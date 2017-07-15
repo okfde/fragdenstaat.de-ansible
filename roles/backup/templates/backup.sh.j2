@@ -1,0 +1,33 @@
+#!/bin/sh
+set -ex
+
+PATH=/usr/bin:/bin
+DATE=`date +%F`
+DAYOFMONTH=`date +%d`
+
+export FTP_PASSWORD='{{ backup_ftp_password }}'
+export PASSPHRASE='{{ backup_gpg_password }}'
+
+umask 177
+
+if [ ! -f {{ virtualenv_path }}/backup/dpkg-${DATE}.txt ]; then
+	dpkg --get-selections > {{ virtualenv_path }}/backup/dpkg-${DATE}.txt
+fi
+
+if [ ! -f {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz ]; then
+	sudo -u postgres pg_dumpall | gzip -c > {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz
+fi
+
+find {{ virtualenv_path }}/backup/ -mtime +7 -exec rm -Rf -- {} \;
+
+duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M {{ virtualenv_path }}/backup/ {{ backup_ftp_url }}/fds-sql-backup >> {{ virtualenv_path }}/logs/fds-sql-backup.log
+duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M {{ virtualenv_path }}/storage/ {{ backup_ftp_url }}/fds-storage-backup >> {{ virtualenv_path }}/logs/fds-storage-backup.log
+duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M /var/vmail/ {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
+
+duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/fds-sql-backup >> {{ virtualenv_path }}/logs/fds-sql-backup.log
+duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/fds-storage-backup >> {{ virtualenv_path }}/logs/fds-storage-backup.log
+duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
+
+
+unset FTP_PASSWORD
+unset PASSPHRASE

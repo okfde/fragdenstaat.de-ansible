@@ -1,0 +1,86 @@
+upstream {{ application_name }}_wsgi_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:{{ virtualenv_path }}/run/gunicorn.sock fail_timeout=0;
+}
+
+server {
+    listen      80;
+    server_name {{ nginx_server_name }} www.{{ nginx_server_name }};
+    rewrite     ^ https://{{ nginx_server_name }}$request_uri? permanent;
+}
+
+server {
+    listen              443 ssl http2;
+    server_name         www.{{ nginx_server_name }};
+
+    {% include '_ssl.j2' %}
+
+    rewrite     ^ https://{{ nginx_server_name }}$request_uri? permanent;
+
+}
+
+server {
+    listen              443 ssl http2;
+    server_name         {{ nginx_server_name }};
+
+    {% include '_ssl.j2' %}
+
+    client_max_body_size 50M;
+
+    access_log {{ nginx_access_log_file }};
+    error_log {{ nginx_error_log_file }};
+
+    location /robots.txt {
+        return 200 "User-agent: *\nDisallow:\n";
+    }
+    location /favicon.ico {
+        return 404;
+    }
+
+    location /static/ {
+        alias   {{ nginx_static_dir }};
+    }
+
+    location /protected {
+      internal;
+      alias   {{ nginx_media_dir }};
+    }
+
+    location /files/legalaction {
+      alias   {{ nginx_media_dir }}/files/legalaction;
+    }
+
+    location /{{ django_secret_url_admin }}/ {
+        auth_basic "Restricted";
+        auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd;
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Host $http_host;
+        proxy_pass http://{{ application_name }}_wsgi_server;
+    }
+
+    location / {
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Host $http_host;
+        proxy_pass http://{{ application_name }}_wsgi_server;
+    }
+
+    # Error pages
+    error_page 500 502 504 /500.html;
+    location = /500.html {
+        root {{ project_path }}/{{ application_name }}/templates/;
+    }
+
+    error_page 503 /maintenance_on.html;
+    location = /maintenance_on.html {
+        root {{ virtualenv_path }}/;
+    }
+}

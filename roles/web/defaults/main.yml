@@ -1,0 +1,6 @@
+---
+
+virtualenv_python_version: python3.5
+
+gunicorn_max_requests: 0
+git_branch: master

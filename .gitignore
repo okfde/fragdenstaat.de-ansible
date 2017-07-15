@@ -1,0 +1,12 @@
+# PyCharm IDE
+.idea
+
+# Vagrant
+.vagrant
+vagrant_ansible_inventory_default
+
+# Ansible
+*.retry
+
+adenauer/
+env_vars/production.yml

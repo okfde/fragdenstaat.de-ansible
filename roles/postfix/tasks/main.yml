@@ -1,0 +1,41 @@
+---
+
+- name: Ensure postfix and dependencies are installed
+  apt: name={{ item }} state=installed
+  with_items:
+    - postfix
+    - postfix-pgsql
+
+- name: Ensure postfix is started and enabled at boot.
+  service: name=postfix state=started enabled=yes
+
+- name: configure mailname
+  copy: content={{ mail_hostname }} dest=/etc/mailname
+
+- name: Install postfix main.cf config
+  template: src=main.cf.j2 dest=/etc/postfix/main.cf
+  notify: restart postfix
+
+- name: Install postfix master.cf config
+  template: src=master.cf.j2 dest=/etc/postfix/master.cf
+  notify: restart postfix
+
+- name: Install vmail_domains
+  template: src=vmail_domains.j2 dest=/etc/postfix/vmail_domains
+  notify: update postmap
+
+- name: Install vmail_mailbox
+  template: src=vmail_mailbox.j2 dest=/etc/postfix/vmail_mailbox
+  notify: update postmap
+
+- name: Install virtual alias map configuration
+  template: src=postgres-virtual-alias-maps.cf.j2 dest=/etc/postfix/postgres-virtual-alias-maps.cf
+  notify: update postmap
+
+- name: configure smtp ports in firewall
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+  - ssmtp
+  - submission
+
+- include: opendkim.yml

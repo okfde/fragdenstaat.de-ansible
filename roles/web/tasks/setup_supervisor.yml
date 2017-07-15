@@ -1,0 +1,19 @@
+---
+
+- name: Install Supervisor
+  apt: name=supervisor update_cache={{ update_apt_cache }} state=installed
+  tags:
+    - celery
+
+- name: Ensure supervisor service is started
+  service: name=supervisor state=started enabled=yes
+  tags:
+    - celery
+
+- name: Create the Supervisor config file
+  template: src=supervisor_config.j2
+            dest=/etc/supervisor/conf.d/{{ application_name }}.conf
+            backup=yes
+
+- name: Re-read the Supervisor config files
+  supervisorctl: name={{ application_name }} state=present

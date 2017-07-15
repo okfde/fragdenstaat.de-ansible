@@ -1,0 +1,95 @@
+## Dovecot configuration file
+
+# If you're in a hurry, see http://wiki2.dovecot.org/QuickConfiguration
+
+# "doveconf -n" command gives a clean output of the changed settings. Use it
+# instead of copy&pasting files when posting to the Dovecot mailing list.
+
+# '#' character and everything after it is treated as comments. Extra spaces
+# and tabs are ignored. If you want to use either of these explicitly, put the
+# value inside quotes, eg.: key = "# char and trailing whitespace  "
+
+# Most (but not all) settings can be overridden by different protocols and/or
+# source/destination IPs by placing the settings inside sections, for example:
+# protocol imap { }, local 127.0.0.1 { }, remote 10.0.0.0/8 { }
+
+# Default values are shown for each setting, it's not required to uncomment
+# those. These are exceptions to this though: No sections (e.g. namespace {})
+# or plugin settings are added by default, they're listed only as examples.
+# Paths are also just examples with the real defaults being based on configure
+# options. The paths listed here are for configure --prefix=/usr
+# --sysconfdir=/etc --localstatedir=/var
+
+# Enable installed protocols
+!include_try /usr/share/dovecot/protocols.d/*.protocol
+
+# Most of the actual configuration gets included below. The filenames are
+# first sorted by their ASCII value and parsed in that order. The 00-prefixes
+# in filenames are intended to make it easier to understand the ordering.
+!include conf.d/*.conf
+
+# A comma separated list of IPs or hosts where to listen in for connections.
+# "*" listens in all IPv4 interfaces, "::" listens in all IPv6 interfaces.
+# If you want to specify non-default ports or anything more complex,
+# edit conf.d/master.conf.
+listen = *, ::
+
+mail_debug = yes
+log_timestamp = "%Y-%m-%d %H:%M:%S "
+log_path = /var/log/dovecot.log
+mail_gid = vmail
+mail_location = maildir:/var/vmail/%d/%n/Maildir
+mail_privileged_group = mail
+mail_uid = vmail
+# managesieve_notify_capability = mailto
+# managesieve_sieve_capability = fileinto reject envelope encoded-character vacation subaddress comparator-i;ascii-numeric relational regex imap4flags copy include variables body enotify environment mailbox date ihave
+
+passdb {
+  driver = passwd-file
+  args = {{ dovecot_passwd_file }}
+}
+
+userdb {
+  args = uid=5000 gid=5000 home=/var/vmail/%d/%n allow_all_users=yes
+  driver = static
+}
+userdb {
+  driver = passwd
+}
+
+protocols = imap
+
+service auth {
+  unix_listener /var/spool/postfix/private/auth {
+    group = postfix
+    mode = 0660
+    user = postfix
+  }
+  unix_listener auth-master {
+    mode = 0600
+    user = vmail
+  }
+  user = root
+}
+shutdown_clients = no
+
+{% if letsencrypt_enabled %}
+ssl = yes
+ssl_cert = <{{ cert_filename }}
+ssl_key = <{{ privkey_filename }}
+
+ssl_cipher_list = TLSv1+HIGH:!SSLv2:!EXPORT:!RC4:!aNULL:!eNULL:!3DES:@STRENGTH
+{% endif %}
+
+protocol lda {
+  auth_socket_path = /var/run/dovecot/auth-master
+  hostname = fragdenstaat.de
+  log_path = /var/vmail/dovecot-deliver.log
+  mail_plugin_dir = /usr/lib/dovecot/modules
+  #  mail_plugins = sieve
+  postmaster_address = postmaster@fragdenstaat.de
+}
+
+# A config file can also tried to be included without giving an error if
+# it's not found:
+!include_try local.conf

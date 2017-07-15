@@ -1,0 +1,32 @@
+---
+
+# Application settings.
+application_log_file: "{{ application_log_dir }}/gunicorn_supervisor.log"
+requirements_file: "{{ project_path }}/requirements-production.txt"
+
+
+# Django environment variables.
+django_environment:
+  DJANGO_SETTINGS_MODULE: "{{ django_settings_file }}"
+  DJANGO_CONFIGURATION: "{{ django_configuration }}"
+  DJANGO_SECRET_KEY: "{{ django_secret_key }}"
+  DJANGO_MEDIA_ROOT: "{{ django_media_root }}"
+  DJANGO_STATIC_ROOT: "{{ nginx_static_dir }}"
+  DATABASE_URL: "postgres://{{ db_user }}:{{ db_password }}@{{ db_host }}/{{ db_name }}"
+  DATABASE_NAME: "{{ db_name }}"
+  DATABASE_USER: "{{ db_user }}"
+  DATABASE_HOST: "{{ db_host }}"
+  DATABASE_PASSWORD: "{{ db_password }}"
+  DJANGO_BROKER_URL: "{{ broker_url }}"
+  DJANGO_EMAIL_HOST: "{{ email_host }}"
+  DJANGO_EMAIL_HOST_USER: "{{ email_host_user }}"
+  DJANGO_EMAIL_HOST_PASSWORD: "{{ email_host_password }}"
+  DJANGO_FOI_EMAIL_HOST: "{{ foi_email_host }}"
+  DJANGO_FOI_EMAIL_HOST_USER: "{{ foi_email_host_user }}"
+  DJANGO_FOI_EMAIL_HOST_PASSWORD: "{{ foi_email_host_password }}"
+  DJANGO_FOI_EMAIL_ACCOUNT_PASSWORD: "{{ foi_email_host_password }}"
+  DJANGO_FOI_EMAIL_HOST_IMAP: "{{ foi_email_host }}"
+  DJANGO_FOI_EMAIL_ACCOUNT_NAME: "{{ foi_email_host_user }}"
+  DJANGO_GEOIP_PATH: "{{ django_geoip_path }}"
+  DJANGO_LOG_DIR: "{{ application_log_dir }}"
+  DJANGO_SECRET_URL_ADMIN: "{{ django_secret_url_admin }}"

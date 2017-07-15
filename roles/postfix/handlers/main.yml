@@ -1,0 +1,12 @@
+- name: restart postfix
+  service: name=postfix state=restarted enabled=yes
+
+- name: update postmap
+  shell: "postmap /etc/postfix/{{ item }}"
+  notify: restart postfix
+  with_items:
+    - "vmail_domains"
+    - "vmail_mailbox"
+
+- name: restart opendkim
+  service: name=opendkim state=restarted

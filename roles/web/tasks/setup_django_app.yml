@@ -1,0 +1,15 @@
+---
+
+- name: Install packages required by the Django app inside virtualenv
+  pip: virtualenv={{ virtualenv_path }} chdir={{ project_path }} requirements={{ requirements_file }} extra_args="-U -e . --exists-action=w" editable=True state=latest
+  become: true
+  become_user: "{{ gunicorn_user }}"
+
+- name: Creates public directory
+  file: path={{ virtualenv_path }}/public state=directory owner={{ gunicorn_user }}
+
+- name: Creates storage directory
+  file: path={{ virtualenv_path }}/storage/files state=directory owner={{ gunicorn_user }}
+
+- name: Create symlink to storage
+  file: src={{ virtualenv_path }}/storage/files dest={{ virtualenv_path }}/public/files state=link owner={{ gunicorn_user }}

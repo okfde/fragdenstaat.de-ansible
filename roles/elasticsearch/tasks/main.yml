@@ -1,0 +1,24 @@
+---
+
+- name: Install JRE
+  apt: name={{ item }} update_cache={{ update_apt_cache }} state=installed
+  with_items:
+    - default-jre
+  tags: packages
+
+- name: Check if elasticsearch present
+  stat: path=/usr/share/elasticsearch/bin/elasticsearch
+  register: elasticsearch_config
+
+- name: Get elasticsearch release
+  get_url:
+    url: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.4/elasticsearch-2.4.4.deb"
+    dest: "/tmp/elasticsearch-2.4.4.deb"
+  when: not elasticsearch_config.stat.exists
+
+- name: Install elasticsearch
+  command: dpkg -i /tmp/elasticsearch-2.4.4.deb
+  when: not elasticsearch_config.stat.exists
+
+- name: Ensure elasticsearch service is running
+  service: name=elasticsearch state=started enabled=yes

@@ -1,0 +1,9 @@
+---
+
+postfix_hostname: fragdenstaat.de
+postfix_domains:
+  - echtemail.de
+dkim_selector: mail
+dkim_domains:
+ - fragdenstaat.de
+admin_email: postmaster@fragdenstaat.de

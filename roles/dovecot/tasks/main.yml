@@ -1,0 +1,51 @@
+---
+
+- name: Install dovecot
+  apt: name=dovecot-imapd state=latest
+
+- name: Create group used in passwdfile
+  group:
+    name: "vmail"
+    gid: 5000
+    system: yes
+
+- name: Create vmail user
+  user:
+    name: "vmail"
+    group: "vmail"
+    uid: 5000
+    home: "/var/local/vmail"
+    shell: "/usr/sbin/nologin"
+    system: yes
+
+
+- name: Create the dovecot config
+  template: src=dovecot.conf.j2
+            dest=/etc/dovecot/dovecot.conf
+  notify: restart dovecot
+
+- name: Create dovecot passwd file
+  copy:
+    content: ""
+    dest: "{{ dovecot_passwd_file }}"
+    force: no
+    owner: 'root'
+    group: 'dovecot'
+    mode: '0650'
+
+- name: Add dovecot passwords
+  lineinfile: dest="{{ dovecot_passwd_file }}"
+              regexp="^{{ item.user }}"
+              line="{{ item.user }}:{plain}{{ item.password }}"
+              state=present
+  with_items: "{{ email_accounts }}"
+  notify: restart dovecot
+
+- name: configure imaps port in ufw
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+  - imap
+  - imaps
+
+- name: Ensure dovecot is started and enabled at boot.
+  service: name=dovecot state=started enabled=yes

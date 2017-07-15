@@ -1,0 +1,65 @@
+---
+
+- name: Install Nginx
+  apt: name=nginx update_cache={{ update_apt_cache }} state=installed
+  tags: packages
+
+- name: Ensure that a strong Diffie-Hellman group is used
+  command: openssl dhparam -out /etc/ssl/certs/dhparams.pem 2048 creates=/etc/ssl/certs/dhparams.pem
+  when: nginx_strong_dh_group is defined and nginx_strong_dh_group
+
+- name: Create the Nginx configuration file
+  template: src=nginx_config.j2
+            dest=/etc/nginx/sites-available/{{ application_name }}
+            backup=yes
+  notify: reload nginx
+
+- name: Create custom log rotation file
+  template: src=nginx_logrotate.j2
+            dest=/etc/logrotate.d/{{ application_name }}
+            backup=yes
+
+- name: Ensure that the default site is disabled
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: reload nginx
+
+- name: Ensure that the application site is enabled
+  file: src=/etc/nginx/sites-available/{{ application_name }}
+        dest=/etc/nginx/sites-enabled/{{ application_name }}
+        state=link
+  notify: reload nginx
+
+
+- name: Create the conf folder
+  file: path={{ virtualenv_path}}/conf
+        mode=0550
+        owner=www-data
+        state=directory
+
+- name: Create basic auth for admin URLs
+  template: src=htpasswd.j2 dest={{ virtualenv_path}}/conf/htpasswd mode=0550 owner=www-data
+
+- name: Ensure that the file permissions for static are correct
+  file: path={{ django_static_root }}
+        recurse=yes
+        owner={{ gunicorn_user }}
+        group=www-data
+        mode=u=rwx,g=rx,o=r
+        state=directory
+
+- name: Ensure that the file permissions for media are correct
+  file: path={{ django_media_root }}
+        recurse=yes
+        owner={{ gunicorn_user }}
+        group=www-data
+        mode=u=rwx,g=rx,o=r
+        state=directory
+
+- name: Ensure Nginx service is started
+  service: name=nginx state=started enabled=yes
+
+- name: configure http, https ports in firewall
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+  - http
+  - https

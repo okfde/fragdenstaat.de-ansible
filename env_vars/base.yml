@@ -1,0 +1,70 @@
+---
+
+git_repo: https://github.com/okfde/fragdenstaat_de.git
+
+hostname: fragdenstaat.de
+project_name: fragdenstaat.de
+application_name: fragdenstaat_de
+mail_hostname: fragdenstaat.de
+nginx_server_name: fragdenstaat.de
+
+db_host: "127.0.0.1"
+db_name: "{{ application_name }}"
+db_user: "{{ application_name }}"
+
+# Gunicorn settings.
+gunicorn_num_workers: 3
+gunicorn_user: "{{ application_name }}"
+gunicorn_group: webapps
+
+
+# Temporary here
+virtualenv_path: "/var/www/fragdenstaat.de"
+project_path: "{{ virtualenv_path }}/{{ project_name }}"
+application_log_dir: "/var/www/fragdenstaat.de/logs"
+
+nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
+nginx_media_dir: "/var/www/fragdenstaat.de/public"
+
+django_media_root: "/var/www/fragdenstaat.de/storage/files"
+django_static_root: "/var/www/fragdenstaat.de/public/static"
+
+django_settings_file: "{{ application_name }}.settings.development"
+django_configuration: "Dev"
+
+django_geoip_path: "/var/www/fragdenstaat.de/data"
+django_secret_url_admin: "admin"
+
+rabbitmq_application_vhost: "{{ application_name }}"
+rabbitmq_application_user: "{{ application_name }}"
+rabbitmq_application_password: password
+broker_url: "amqp://{{ rabbitmq_application_user }}:{{ rabbitmq_application_password }}@localhost/{{ rabbitmq_application_vhost }}"
+
+dovecot_passwdfile_scheme: 'sha512-crypt'
+
+email_accounts:
+  - user: mail@fragdenstaat.de
+    password: "password"
+  - user: mail@fragdenstaat.de
+    password: "password"
+
+email_host: "127.0.0.1"
+email_host_user: "mail@fragdenstaat.de"
+email_host_password: password
+foi_email_host: "127.0.0.1"
+foi_email_host_user: "mail@fragdenstaat.de"
+foi_email_host_password: password
+
+email_alias:
+  - from: "test@fragdenstaat.de"
+    to: "root@fragdenstaat.de"
+
+
+letsencrypt_enabled: no
+letsencrypt_dir: "/etc/letsencrypt/live/fragdenstaat.de/"
+cert_filename: "/etc/letsencrypt/live/fragdenstaat.de/fullchain.pem"
+privkey_filename: "/etc/letsencrypt/live/fragdenstaat.de/privkey.pem"
+
+backup_ftp_url: "ftp://user@server"
+backup_ftp_password: "password"
+backup_gpg_password: "password"

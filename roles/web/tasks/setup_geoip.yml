@@ -1,0 +1,21 @@
+---
+
+- name: Maxmind directory
+  file: "path={{ django_geoip_path }} mode=0755 owner={{ gunicorn_user }} state=directory"
+
+- name: Get Maxmind databases
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ django_geoip_path }}/{{ item | basename }}"
+    mode: '0444'
+  with_items:
+    - http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
+  become: true
+  become_user: "{{ gunicorn_user }}"
+
+- name: extract db
+  command: "gunzip -k {{ django_geoip_path }}/{{ item }}.gz creates={{ django_geoip_path }}/{{ item }}"
+  with_items:
+    - GeoIP.dat
+  become: true
+  become_user: "{{ gunicorn_user }}"

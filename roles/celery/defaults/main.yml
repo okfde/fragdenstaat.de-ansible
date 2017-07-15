@@ -1,0 +1,3 @@
+---
+
+celery_num_workers: 1
