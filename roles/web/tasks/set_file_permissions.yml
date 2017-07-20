@@ -1,8 +1,18 @@
 ---
 
 - name: Ensure that the application file permissions are set properly
-  file: path={{ virtualenv_path }}
+  file: path={{ virtualenv_path }}/{{ item }}
         recurse=yes
         owner={{ gunicorn_user }}
         group={{ gunicorn_group }}
         state=directory
+  with_items:
+    - bin
+    - fragdenstaat.de
+    - include
+    - data
+    - lib
+    - scripts
+    - share
+    - src
+    - run
