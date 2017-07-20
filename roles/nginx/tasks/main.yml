@@ -36,8 +36,18 @@
         owner=www-data
         state=directory
 
-- name: Create basic auth for admin URLs
-  template: src=htpasswd.j2 dest={{ virtualenv_path}}/conf/htpasswd mode=0550 owner=www-data
+- name: Install python3 passlib library
+  apt: name=python3-passlib update_cache={{ update_apt_cache }} state=installed
+  tags: packages
+
+- htpasswd:
+    path: "{{ virtualenv_path}}/conf/htpasswd"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    owner: www-data
+    group: www-data
+    mode: 0550
+  with_items: "{{ htpasswd }}"
 
 - name: Ensure that the file permissions for static are correct
   file: path={{ django_static_root }}

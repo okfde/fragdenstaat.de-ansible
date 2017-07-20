@@ -26,6 +26,10 @@ application_log_dir: "/var/www/fragdenstaat.de/logs"
 nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
 nginx_media_dir: "/var/www/fragdenstaat.de/public"
 
+htpasswd:
+  - name: user
+    password: password
+
 django_media_root: "/var/www/fragdenstaat.de/storage/files"
 django_static_root: "/var/www/fragdenstaat.de/public/static"
 
