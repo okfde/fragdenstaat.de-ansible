@@ -1,7 +1,17 @@
 ---
 
-- name: Download certbot
-  get_url: url=https://dl.eff.org/certbot-auto dest={{ certbot_script }} mode=0755
+- name: Add certboot apt repo
+  apt_repository: repo="ppa:certbot/certbot" update_cache=false
+
+- name: Ensure software-properties-common installed
+  apt: name=software-properties-common state=latest
+  register: certbot_repo_added
+
+- apt: update_cache=true
+  when: certbot_repo_added | changed
+
+- name: Install Certbot.
+  apt: name=certbot state=latest
 
 - name: Check if Nginx exists
   stat: path=/etc/init.d/nginx
