@@ -1,0 +1,10 @@
+{{ application_log_dir }}/*-backup.log {
+        daily
+        missingok
+        rotate 14
+        compress
+        delaycompress
+        notifempty
+        create 0640 www-data adm
+        sharedscripts
+}

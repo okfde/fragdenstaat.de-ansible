@@ -29,3 +29,8 @@
   when: backup_cron_email is defined and backup_cron_email
   tags:
     - cron
+
+- name: Create custom backup log rotation file
+  template: src=fds_backup_logrotate.j2
+            dest=/etc/logrotate.d/{{ application_name }}_backup
+            backup=yes
