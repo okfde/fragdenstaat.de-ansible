@@ -5,6 +5,26 @@
   become: yes
   become_user: root
   remote_user: sw
+  pre_tasks:
+    - name: Send Slack notification message on start deployment
+      become: no
+      slack:
+        token: '{{ slack_token }}'
+        msg: 'Deployment start on {{ inventory_hostname }}'
+        username: fds-bot
+        channel: '#fragdenstaatplus'
+      delegate_to: localhost
+      when: slack_token is defined
+  post_tasks:
+    - name: Send Slack notification message on finished deployment
+      become: no
+      slack:
+        token: '{{ slack_token }}'
+        msg: 'Deployment finished on {{ inventory_hostname }}'
+        username: fds-bot
+        channel: '#fragdenstaatplus'
+      delegate_to: localhost
+      when: slack_token is defined
   vars:
     - setup_git_repo: yes
     - update_apt_cache: yes
