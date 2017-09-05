@@ -30,3 +30,4 @@ django_environment:
   DJANGO_GEOIP_PATH: "{{ django_geoip_path }}"
   DJANGO_LOG_DIR: "{{ application_log_dir }}"
   DJANGO_SECRET_URL_ADMIN: "{{ django_secret_url_admin }}"
+  DJANGO_SENTRY_DSN: "{{ django_sentry_dsn }}"

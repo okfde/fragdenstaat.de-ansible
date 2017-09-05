@@ -72,3 +72,5 @@ privkey_filename: "/etc/letsencrypt/live/fragdenstaat.de/privkey.pem"
 backup_ftp_url: "ftp://user@server"
 backup_ftp_password: "password"
 backup_gpg_password: "password"
+
+django_sentry_dsn: ""
