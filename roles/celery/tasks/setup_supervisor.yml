@@ -1,8 +1,11 @@
 ---
 
-- name: Create the Supervisor config file for {{ celery_application_name }}
-  template: src=supervisor_{{ celery_application_name }}.conf.j2
-            dest=/etc/supervisor/conf.d/{{ celery_application_name }}.conf
+- name: Create the Supervisor config file for {{ item }}
+  template: src=supervisor_{{ item }}.conf.j2
+            dest=/etc/supervisor/conf.d/{{ item }}.conf
+  with_items:
+    - "{{ celery_application_name }}"
+    - "{{ celerybeat_application_name }}"
   tags:
     - celery
 
@@ -16,6 +19,14 @@
 
 - name: Create the {{ celery_application_name }} log file
   file: path={{ celery_log_file }}
+        owner={{ celery_user }}
+        group={{ celery_group }}
+        state=touch
+  tags:
+    - celery
+
+- name: Create the {{ celerybeat_application_name }} log file
+  file: path={{ celerybeat_log_file }}
         owner={{ celery_user }}
         group={{ celery_group }}
         state=touch

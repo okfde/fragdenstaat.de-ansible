@@ -4,8 +4,15 @@ celery_user: "{{ application_name }}"
 celery_group: webapps
 
 celery_application_name: celery
+celerybeat_application_name: celerybeat
+
 celery_scripts_dir: "{{ virtualenv_path }}/scripts/celery"
+celerybeat_scripts_dir: "{{ virtualenv_path }}/scripts/celerybeat"
+
 celery_template_file: "{{ celery_application_name }}_start.j2"
+celerybeat_template_file: "{{ celerybeat_application_name }}_start.j2"
 
 celery_log_dir: "{{ virtualenv_path }}/logs"
+
 celery_log_file: "{{ celery_log_dir }}/{{ celery_application_name }}.log"
+celerybeat_log_file: "{{ celery_log_dir }}/{{ celerybeat_application_name }}.log"

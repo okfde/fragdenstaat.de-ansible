@@ -10,4 +10,4 @@ cd $DJANGODIR
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
 # TODO: remove -B
-exec celery worker -A froide.celery:app -Q emailfetch,celery -l DEBUG -E --concurrency={{ celery_num_workers }}
+exec celery beat -A froide.celery:app -l DEBUG
