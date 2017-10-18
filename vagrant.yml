@@ -17,9 +17,11 @@
     - db
     - memcached
     - rabbitmq
+    - elasticsearch
     - web
     - celery
+    # - certbot
     - nginx
-    - elasticsearch
     # - postfix
     # - dovecot
+    # - backup
