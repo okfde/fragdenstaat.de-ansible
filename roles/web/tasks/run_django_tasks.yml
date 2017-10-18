@@ -21,26 +21,3 @@
   tags: django.collectstatic
   become: true
   become_user: "{{ gunicorn_user }}"
-
-- name: Run Django compress
-  django_manage:
-    command: compress
-    app_path: "{{ project_path }}"
-    virtualenv: "{{ virtualenv_path }}"
-    settings: "{{ django_settings_file }}"
-  environment: "{{ django_environment }}"
-  tags: django.compress
-  become: true
-  become_user: "{{ gunicorn_user }}"
-  when: django_configuration != "Dev"
-
-- name: Run Django compilemessages
-  django_manage:
-    command: "compilemessages -l de"
-    app_path: "{{ project_path }}"
-    virtualenv: "{{ virtualenv_path }}"
-    settings: "{{ django_settings_file }}"
-  environment: "{{ django_environment }}"
-  tags: django.compress
-  become: true
-  become_user: "{{ gunicorn_user }}"
