@@ -17,6 +17,7 @@ django_environment:
   DATABASE_USER: "{{ db_user }}"
   DATABASE_HOST: "{{ db_host }}"
   DATABASE_PASSWORD: "{{ db_password }}"
+  CACHE_URL: "pymemcached://127.0.0.1:11211?key_prefix=fragdenstaat&timeout=3600"
   DJANGO_CELERY_BROKER_URL: "{{ celery_broker_url }}"
   DJANGO_EMAIL_HOST: "{{ email_host }}"
   DJANGO_EMAIL_HOST_USER: "{{ email_host_user }}"
