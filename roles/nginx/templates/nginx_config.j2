@@ -1,3 +1,15 @@
+map $sent_http_content_type $expires {
+    default                     off;
+    text/html                   epoch;
+    text/css                    max;
+    application/javascript      max;
+    application/x-font-ttf      max;
+    application/x-font-otf      max;
+    application/font-woff       max;
+    application/font-woff2      max;
+    ~image/                     max;
+}
+
 upstream {{ application_name }}_wsgi_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
   # to return a good HTTP response (in case the Unicorn master nukes a
@@ -27,6 +39,8 @@ server {
     server_name         {{ nginx_server_name }};
 
     {% include '_ssl.j2' %}
+
+    expires $expires;
 
     client_max_body_size 50M;
 
