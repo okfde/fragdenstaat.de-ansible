@@ -25,6 +25,12 @@ http {
 	# server_name_in_redirect off;
 
 	include /etc/nginx/mime.types;
+  types {
+    application/font-woff2                woff2;
+    application/x-font-ttf                ttc ttf;
+    font/opentype                         otf;
+  }
+
 	default_type application/octet-stream;
 
 	##
