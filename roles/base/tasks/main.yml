@@ -1,6 +1,6 @@
 ---
 
-- include: create_swap_file.yml
+- import_tasks: create_swap_file.yml
   when: create_swap_file
   tags: swap
 

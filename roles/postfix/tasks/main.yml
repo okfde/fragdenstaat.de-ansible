@@ -38,4 +38,4 @@
   - ssmtp
   - submission
 
-- include: opendkim.yml
+- import_tasks: opendkim.yml

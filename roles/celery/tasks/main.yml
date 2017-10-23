@@ -1,8 +1,8 @@
 ---
 
-- include: copy_scripts.yml
+- import_tasks: copy_scripts.yml
 
-- include: setup_supervisor.yml
+- import_tasks: setup_supervisor.yml
 
 - name: Check running applications managed by supervisor
   shell: supervisorctl status

@@ -21,6 +21,6 @@
 - name: Ensure that the RabbitMQ service is running
   service: name=rabbitmq-server state=started enabled=yes
 
-- include: setup_vhosts.yml
+- import_tasks: setup_vhosts.yml
 
-- include: setup_users.yml
+- import_tasks: setup_users.yml
