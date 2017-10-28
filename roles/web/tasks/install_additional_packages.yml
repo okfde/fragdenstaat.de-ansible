@@ -5,3 +5,4 @@
   with_items:
     - gettext
     - imagemagick
+    - libreoffice-common
