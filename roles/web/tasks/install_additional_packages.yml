@@ -5,4 +5,9 @@
   with_items:
     - gettext
     - imagemagick
-    - libreoffice-common
+
+- name: Add LibreOffice repository
+  apt_repository: repo="ppa:libreoffice/libreoffice-5-3" state=present
+
+- name: Install LibreOffice
+  apt: name=libreoffice state=latest update_cache=yes
