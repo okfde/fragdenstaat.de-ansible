@@ -88,13 +88,13 @@ server {
     }
 
     # Error pages
-    error_page 500 502 504 /500.html;
+    error_page 500 /500.html;
     location = /500.html {
         root {{ project_path }}/{{ application_name }}/templates/;
     }
 
-    error_page 503 /maintenance_on.html;
-    location = /maintenance_on.html {
-        root {{ virtualenv_path }}/;
+    error_page 502 503 504 =503 /maintenance.html;
+    location = /maintenance.html {
+        root {{ virtualenv_path }}/static_html/;
     }
 }

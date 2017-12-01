@@ -25,6 +25,16 @@
             dest=/etc/logrotate.d/{{ application_name }}_nginx
             backup=yes
 
+- name: Create the static_html folder
+  file: path={{ virtualenv_path}}/static_html
+        mode=0550
+        owner=www-data
+        state=directory
+
+- name: Create maintenance page
+  template: src=maintenance.html.j2
+            dest={{ virtualenv_path }}/static_html/maintenance.html
+
 - name: Ensure that the default site is disabled
   file: path=/etc/nginx/sites-enabled/default state=absent
   notify: reload nginx
