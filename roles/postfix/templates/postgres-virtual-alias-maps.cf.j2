@@ -4,4 +4,5 @@ hosts = 127.0.0.1
 dbname = {{ db_name }}
 query = SELECT 'foimail@fragdenstaat.de' AS destination FROM foirequest_foirequest WHERE secret_address = '%s'
   UNION ALL SELECT fr.secret_address AS destination FROM foirequest_deferredmessage AS dm, foirequest_foirequest AS fr WHERE dm.request_id = fr.id AND dm.recipient = '%s'
-  {% for em in email_alias %} UNION ALL SELECT '{{ em.to }}' WHERE '{{ em.from }}' = '%s'{% endfor %}
+  {% for em in email_alias %} UNION ALL SELECT '{{ em.to }}' AS destination WHERE '{{ em.from }}' = '%s'{% endfor %}
+  {% for em in alias_foi_domains %} UNION ALL SELECT 'foimail@fragdenstaat.de' AS destination WHERE '%s' LIKE '%%@{{ em }}'{% endfor %}

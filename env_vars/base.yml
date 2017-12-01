@@ -63,6 +63,8 @@ email_alias:
   - from: "test@fragdenstaat.de"
     to: "root@fragdenstaat.de"
 
+alias_foi_domains: []
+
 
 letsencrypt_enabled: no
 letsencrypt_dir: "/etc/letsencrypt/live/fragdenstaat.de/"
