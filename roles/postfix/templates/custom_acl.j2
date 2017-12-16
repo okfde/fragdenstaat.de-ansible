@@ -1,0 +1,6 @@
+{
+    postrotate
+        /usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log
+        /usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log.1
+    endscript
+}

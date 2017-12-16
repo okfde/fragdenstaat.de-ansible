@@ -32,6 +32,10 @@
   template: src=postgres-virtual-alias-maps.cf.j2 dest=/etc/postfix/postgres-virtual-alias-maps.cf
   notify: update postmap
 
+- name: Install logrotate ACL access
+  template: src=custom_acl.j2 dest=/etc/logrotate.d/custom_acl
+  notify: update postmap
+
 - name: configure smtp ports in firewall
   ufw: rule=allow port={{ item }} proto=tcp
   with_items:
