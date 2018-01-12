@@ -12,12 +12,12 @@
 
 - name: Get elasticsearch release
   get_url:
-    url: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.4/elasticsearch-2.4.4.deb"
-    dest: "/tmp/elasticsearch-2.4.4.deb"
+    url: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.6/elasticsearch-2.4.6.deb"
+    dest: "/tmp/elasticsearch-2.4.6.deb"
   when: not elasticsearch_config.stat.exists
 
 - name: Install elasticsearch
-  command: dpkg -i /tmp/elasticsearch-2.4.4.deb
+  command: dpkg -i /tmp/elasticsearch-2.4.6.deb
   when: not elasticsearch_config.stat.exists
 
 - name: Ensure elasticsearch service is running
