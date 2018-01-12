@@ -12,7 +12,7 @@
 - name: Install PostgreSQL
   apt: name={{ item }} update_cache={{ update_apt_cache }} state=installed
   with_items:
-    - postgresql
+    - postgresql-10
     - postgresql-contrib
     - libpq-dev
     - python3-psycopg2
