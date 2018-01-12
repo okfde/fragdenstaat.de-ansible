@@ -5,6 +5,9 @@
   with_items:
     - gettext
     - imagemagick
+    - tesseract-ocr
+    - libtesseract-dev
+    - libleptonica-dev
 
 - name: Add LibreOffice repository
   apt_repository: repo="ppa:libreoffice/libreoffice-5-3" state=present
