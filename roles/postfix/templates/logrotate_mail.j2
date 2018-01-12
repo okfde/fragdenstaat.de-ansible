@@ -1,0 +1,18 @@
+/var/log/mail.info
+/var/log/mail.warn
+/var/log/mail.err
+/var/log/mail.log
+{
+	rotate 16
+	weekly
+	missingok
+	notifempty
+	compress
+	delaycompress
+	sharedscripts
+	postrotate
+		invoke-rc.d rsyslog rotate > /dev/null
+		/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log > /dev/null
+		/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log.1 > /dev/null
+	endscript
+}
