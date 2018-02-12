@@ -1,3 +1,4 @@
 ---
 
 celery_num_workers: 1
+celerymail_num_workers: 1

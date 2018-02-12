@@ -39,6 +39,8 @@ django_configuration: "Dev"
 django_geoip_path: "/var/www/fragdenstaat.de/data"
 django_secret_url_admin: "admin"
 
+celery_num_workers: 2
+celerymail_num_workers: 1
 rabbitmq_application_vhost: "{{ application_name }}"
 rabbitmq_application_user: "{{ application_name }}"
 rabbitmq_application_password: password
