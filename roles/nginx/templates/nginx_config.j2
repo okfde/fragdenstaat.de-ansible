@@ -59,25 +59,30 @@ server {
         alias   {{ nginx_static_dir }};
     }
 
-    location /protected {
-      internal;
-      alias   {{ nginx_media_dir }};
-    }
+    {% for dir in nginx_private_media %}
+        location /{{ dir }} {
+          internal;
+          alias   {{ nginx_media_dir }};
+        }
+    {% endfor %}
 
-    location /files/legalaction {
-      alias   {{ nginx_media_dir }}/files/legalaction;
-    }
+    {% for dir in nginx_public_media %}
+        location /files/{{ dir }} {
+          alias   {{ nginx_media_dir }}/files/{{ dir }};
+        }
+    {% endfor %}
+
     {% macro csp(csp_list) -%}{% for v in csp_list %}{{ v }};{% endfor %}{%- endmacro %}
+
+    add_header Content-Security-Policy "{{ csp(content_security_policy) }}";
+    add_header X-Content-Security-Policy "{{ csp(content_security_policy) }}";
+    add_header X-WebKit-CSP "{{ csp(content_security_policy) }}";
 
     location /{{ django_secret_url_admin }}/ {
         auth_basic "Restricted";
         auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd;
 
         proxy_set_header X-Real-IP $remote_addr;
-    add_header Content-Security-Policy "{{ csp(content_security_policy) }}";
-    add_header X-Content-Security-Policy "{{ csp(content_security_policy) }}";
-    add_header X-WebKit-CSP "{{ csp(content_security_policy) }}";
-
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto https;
         proxy_set_header Host $http_host;

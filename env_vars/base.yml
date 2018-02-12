@@ -77,6 +77,17 @@ backup_ftp_url: "ftp://user@server"
 backup_ftp_password: "password"
 backup_gpg_password: "password"
 
+nginx_public_media:
+  - legalaction
+  - campaign
+  - public
+  - thumbnails
+
+nginx_private_media:
+  - protected
+  - nginx_private
+
+
 django_sentry_dsn: ""
 content_security_policy:
   - "default-src 'self'"
