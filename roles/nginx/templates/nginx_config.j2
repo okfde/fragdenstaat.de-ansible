@@ -59,16 +59,16 @@ server {
         alias   {{ nginx_static_dir }};
     }
 
-    {% for dir in nginx_private_media %}
-        location /{{ dir }} {
+    {% for url_dir in nginx_private_media %}
+        location {{ url_dir.url }} {
           internal;
-          alias   {{ nginx_media_dir }};
+          alias {{ nginx_private_media_prefix }}/{{ url_dir.dir }};
         }
     {% endfor %}
 
     {% for dir in nginx_public_media %}
-        location /files/{{ dir }} {
-          alias   {{ nginx_media_dir }}/files/{{ dir }};
+        location {{ dir }} {
+          alias   {{ nginx_media_dir }}{{ dir }};
         }
     {% endfor %}
 
