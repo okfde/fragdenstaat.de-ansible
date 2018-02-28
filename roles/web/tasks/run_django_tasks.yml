@@ -13,7 +13,7 @@
 
 - name: Run Django collectstatic
   django_manage:
-    command: "collectstatic --noinput --clear -v 0"
+    command: "collectstatic --noinput -v 0"
     app_path: "{{ project_path }}"
     virtualenv: "{{ virtualenv_path }}"
     settings: "{{ django_settings_file }}"
