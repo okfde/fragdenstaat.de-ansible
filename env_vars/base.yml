@@ -92,6 +92,22 @@ nginx_private_media:
     dir: "private/thumbnails"
 
 
+redirect_domains:
+  - from: "blog.fragdenstaat.de"
+    domain: "fragdenstaat.de/blog"
+
+redirect_paths:
+  - from: "/files/foi/30800/"
+    path: "/media-30800/"
+
+
+simple_files:
+  - path: "/robots.txt"
+    content: "User-agent: *\\nDisallow:\\n"
+  - path: "/.well-known/apple-app-site-association"
+    content: '{"applinks":{"apps":[],"details":[{"appID":"93C29USLP6.de.okfn.fragdenstaat","paths":["/a/*","/anfrage/*"]}]}}'
+    mimetype: 'application/json'
+
 django_sentry_dsn: ""
 content_security_policy:
   - "default-src 'self'"

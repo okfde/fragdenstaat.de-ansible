@@ -18,6 +18,20 @@ upstream {{ application_name }}_wsgi_server {
   server unix:{{ virtualenv_path }}/run/gunicorn.sock fail_timeout=0;
 }
 
+
+{% if redirect_domains is defined %}
+    {% for redirect_domain in redirect_domains %}
+    server {
+        listen 80;
+        server_name {{ redirect_domain.from }};
+        location / {
+          return 301 https://{{ redirect_domain.domain }}$request_uri;
+        }
+    }
+    {% endfor %}
+{% endif %}
+
+
 server {
     listen      80;
     server_name {{ nginx_server_name }} www.{{ nginx_server_name }};
@@ -48,9 +62,23 @@ server {
     access_log {{ nginx_access_log_file }};
     error_log {{ nginx_error_log_file }};
 
-    location /robots.txt {
-        return 200 "User-agent: *\nDisallow:\n";
-    }
+
+    {% if redirect_paths is defined %}
+        {% for redirect_path in redirect_paths %}
+            location ~ {{ redirect_path.from }}(.*)$ {
+              return 301 {{ redirect_path.path }}$1;
+            }
+        {% endfor %}
+    {% endif %}
+    {% for simple_file in simple_files %}
+        location {{ simple_file.path }} {
+            {% if simple_file.mimetype is defined %}
+                add_header Content-Type "{{ simple_file.mimetype }}";
+            {% endif %}
+            return 200 '{{ simple_file.content }}';
+        }
+    {% endfor %}
+
     location /favicon.ico {
         return 404;
     }
