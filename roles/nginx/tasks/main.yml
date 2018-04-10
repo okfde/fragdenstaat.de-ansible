@@ -73,14 +73,6 @@
         mode=u=rwx,g=rx,o=r
         state=directory
 
-- name: Ensure that the file permissions for media are correct
-  file: path={{ django_media_root }}
-        recurse=yes
-        owner={{ gunicorn_user }}
-        group=www-data
-        mode=u=rwx,g=rx,o=r
-        state=directory
-
 - name: Ensure Nginx service is started
   service: name=nginx state=started enabled=yes
 
