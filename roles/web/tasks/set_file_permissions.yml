@@ -17,11 +17,11 @@
     - src
     - run
 
-- name: Ensure that the storage file permissions are set properly
-  # leading 2 on mode sets group id (setgid), so other files will get group www-data
-  file: path={{ virtualenv_path }}/storage
-        recurse=yes
-        owner={{ gunicorn_user }}
-        group=www-data
-        mode=2750
-        state=directory
+# - name: Ensure that the storage file permissions are set properly
+#   # leading 2 on mode sets group id (setgid), so other files will get group www-data
+#   file: path={{ virtualenv_path }}/storage
+#         recurse=yes
+#         owner={{ gunicorn_user }}
+#         group=www-data
+#         mode=2750
+#         state=directory
