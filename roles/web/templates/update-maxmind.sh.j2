@@ -1,0 +1,12 @@
+#!/bin/sh
+# {{ ansible_managed }}
+## simple cron script to update maxmindb
+dir={{ django_geoip_path }}
+
+cd $dir
+for u in \
+    http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz \
+    http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz \
+    ; do
+    wget -N -q $u -O ${u##*/} && gunzip -fc ${u##*/} > $(basename $u .gz)
+done

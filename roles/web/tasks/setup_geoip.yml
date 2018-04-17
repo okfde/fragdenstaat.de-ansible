@@ -1,5 +1,16 @@
 ---
 
+- name: Add Maxmind PPA
+  apt_repository: repo='ppa:maxmind/ppa' state=present
+
+- name: Install libmaxminddb
+  apt: name={{ item }} update_cache={{ update_apt_cache }} state=installed
+  with_items:
+    - libmaxminddb0
+    - libmaxminddb-dev
+    - mmdb-bin
+  tags: packages
+
 - name: Maxmind directory
   file: "path={{ django_geoip_path }} mode=0755 owner={{ gunicorn_user }} state=directory"
 
@@ -9,13 +20,25 @@
     dest: "{{ django_geoip_path }}/{{ item | basename }}"
     mode: '0444'
   with_items:
-    - http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
+    - http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+    - http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz
   become: true
   become_user: "{{ gunicorn_user }}"
 
 - name: extract db
   command: "gunzip -k {{ django_geoip_path }}/{{ item }}.gz creates={{ django_geoip_path }}/{{ item }}"
   with_items:
-    - GeoIP.dat
+    - GeoLite2-City.mmdb
+    - GeoLite2-Country.mmdb
   become: true
   become_user: "{{ gunicorn_user }}"
+
+- name: Add script to update maxmind
+  template: src=update-maxmind.sh.j2 dest={{ django_geoip_path }}/update-maxmind.sh mode=0755
+
+- name: apt | ensure cron is installed
+  apt: name=cron state=present
+
+- name: cron task to update daily
+  cron: name="maxmind autoupdate" minute=0 hour=3
+        user={{ gunicorn_user }} job="{{ django_geoip_path }}/update-maxmind.sh > /tmp/update_maxmind.log 2>&1"
