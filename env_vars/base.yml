@@ -113,6 +113,6 @@ content_security_policy:
   - "default-src 'self'"
   - "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://traffic.okfn.de"
   - "style-src 'self' 'unsafe-inline'"
-  - "img-src 'self' data: blob: https://traffic.okfn.de https://www.betterplace.org https://asset0.betterplace.org https://raw.githubusercontent.com *.tile.openstreetmap.org"
+  - "img-src 'self' data: blob: https://traffic.okfn.de https://www.betterplace.org https://asset0.betterplace.org https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net"
   - "worker-src 'self'"
   - "frame-src 'self' https://www.betterplace.org https://player.vimeo.com https://media.ccc.de"
