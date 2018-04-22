@@ -106,7 +106,7 @@ simple_files:
     content: "User-agent: *\\nDisallow:\\n"
   - path: "/.well-known/apple-app-site-association"
     content: '{"applinks":{"apps":[],"details":[{"appID":"93C29USLP6.de.okfn.fragdenstaat","paths":["/a/*","/anfrage/*"]}]}}'
-    mimetype: 'application/json'
+    mimetype: 'application/pkcs7-mime'
 
 django_sentry_dsn: ""
 content_security_policy:
