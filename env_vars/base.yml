@@ -111,9 +111,10 @@ simple_files:
 
 django_sentry_dsn: ""
 content_security_policy:
-  - "default-src 'self'"
+  - "default-src 'self' data"
   - "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://traffic.okfn.de"
   - "style-src 'self' 'unsafe-inline'"
   - "img-src 'self' data: blob: https://traffic.okfn.de https://www.betterplace.org https://asset0.betterplace.org https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net *.yelpcdn.com"
   - "worker-src 'self'"
   - "frame-src 'self' https://www.betterplace.org https://player.vimeo.com https://media.ccc.de https://challonge.com"
+  - "report-uri https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
