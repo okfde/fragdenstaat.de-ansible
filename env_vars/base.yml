@@ -6,7 +6,9 @@ hostname: fragdenstaat.de
 project_name: fragdenstaat.de
 application_name: fragdenstaat_de
 mail_hostname: fragdenstaat.de
-nginx_server_name: fragdenstaat.de
+web_server_name: fragdenstaat.de
+media_server_name: media.frag-den-staat.de
+static_server_name: static.frag-den-staat.de
 
 db_host: "127.0.0.1"
 db_name: "{{ application_name }}"

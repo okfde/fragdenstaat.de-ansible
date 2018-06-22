@@ -24,7 +24,7 @@ gunicorn_timeout_seconds: 300
 
 
 # Nginx settings.
-nginx_server_name: 192.168.33.15
+web_server_name: 192.168.33.15
 nginx_strong_dh_group: no
 
 
