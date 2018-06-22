@@ -86,6 +86,7 @@ nginx_public_media:
   - /files/campaign
   - /files/media
   - /files/profile
+  - /files/docs
 
 nginx_private_media:
   - url: "/protected"
