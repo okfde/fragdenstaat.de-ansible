@@ -8,6 +8,16 @@
     - tesseract-ocr
     - libtesseract-dev
     - libleptonica-dev
+    - poppler-utils
+
+- name: Install tesseract data
+  get_url:
+    url: "{{ item }}"
+    # Remove tessdata here for tesseract > 4 in Ubuntu 18.04
+    dest: "{{ tesseract_data_path }}tessdata/{{ item | basename }}"
+    mode: '0444'
+  with_items:
+    - https://raw.githubusercontent.com/tesseract-ocr/tessdata/3.04.00/deu.traineddata
 
 - name: Add LibreOffice repository
   apt_repository: repo="ppa:libreoffice/libreoffice-5-3" state=present
