@@ -25,7 +25,7 @@ application_log_dir: "/var/www/fragdenstaat.de/logs"
 
 nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
 nginx_media_dir: "/var/www/fragdenstaat.de/storage"
-nginx_private_media_prefix: "/var/www/fragdenstaat.de/storage"
+nginx_private_media_path: "/var/www/fragdenstaat.de/storage"
 
 htpasswd:
   - name: user
@@ -91,6 +91,7 @@ nginx_public_media:
 nginx_private_media:
   - url: "/protected"
     dir: ""
+    force_download: true
   - url: "/private_main"
     dir: "private/main"
   - url: "/private_thumbnails"
