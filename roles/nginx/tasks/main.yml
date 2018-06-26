@@ -1,7 +1,7 @@
 ---
 
 - name: Install Nginx
-  apt: name=nginx update_cache={{ update_apt_cache }} state=installed
+  apt: name=nginx update_cache={{ update_apt_cache }} state=present
   tags: packages
 
 - name: Ensure that a strong Diffie-Hellman group is used
@@ -32,8 +32,11 @@
         state=directory
 
 - name: Create maintenance page
-  template: src=maintenance.html.j2
-            dest={{ virtualenv_path }}/static_html/maintenance.html
+  template: src={{ item }}.html.j2
+            dest={{ virtualenv_path }}/static_html/{{ item }}.html
+  with_items:
+    - maintenance
+    - forbidden
 
 - name: Ensure that the default site is disabled
   file: path=/etc/nginx/sites-enabled/default state=absent
