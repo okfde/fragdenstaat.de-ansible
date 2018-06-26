@@ -48,6 +48,17 @@ server {
     rewrite     ^ https://{{ web_server_name }}$request_uri? permanent;
 }
 
+{% macro csp(csp_list) -%}{% for v in csp_list %}{{ v }};{% endfor %}{%- endmacro %}
+{% macro csp_block(csp_list) -%}
+    add_header Content-Security-Policy "{{ csp(csp_list) }}";
+    add_header X-Content-Security-Policy "{{ csp(csp_list) }}";
+    add_header X-WebKit-CSP "{{ csp(csp_list) }}";
+{%- endmacro %}
+{% macro cors(domain) -%}if ($http_origin ~* (^https://{{ domain }}(:[0-9]+)?$)) {
+                add_header Access-Control-Allow-Origin $http_origin;
+        }{%- endmacro %}
+
+
 server {
     listen              443 ssl http2;
     server_name         {{ web_server_name }};
@@ -72,6 +83,7 @@ server {
             }
         {% endfor %}
     {% endif %}
+
     {% for simple_file in simple_files %}
         location {{ simple_file.path }} {
             {% if simple_file.mimetype is defined %}
@@ -86,13 +98,13 @@ server {
     }
 
     location /static/ {
-        alias   {{ nginx_static_dir }};
+        rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
     }
 
     {% for url_dir in nginx_private_media %}
         location {{ url_dir.url }} {
           internal;
-          {% if url_dir.force_download %}
+          {% if url_dir.force_download is defined and url_dir.force_download %}
               add_header Content-disposition "attachment; filename=$1";
           {% endif %}
           alias {{ nginx_private_media_path }}/{{ url_dir.dir }};
@@ -101,19 +113,17 @@ server {
 
     {% for dir in nginx_public_media %}
         location {{ dir }} {
-          alias   {{ nginx_media_dir }}{{ dir }};
+            rewrite     ^ https://{{ media_server_name }}$request_uri? permanent;
         }
     {% endfor %}
 
-    {% macro csp(csp_list) -%}{% for v in csp_list %}{{ v }};{% endfor %}{%- endmacro %}
-
-    add_header Content-Security-Policy "{{ csp(content_security_policy) }}";
-    add_header X-Content-Security-Policy "{{ csp(content_security_policy) }}";
-    add_header X-WebKit-CSP "{{ csp(content_security_policy) }}";
+    {{ csp_block(content_security_policy) }}
 
     location /{{ django_secret_url_admin }}/ {
         auth_basic "Restricted";
         auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd;
+
+        {{ cors(static_server_name) }}
 
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -123,6 +133,8 @@ server {
     }
 
     location / {
+        {{ cors(static_server_name) }}
+
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto https;
@@ -139,5 +151,82 @@ server {
     error_page 502 503 504 =503 /maintenance.html;
     location = /maintenance.html {
         root {{ virtualenv_path }}/static_html/;
+    }
+}
+
+server {
+    listen              443 ssl http2;
+    server_name         {{ media_server_name }};
+
+    {% with server_name = media_server_name %}
+        {% include '_ssl.j2' %}
+    {% endwith %}
+
+    expires $expires;
+
+    error_page 403 /forbidden.html;
+    proxy_intercept_errors on;
+
+    {{ csp_block(media_content_security_policy) }}
+
+    location = /forbidden.html {
+        root {{ virtualenv_path }}/static_html/;
+    }
+
+    {% for prefix in nginx_private_media_prefix %}
+        location {{ prefix.url }} {
+
+            {{ cors(static_server_name) }}
+            {{ cors(web_server_name) }}
+
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header Host $http_host;
+
+            proxy_pass http://{{ application_name }}_wsgi_server;
+            proxy_hide_header Set-Cookie;
+        }
+    {% endfor %}
+
+    {% for url_dir in nginx_private_media %}
+        location {{ url_dir.url }} {
+            internal;
+            {% if url_dir.force_download is defined and url_dir.force_download %}
+              add_header Content-disposition "attachment; filename=$1";
+            {% endif %}
+
+            {{ cors(static_server_name) }}
+            {{ cors(web_server_name) }}
+            proxy_hide_header Set-Cookie;
+            alias {{ nginx_private_media_path }}/{{ url_dir.dir }};
+        }
+    {% endfor %}
+
+    {% for dir in nginx_public_media %}
+        location {{ dir }} {
+            {{ cors(static_server_name) }}
+            {{ cors(web_server_name) }}
+
+            alias   {{ nginx_media_dir }}{{ dir }};
+        }
+    {% endfor %}
+}
+
+server {
+    listen              443 ssl http2;
+    server_name         {{ static_server_name }};
+
+    {% with server_name = static_server_name %}
+        {% include '_ssl.j2' %}
+    {% endwith %}
+
+    expires $expires;
+
+    {{ csp_block(static_content_security_policy) }}
+
+    location /static/ {
+        {{ cors(web_server_name) }}
+        alias   {{ nginx_static_dir }};
     }
 }

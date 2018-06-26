@@ -104,6 +104,10 @@ nginx_private_media:
   - url: "/private_thumbnails"
     dir: "private/thumbnails"
 
+nginx_private_media_prefix:
+  - url: "/files/foi"
+  - url: "/smedia"
+
 
 redirect_domains:
   - from: "blog.fragdenstaat.de"
