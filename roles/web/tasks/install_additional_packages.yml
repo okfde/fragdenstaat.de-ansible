@@ -1,7 +1,7 @@
 ---
 
 - name: Install additional packages
-  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=installed
+  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=present
   with_items:
     - gettext
     - imagemagick
@@ -24,3 +24,9 @@
 
 - name: Install LibreOffice
   apt: name=libreoffice state=latest update_cache=yes
+
+- name: Install Latex for PDF generation
+  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=present
+  with_items:
+    - texlive
+    - latexmk
