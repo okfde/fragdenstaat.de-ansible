@@ -1,7 +1,7 @@
 ssl on;
 {% if letsencrypt_enabled %}
-ssl_certificate     {{ letsencrypt_dir }}{{ letsencrypt_cert_filename }};
-ssl_certificate_key {{ letsencrypt_dir }}{{ letsencrypt_privkey_filename }};
+ssl_certificate     /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_cert_filename }};
+ssl_certificate_key /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_privkey_filename }};
 {% else %}
 ssl_certificate     /etc/ssl/certs/ssl-cert-snakeoil.pem;
 ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
@@ -19,7 +19,7 @@ add_header Strict-Transport-Security max-age=15768000;
 {% if letsencrypt_enabled %}
 ssl_stapling on;
 ssl_stapling_verify on;
-ssl_trusted_certificate {{ letsencrypt_dir }}fullchain.pem;
+ssl_trusted_certificate /etc/letsencrypt/live/{{ server_name }}/fullchain.pem;
 {% endif %}
 
 resolver 8.8.8.8 8.8.4.4 valid=300s;

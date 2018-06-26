@@ -13,22 +13,18 @@
 - name: Install Certbot.
   apt: name=certbot state=latest
 
+- name: Install Certbot nginx
+  apt: name=python-certbot-nginx state=latest
+
 - name: Check if Nginx exists
   stat: path=/etc/init.d/nginx
   register: nginx_status
 
-- name: Ensure Nginx is stopped
-  service: name=nginx state=stopped
-  when: nginx_status.stat.exists
-
 - name: Install certbot and generate cert
-  command: "{{ certbot_script }} certonly --noninteractive --agree-tos --standalone --email {{ certbot_admin_email }} -d {{ hostname }} -d www.{{ hostname }}"
+  command: "{{ certbot_script }} certonly --noninteractive --agree-tos --nginx -d {{ item }} -d www.{{ item }}"
   args:
     creates: "{{ certbot_output_dir }}"
-
-- name: Ensure Nginx is started
-  service: name=nginx state=started
-  when: nginx_status.stat.exists
+  with_items: "{{ https_domains }}"
 
 - name: Ensure a cron job to auto-renew the cert exists
   cron: name="daily auto renew cert"

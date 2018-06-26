@@ -10,6 +10,11 @@ web_server_name: fragdenstaat.de
 media_server_name: media.frag-den-staat.de
 static_server_name: static.frag-den-staat.de
 
+https_domains:
+  - "{{ web_server_name }}"
+  - "{{ media_server_name }}"
+  - "{{ static_server_name }}"
+
 db_host: "127.0.0.1"
 db_name: "{{ application_name }}"
 db_user: "{{ application_name }}"
@@ -18,7 +23,6 @@ db_user: "{{ application_name }}"
 gunicorn_num_workers: 3
 gunicorn_user: "{{ application_name }}"
 gunicorn_group: webapps
-
 
 # Temporary here
 virtualenv_path: "/var/www/fragdenstaat.de"
@@ -75,7 +79,8 @@ alias_foi_domains: []
 
 
 letsencrypt_enabled: no
-letsencrypt_dir: "/etc/letsencrypt/live/fragdenstaat.de/"
+
+# For dovecto and postfix
 cert_filename: "/etc/letsencrypt/live/fragdenstaat.de/fullchain.pem"
 privkey_filename: "/etc/letsencrypt/live/fragdenstaat.de/privkey.pem"
 

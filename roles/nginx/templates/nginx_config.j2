@@ -41,8 +41,9 @@ server {
 server {
     listen              443 ssl http2;
     server_name         www.{{ web_server_name }};
-
-    {% include '_ssl.j2' %}
+    {% with server_name = web_server_name %}
+        {% include '_ssl.j2' %}
+    {% endwith %}
 
     rewrite     ^ https://{{ web_server_name }}$request_uri? permanent;
 }
@@ -51,7 +52,9 @@ server {
     listen              443 ssl http2;
     server_name         {{ web_server_name }};
 
-    {% include '_ssl.j2' %}
+    {% with server_name = web_server_name %}
+        {% include '_ssl.j2' %}
+    {% endwith %}
     add_header Referrer-Policy "same-origin";
 
     expires $expires;

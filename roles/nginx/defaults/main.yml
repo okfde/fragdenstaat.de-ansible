@@ -11,8 +11,6 @@ nginx_error_log_file: "{{ application_log_dir }}/nginx_error.log"
 nginx_static_dir: "{{ virtualenv_path }}/public/static/"
 nginx_media_dir: "{{ virtualenv_path }}/public"
 
-
 # Only used when nginx_use_letsencrypt is set to yes/true. The 'certbot' role will automatically generate these files.
-letsencrypt_dir: "/etc/letsencrypt/live/{{ hostname }}/"
 letsencrypt_cert_filename: fullchain.pem
 letsencrypt_privkey_filename: privkey.pem
