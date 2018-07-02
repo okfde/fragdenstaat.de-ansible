@@ -9,6 +9,7 @@
     - libtesseract-dev
     - libleptonica-dev
     - poppler-utils
+    - qpdf
 
 - name: Install tesseract data
   get_url:
