@@ -117,6 +117,9 @@ redirect_paths:
   - from: "/files/foi/30800/"
     path: "/media-30800/"
 
+media_redirect_paths:
+  - from: "/files/media/main/2e/bc/2ebc2ed7-51e4-4717-9fc7-a34225bebc5c/sog-masterplan-csu.pdf"
+    path: "https://fragdenstaat.de/dokumente/30-sog-masterplan-csu/"
 
 simple_files:
   - path: "/robots.txt"

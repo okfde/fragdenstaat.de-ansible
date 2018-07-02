@@ -173,6 +173,14 @@ server {
         root {{ virtualenv_path }}/static_html/;
     }
 
+    {% if media_redirect_paths is defined %}
+        {% for redirect_path in media_redirect_paths %}
+            location ~ {{ redirect_path.from }}(.*)$ {
+              return 301 {{ redirect_path.path }}$1;
+            }
+        {% endfor %}
+    {% endif %}
+
     {% for prefix in nginx_private_media_prefix %}
         location {{ prefix.url }} {
 
