@@ -132,6 +132,19 @@ server {
         proxy_pass http://{{ application_name }}_wsgi_server;
     }
 
+    {% for url in web_cors_for_media %}
+        location {{ url }} {
+            {{ cors(static_server_name) }}
+            {{ cors(media_server_name) }}
+
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_set_header Host $host;
+            proxy_pass http://{{ application_name }}_wsgi_server;
+        }
+    {% endfor %}
+
     location / {
         {{ cors(static_server_name) }}
 
@@ -167,8 +180,6 @@ server {
     error_page 403 /forbidden.html;
     proxy_intercept_errors on;
 
-    {{ csp_block(media_content_security_policy) }}
-
     location = /forbidden.html {
         root {{ virtualenv_path }}/static_html/;
     }
@@ -183,6 +194,7 @@ server {
 
     {% for prefix in nginx_private_media_prefix %}
         location {{ prefix.url }} {
+            {{ csp_block(media_content_security_policy) }}
 
             {{ cors(static_server_name) }}
             {{ cors(web_server_name) }}
@@ -213,6 +225,18 @@ server {
 
     {% for dir in nginx_public_media %}
         location {{ dir }} {
+            {{ csp_block(media_content_security_policy) }}
+            {{ cors(static_server_name) }}
+            {{ cors(web_server_name) }}
+
+            alias   {{ nginx_media_dir }}{{ dir }};
+        }
+    {% endfor %}
+
+    {# privileged media has a CSP like web server #}
+    {% for dir in nginx_public_privileged_media %}
+        location {{ dir }} {
+            {{ csp_block(priviliged_media_content_security_policy) }}
             {{ cors(static_server_name) }}
             {{ cors(web_server_name) }}
 
