@@ -7,6 +7,12 @@
 - name: Create the virtualenv
   command: virtualenv -p {{ virtualenv_python_version }} {{ virtualenv_path }}
            creates={{ virtualenv_path }}/bin/activate
+  when: ansible_distribution_version == "16.04"
+
+- name: Create the virtualenv
+  command: virtualenv -p python3.6 {{ virtualenv_path }}
+           creates={{ virtualenv_path }}/bin/activate
+  when: ansible_distribution_version == "18.04"
 
 - name: Ensure gunicorn is installed
   pip: virtualenv={{ virtualenv_path }} name=gunicorn

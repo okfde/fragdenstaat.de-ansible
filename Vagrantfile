@@ -5,7 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "ubuntu/bionic64"
 
   config.vm.network :private_network, ip: "192.168.33.15"
 
@@ -15,7 +15,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Shared folder from the host machine to the guest machine. Uncomment the line
   # below to enable it.
-  #config.vm.synced_folder "../../../my-cool-app", "/webapps/mycoolapp/my-cool-app"
+  # config.vm.synced_folder "../fragdenstaat_de", "/var/www/fragdenstaat.de/fragdenstaat.de"
+  # config.vm.synced_folder "../froide", "/var/www/fragdenstaat.de/src/froide"
+  # config.vm.synced_folder "../froide-fax", "/var/www/fragdenstaat.de/src/froide-fax"
+  # etc.
 
   # Ansible provisioner.
   config.vm.provision "ansible" do |ansible|
