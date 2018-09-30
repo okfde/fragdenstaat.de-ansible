@@ -1,0 +1,14 @@
+#!/bin/bash
+
+source {{ virtualenv_path }}/bin/activate
+source {{ virtualenv_path }}/bin/postactivate
+
+pushd {{ project_path }}
+
+# OAuth sessions
+python manage.py clearsessions
+
+# OAuth tokens
+python manage.py cleartokens
+
+popd

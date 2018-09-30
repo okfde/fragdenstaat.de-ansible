@@ -31,3 +31,6 @@
 
 - name: restart application
   supervisorctl: name={{ application_name }} state=restarted
+
+- import_tasks: setup_cron_tasks.yml
+  tags: maintenance
