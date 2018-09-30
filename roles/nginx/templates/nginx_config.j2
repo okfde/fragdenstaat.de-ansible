@@ -71,6 +71,19 @@ server {
     expires $expires;
 
     client_max_body_size 50M;
+    {% if maintenance %}
+        set $maintenance on;
+
+        {% if maintenance_admin_ip %}
+        if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
+            set $maintenance off;
+        }
+        {% endif %}
+        if ($maintenance = on) {
+            return 503;
+        }
+    {% endif %}
+
 
     access_log {{ nginx_access_log_file }};
     error_log {{ nginx_error_log_file }};
@@ -179,6 +192,19 @@ server {
 
     error_page 403 /forbidden.html;
     proxy_intercept_errors on;
+    {% if maintenance %}
+        set $maintenance on;
+
+        {% if maintenance_admin_ip %}
+        if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
+            set $maintenance off;
+        }
+        {% endif %}
+        if ($maintenance = on) {
+            return 503;
+        }
+    {% endif %}
+
 
     location = /forbidden.html {
         root {{ virtualenv_path }}/static_html/;

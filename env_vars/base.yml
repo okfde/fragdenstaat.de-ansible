@@ -4,6 +4,10 @@ git_repo: https://github.com/okfde/fragdenstaat_de.git
 
 ssh_port: 22
 
+maintenance: no
+maintenance_media: no
+maintenance_admin_ip: no
+
 hostname: "{{ inventory_hostname }}"
 project_name: fragdenstaat.de
 application_name: fragdenstaat_de
