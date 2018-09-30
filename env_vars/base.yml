@@ -2,12 +2,13 @@
 
 git_repo: https://github.com/okfde/fragdenstaat_de.git
 
-hostname: fragdenstaat.de
 ssh_port: 22
 
+hostname: "{{ inventory_hostname }}"
 project_name: fragdenstaat.de
 application_name: fragdenstaat_de
-mail_hostname: fragdenstaat.de
+mail_domain: mail.fragdenstaat.de
+domain_name: fragdenstaat.de
 web_server_name: fragdenstaat.de
 media_server_name: media.frag-den-staat.de
 static_server_name: static.frag-den-staat.de

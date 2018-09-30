@@ -4,6 +4,14 @@
 setup_git_repo: yes
 git_branch: master
 
+hostname: "{{ inventory_hostname }}"
+project_name: fragdenstaat.de
+application_name: fragdenstaat_de
+mail_domain: mail.fragdenstaat.dev
+domain_name: fragdenstaat.dev
+web_server_name: fragdenstaat.dev
+media_server_name: media.frag-den-staat.dev
+static_server_name: static.frag-den-staat.dev
 
 # Database settings.
 db_user: "{{ application_name }}"
@@ -24,7 +32,6 @@ gunicorn_timeout_seconds: 300
 
 
 # Nginx settings.
-web_server_name: 192.168.33.15
 nginx_strong_dh_group: no
 
 
