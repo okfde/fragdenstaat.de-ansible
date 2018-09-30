@@ -23,6 +23,7 @@ upstream {{ application_name }}_wsgi_server {
     {% for redirect_domain in redirect_domains %}
     server {
         listen 80;
+        listen [::]:80;
         server_name {{ redirect_domain.from }};
         location / {
           return 301 https://{{ redirect_domain.domain }}$request_uri;
@@ -34,12 +35,14 @@ upstream {{ application_name }}_wsgi_server {
 
 server {
     listen      80;
+    listen [::]:80;
     server_name {{ web_server_name }} www.{{ web_server_name }};
     rewrite     ^ https://{{ web_server_name }}$request_uri? permanent;
 }
 
 server {
-    listen              443 ssl http2;
+    listen      443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name         www.{{ web_server_name }};
     {% with server_name = web_server_name %}
         {% include '_ssl.j2' %}
@@ -58,9 +61,9 @@ server {
                 add_header Access-Control-Allow-Origin $http_origin;
         }{%- endmacro %}
 
-
 server {
     listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
     server_name         {{ web_server_name }};
 
     {% with server_name = web_server_name %}
@@ -68,9 +71,6 @@ server {
     {% endwith %}
     add_header Referrer-Policy "same-origin";
 
-    expires $expires;
-
-    client_max_body_size 50M;
     {% if maintenance %}
         set $maintenance on;
 
@@ -84,6 +84,9 @@ server {
         }
     {% endif %}
 
+    expires $expires;
+
+    client_max_body_size 50M;
 
     access_log {{ nginx_access_log_file }};
     error_log {{ nginx_error_log_file }};
@@ -182,16 +185,13 @@ server {
 
 server {
     listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
     server_name         {{ media_server_name }};
 
     {% with server_name = media_server_name %}
         {% include '_ssl.j2' %}
     {% endwith %}
 
-    expires $expires;
-
-    error_page 403 /forbidden.html;
-    proxy_intercept_errors on;
     {% if maintenance %}
         set $maintenance on;
 
@@ -205,6 +205,10 @@ server {
         }
     {% endif %}
 
+    expires $expires;
+
+    error_page 403 /forbidden.html;
+    proxy_intercept_errors on;
 
     location = /forbidden.html {
         root {{ virtualenv_path }}/static_html/;
@@ -273,6 +277,7 @@ server {
 
 server {
     listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
     server_name         {{ static_server_name }};
 
     {% with server_name = static_server_name %}
