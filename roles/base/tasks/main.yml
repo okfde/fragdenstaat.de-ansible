@@ -6,6 +6,11 @@
 
 - apt_repository: repo="deb http://archive.ubuntu.com/ubuntu xenial universe" update_cache=false
   register: universe_installed
+  when: ansible_distribution_version == "16.04"
+
+- apt_repository: repo="deb http://archive.ubuntu.com/ubuntu bionic universe" update_cache=false
+  register: universe_installed
+  when: ansible_distribution_version == "18.04"
 
 - apt: update_cache=true
   when: universe_installed is changed
