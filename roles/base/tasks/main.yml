@@ -8,7 +8,7 @@
   register: universe_installed
 
 - apt: update_cache=true
-  when: universe_installed | changed
+  when: universe_installed is changed
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
   apt: name={{ item }} update_cache={{ update_apt_cache }} state=latest
@@ -20,7 +20,7 @@
   tags: packages
 
 - name: Install base packages
-  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=installed
+  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=present
   with_items:
     - build-essential
     - acl

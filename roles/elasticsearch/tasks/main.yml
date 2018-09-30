@@ -1,7 +1,7 @@
 ---
 
-- name: Install JRE
-  apt: name={{ item }} update_cache={{ update_apt_cache }} state=installed
+- name: Install JRE 8 (compatible with ES 2.4.6)
+  apt: name={{ item }} update_cache={{ update_apt_cache }} state=present
   with_items:
     - default-jre
   tags: packages

@@ -8,7 +8,7 @@
   register: certbot_repo_added
 
 - apt: update_cache=true
-  when: certbot_repo_added | changed
+  when: certbot_repo_added is changed
 
 - name: Install Certbot.
   apt: name=certbot state=latest

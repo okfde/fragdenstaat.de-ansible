@@ -4,7 +4,7 @@
   apt_repository: repo='ppa:maxmind/ppa' state=present
 
 - name: Install libmaxminddb
-  apt: name={{ item }} update_cache={{ update_apt_cache }} state=installed
+  apt: name={{ item }} update_cache={{ update_apt_cache }} state=present
   with_items:
     - libmaxminddb0
     - libmaxminddb-dev
