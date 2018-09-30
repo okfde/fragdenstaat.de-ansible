@@ -38,6 +38,13 @@
 - name: Install custom mail logrotate
   template: src=logrotate_mail.j2 dest=/etc/logrotate.d/mail
 
+- stat: path=/var/log/mail.log.1
+  register: mail_log_rotated
+
+- name: Make sure log permission is present
+  command: /usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log
+  when: mail_log_rotated.stat.exists == False
+
 - name: configure smtp ports in firewall
   ufw: rule=allow port={{ item }} proto=tcp
   with_items:
