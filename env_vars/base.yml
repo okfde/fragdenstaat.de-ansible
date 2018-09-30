@@ -56,6 +56,7 @@ django_secret_url_admin: "admin"
 
 celery_num_workers: 2
 celerymail_num_workers: 1
+rabbitmq_admin_password: password
 rabbitmq_application_vhost: "{{ application_name }}"
 rabbitmq_application_user: "{{ application_name }}"
 rabbitmq_application_password: password
