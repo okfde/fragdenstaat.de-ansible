@@ -4,7 +4,6 @@
   hosts: all
   become: yes
   become_user: root
-  remote_user: sw
   pre_tasks:
     - name: Send Slack notification message on start deployment
       become: no
@@ -13,7 +12,6 @@
         msg: 'Deployment start on {{ inventory_hostname }}'
         username: fds-bot
         channel: '#fragdenstaatplus'
-      delegate_to: localhost
       when: slack_token is defined
   post_tasks:
     - name: Send Slack notification message on finished deployment
@@ -23,7 +21,6 @@
         msg: 'Deployment finished on {{ inventory_hostname }}'
         username: fds-bot
         channel: '#fragdenstaatplus'
-      delegate_to: localhost
       when: slack_token is defined
   vars:
     - setup_git_repo: yes
