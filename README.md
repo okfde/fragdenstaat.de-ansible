@@ -2,7 +2,7 @@
 
 Based on [ansible-django-stack](https://github.com/jcalazan/ansible-django-stack).
 
-Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue and a full email server with postfix and dovecot on Ubuntu Xenial.
+Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue and a full email server with postfix and dovecot on Ubuntu Bionic 18.04.
 
 
 ## Deploy FragDenStaat.de
