@@ -10,7 +10,7 @@
   service: name=postfix state=started enabled=yes
 
 - name: configure mailname
-  copy: content={{ mail_hostname }} dest=/etc/mailname
+  copy: content={{ domain_name }} dest=/etc/mailname
 
 - name: Install postfix main.cf config
   template: src=main.cf.j2 dest=/etc/postfix/main.cf

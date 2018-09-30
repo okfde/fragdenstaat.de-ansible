@@ -1,6 +1,6 @@
 ---
 
-postfix_hostname: fragdenstaat.de
+postfix_hostname: "{{ mail_domain }}"
 postfix_domains:
   - echtemail.de
 dkim_selector: mail
