@@ -38,3 +38,12 @@
 - name: Upgrade pip
   pip: name=pip state=latest
   tags: packages
+
+- import_tasks: setup_unattended_upgrades.yml
+  when: enable_unattended_upgrades is defined and enable_unattended_upgrades
+
+- import_tasks: setup_uncomplicated_firewall.yml
+  when: enable_ufw is defined and enable_ufw
+
+- import_tasks: setup_fail2ban.yml
+  when: enable_fail2ban is defined and enable_fail2ban

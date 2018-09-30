@@ -1,0 +1,11 @@
+---
+
+- name: Install Uncomplicated Firewall
+  apt: update_cache={{ update_apt_cache }} state=present pkg=ufw
+
+  # Allow ssh port
+- name: Allow ssh and http(s) connections
+  ufw: rule=allow port={{ ssh_port }} proto=tcp
+
+- name: Enable ufw/firewall
+  ufw: state=enabled policy=deny
