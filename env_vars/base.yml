@@ -62,8 +62,8 @@ rabbitmq_application_user: "{{ application_name }}"
 rabbitmq_application_password: password
 celery_broker_url: "amqp://{{ rabbitmq_application_user }}:{{ rabbitmq_application_password }}@localhost/{{ rabbitmq_application_vhost }}"
 
-# This needs to add tessdata/ for tesseract > 4 starting Ubuntu 18.04
-tesseract_data_path: /usr/share/tesseract-ocr/
+# This needs tessdata/ for tesseract >= 4 starting Ubuntu 18.04
+tesseract_data_path: /usr/share/tesseract-ocr/tessdata
 
 dovecot_passwdfile_scheme: 'sha512-crypt'
 
