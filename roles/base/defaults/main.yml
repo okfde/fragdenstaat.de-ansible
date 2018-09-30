@@ -1,3 +1,9 @@
 ---
 
 server_user: root
+
+enable_unattended_upgrades: yes
+
+enable_ufw: yes
+
+enable_fail2ban: yes
