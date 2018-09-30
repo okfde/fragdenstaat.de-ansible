@@ -75,19 +75,21 @@ shutdown_clients = no
 
 {% if letsencrypt_enabled %}
 ssl = yes
-ssl_cert = <{{ cert_filename }}
-ssl_key = <{{ privkey_filename }}
+ssl_cert = <{{ mail_cert_filename }}
+ssl_key = <{{ mail_privkey_filename }}
 
 ssl_cipher_list = TLSv1+HIGH:!SSLv2:!EXPORT:!RC4:!aNULL:!eNULL:!3DES:@STRENGTH
 {% endif %}
 
 protocol lda {
+  # https://wiki.dovecot.org/LDA
   auth_socket_path = /var/run/dovecot/auth-master
-  hostname = fragdenstaat.de
+  # hostname is used in generated Message-IDs and in Reporting-UA: header in bounce mails
+  hostname = {{ domain_name }}
   log_path = /var/vmail/dovecot-deliver.log
   mail_plugin_dir = /usr/lib/dovecot/modules
   #  mail_plugins = sieve
-  postmaster_address = postmaster@fragdenstaat.de
+  postmaster_address = postmaster@{{ domain_name }}
 }
 
 # A config file can also tried to be included without giving an error if
