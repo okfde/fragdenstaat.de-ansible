@@ -1,19 +1,15 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 ansible = "*"
-
+requests = {extras = ["security"]}
+cryptography = "*"
+passlib = "*"
 
 [dev-packages]
 
-
-
 [requires]
-
 python_version = "3.6"
