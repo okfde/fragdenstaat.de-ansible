@@ -20,11 +20,16 @@
   stat: path=/etc/init.d/nginx
   register: nginx_status
 
-- name: Install certbot and generate cert
-  command: "{{ certbot_script }} certonly --noninteractive --agree-tos --nginx -d {{ item }} -d www.{{ item }}"
+- name: Generate cert for HTTPS domains
+  command: "{{ certbot_script }} certonly --noninteractive --agree-tos --email {{ letsencrypt_registrion_email }} --nginx -d {{ item }} -d www.{{ item }}"
   args:
-    creates: "{{ certbot_output_dir }}"
+    creates: "{{ certbot_output_dir }}{{ item }}"
   with_items: "{{ https_domains }}"
+
+- name: Generate cert for mail domain
+  command: "service nginx stop; {{ certbot_script }} certonly --noninteractive --agree-tos --email {{ letsencrypt_registrion_email }} --standalone -d {{ mail_domain }} -d {{ domain_name }} ; service nginx start"
+  args:
+    creates: "{{ certbot_output_dir }}{{ mail_domain }}"
 
 - name: Ensure a cron job to auto-renew the cert exists
   cron: name="daily auto renew cert"

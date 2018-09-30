@@ -21,6 +21,7 @@ https_domains:
   - "{{ web_server_name }}"
   - "{{ media_server_name }}"
   - "{{ static_server_name }}"
+letsencrypt_registrion_email: mail@example.org
 
 db_host: "127.0.0.1"
 db_name: "{{ application_name }}"
@@ -87,9 +88,9 @@ alias_foi_domains: []
 
 letsencrypt_enabled: no
 
-# For dovecto and postfix
-cert_filename: "/etc/letsencrypt/live/fragdenstaat.de/fullchain.pem"
-privkey_filename: "/etc/letsencrypt/live/fragdenstaat.de/privkey.pem"
+# For dovecot and postfix
+mail_cert_filename: "/etc/letsencrypt/live/{{ mail_domain }}/fullchain.pem"
+mail_privkey_filename: "/etc/letsencrypt/live/{{ mail_domain }}/privkey.pem"
 
 backup_ftp_url: "ftp://user@server"
 backup_ftp_password: "password"

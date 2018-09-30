@@ -3,4 +3,4 @@
 certbot_auto_renew: yes
 certbot_admin_email: admin@example.com
 certbot_script: /usr/bin/certbot
-certbot_output_dir: "/etc/letsencrypt/live/{{ hostname }}"
+certbot_output_dir: "/etc/letsencrypt/live/"
