@@ -123,7 +123,7 @@ server {
           {% if url_dir.force_download is defined and url_dir.force_download %}
               add_header Content-disposition "attachment; filename=$1";
           {% endif %}
-          alias {{ nginx_private_media_path }}/{{ url_dir.dir }};
+          alias {{ nginx_private_media_path }}{{ url_dir.dir }};
         }
     {% endfor %}
 
@@ -249,7 +249,7 @@ server {
             {{ cors(static_server_name) }}
             {{ cors(web_server_name) }}
             proxy_hide_header Set-Cookie;
-            alias {{ nginx_private_media_path }}/{{ url_dir.dir }};
+            alias {{ nginx_private_media_path }}{{ url_dir.dir }};
         }
     {% endfor %}
 
