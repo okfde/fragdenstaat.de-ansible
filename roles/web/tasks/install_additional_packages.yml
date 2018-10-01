@@ -45,4 +45,5 @@
   apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=present
   with_items:
     - texlive
+    - texlive-xetex
     - latexmk
