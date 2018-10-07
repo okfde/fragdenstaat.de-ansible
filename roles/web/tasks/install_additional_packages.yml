@@ -11,6 +11,39 @@
     - poppler-utils
     - qpdf
 
+- name: Comment out ImageMagick policy entries for PDF none
+  replace:
+    path: /etc/ImageMagick-6/policy.xml
+    regexp: '^(  <policy domain="coder" rights="none" pattern="PDF" />)$'
+    replace: '<!-- \1 -->'
+
+- name: Add ImageMagick policy entries tmp resource and PDF read/write
+  blockinfile:
+    path: /etc/ImageMagick-6/policy.xml
+    insertbefore: '</policymap>'
+    block: |
+      <policy domain="coder" rights="read | write" pattern="PDF" />
+      <policy domain="resource" name="temporary-path" value="/tmp"/>
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+
+- name: Add ImageMagick policy entries for paths
+  blockinfile:
+    path: /etc/ImageMagick-6/policy.xml
+    insertbefore: '</policymap>'
+    block: |
+      <policy domain="path" rights="read | write" pattern="{{ item }}/*" />
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK {{ item }} -->"
+  with_items:
+    - "{{ django_media_root }}/foi"
+    - "{{ django_media_root }}/docs"
+
+- replace:
+    path: /etc/ImageMagick-6/policy.xml
+    regexp: '<policy domain="coder" rights="none" pattern="PDF" />'
+    replace: ''
+    after: 'Start after line.*'
+    backup: yes
+
 - name: Install tesseract data
   get_url:
     url: "{{ item }}"
