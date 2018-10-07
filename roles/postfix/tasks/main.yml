@@ -48,6 +48,7 @@
 - name: configure smtp ports in firewall
   ufw: rule=allow port={{ item }} proto=tcp
   with_items:
+  - smtp
   - ssmtp
   - submission
 
