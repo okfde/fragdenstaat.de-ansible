@@ -1,6 +1,7 @@
 #!/bin/sh
 # {{ ansible_managed }}
 ## simple cron script to update maxmindb
+set -ex
 dir={{ django_geoip_path }}
 
 cd $dir
