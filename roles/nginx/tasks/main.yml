@@ -4,6 +4,11 @@
   apt: name=nginx update_cache={{ update_apt_cache }} state=present
   tags: packages
 
+- name: Adding user www-data to {{ gunicorn_group }}
+  user: name=www-data
+        groups={{ gunicorn_group }}
+        append=yes
+
 - name: Ensure that a strong Diffie-Hellman group is used
   command: openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096 creates=/etc/ssl/certs/dhparams.pem
   when: nginx_strong_dh_group is defined and nginx_strong_dh_group
