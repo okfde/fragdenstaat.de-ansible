@@ -33,6 +33,17 @@
   become: true
   become_user: "{{ gunicorn_user }}"
 
+- name: Ensure that the geoip databaase file permissions are set properly
+  file: path={{ django_geoip_path }}/{{ item }}
+        owner={{ gunicorn_user }}
+        group={{ gunicorn_group }}
+        mode=740
+  with_items:
+    - GeoLite2-City.mmdb
+    - GeoLite2-City.mmdb.gz
+    - GeoLite2-Country.mmdb
+    - GeoLite2-Country.mmdb.gz
+
 - name: Add script to update maxmind
   template: src=update-maxmind.sh.j2 dest={{ django_geoip_path }}/update-maxmind.sh mode=0755
 
