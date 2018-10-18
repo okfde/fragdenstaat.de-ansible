@@ -9,5 +9,5 @@ cd $DJANGODIR
 
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
-# TODO: remove -B
-exec celery worker -A froide.celery:app -Q celery -l INFO -E --concurrency={{ celery_num_workers }}  -n celery@%h
+
+exec celery worker -A froide.celery:app -Q {{ item.queues }} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h

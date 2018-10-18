@@ -11,16 +11,12 @@
     - celery
     - deploy
 
-- name: Restart the {{ celery_application_name }} app
-  supervisorctl: name={{ celery_application_name }} state=restarted
-  when: supervisor_applications.stdout.find(celery_application_name) != -1
-  tags:
-    - celery
-    - deploy
-
-- name: Restart the {{ celerymail_application_name }} app
-  supervisorctl: name={{ celerymail_application_name }} state=restarted
-  when: supervisor_applications.stdout.find(celerymail_application_name) != -1
+- name: Restart the celery workers
+  supervisorctl:
+    name: celery_{{ item.name }}
+    state: restarted
+  with_items: "{{ celery_worker }}"
+  when: supervisor_applications.stdout.find(item.name) != -1
   tags:
     - celery
     - deploy

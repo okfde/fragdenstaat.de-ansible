@@ -9,29 +9,23 @@
   tags:
     - celery
 
-- name: Create the {{ celery_application_name }} script file
-  template: src={{ celery_template_file }}
-            dest={{ celery_scripts_dir }}/{{ celery_application_name }}_start
-            owner={{ celery_user }}
-            group={{ celery_group }}
-            mode=0755
+- name: Create the celery worker script file
+  template:
+    src: celery_worker.j2
+    dest: "{{ celery_scripts_dir }}/celery_{{ item.name }}"
+    owner: "{{ celery_user }}"
+    group: "{{ celery_group }}"
+    mode: 0755
+  with_items: "{{ celery_worker }}"
   tags:
     - celery
 
-- name: Create the {{ celerymail_application_name }} script file
-  template: src={{ celerymail_template_file }}
-            dest={{ celery_scripts_dir }}/{{ celerymail_application_name }}_start
-            owner={{ celery_user }}
-            group={{ celery_group }}
-            mode=0755
-  tags:
-    - celery
-
-- name: Create the {{ celerybeat_application_name }} script file
-  template: src={{ celerybeat_template_file }}
-            dest={{ celery_scripts_dir }}/{{ celerybeat_application_name }}_start
-            owner={{ celery_user }}
-            group={{ celery_group }}
-            mode=0755
+- name: Create the celery beat script file
+  template:
+    src: "{{ celerybeat_template_file }}"
+    dest: "{{ celery_scripts_dir }}/celerybeat_start"
+    owner: "{{ celery_user }}"
+    group: "{{ celery_group }}"
+    mode: 0755
   tags:
     - celery

@@ -1,16 +1,19 @@
 ---
 
-- name: Create the Supervisor config file for {{ item }}
-  template: src=supervisor_{{ item }}.conf.j2
-            dest=/etc/supervisor/conf.d/{{ item }}.conf
-  with_items:
-    - "{{ celery_application_name }}"
-    - "{{ celerymail_application_name }}"
-    - "{{ celerybeat_application_name }}"
+- name: Create the Supervisor config file for celery workers
+  template: src=supervisor_celery.conf.j2
+            dest=/etc/supervisor/conf.d/{{ item.name }}.conf
+  with_items: "{{ celery_worker }}"
   tags:
     - celery
 
-- name: Create the {{ celery_application_name }} log directory
+- name: Create the Supervisor config file for celerybeat
+  template: src=supervisor_celerybeat.conf.j2
+            dest=/etc/supervisor/conf.d/celerybeat.conf
+  tags:
+    - celery
+
+- name: Create the celery log directory
   file: path={{ celery_log_dir }}
         owner={{ celery_user }}
         group={{ celery_group }}
@@ -18,23 +21,16 @@
   tags:
     - celery
 
-- name: Create the {{ celery_application_name }} log file
-  file: path={{ celery_log_file }}
+- name: Create the celery worker log files
+  file: path={{ celery_log_dir }}/celery_{{ item.name }}.log
         owner={{ celery_user }}
         group={{ celery_group }}
         state=touch
+  with_items: "{{ celery_worker }}"
   tags:
     - celery
 
-- name: Create the {{ celerymail_application_name }} log file
-  file: path={{ celerymail_log_file }}
-        owner={{ celery_user }}
-        group={{ celery_group }}
-        state=touch
-  tags:
-    - celery
-
-- name: Create the {{ celerybeat_application_name }} log file
+- name: Create the celery beat application log file
   file: path={{ celerybeat_log_file }}
         owner={{ celery_user }}
         group={{ celery_group }}
