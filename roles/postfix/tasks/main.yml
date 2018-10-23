@@ -5,6 +5,7 @@
   with_items:
     - postfix
     - postfix-pgsql
+    - postfix-pcre
 
 - name: Ensure postfix is started and enabled at boot.
   service: name=postfix state=started enabled=yes
@@ -30,6 +31,10 @@
 
 - name: Install virtual alias map configuration
   template: src=postgres-virtual-alias-maps.cf.j2 dest=/etc/postfix/postgres-virtual-alias-maps.cf
+  notify: update postmap
+
+- name: Add reject domains file
+  copy: src=reject_domains dest=/etc/postfix/reject_domains
   notify: update postmap
 
 - name: Install custom rsyslog logrotate
