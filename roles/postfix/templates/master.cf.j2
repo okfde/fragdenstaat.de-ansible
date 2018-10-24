@@ -109,7 +109,7 @@ mailman   unix  -       n       n       -       -       pipe
 
 # deliver mail to dovecot
 dovecot   unix  -       n       n       -       -       pipe
-    flags=DROhu user=vmail:vmail argv=/usr/lib/dovecot/deliver -f ${sender} -d ${recipient}
+    flags=DROhu user=vmail:vmail argv=/usr/lib/dovecot/deliver -f ${sender} -a ${recipient} -d ${user}@${nexthop}
 
 # amavis
 smtp-amavis unix -      -       n     -       2  smtp
