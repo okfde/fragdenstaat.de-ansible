@@ -54,6 +54,11 @@ django_configuration: "Dev"
 django_geoip_path: "/var/www/fragdenstaat.de/data"
 django_secret_url_admin: "admin"
 
+rate_limited_urls:
+  - url: /account/login/
+    zone: login
+    auth: no
+
 celery_worker:
   - name: celery
     queues: "celery"

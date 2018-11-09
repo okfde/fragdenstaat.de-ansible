@@ -60,6 +60,18 @@ server {
 {% macro cors(domain) -%}if ($http_origin ~* (^https://{{ domain }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;
         }{%- endmacro %}
+{% macro basic_auth() -%}
+    auth_basic "Restricted";
+    auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd;
+{%- endmacro %}
+
+{% macro proxy_upstream() -%}
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Host $host;
+    proxy_pass http://{{ application_name }}_wsgi_server;
+{%- endmacro %}
 
 server {
     listen              443 ssl http2;
@@ -135,17 +147,18 @@ server {
 
     {{ csp_block(content_security_policy) }}
 
+    {% for item in rate_limited_urls %}
+        location {{ item.url }} {
+            limit_req zone={{ item.zone }} burst=5 nodelay;
+            {% if item.auth %}{{ basic_auth() }}{% endif %}
+
+            {{ proxy_upstream() }}
+        }
+    {% endfor %}
+
     location /{{ django_secret_url_admin }}/ {
-        auth_basic "Restricted";
-        auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd;
-
-        {{ cors(static_server_name) }}
-
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header Host $host;
-        proxy_pass http://{{ application_name }}_wsgi_server;
+        {{ basic_auth() }}
+        {{ proxy_upstream() }}
     }
 
     {% for url in web_cors_for_media %}
@@ -153,22 +166,14 @@ server {
             {{ cors(static_server_name) }}
             {{ cors(media_server_name) }}
 
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto https;
-            proxy_set_header Host $host;
-            proxy_pass http://{{ application_name }}_wsgi_server;
+            {{ proxy_upstream() }}
         }
     {% endfor %}
 
     location / {
         {{ cors(static_server_name) }}
 
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header Host $host;
-        proxy_pass http://{{ application_name }}_wsgi_server;
+        {{ proxy_upstream() }}
     }
 
     # Error pages
