@@ -12,13 +12,20 @@
 - name: Install PostgreSQL
   apt: name={{ item }} update_cache={{ update_apt_cache }} state=present
   with_items:
-    - postgresql-10
+    - postgresql-11
     - postgresql-contrib
     - libpq-dev
     - postgis
+    - postgresql-11-postgis-scripts
     - postgis-doc
     - python3-psycopg2
   tags: packages
+
+# # Cluster upgrade
+# sudo apt-get install postgresql-11 postgresql-11-postgis-scripts
+# sudo pg_dropcluster 11 main --stop
+# sudo pg_upgradecluster 10 main
+# sudo pg_dropcluster 10 main
 
 - name: Ensure the PostgreSQL service is running
   service: name=postgresql state=started enabled=yes
@@ -33,7 +40,6 @@
 - name: Ensure locale exists
   locale_gen: name={{ item }}
   with_items:
-    - en_GB.UTF-8
     - en_US.UTF-8
 
 - name: ensure dpkg is reconfigured
@@ -48,8 +54,8 @@
   become_user: postgres
   postgresql_db: name={{ db_name }}
                  encoding='UTF-8'
-                 lc_collate='en_GB.UTF-8'
-                 lc_ctype='en_GB.UTF-8'
+                 lc_collate='en_US.UTF-8'
+                 lc_ctype='en_US.UTF-8'
                  template='template0'
                  state=present
 
