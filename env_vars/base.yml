@@ -91,6 +91,9 @@ email_host_password: password
 foi_email_host: "127.0.0.1"
 foi_email_host_user: "mail@fragdenstaat.de"
 foi_email_host_password: password
+bounce_email_host: "127.0.0.1"
+bounce_email_host_user: "mail@fragdenstaat.de"
+bounce_email_host_password: password
 
 email_alias:
   - from: "test@fragdenstaat.de"
