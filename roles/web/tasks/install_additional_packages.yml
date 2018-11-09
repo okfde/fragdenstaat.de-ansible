@@ -79,4 +79,5 @@
   with_items:
     - texlive
     - texlive-xetex
+    - texlive-lang-german
     - latexmk
