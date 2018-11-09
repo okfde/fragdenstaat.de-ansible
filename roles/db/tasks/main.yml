@@ -62,6 +62,16 @@
                    state=present
                    encrypted=yes
 
+- name: Ensure readonly user has access to the database
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user_readonly }}"
+    password: "{{ db_password_readonly }}"
+    role_attr_flags: NOSUPERUSER,NOCREATEDB
+    state: present
+    encrypted: yes
+
 - name: Ensure user has access to tables
   become_user: postgres
   postgresql_privs:
@@ -73,6 +83,35 @@
     schema: public
     roles: "{{ db_user }}"
     grant_option: yes
+
+- name: Ensure readonly user has no privileges
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ db_name }}"
+    state: absent
+    role: "{{ db_user_readonly }}"
+    privs: ALL
+    objs: ALL_IN_SCHEMA
+
+- name: Ensure readonly user has connect access to db
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: CONNECT
+    type: database
+    role: "{{ db_user_readonly }}"
+    grant_option: yes
+  become: yes
+  become_user: postgres
+
+- name: Ensure readonly user has select access to all tables in schema
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+    role: "{{ db_user_readonly }}"
+    grant_option: yes
+  become: yes
+  become_user: postgres
 
 - name: Ensure user has access to all sequences
   become_user: postgres
