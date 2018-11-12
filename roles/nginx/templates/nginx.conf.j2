@@ -61,7 +61,7 @@ http {
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript application/x-font-ttf font/opentype image/svg+xml image/x-icon;
 
   limit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;
-
+  limit_req_status 429;
 	##
 	# Virtual Host Configs
 	##
