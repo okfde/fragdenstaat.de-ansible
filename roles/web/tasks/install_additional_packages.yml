@@ -60,7 +60,7 @@
     dest: "{{ tesseract_data_path }}{{ item | basename }}"
     mode: '0444'
   with_items:
-    - https://raw.githubusercontent.com/tesseract-ocr/tessdata/4.00/deu.traineddata
+    - https://raw.githubusercontent.com/tesseract-ocr/tessdata/4.0.0/deu.traineddata
   when: ansible_distribution_version == "18.04"
 
 - name: Add LibreOffice repository
