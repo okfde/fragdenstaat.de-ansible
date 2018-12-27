@@ -156,10 +156,12 @@ server {
         }
     {% endfor %}
 
-    location /{{ django_secret_url_admin }}/ {
-        {{ basic_auth() }}
-        {{ proxy_upstream() }}
-    }
+    {% for url in protected_urls %}
+        location {{ url }} {
+            {{ basic_auth() }}
+            {{ proxy_upstream() }}
+        }
+    {% endfor %}
 
     {% for url in web_cors_for_media %}
         location {{ url }} {
