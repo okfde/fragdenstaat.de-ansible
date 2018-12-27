@@ -178,7 +178,7 @@ content_security_policy:
   - "base-uri 'none'"
   - "font-src data: https://static.frag-den-staat.de"
   - "manifest-src https://static.frag-den-staat.de"
-  - "form-action 'self' https://www.paypal.com"
+  - "form-action 'self' https://www.paypal.com https://pretix.eu"
   - "report-uri https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
 
 static_content_security_policy:
