@@ -171,7 +171,7 @@ content_security_policy:
   - "style-src 'self' 'unsafe-inline' https://static.frag-den-staat.de"
   - "img-src 'self' data: blob: https://static.frag-den-staat.de https://media.frag-den-staat.de https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net *.yelpcdn.com i.ytimg.com"
   - "worker-src 'self' blob: https://static.frag-den-staat.de"
-  - "frame-src 'self' blob: https://static.frag-den-staat.de https://media.frag-den-staat.de https://okfde.github.io https://www.betterplace.org https://betterplace-assets.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com"
+  - "frame-src 'self' blob: https://static.frag-den-staat.de https://media.frag-den-staat.de https://okfde.github.io https://www.betterplace.org https://betterplace-assets.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com https://www.foodwatch.org/de/iframe/"
   - "object-src 'self' https://media.frag-den-staat.de"
   - "connect-src 'self' https://static.frag-den-staat.de https://media.frag-den-staat.de"
   - "child-src blob: https://static.frag-den-staat.de"
