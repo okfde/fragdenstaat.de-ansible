@@ -61,9 +61,9 @@ server {
 {% macro cors(domain) -%}if ($http_origin ~* (^https://{{ domain }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;
         }{%- endmacro %}
-{% macro basic_auth() -%}
+{% macro basic_auth(realm) -%}
     auth_basic "Restricted";
-    auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd;
+    auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd_{{ realm }};
 {%- endmacro %}
 
 {% macro proxy_upstream() -%}
@@ -108,7 +108,7 @@ server {
     {% if redirect_paths is defined %}
         {% for redirect_path in redirect_paths %}
             location ~ {{ redirect_path.from }}(.*)$ {
-              return 301 {{ redirect_path.path }}$1;
+              return 301 {{ redirect_path.path }}$1$is_args$args;
             }
         {% endfor %}
     {% endif %}
@@ -151,15 +151,17 @@ server {
     {% for item in rate_limited_urls %}
         location {{ item.url }} {
             limit_req zone={{ item.zone }} burst=5 nodelay;
-            {% if item.auth %}{{ basic_auth() }}{% endif %}
+            {% if item.auth %}{{ basic_auth(item.auth) }}{% endif %}
 
             {{ proxy_upstream() }}
         }
     {% endfor %}
 
-    {% for url in protected_urls %}
-        location {{ url }} {
-            {{ basic_auth() }}
+    {% for url_realm in protected_urls %}
+        location {{ url_realm.url }} {
+            {{ basic_auth(url_realm.realm) }}
+            {{ cors(static_server_name) }}
+
             {{ proxy_upstream() }}
         }
     {% endfor %}
@@ -225,7 +227,7 @@ server {
     {% if media_redirect_paths is defined %}
         {% for redirect_path in media_redirect_paths %}
             location ~ {{ redirect_path.from }}(.*)$ {
-              return 301 {{ redirect_path.path }}$1;
+              return 301 {{ redirect_path.path }}$1$is_args$args;
             }
         {% endfor %}
     {% endif %}
@@ -294,10 +296,10 @@ server {
 
     expires $expires;
 
-    {{ csp_block(static_content_security_policy) }}
-
     location /static/ {
-        {{ cors(web_server_name) }}
+        {{ csp_block(static_content_security_policy) }}
+        add_header Access-Control-Allow-Origin https://fragdenstaat.de;
+
         alias   {{ nginx_static_dir }};
     }
 }
