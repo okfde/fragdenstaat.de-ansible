@@ -13,6 +13,10 @@ append_dot_mydomain = no
 
 readme_directory = no
 
+# Allow addresses with leading -
+# http://www.postfix.org/postconf.5.html#allow_min_user
+allow_min_user = yes
+
 # enable dnssec lookups
 smtp_dns_support_level = dnssec
 
