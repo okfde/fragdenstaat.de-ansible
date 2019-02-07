@@ -19,6 +19,12 @@
     regexp: '^(  <policy domain="coder" rights="none" pattern="PDF" />)$'
     replace: '<!-- \1 -->'
 
+- name: Increase ImageMagick cache disk resources
+  replace:
+    path: /etc/ImageMagick-6/policy.xml
+    regexp: '<policy domain="resource" name="disk" value="1GiB"/>'
+    replace: '<policy domain="resource" name="disk" value="8GiB"/>'
+
 - name: Add ImageMagick policy entries tmp resource and PDF read/write
   blockinfile:
     path: /etc/ImageMagick-6/policy.xml
