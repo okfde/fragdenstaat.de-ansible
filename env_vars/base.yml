@@ -43,8 +43,9 @@ nginx_media_dir: "/var/www/fragdenstaat.de/storage"
 nginx_private_media_path: "/var/www/fragdenstaat.de/storage"
 
 htpasswd:
-  - name: user
-    password: password
+  admin:
+    - name: user
+      password: password
 
 django_media_root: "/var/www/fragdenstaat.de/storage/files"
 django_static_root: "/var/www/fragdenstaat.de/public/static"
@@ -55,7 +56,8 @@ django_configuration: "Dev"
 django_geoip_path: "/var/www/fragdenstaat.de/data"
 django_secret_url_admin: "admin"
 protected_urls:
-  - "/admin/"
+  - url: "/admin/"
+    realm: admin
 
 rate_limited_urls:
   - url: /account/login/

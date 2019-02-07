@@ -65,13 +65,14 @@
   tags: packages
 
 - htpasswd:
-    path: "{{ virtualenv_path}}/conf/htpasswd"
+    path: "{{ virtualenv_path}}/conf/htpasswd_{{ item.realm }}"
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     owner: www-data
     group: www-data
     mode: 0550
   with_items: "{{ htpasswd }}"
+  notify: reload nginx
 
 - name: Ensure that the file permissions for static are correct
   file: path={{ django_static_root }}
