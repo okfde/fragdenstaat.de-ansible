@@ -29,7 +29,7 @@ db_user: "{{ application_name }}"
 db_user_readonly: "{{ application_name }}_readonly"
 
 # Gunicorn settings.
-gunicorn_num_workers: 3
+gunicorn_num_workers: 6
 gunicorn_user: "{{ application_name }}"
 gunicorn_group: webapps
 
