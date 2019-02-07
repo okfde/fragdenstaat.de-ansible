@@ -8,8 +8,10 @@
     - tesseract-ocr
     - libtesseract-dev
     - libleptonica-dev
+    - tesseract-ocr-deu
     - poppler-utils
     - qpdf
+    - ocrmypdf
 
 - name: Comment out ImageMagick policy entries for PDF none
   replace:
@@ -43,25 +45,6 @@
     replace: ''
     after: 'Start after line.*'
     backup: yes
-
-- name: Install tesseract data
-  get_url:
-    url: "{{ item }}"
-    # Remove tessdata here for tesseract > 4 in Ubuntu 18.04
-    dest: "{{ tesseract_data_path }}tessdata/{{ item | basename }}"
-    mode: '0444'
-  with_items:
-    - https://raw.githubusercontent.com/tesseract-ocr/tessdata/3.04.00/deu.traineddata
-  when: ansible_distribution_version == "16.04"
-
-- name: Install tesseract 4 data
-  get_url:
-    url: "{{ item }}"
-    dest: "{{ tesseract_data_path }}{{ item | basename }}"
-    mode: '0444'
-  with_items:
-    - https://raw.githubusercontent.com/tesseract-ocr/tessdata/4.0.0/deu.traineddata
-  when: ansible_distribution_version == "18.04"
 
 - name: Add LibreOffice repository
   apt_repository: repo="ppa:libreoffice/libreoffice-5-3" state=present
