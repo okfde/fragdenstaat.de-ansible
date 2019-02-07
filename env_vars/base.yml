@@ -67,7 +67,7 @@ rate_limited_urls:
 celery_worker:
   - name: celery
     queues: "celery"
-    worker: 2
+    worker: 4
   - name: mail
     queues: "emailfetch,email"
     worker: 1
@@ -127,6 +127,7 @@ nginx_public_media:
   - /files/media
   - /files/profile
   - /files/docs
+  - /files/export
 
 nginx_public_privileged_media:
   - "/files/campaign"
@@ -150,8 +151,12 @@ redirect_domains:
     domain: "fragdenstaat.de/blog"
 
 redirect_paths:
-  - from: "/files/foi/30800/"
+  - from: "^/files/foi/30800/"
     path: "/media-30800/"
+  - from: "^/k/lks/"
+    path: "/kampagnen/lebensmittelkontrolle/gesendet/"
+  - from: "^/de/"
+    path: "/"
 
 media_redirect_paths:
   - from: "/files/media/main/2e/bc/2ebc2ed7-51e4-4717-9fc7-a34225bebc5c/sog-masterplan-csu.pdf"
