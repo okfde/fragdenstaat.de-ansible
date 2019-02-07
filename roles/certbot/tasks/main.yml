@@ -27,13 +27,13 @@
   with_items: "{{ https_domains }}"
 
 - name: Generate cert for mail domain
-  command: "service nginx stop; {{ certbot_script }} certonly --noninteractive --agree-tos --email {{ letsencrypt_registrion_email }} --standalone -d {{ mail_domain }} -d {{ domain_name }} ; service nginx start"
+  command: "service nginx stop; {{ certbot_script }} certonly --noninteractive --agree-tos --email {{ letsencrypt_registrion_email }} --standalone -d {{ mail_domain }} -d {{ domain_name }} ; service nginx start; service postfix restart; service dovecot restart"
   args:
     creates: "{{ certbot_output_dir }}{{ mail_domain }}"
 
 - name: Ensure a cron job to auto-renew the cert exists
   cron: name="daily auto renew cert"
         special_time=daily
-        job="{{ certbot_script }} renew --standalone --no-self-upgrade --pre-hook \"service nginx stop\" --post-hook \"service nginx start\" --quiet"
+        job="{{ certbot_script }} renew --no-self-upgrade --quiet"
         state=present
   when: certbot_auto_renew
