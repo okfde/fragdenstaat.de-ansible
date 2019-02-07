@@ -60,6 +60,7 @@ server {
 {%- endmacro %}
 {% macro cors(domain) -%}if ($http_origin ~* (^https://{{ domain }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;
+                add_header Access-Control-Allow-Headers "pragma, cache-control";
         }{%- endmacro %}
 {% macro basic_auth(realm) -%}
     auth_basic "Restricted";
