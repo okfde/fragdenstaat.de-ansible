@@ -1,0 +1,35 @@
+- name: Add node key
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: Add node to the sources list
+  apt_repository: repo='deb https://deb.nodesource.com/node_8.x xenial main'
+                  update_cache={{ update_apt_cache }}
+                  state=present
+
+- name: Add yarn key
+  apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+    state: present
+
+- name: Add yarn to the sources list
+  apt_repository: repo='deb https://dl.yarnpkg.com/debian/ stable main'
+                  update_cache={{ update_apt_cache }}
+                  state=present
+
+- name: Install node
+  apt: name=nodejs update_cache={{ update_apt_cache }} state=present
+  tags: packages
+
+- name: Install yarn
+  apt: name=yarn update_cache={{ update_apt_cache }} state=present
+  tags: packages
+
+- name: Setup yarn build script
+  template: src=yarn-build.sh.j2 dest={{ virtualenv_path }}/yarn-build.sh mode=0755
+
+- name: Run yarn setup script
+  command: "{{ virtualenv_path }}/yarn-build.sh"
+  become: true
+  become_user: "{{ gunicorn_user }}"

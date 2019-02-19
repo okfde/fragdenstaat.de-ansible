@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -ex
+
+source {{ virtualenv_path }}/bin/activate
+
+{% for module in frontend_modules %}
+pushd $(python -c "import {{ module.package }} as mod; print(mod.__path__[0])")
+yarn install
+yarn link
+popd
+{% endfor %}
+
+pushd {{ project_path }}
+
+yarn install
+
+{% for module in frontend_modules %}
+yarn link {{ module.package }}
+{% endfor %}
+
+npm run build
+
+popd

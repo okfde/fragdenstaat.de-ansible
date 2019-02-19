@@ -26,6 +26,9 @@
 - import_tasks: setup_supervisor.yml
   tags: supervisor
 
+- import_tasks: build_frontend.yml
+  tags: deploy
+
 - import_tasks: run_django_tasks.yml
   tags: deploy
 

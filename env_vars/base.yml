@@ -64,6 +64,9 @@ rate_limited_urls:
     zone: login
     auth: no
 
+frontend_modules:
+  - package: froide
+
 celery_worker:
   - name: celery
     queues: "celery"
