@@ -158,6 +158,8 @@ redirect_paths:
     path: "/media-30800/"
   - from: "^/k/lks/"
     path: "/kampagnen/lebensmittelkontrolle/gesendet/"
+  - from: "^/k/abi/"
+    path: "/kampagnen/frag-sie-abi/gesendet/"
   - from: "^/de/"
     path: "/"
 
