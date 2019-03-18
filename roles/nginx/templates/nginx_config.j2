@@ -265,7 +265,7 @@ server {
         location {{ url_dir.url }} {
             internal;
             {% if url_dir.force_download is defined and url_dir.force_download %}
-              add_header Content-disposition "attachment; filename=$1";
+              add_header Content-disposition "attachment";
             {% endif %}
 
             {{ cors(static_server_name) }}
