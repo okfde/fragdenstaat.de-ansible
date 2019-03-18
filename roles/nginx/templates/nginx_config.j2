@@ -35,6 +35,17 @@ upstream {{ application_name }}_wsgi_server {
 
 
 server {
+    listen 80;
+    server_name localhost 127.0.0.1;
+    location /nginx_status {
+        stub_status;
+        allow 127.0.0.1;        # only allow requests from localhost
+        deny all;               # deny all other hosts
+    }
+}
+
+
+server {
     listen      80;
     listen [::]:80;
     server_name {{ web_server_name }} www.{{ web_server_name }};
