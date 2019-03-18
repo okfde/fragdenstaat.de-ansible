@@ -21,7 +21,6 @@
   tags: deploy
 
 - import_tasks: setup_geoip.yml
-  tags: deploy
 
 - import_tasks: setup_supervisor.yml
   tags: supervisor
@@ -34,6 +33,7 @@
 
 - name: restart application
   supervisorctl: name={{ application_name }} state=restarted
+  tags: deploy
   notify:
     - restart memcached
 
