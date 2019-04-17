@@ -12,6 +12,8 @@
     - poppler-utils
     - qpdf
     - ocrmypdf
+    - optipng
+    - jpegoptim
 
 - name: Comment out ImageMagick policy entries for PDF none
   replace:
