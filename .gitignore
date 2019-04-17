@@ -10,3 +10,4 @@ vagrant_ansible_inventory_default
 
 adenauer/
 env_vars/production.yml
+ansible-env/
