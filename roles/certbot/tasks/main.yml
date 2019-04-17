@@ -20,20 +20,23 @@
   stat: path=/etc/init.d/nginx
   register: nginx_status
 
+- name: Make letsencrypt tmp dir
+  file: path=/opt/letsencrypt/tmp state=directory
+
 - name: Generate cert for HTTPS domains
-  command: "{{ certbot_script }} certonly --noninteractive --agree-tos --email {{ letsencrypt_registrion_email }} --nginx -d {{ item }} -d www.{{ item }}"
+  command: "{{ certbot_script }} certonly --webroot --agree-tos --email {{ letsencrypt_registrion_email }} -d {{ item }} -d www.{{ item }}"
   args:
     creates: "{{ certbot_output_dir }}{{ item }}"
   with_items: "{{ https_domains }}"
 
 - name: Generate cert for mail domain
-  command: "service nginx stop; {{ certbot_script }} certonly --noninteractive --agree-tos --email {{ letsencrypt_registrion_email }} --standalone -d {{ mail_domain }} -d {{ domain_name }} ; service nginx start; service postfix restart; service dovecot restart"
+  command: "{{ certbot_script }} certonly --webroot --agree-tos --email {{ letsencrypt_registrion_email }} -d {{ mail_domain }} -d {{ domain_name }} ; service nginx restart; service postfix restart; service dovecot restart"
   args:
     creates: "{{ certbot_output_dir }}{{ mail_domain }}"
 
 - name: Ensure a cron job to auto-renew the cert exists
   cron: name="daily auto renew cert"
         special_time=daily
-        job="{{ certbot_script }} renew --no-self-upgrade --quiet"
+        job="{{ certbot_script }} renew --deploy-hook 'service nginx reload'"
         state=present
   when: certbot_auto_renew

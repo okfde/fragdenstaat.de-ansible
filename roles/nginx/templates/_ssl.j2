@@ -3,8 +3,10 @@ ssl on;
 ssl_certificate     /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_cert_filename }};
 ssl_certificate_key /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_privkey_filename }};
 {% else %}
-ssl_certificate     /etc/ssl/certs/ssl-cert-snakeoil.pem;
-ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+{# ssl_certificate     /etc/ssl/certs/ssl-cert-snakeoil.pem;
+ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key; #}
+ssl_certificate     {{ virtualenv_path }}/certs/server.crt;
+ssl_certificate_key {{ virtualenv_path }}/certs/server.key;
 {% endif %}
 
 ssl_session_timeout 1d;
@@ -27,3 +29,8 @@ resolver 8.8.8.8 8.8.4.4 [2001:4860:4860::8888] [2001:4860:4860::8844] valid=300
 {% if nginx_strong_dh_group %}
 ssl_dhparam          /etc/ssl/certs/dhparams.pem;
 {% endif %}
+
+location /.well-known/acme-challenge/ {
+       default_type "text/plain";
+       root /opt/letsencrypt/tmp;
+}
