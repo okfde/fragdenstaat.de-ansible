@@ -51,5 +51,11 @@
   notify:
     - restart memcached
 
+- name: Reload application
+  shell: "supervisorctl pid {{ application_name }} | xargs kill -s HUP"
+  tags:
+    - deploy
+    - deploy-backend
+
 - import_tasks: setup_cron_tasks.yml
   tags: maintenance
