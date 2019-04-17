@@ -163,9 +163,15 @@ redirect_paths:
   - from: "^/de/"
     path: "/"
 
+media_legal_paths:
+  - path: "/files/foi/110867/bfr-stellungnahme.pdf"
+    link: "https://fragdenstaat.de/zensurheberrecht"
+
 media_redirect_paths:
   - from: "/files/media/main/2e/bc/2ebc2ed7-51e4-4717-9fc7-a34225bebc5c/sog-masterplan-csu.pdf"
     path: "https://fragdenstaat.de/dokumente/30-sog-masterplan-csu/"
+  - from: "/files/foi/110867/bfr-stellungnahme.pdf"
+    path: "https://fragdenstaat.de/dokumente/66/"
 
 simple_files:
   - path: "/robots.txt"

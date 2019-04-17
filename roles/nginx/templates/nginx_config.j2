@@ -236,6 +236,20 @@ server {
         root {{ virtualenv_path }}/static_html/;
     }
 
+    error_page 451 =451 /error_451.html;
+    location = /error_451.html {
+        add_header Link '<https://fragdenstaat.de/zensurheberrecht>; rel="blocked-by"' always;
+        root {{ virtualenv_path }}/static_html/;
+    }
+
+    {% if media_legal_paths is defined %}
+        {% for legal_info in media_legal_paths %}
+            location ~ {{ legal_info.path }}(.*)$ {
+              return 451;
+            }
+        {% endfor %}
+    {% endif %}
+
     {% if media_redirect_paths is defined %}
         {% for redirect_path in media_redirect_paths %}
             location ~ {{ redirect_path.from }}(.*)$ {
