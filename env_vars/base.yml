@@ -74,16 +74,16 @@ frontend_modules:
 celery_worker:
   - name: celery
     queues: "celery"
-    worker: 4
+    worker: 8
   - name: mail
     queues: "emailfetch,email"
     worker: 1
   - name: mailsend
     queues: "emailsend"
-    worker: 1
+    worker: 4
   - name: search
     queues: "searchindex"
-    worker: 1
+    worker: 3
 
 rabbitmq_admin_password: password
 rabbitmq_application_vhost: "{{ application_name }}"
