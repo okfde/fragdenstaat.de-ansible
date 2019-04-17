@@ -66,6 +66,8 @@ rate_limited_urls:
 
 frontend_modules:
   - package: froide
+  - package: froide_food
+  - package: froide_payment
 
 celery_worker:
   - name: celery
