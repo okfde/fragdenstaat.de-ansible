@@ -227,9 +227,19 @@ priviliged_media_content_security_policy:
 # Fill this in
 
 django_sentry_dsn: ""
+django_sentry_public_dsn: ""
 
 yelp_api_key: ""
 
 twilio_account_sid: ""
 twilio_auth_token: ""
 twilio_from_number: ""
+
+stripe_public_key: ""
+stripe_private_key: ""
+stripe_webhook_cc_signing_key: ""
+stripe_webhook_sofort_signing_key: ""
+
+paypal_client_id: ""
+paypal_client_secret: ""
+paypal_api_url: ""
