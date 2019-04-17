@@ -42,6 +42,17 @@
   with_items:
     - maintenance
     - forbidden
+    - error_451
+
+- name: Create the simple files folder
+  file: path={{ virtualenv_path}}/simple_files
+        mode=0550
+        owner=www-data
+        state=directory
+
+- name: Copy simple files
+  copy: src={{ item.filename }} dest={{ virtualenv_path}}/simple_files/{{ item.filename }}
+  with_items: "{{ simple_files }}"
 
 - name: Ensure that the default site is disabled
   file: path=/etc/nginx/sites-enabled/default state=absent

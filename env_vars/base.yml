@@ -175,10 +175,12 @@ media_redirect_paths:
 
 simple_files:
   - path: "/robots.txt"
-    content: "User-agent: *\\nDisallow:\\n"
+    filename: robots.txt
   - path: "/.well-known/apple-app-site-association"
-    content: '{"applinks":{"apps":[],"details":[{"appID":"93C29USLP6.de.okfn.fragdenstaat","paths":["/a/*","/anfrage/*"]}]}}'
+    filename: apple-app-site-association
     mimetype: 'application/pkcs7-mime'
+  - path: "/.well-known/apple-developer-merchantid-domain-association"
+    filename: apple-developer-merchantid-domain-association.dms
 
 web_cors_for_media:
   - "/api/v1/campaigninformationobject"

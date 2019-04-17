@@ -130,7 +130,7 @@ server {
             {% if simple_file.mimetype is defined %}
                 add_header Content-Type "{{ simple_file.mimetype }}";
             {% endif %}
-            return 200 '{{ simple_file.content }}';
+            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
         }
     {% endfor %}
 
