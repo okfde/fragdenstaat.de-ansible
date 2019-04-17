@@ -16,6 +16,8 @@ domain_name: fragdenstaat.de
 web_server_name: fragdenstaat.de
 media_server_name: media.frag-den-staat.de
 static_server_name: static.frag-den-staat.de
+static_asset_path: "https://static.frag-den-staat.de/static/js/"
+
 
 https_domains:
   - "{{ web_server_name }}"

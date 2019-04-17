@@ -19,6 +19,6 @@ yarn install
 yarn link {{ module.package }}
 {% endfor %}
 
-yarn run build --bail
+ASSET_PATH={{ static_asset_path }} yarn run build --bail
 
 popd
