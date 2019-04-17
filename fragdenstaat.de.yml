@@ -11,8 +11,12 @@
         token: '{{ slack_token }}'
         msg: 'Deployment start on {{ inventory_hostname }}'
         username: fds-bot
-        channel: '#fragdenstaatplus'
+        channel: '#fragdenstaat-alerts'
       when: slack_token is defined
+      tags:
+        - deploy
+        - deploy-backend
+        - deploy-frontend
   post_tasks:
     - name: Send Slack notification message on finished deployment
       become: no
@@ -20,8 +24,12 @@
         token: '{{ slack_token }}'
         msg: 'Deployment finished on {{ inventory_hostname }}'
         username: fds-bot
-        channel: '#fragdenstaatplus'
+        channel: '#fragdenstaat-alerts'
       when: slack_token is defined
+      tags:
+        - deploy
+        - deploy-backend
+        - deploy-frontend
   vars:
     - setup_git_repo: yes
     - update_apt_cache: yes

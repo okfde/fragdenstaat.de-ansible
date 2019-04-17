@@ -24,7 +24,9 @@
             group={{ gunicorn_group }}
             mode=0755
             backup=yes
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-backend
 
 - name: Create the application log folder
   file: path={{ application_log_dir }}
@@ -47,7 +49,9 @@
             group={{ gunicorn_group }}
             mode=0640
             backup=yes
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-backend
 
 - name: Create the maintenance page
   template: src=maintenance_off.html

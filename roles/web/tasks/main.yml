@@ -6,19 +6,30 @@
 - import_tasks: create_users_and_groups.yml
 
 - import_tasks: set_file_permissions.yml
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-backend
 
 - import_tasks: setup_virtualenv.yml
   tags: virtualenv
 
 - import_tasks: setup_git_repo.yml
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
 
 - import_tasks: set_file_permissions.yml
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
 
 - import_tasks: setup_django_app.yml
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-frontend
+    - deploy-backend
 
 - import_tasks: setup_geoip.yml
 
@@ -26,14 +37,17 @@
   tags: supervisor
 
 - import_tasks: build_frontend.yml
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-frontend
 
 - import_tasks: run_django_tasks.yml
-  tags: deploy
+  tags:
+    - deploy
+    - deploy-backend
 
 - name: restart application
   supervisorctl: name={{ application_name }} state=restarted
-  tags: deploy
   notify:
     - restart memcached
 
