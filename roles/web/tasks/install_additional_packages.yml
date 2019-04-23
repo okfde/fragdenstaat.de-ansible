@@ -1,19 +1,22 @@
 ---
 
 - name: Install additional packages
-  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=present
-  with_items:
-    - gettext
-    - imagemagick
-    - tesseract-ocr
-    - libtesseract-dev
-    - libleptonica-dev
-    - tesseract-ocr-deu
-    - poppler-utils
-    - qpdf
-    - ocrmypdf
-    - optipng
-    - jpegoptim
+  apt:
+    name:
+      - gettext
+      - imagemagick
+      - tesseract-ocr
+      - libtesseract-dev
+      - libleptonica-dev
+      - tesseract-ocr-deu
+      - poppler-utils
+      - qpdf
+      - ocrmypdf
+      - optipng
+      - jpegoptim
+    update_cache: "{{ update_apt_cache }}"
+    force: yes
+    state: present
 
 - name: Comment out ImageMagick policy entries for PDF none
   replace:
@@ -66,9 +69,12 @@
   apt: name=libreoffice state=latest update_cache=yes
 
 - name: Install Latex for PDF generation
-  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=present
-  with_items:
-    - texlive
-    - texlive-xetex
-    - texlive-lang-german
-    - latexmk
+  apt:
+    name:
+      - texlive
+      - texlive-xetex
+      - texlive-lang-german
+      - latexmk
+    update_cache: "{{ update_apt_cache }}"
+    force: yes
+    state: present
