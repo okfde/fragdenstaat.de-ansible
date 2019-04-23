@@ -80,7 +80,10 @@ celery_worker:
     worker: 1
   - name: mailsend
     queues: "emailsend"
-    worker: 4
+    worker: 3
+  - name: mailsend_bulk
+    queues: "emailsend_bulk"
+    worker: 3
   - name: search
     queues: "searchindex"
     worker: 3
