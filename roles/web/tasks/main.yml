@@ -37,9 +37,6 @@
   tags: supervisor
 
 - import_tasks: build_frontend.yml
-  tags:
-    - deploy
-    - deploy-frontend
 
 - import_tasks: run_django_tasks.yml
   tags:
@@ -56,6 +53,7 @@
   tags:
     - deploy
     - deploy-backend
+    - deploy-frontend
 
 - import_tasks: setup_cron_tasks.yml
   tags: maintenance

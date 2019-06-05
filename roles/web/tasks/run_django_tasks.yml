@@ -18,6 +18,10 @@
     virtualenv: "{{ virtualenv_path }}"
     settings: "{{ django_settings_file }}"
   environment: "{{ django_environment }}"
-  tags: django.collectstatic
   become: true
   become_user: "{{ gunicorn_user }}"
+  tags:
+    - django.collectstatic
+    - deploy-backend
+    - deploy-frontend
+    - deploy

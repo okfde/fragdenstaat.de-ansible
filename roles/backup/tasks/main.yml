@@ -1,10 +1,12 @@
 ---
 
 - name: Install duplicity and dependencies
-  apt: name={{ item }} update_cache={{ update_apt_cache }} state=present
-  with_items:
-    - duplicity
-    - lftp
+  apt:
+    name:
+      - duplicity
+      - lftp
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   tags: packages
 
 - name: Do not verify SSL certificate

@@ -33,3 +33,6 @@
   command: "{{ virtualenv_path }}/yarn-build.sh"
   become: true
   become_user: "{{ gunicorn_user }}"
+  tags:
+    - deploy
+    - deploy-frontend

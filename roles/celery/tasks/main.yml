@@ -10,6 +10,7 @@
   tags:
     - celery
     - deploy
+    - deploy-backend
 
 - name: Restart the celery workers
   supervisorctl:
@@ -20,6 +21,7 @@
   tags:
     - celery
     - deploy
+    - deploy-backend
 
 - name: Restart the {{ celerybeat_application_name }} app
   supervisorctl: name={{ celerybeat_application_name }} state=restarted
@@ -27,3 +29,4 @@
   tags:
     - celery
     - deploy
+    - deploy-backend
