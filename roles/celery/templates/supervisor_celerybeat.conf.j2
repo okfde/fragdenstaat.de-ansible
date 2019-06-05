@@ -5,6 +5,8 @@ command={{ celery_scripts_dir }}/{{ celerybeat_application_name }}_start
 
 autostart=true
 autorestart=true
+stopsignal=TERM
+stopwaitsecs=120
 
 user={{ celery_user }}
 
