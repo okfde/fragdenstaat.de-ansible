@@ -31,6 +31,6 @@ ssl_dhparam          /etc/ssl/certs/dhparams.pem;
 {% endif %}
 
 location /.well-known/acme-challenge/ {
-       default_type "text/plain";
-       root /opt/letsencrypt/tmp;
+   default_type "text/plain";
+   root {{ letsencrypt_tmp_dir }};
 }

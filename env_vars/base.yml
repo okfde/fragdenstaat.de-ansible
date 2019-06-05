@@ -18,12 +18,22 @@ media_server_name: media.frag-den-staat.de
 static_server_name: static.frag-den-staat.de
 static_asset_path: "https://static.frag-den-staat.de/static/js/"
 
-
 https_domains:
-  - "{{ web_server_name }}"
-  - "{{ media_server_name }}"
-  - "{{ static_server_name }}"
-letsencrypt_registrion_email: mail@example.org
+  - ["{{ web_server_name }}", "www.{{ web_server_name }}"]
+  - ["{{ media_server_name }}"]
+  - ["{{ static_server_name }}"]
+  - ["{{ mail_domain }}", "{{ domain_name }}"]
+letsencrypt_registration_email: info@fragdenstaat.de
+letsencrypt_tmp_dir: /opt/letsencrypt/tmp
+letsencrypt_renew_hooks:
+  - domain: "{{ web_server_name }}"
+    command: systemctl reload nginx
+  - domain: "{{ media_server_name }}"
+    command: systemctl reload nginx
+  - domain: "{{ static_server_name }}"
+    command: systemctl reload nginx
+  - domain: "{{ mail_domain }}"
+    command: "systemctl reload nginx postfix dovecot"
 
 db_host: "127.0.0.1"
 db_name: "{{ application_name }}"
@@ -39,10 +49,6 @@ gunicorn_group: webapps
 virtualenv_path: "/var/www/fragdenstaat.de"
 project_path: "{{ virtualenv_path }}/{{ project_name }}"
 application_log_dir: "/var/www/fragdenstaat.de/logs"
-
-nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
-nginx_media_dir: "/var/www/fragdenstaat.de/storage"
-nginx_private_media_path: "/var/www/fragdenstaat.de/storage"
 
 htpasswd:
   admin:
@@ -74,19 +80,19 @@ frontend_modules:
 celery_worker:
   - name: celery
     queues: "celery"
-    worker: 8
+    worker: 6
   - name: mail
     queues: "emailfetch,email"
     worker: 1
   - name: mailsend
     queues: "emailsend"
-    worker: 3
+    worker: 6
   - name: mailsend_bulk
     queues: "emailsend_bulk"
-    worker: 3
+    worker: 1
   - name: search
     queues: "searchindex"
-    worker: 3
+    worker: 6
 
 rabbitmq_admin_password: password
 rabbitmq_application_vhost: "{{ application_name }}"
@@ -132,6 +138,10 @@ backup_ftp_url: "ftp://user@server"
 backup_ftp_password: "password"
 backup_gpg_password: "password"
 
+nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
+nginx_media_dir: "/var/www/fragdenstaat.de/storage"
+nginx_private_media_path: "/var/www/fragdenstaat.de/storage/"
+
 nginx_public_media:
   - /files/legalaction
   - /files/media
@@ -144,7 +154,7 @@ nginx_public_privileged_media:
 
 nginx_private_media:
   - url: "/protected"
-    dir: ""
+    dir: "files"
     force_download: true
   - url: "/private_main"
     dir: "private/main"
@@ -159,6 +169,13 @@ nginx_private_media_prefix:
 redirect_domains:
   - from: "blog.fragdenstaat.de"
     domain: "fragdenstaat.de/blog"
+  - from: "mail.fragdenstaat.de"
+    domain: "fragdenstaat.de"
+  - from: "media.frag-den-staat.de"
+    domain: "media.frag-den-staat.de"
+  - from: "static.frag-den-staat.de"
+    domain: "static.frag-den-staat.de"
+
 
 redirect_paths:
   - from: "^/files/foi/30800/"
@@ -184,6 +201,8 @@ simple_files:
     mimetype: 'application/pkcs7-mime'
   - path: "/.well-known/apple-developer-merchantid-domain-association"
     filename: apple-developer-merchantid-domain-association.dms
+  - path: "/BingSiteAuth.xml"
+    filename: BingSiteAuth.xml
 
 web_cors_for_media:
   - "/api/v1/campaigninformationobject"
@@ -202,7 +221,7 @@ content_security_policy:
   - "base-uri 'none'"
   - "font-src data: https://static.frag-den-staat.de"
   - "manifest-src https://static.frag-den-staat.de"
-  - "form-action 'self' https://fragdenstaat.de https://forum.okfn.de https://www.paypal.com https://pretix.eu fragdenstaat://authorize https://hooks.stripe.com https://stripe.com"
+  - "form-action 'self' https://fragdenstaat.de https://forum.okfn.de https://www.paypal.com https://pretix.eu fragdenstaat://authorize https://hooks.stripe.com https://stripe.com https://r.girogate.de"
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
 

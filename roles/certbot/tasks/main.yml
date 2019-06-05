@@ -21,22 +21,42 @@
   register: nginx_status
 
 - name: Make letsencrypt tmp dir
-  file: path=/opt/letsencrypt/tmp state=directory
+  file: path={{ letsencrypt_tmp_dir }} state=directory
 
 - name: Generate cert for HTTPS domains
-  command: "{{ certbot_script }} certonly --webroot --agree-tos --email {{ letsencrypt_registrion_email }} -d {{ item }} -d www.{{ item }}"
+  command: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
   args:
-    creates: "{{ certbot_output_dir }}{{ item }}"
-  with_items: "{{ https_domains }}"
+    creates: "{{ certbot_output_dir }}{{ item[0] }}"
+  loop: "{{ https_domains }}"
 
-- name: Generate cert for mail domain
-  command: "{{ certbot_script }} certonly --webroot --agree-tos --email {{ letsencrypt_registrion_email }} -d {{ mail_domain }} -d {{ domain_name }} ; service nginx restart; service postfix restart; service dovecot restart"
-  args:
-    creates: "{{ certbot_output_dir }}{{ mail_domain }}"
+- name: Add custom webroot_map to renewal files
+  ini_file:
+    section: "[webroot_map]"
+    option: "{{ item[0] }}"
+    value: "{{ letsencrypt_tmp_dir }}"
+    dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
+  loop: "{{ https_domains }}"
+
+- name: Add custom webroot_map to renewal for second domain
+  ini_file:
+    section: "[webroot_map]"
+    option: "{{ item[1] }}"
+    value: "{{ letsencrypt_tmp_dir }}"
+    dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
+  when: item[1] is defined
+  loop: "{{ https_domains }}"
+
+- name: Add renew_hooks
+  ini_file:
+    section: renewalparams
+    option: renew_hook
+    value: "{{ item.command }}"
+    dest: "/etc/letsencrypt/renewal/{{ item.domain }}.conf"
+  with_items: "{{ letsencrypt_renew_hooks }}"
 
 - name: Ensure a cron job to auto-renew the cert exists
   cron: name="daily auto renew cert"
         special_time=daily
-        job="{{ certbot_script }} renew --deploy-hook 'service nginx reload'"
+        job="{{ certbot_script }} renew"
         state=present
-  when: certbot_auto_renew
+  when: "{{ certbot_auto_renew }}"

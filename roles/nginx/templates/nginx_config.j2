@@ -23,12 +23,15 @@ upstream {{ application_name }}_wsgi_server {
 {% if redirect_domains is defined %}
     {% for redirect_domain in redirect_domains %}
     server {
+        if ($host = {{ redirect_domain.from }}) {
+            return 301 https://{{ redirect_domain.domain }}$request_uri;
+        }
+
         listen 80;
         listen [::]:80;
         server_name {{ redirect_domain.from }};
-        location / {
-          return 301 https://{{ redirect_domain.domain }}$request_uri;
-        }
+
+        return 404; # managed by Certbot
     }
     {% endfor %}
 {% endif %}
