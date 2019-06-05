@@ -99,6 +99,11 @@ server {
     {% endwith %}
     add_header Referrer-Policy "same-origin";
 
+    error_page 502 503 504 =503 /maintenance.html;
+    location = /maintenance.html {
+        root {{ virtualenv_path }}/static_html/;
+    }
+
     {% if maintenance %}
         set $maintenance on;
 
@@ -201,11 +206,6 @@ server {
     location = /500.html {
         root {{ project_path }}/{{ application_name }}/templates/;
     }
-
-    error_page 502 503 504 =503 /maintenance.html;
-    location = /maintenance.html {
-        root {{ virtualenv_path }}/static_html/;
-    }
 }
 
 server {
@@ -229,8 +229,6 @@ server {
             return 503;
         }
     {% endif %}
-
-    expires $expires;
 
     error_page 403 /forbidden.html;
     proxy_intercept_errors on;
@@ -343,3 +341,4 @@ server {
     {% endwith %}
 
 }
+
