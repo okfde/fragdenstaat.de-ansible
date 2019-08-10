@@ -80,19 +80,27 @@ frontend_modules:
 celery_worker:
   - name: celery
     queues: "celery"
-    worker: 6
+    worker: 3
   - name: mail
     queues: "emailfetch,email"
     worker: 1
   - name: mailsend
     queues: "emailsend"
-    worker: 6
+    worker: 4
   - name: mailsend_bulk
     queues: "emailsend_bulk"
     worker: 1
   - name: search
     queues: "searchindex"
-    worker: 6
+    worker: 4
+  - name: celery_solo_1
+    queues: "redact,ocr,convert,convert_office"
+    worker: 1
+    pool: solo
+  - name: celery_solo_2
+    queues: "redact,ocr,convert,convert_office"
+    worker: 1
+    pool: solo
 
 rabbitmq_admin_password: password
 rabbitmq_application_vhost: "{{ application_name }}"
