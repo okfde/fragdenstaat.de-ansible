@@ -294,6 +294,10 @@ server {
     {% for url_dir in nginx_private_media %}
         location {{ url_dir.url }} {
             internal;
+
+            set $link "$upstream_http_link";
+            add_header Link $link;
+
             {% if url_dir.force_download is defined and url_dir.force_download %}
               add_header Content-disposition "attachment";
             {% endif %}
