@@ -127,6 +127,7 @@ email_alias:
 
 alias_foi_domains: []
 
+bad_referrers: []
 
 letsencrypt_enabled: no
 
