@@ -203,6 +203,9 @@ simple_files:
     filename: apple-developer-merchantid-domain-association.dms
   - path: "/BingSiteAuth.xml"
     filename: BingSiteAuth.xml
+  - path: "/nope"
+    filename: bad_referrer.html
+    mimetype: 'text/html'
 
 web_cors_for_media:
   - "/api/v1/campaigninformationobject"

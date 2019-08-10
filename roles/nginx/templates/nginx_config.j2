@@ -11,6 +11,13 @@ map $sent_http_content_type $expires {
     ~image/                     max;
 }
 
+map $http_referer $bad_referrer {
+    default                  0;
+    {% for domain in bad_referrers %}
+    "~{{ domain.from }}"          "{{ domain.to }}";
+    {% endfor %}
+}
+
 upstream {{ application_name }}_wsgi_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
   # to return a good HTTP response (in case the Unicorn master nukes a
@@ -142,6 +149,10 @@ server {
         }
     {% endfor %}
 
+    if ($bad_referrer) {
+        return 301 $bad_referrer;
+    }
+
     location /favicon.ico {
         return 404;
     }
@@ -229,6 +240,10 @@ server {
             return 503;
         }
     {% endif %}
+
+    if ($bad_referrer) {
+        return 301 $bad_referrer;
+    }
 
     error_page 403 /forbidden.html;
     proxy_intercept_errors on;
@@ -329,6 +344,14 @@ server {
 
         alias   {{ nginx_static_dir }};
     }
+    {% for simple_file in simple_files %}
+        location {{ simple_file.path }} {
+            {% if simple_file.mimetype is defined %}
+                add_header Content-Type "{{ simple_file.mimetype }}";
+            {% endif %}
+            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
+        }
+    {% endfor %}
 }
 
 server {
