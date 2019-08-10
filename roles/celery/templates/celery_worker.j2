@@ -10,4 +10,4 @@ cd $DJANGODIR
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
 
-exec celery worker -A froide.celery:app -Q {{ item.queues }} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h
+exec celery worker -A froide.celery:app -Q {{ item.queues }}{% if item.pool is defined %} --pool={{ item.pool }}{% endif %} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h
