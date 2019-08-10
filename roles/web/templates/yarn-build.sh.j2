@@ -5,7 +5,7 @@ set -ex
 source {{ virtualenv_path }}/bin/activate
 
 {% for module in frontend_modules %}
-pushd $(python -c "import {{ module.package }} as mod; print(mod.__path__[0])")
+pushd $(python -c "import {{ module.package }} as mod; print(mod.__path__[0])")/..
 yarn install
 yarn link
 popd
