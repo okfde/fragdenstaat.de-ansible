@@ -76,6 +76,7 @@ frontend_modules:
   - package: froide
   - package: froide_food
   - package: froide_payment
+  - package: filingcabinet
 
 celery_worker:
   - name: celery
