@@ -1,5 +1,11 @@
 ---
 
+- name: Record previous git info
+  shell: git -C {{ virtualenv_path }}/src/{{ item.name }} rev-parse HEAD > {{ virtualenv_path }}/meta/{{ item.name }}.gitsha
+  with_items: "{{ release_notifications }}"
+  tags:
+    - release_tag
+
 - name: Install packages required by the Django app inside virtualenv
   pip: virtualenv={{ virtualenv_path }} chdir={{ project_path }} requirements={{ requirements_file }} extra_args="-U -e . --exists-action=w" editable=True state=latest
   become: true

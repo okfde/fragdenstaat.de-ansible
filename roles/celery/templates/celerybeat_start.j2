@@ -7,6 +7,8 @@ cd $DJANGODIR
 . {{ virtualenv_path }}/bin/activate
 . {{ virtualenv_path }}/bin/postactivate
 
+export GIT_COMMIT=$(git rev-parse HEAD)
+
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
 exec celery beat -A froide.celery:app -l INFO

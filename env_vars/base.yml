@@ -72,6 +72,26 @@ rate_limited_urls:
     zone: login
     auth: no
 
+release_notifications:
+  - name: froide
+    repo: okfde/froide
+  - name: froide-campaign
+    repo: okfde/froide-campaign
+  - name: froide-legalaction
+    repo: okfde/froide-legalaction
+  - name: froide-crowdfunding
+    repo: okfde/froide-crowdfunding
+  - name: froide-fax
+    repo: okfde/froide-fax
+  - name: froide-exam
+    repo: okfde/froide-exam
+  - name: froide-food
+    repo: okfde/froide-food
+  - name: froide-payment
+    repo: okfde/froide-payment
+  - name: django-filingcabinet
+    repo: okfde/django-filingcabinet
+
 frontend_modules:
   - package: froide
   - package: froide_food
