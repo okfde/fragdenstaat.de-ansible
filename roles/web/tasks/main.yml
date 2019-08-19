@@ -6,9 +6,6 @@
 - import_tasks: create_users_and_groups.yml
 
 - import_tasks: set_file_permissions.yml
-  tags:
-    - deploy
-    - deploy-backend
 
 - import_tasks: setup_virtualenv.yml
   tags: virtualenv
@@ -17,18 +14,21 @@
   tags:
     - deploy
     - deploy-backend
+    - deploy-web
     - deploy-frontend
 
 - import_tasks: set_file_permissions.yml
   tags:
     - deploy
     - deploy-backend
+    - deploy-web
     - deploy-frontend
 
 - import_tasks: setup_django_app.yml
   tags:
     - deploy
     - deploy-frontend
+    - deploy-web
     - deploy-backend
 
 - import_tasks: setup_geoip.yml
@@ -42,6 +42,7 @@
   tags:
     - deploy
     - deploy-backend
+    - deploy-web
 
 - name: restart application
   supervisorctl: name={{ application_name }} state=restarted
@@ -54,6 +55,7 @@
     - deploy
     - deploy-backend
     - deploy-frontend
+    - deploy-web
 
 - import_tasks: setup_cron_tasks.yml
   tags: maintenance

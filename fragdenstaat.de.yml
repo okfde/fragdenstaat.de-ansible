@@ -16,6 +16,7 @@
       tags:
         - deploy
         - deploy-backend
+        - deploy-web
         - deploy-frontend
   post_tasks:
     - name: Send Slack notification message on finished deployment
@@ -29,6 +30,7 @@
       tags:
         - deploy
         - deploy-backend
+        - deploy-web
         - deploy-frontend
   vars:
     - setup_git_repo: yes

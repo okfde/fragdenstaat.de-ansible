@@ -27,6 +27,7 @@
   tags:
     - deploy
     - deploy-backend
+    - deploy-web
 
 - name: Create the application log folder
   file: path={{ application_log_dir }}
@@ -52,6 +53,7 @@
   tags:
     - deploy
     - deploy-backend
+    - deploy-web
 
 - name: Create the maintenance page
   template: src=maintenance_off.html
