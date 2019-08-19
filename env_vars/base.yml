@@ -95,11 +95,11 @@ celery_worker:
     queues: "searchindex"
     worker: 4
   - name: celery_solo_1
-    queues: "redact,ocr,convert,convert_office"
+    queues: "redact,ocr"
     worker: 1
     pool: solo
   - name: celery_solo_2
-    queues: "redact,ocr,convert,convert_office"
+    queues: "redact,ocr,convert,convert_office,document"
     worker: 1
     pool: solo
 
