@@ -11,6 +11,13 @@ map $sent_http_content_type $expires {
     ~image/                     max;
 }
 
+map $sent_http_content_type $media_expires {
+    default                     off;
+    text/html                   epoch;
+    application/pdf             off;
+    ~image/                     max;
+}
+
 map $http_referer $bad_referrer {
     default                  0;
     {% for domain in bad_referrers %}
@@ -240,6 +247,8 @@ server {
             return 503;
         }
     {% endif %}
+
+    expires $media_expires;
 
     if ($bad_referrer) {
         return 301 $bad_referrer;
