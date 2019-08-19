@@ -1,0 +1,17 @@
+#!/bin/bash
+
+HOME=/home/stage
+PACKAGE=poppler-0.79.0
+
+mkdir -p $HOME
+
+pushd $HOME
+
+wget poppler.freedesktop.org/${PACKAGE}.tar.xz
+tar -xvzf ~/${PACKAGE}.tar.xz
+pushd $PACKAGE
+mkdir build
+pushd $PACKAGE
+cmake ..
+make
+sudo checkinstall

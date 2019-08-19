@@ -9,7 +9,6 @@
       - libtesseract-dev
       - libleptonica-dev
       - tesseract-ocr-deu
-      - poppler-utils
       - qpdf
       - ocrmypdf
       - optipng
@@ -17,6 +16,7 @@
     update_cache: "{{ update_apt_cache }}"
     force: yes
     state: present
+
 
 - name: Comment out ImageMagick policy entries for PDF none
   replace:
