@@ -13,4 +13,4 @@ cd $DJANGODIR
 export LD_LIBRARY_PATH=/usr/local/lib
 export GIT_COMMIT=$(git rev-parse HEAD)
 
-exec celery worker -A froide.celery:app -Q {{ item.queues }}{% if item.pool is defined %} --pool={{ item.pool }} -O fair --max-tasks-per-child=1 --without-gossip{% endif %} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h
+exec celery worker -A froide.celery:app -Q {{ item.queues }}{% if item.type is defined %} -O fair --max-tasks-per-child=1 --without-gossip{% endif %} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h
