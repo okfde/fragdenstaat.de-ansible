@@ -118,11 +118,15 @@ celery_worker:
   - name: celery_solo_1
     queues: "redact,ocr"
     worker: 1
-    pool: solo
+    type: slow
   - name: celery_solo_2
     queues: "redact,ocr,convert,convert_office,document"
     worker: 1
-    pool: solo
+    type: slow
+  - name: celery_solo_3
+    queues: "redact"
+    worker: 1
+    type: slow
 
 rabbitmq_admin_password: password
 rabbitmq_application_vhost: "{{ application_name }}"
