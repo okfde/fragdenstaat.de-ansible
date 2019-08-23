@@ -18,6 +18,13 @@ map $sent_http_content_type $media_expires {
     ~image/                     max;
 }
 
+map $request_uri $csp_header {
+    default "{% for k, v in content_security_policy.items() %}{{ k }} {{ v }};{% endfor %}";
+    {% for override in content_security_policy_overrides %}
+    "{{ override.url }}" "{% for k, v in content_security_policy.items() %}{{ k }} {% if k in override.directives %}{{ override.directives[k] }}{% else %}{{ v }}{% endif %};{% endfor %}";
+    {% endfor %}
+}
+
 map $http_referer $bad_referrer {
     default                  0;
     {% for domain in bad_referrers %}
@@ -86,6 +93,7 @@ server {
     add_header X-Content-Security-Policy "{{ csp(csp_list) }}";
     add_header X-WebKit-CSP "{{ csp(csp_list) }}";
 {%- endmacro %}
+
 {% macro cors(domain) -%}if ($http_origin ~* (^https://{{ domain }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;
                 add_header Access-Control-Allow-Headers "pragma, cache-control";
@@ -184,7 +192,9 @@ server {
         }
     {% endfor %}
 
-    {{ csp_block(content_security_policy) }}
+    add_header Content-Security-Policy $csp_header;
+    add_header X-Content-Security-Policy $csp_header;
+    add_header X-WebKit-CSP $csp_header;
 
     {% for item in rate_limited_urls %}
         location {{ item.url }} {
