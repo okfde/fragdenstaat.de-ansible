@@ -6,15 +6,13 @@
         group={{ gunicorn_group }}
         mode=0774
         state=directory
-  register: git_meta_fresh
   tags:
-    - release_tag
+    - release
 
 - name: Record previous git info
   shell: git -C {{ project_path }} rev-parse HEAD > {{ virtualenv_path }}/meta/{{ application_name }}.gitsha
-  when: not git_meta_fresh
   tags:
-    - release_tag
+    - release
 
 - name: Setup the Git repo
   git: repo={{ git_repo }}

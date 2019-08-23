@@ -72,6 +72,7 @@ rate_limited_urls:
     zone: login
     auth: no
 
+release_repo: okfde/fragdenstaat_de
 release_notifications:
   - name: froide
     repo: okfde/froide

@@ -47,6 +47,9 @@
     - deploy-backend
     - deploy-web
 
+- name: release notifications
+  import_tasks: release_notification.yml
+
 - name: restart application
   supervisorctl: name={{ application_name }} state=restarted
   notify:

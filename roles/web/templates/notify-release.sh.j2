@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -ex
+SENTRY_URL="{{ sentry_url }}"
+SENTRY_ORG="{{ sentry_org }}"
+SENTRY_AUTH_TOKEN="{{ sentry_auth_token }}"
+SENTRY_PROJECT="{{ sentry_project }}"
+
+PROJECT_VERSION=`git -C {{ project_path }} rev-parse HEAD`
+PREV_PROJECT_VERSION=`cat {{ virtualenv_path}}/meta/{{ application_name }}.gitsha`
+
+LONG_VERSION="${PROJECT_VERSION}-{% for item in release_notifications %}$(git -C {{ virtualenv_path }}/src/{{ item.name }} rev-parse HEAD){% if not loop.last %}-{% endif %}{% endfor %}"
+VERSION=`echo -n "$LONG_VERSION" | md5sum | awk '{print $1}'`
+
+echo -n "$VERSION" > {{ virtualenv_path}}/meta/current_release
+
+curl "${SENTRY_URL}api/0/organizations/${SENTRY_ORG}/releases/" \
+  -X POST \
+  -H "Authorization: Bearer ${SENTRY_AUTH_TOKEN}" \
+  -H 'Content-Type: application/json' \
+  -d '
+ {
+ "version": "'"$VERSION"'",
+ "refs": [{
+ "repository":"{{ release_repo }}",
+ "commit":"'"$PROJECT_VERSION"'",
+ "previousCommit":"'"$PREV_PROJECT_VERSION"'"
+ }{% if release_notifications %},{% endif %}{% for item in release_notifications %}{
+ "repository":"{{ item.repo }}",
+ "commit":"'"$(git -C {{ virtualenv_path }}/src/{{ item.name }} rev-parse HEAD)"'",
+ "previousCommit":"'"$(cat {{ virtualenv_path}}/meta/{{ item.name}}.gitsha)"'"
+ }{% if not loop.last %},{% endif %}{% endfor %}],
+ "projects":["'"$SENTRY_PROJECT"'"]
+}
+'
