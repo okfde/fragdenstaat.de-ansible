@@ -15,5 +15,7 @@
   template: src=install_poppler.sh.j2 dest={{ virtualenv_path }}/install_poppler.sh mode=0755
 
 - name: Build and install poppler-utils
-  command: "{{ virtualenv_path }}/install_poppler.sh"
+  command:  "{{ virtualenv_path }}/install_poppler.sh"
+  args:
+    creates: "/usr/local/lib/libpoppler.so"
   become: true
