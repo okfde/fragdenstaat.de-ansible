@@ -118,7 +118,7 @@ smtpd_sasl_path = private/auth
 
 # receive_override_options=no_address_mappings
 smtpd_sasl_local_domain = $myhostname
-smtpd_sender_restrictions = reject_unknown_sender_domain, check_sender_access pcre:/etc/postfix/reject_domains
+smtpd_sender_restrictions = permit_sasl_authenticated, reject_unknown_sender_domain, check_sender_access pcre:/etc/postfix/reject_domains
 # mailbox_command = /usr/lib/dovecot/deliver -c /etc/dovecot/conf.d/01-mail-stack-delivery.conf -m "${EXTENSION}"
 
 smtp_use_tls = yes
