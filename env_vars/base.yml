@@ -264,7 +264,7 @@ content_security_policy:
   "report-uri": "https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
 
 content_security_policy_overrides:
-  - url: "/account/authorize/"
+  - url: "~^/account/authorize/"
     directives:
       "form-action": "*"
 
