@@ -176,16 +176,6 @@ server {
         rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
     }
 
-    {% for url_dir in nginx_private_media %}
-        location {{ url_dir.url }} {
-          internal;
-          {% if url_dir.force_download is defined and url_dir.force_download %}
-              add_header Content-disposition "attachment; filename=$1";
-          {% endif %}
-          alias {{ nginx_private_media_path }}{{ url_dir.dir }};
-        }
-    {% endfor %}
-
     {% for dir in nginx_public_media %}
         location {{ dir }} {
             rewrite     ^ https://{{ media_server_name }}$request_uri? permanent;
