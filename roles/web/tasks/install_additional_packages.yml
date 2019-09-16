@@ -67,14 +67,3 @@
 
 - name: Install LibreOffice
   apt: name=libreoffice state=latest update_cache=yes
-
-- name: Install Latex for PDF generation
-  apt:
-    name:
-      - texlive
-      - texlive-xetex
-      - texlive-lang-german
-      - latexmk
-    update_cache: "{{ update_apt_cache }}"
-    force: yes
-    state: present
