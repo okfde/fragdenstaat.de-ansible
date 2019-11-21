@@ -74,24 +74,24 @@ rate_limited_urls:
 
 release_repo: okfde/fragdenstaat_de
 release_notifications:
+  - name: django-filingcabinet
+    repo: okfde/django-filingcabinet
   - name: froide
     repo: okfde/froide
   - name: froide-campaign
     repo: okfde/froide-campaign
-  - name: froide-legalaction
-    repo: okfde/froide-legalaction
   - name: froide-crowdfunding
     repo: okfde/froide-crowdfunding
-  - name: froide-fax
-    repo: okfde/froide-fax
   - name: froide-exam
     repo: okfde/froide-exam
+  - name: froide-fax
+    repo: okfde/froide-fax
   - name: froide-food
     repo: okfde/froide-food
+  - name: froide-legalaction
+    repo: okfde/froide-legalaction
   - name: froide-payment
     repo: okfde/froide-payment
-  - name: django-filingcabinet
-    repo: okfde/django-filingcabinet
 
 frontend_modules:
   - package: froide
@@ -108,10 +108,10 @@ celery_worker:
     worker: 1
   - name: mailsend
     queues: "emailsend"
-    worker: 4
+    worker: 2
   - name: mailsend_bulk
     queues: "emailsend_bulk"
-    worker: 1
+    worker: 4
   - name: search
     queues: "searchindex"
     worker: 4
@@ -154,6 +154,10 @@ foi_email_host_password: password
 bounce_email_host: "127.0.0.1"
 bounce_email_host_user: "mail@fragdenstaat.de"
 bounce_email_host_password: password
+unsubscribe_email_host: "127.0.0.1"
+unsubscribe_email_host_user: "mail@fragdenstaat.de"
+unsubscribe_email_host_password: password
+
 
 email_alias:
   - from: "test@fragdenstaat.de"
@@ -178,14 +182,14 @@ nginx_media_dir: "/var/www/fragdenstaat.de/storage"
 nginx_private_media_path: "/var/www/fragdenstaat.de/storage/"
 
 nginx_public_media:
-  - /files/legalaction
-  - /files/media
-  - /files/profile
-  - /files/docs
-  - /files/export
+  - /files/legalaction/
+  - /files/media/
+  - /files/profile/
+  - /files/docs/
+  - /files/export/
 
 nginx_public_privileged_media:
-  - "/files/campaign"
+  - "/files/campaign/"
 
 nginx_private_media:
   - url: "/protected"
@@ -195,9 +199,12 @@ nginx_private_media:
     dir: "private/main"
   - url: "/private_thumbnails"
     dir: "private/thumbnails"
+  - url: "/filingcabinet-private"
+    dir: "files"
 
 nginx_private_media_prefix:
-  - url: "/files/foi"
+  - url: "/files/foi/"
+  - url: "/files/docs-private/"
   - url: "/smedia"
 
 
@@ -217,16 +224,18 @@ redirect_paths:
     path: "/media-30800/"
   - from: "^/de/"
     path: "/"
+  - from: "^/r/"
+    path: "/a/"
 
-media_legal_paths:
-  - path: "/files/foi/110867/bfr-stellungnahme.pdf"
-    link: "https://fragdenstaat.de/zensurheberrecht"
+media_legal_paths: []
+# - path: "/files/foi/110867/bfr-stellungnahme.pdf"
+#   link: "https://fragdenstaat.de/zensurheberrecht"
 
 media_redirect_paths:
   - from: "/files/media/main/2e/bc/2ebc2ed7-51e4-4717-9fc7-a34225bebc5c/sog-masterplan-csu.pdf"
     path: "https://fragdenstaat.de/dokumente/30-sog-masterplan-csu/"
-  - from: "/files/foi/110867/bfr-stellungnahme.pdf"
-    path: "https://fragdenstaat.de/dokumente/66/"
+# - from: "/files/foi/110867/bfr-stellungnahme.pdf"
+#   path: "https://fragdenstaat.de/dokumente/66/"
 
 simple_files:
   - path: "/robots.txt"
@@ -238,9 +247,6 @@ simple_files:
     filename: apple-developer-merchantid-domain-association.dms
   - path: "/BingSiteAuth.xml"
     filename: BingSiteAuth.xml
-  - path: "/nope"
-    filename: bad_referrer.html
-    mimetype: 'text/html'
 
 web_cors_for_media:
   - "/api/v1/campaigninformationobject"
@@ -255,34 +261,35 @@ content_security_policy:
   "frame-src": "'self' blob: https://static.frag-den-staat.de https://media.frag-den-staat.de https://okfde.github.io https://www.betterplace.org https://betterplace-assets.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com https://www.foodwatch.org/de/iframe/ https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
   "object-src": "'self' https://media.frag-den-staat.de"
   "connect-src": "'self' https://static.frag-den-staat.de https://media.frag-den-staat.de https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com"
-  "child-src": "blob: https://static.frag-den-staat.de"
+  "child-src": "'self' blob: https://static.frag-den-staat.de"
   "base-uri": "'none'"
   "font-src": "data: https://static.frag-den-staat.de"
   "manifest-src": "https://static.frag-den-staat.de"
   "form-action": "'self' https://fragdenstaat.de https://forum.okfn.de https://www.paypal.com https://pretix.eu https://hooks.stripe.com https://stripe.com https://r.girogate.de"
   "frame-ancestors": "*"
-  "report-uri": "https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
+  "report-uri": "https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
 content_security_policy_overrides:
   - url: "~^/account/authorize/"
     directives:
-      "form-action": "*"
+      "form-action": "* fragdenstaat:"
 
 static_content_security_policy:
   - "default-src 'self' data: blob: https://fragdenstaat.de https://media.frag-den-staat.de"
   - "style-src 'self' data: 'unsafe-inline'"
   - "connect-src 'self' https://fragdenstaat.de https://media.frag-den-staat.de"
   - "frame-ancestors *"
-  - "report-uri https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
+  - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
 media_content_security_policy:
   - "default-src 'none'"
   - "style-src 'unsafe-inline'"
   - "object-src 'self'"
+  - "img-src 'self'"
   - "connect-src 'self'"
   - "media-src 'self'"
   - "frame-ancestors *"
-  - "report-uri https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
+  - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
 priviliged_media_content_security_policy:
   - "default-src 'self' data: https://static.frag-den-staat.de"
@@ -295,13 +302,18 @@ priviliged_media_content_security_policy:
   - "connect-src 'self' https://fragdenstaat.de"
   - "child-src blob: https://static.frag-den-staat.de"
   - "frame-ancestors *"
-  - "report-uri https://sentry.okfn.de/api/4/csp-report/?sentry_key=b0305966ad35428b88f611c796792749"
+  - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
 
 # Fill this in
 
 django_sentry_dsn: ""
 django_sentry_public_dsn: ""
+sentry_auth_token: ""
+sentry_url: ""
+sentry_org: ""
+sentry_project: ""
+sentry_webhook_url: ""
 
 yelp_api_key: ""
 
@@ -317,3 +329,5 @@ stripe_webhook_sofort_signing_key: ""
 paypal_client_id: ""
 paypal_client_secret: ""
 paypal_api_url: ""
+
+slack_webhook_url: ""
