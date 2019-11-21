@@ -1,2 +1,6 @@
 User-agent: *
-Disallow:
+Disallow: /anfrage/*/pdf/
+Disallow: /payment*
+Disallow: /en/request/
+Disallow: /account/
+Disallow: /spenden/spende/ihre-spenden/
