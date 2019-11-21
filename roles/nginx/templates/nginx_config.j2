@@ -28,7 +28,7 @@ map $request_uri $csp_header {
 map $http_referer $bad_referrer {
     default                  0;
     {% for domain in bad_referrers %}
-    "~{{ domain.from }}"          "{{ domain.to }}";
+    "~{{ domain.domain }}"          "https://{{ static_server_name }}/nope?url={{ domain.url|urlencode() }}";
     {% endfor %}
 }
 
@@ -350,6 +350,11 @@ server {
     {% endwith %}
 
     expires $expires;
+
+    location /nope {
+        default_type text/html;
+        alias {{ virtualenv_path }}/simple_files/bad_referrer.html;
+    }
 
     location /static/ {
         {{ csp_block(static_content_security_policy) }}

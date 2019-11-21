@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title></title>
-<meta http-equiv="refresh" content="1; url=https://taz.de/Journalistenwatch-ohne-Gemeinnutz/!5607795/" />
+<meta http-equiv="refresh" content="1; url=https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
 <script>
-    if (window.opener) {
-        opener.location = 'https://www.exit-deutschland.de/';
+    var query = document.location.search
+    var url= 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+    if (query.indexOf('?url=') !== -1) {
+        url = decodeURIComponent(query.replace('?url=', ''))
     }
-    document.location.replace('https://taz.de/Journalistenwatch-ohne-Gemeinnutz/!5607795/');
+    if (window.opener) {
+        window.opener.location.replace(url);
+    }
+    document.location.replace(url);
 </script>
