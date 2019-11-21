@@ -46,6 +46,8 @@ django_environment:
   PAYPAL_CLIENT_ID: "{{ paypal_client_id }}"
   PAYPAL_CLIENT_SECRET: "{{ paypal_client_secret }}"
   PAYPAL_API_URL: "{{ paypal_api_url }}"
+  PAYPAL_WEBHOOK_ID: "{{ paypal_webhook_id }}"
+  SLACK_WEBHOOK_URL: "{{ slack_webhook_url }}"
   YELP_API_KEY: "{{ yelp_api_key }}"
   MAPBOX_API_KEY: "{{ mapbox_api_key }}"
   FOURSQUARE_API_KEY: "{{ foursquare_api_key }}"
