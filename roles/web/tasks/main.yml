@@ -21,11 +21,6 @@
     - deploy-frontend
 
 - import_tasks: set_file_permissions.yml
-  tags:
-    - deploy
-    - deploy-backend
-    - deploy-web
-    - deploy-frontend
 
 - import_tasks: setup_django_app.yml
   tags:
@@ -57,6 +52,8 @@
 
 - name: Reload application
   shell: "supervisorctl pid {{ application_name }} | xargs kill -s HUP"
+  notify:
+    - restart memcached
   tags:
     - deploy
     - deploy-backend
