@@ -9,5 +9,6 @@ for u in \
     https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz \
     https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz \
     ; do
-    wget -N -q $u -O ${u##*/} && gunzip -fc ${u##*/} > $(basename $u .gz)
+    FILE=$(basename $u .gz)
+    wget -N -q $u -O ${u##*/} && gunzip -fc ${u##*/} > $FILE.tmp && mv $FILE.tmp $FILE
 done
