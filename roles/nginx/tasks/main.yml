@@ -54,6 +54,9 @@
   copy: src={{ item.filename }} dest={{ virtualenv_path}}/simple_files/{{ item.filename }}
   with_items: "{{ simple_files }}"
 
+- name: Setup bad referrer redirect
+  copy: src=bad_referrer.html dest={{ virtualenv_path}}/simple_files/bad_referrer.html
+
 - name: Ensure that the default site is disabled
   file: path=/etc/nginx/sites-enabled/default state=absent
   notify: reload nginx
