@@ -41,6 +41,7 @@
     - deploy
     - deploy-backend
     - deploy-web
+    - deploy-frontend
 
 - name: release notifications
   import_tasks: release_notification.yml

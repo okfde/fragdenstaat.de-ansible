@@ -7,7 +7,10 @@
     virtualenv: "{{ virtualenv_path }}"
     settings: "{{ django_settings_file }}"
   environment: "{{ django_environment }}"
-  tags: django.migrate
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
   become: true
   become_user: "{{ gunicorn_user }}"
 
@@ -22,3 +25,6 @@
   become_user: "{{ gunicorn_user }}"
   tags:
     - django.collectstatic
+    - deploy-web
+    - deploy-backend
+    - deploy-frontend
