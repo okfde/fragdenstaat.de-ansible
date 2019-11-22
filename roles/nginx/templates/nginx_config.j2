@@ -1,3 +1,5 @@
+{% from '_utils.j2' import csp_header_map with context %}
+
 map $sent_http_content_type $expires {
     default                     off;
     text/html                   epoch;
@@ -18,12 +20,7 @@ map $sent_http_content_type $media_expires {
     ~image/                     max;
 }
 
-map $request_uri $csp_header {
-    default "{% for k, v in content_security_policy.items() %}{{ k }} {{ v }};{% endfor %}";
-    {% for override in content_security_policy_overrides %}
-    "{{ override.url }}" "{% for k, v in content_security_policy.items() %}{{ k }} {% if k in override.directives %}{{ override.directives[k] }}{% else %}{{ v }}{% endif %};{% endfor %}";
-    {% endfor %}
-}
+{{ csp_header_map() }}
 
 map $http_referer $bad_referrer {
     default                  0;
@@ -87,30 +84,6 @@ server {
     rewrite     ^ https://{{ web_server_name }}$request_uri? permanent;
 }
 
-{% macro csp(csp_list) -%}{% for v in csp_list %}{{ v }};{% endfor %}{%- endmacro %}
-{% macro csp_block(csp_list) -%}
-    add_header Content-Security-Policy "{{ csp(csp_list) }}";
-    add_header X-Content-Security-Policy "{{ csp(csp_list) }}";
-    add_header X-WebKit-CSP "{{ csp(csp_list) }}";
-{%- endmacro %}
-
-{% macro cors(domain) -%}if ($http_origin ~* (^https://{{ domain }}(:[0-9]+)?$)) {
-                add_header Access-Control-Allow-Origin $http_origin;
-                add_header Access-Control-Allow-Headers "pragma, cache-control";
-        }{%- endmacro %}
-{% macro basic_auth(realm) -%}
-    auth_basic "Restricted";
-    auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd_{{ realm }};
-{%- endmacro %}
-
-{% macro proxy_upstream() -%}
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto https;
-    proxy_set_header Host $host;
-    proxy_pass http://{{ application_name }}_wsgi_server;
-{%- endmacro %}
-
 server {
     listen              443 ssl http2;
     listen         [::]:443 ssl http2;
@@ -119,111 +92,8 @@ server {
     {% with server_name = web_server_name %}
         {% include '_ssl.j2' %}
     {% endwith %}
-    add_header Referrer-Policy "same-origin";
 
-    error_page 502 503 504 =503 /maintenance.html;
-    location = /maintenance.html {
-        root {{ virtualenv_path }}/static_html/;
-    }
-
-    {% if maintenance %}
-        set $maintenance on;
-
-        {% if maintenance_admin_ip %}
-        if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
-            set $maintenance off;
-        }
-        {% endif %}
-        if ($maintenance = on) {
-            return 503;
-        }
-    {% endif %}
-
-    expires $expires;
-
-    client_max_body_size 50M;
-
-    access_log {{ nginx_access_log_file }};
-    error_log {{ nginx_error_log_file }};
-
-
-    {% if redirect_paths is defined %}
-        {% for redirect_path in redirect_paths %}
-            location ~ {{ redirect_path.from }}(.*)$ {
-              return 301 {{ redirect_path.path }}$1$is_args$args;
-            }
-        {% endfor %}
-    {% endif %}
-
-    {% for simple_file in simple_files %}
-        location {{ simple_file.path }} {
-            {% if simple_file.mimetype is defined %}
-                add_header Content-Type "{{ simple_file.mimetype }}";
-            {% endif %}
-            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
-        }
-    {% endfor %}
-
-    if ($bad_referrer) {
-        return 301 $bad_referrer;
-    }
-
-    location /favicon.ico {
-        return 404;
-    }
-
-    location /static/ {
-        rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
-    }
-
-    {% for dir in nginx_public_media %}
-        location {{ dir }} {
-            rewrite     ^ https://{{ media_server_name }}$request_uri? permanent;
-        }
-    {% endfor %}
-
-    add_header Content-Security-Policy $csp_header;
-    add_header X-Content-Security-Policy $csp_header;
-    add_header X-WebKit-CSP $csp_header;
-
-    {% for item in rate_limited_urls %}
-        location {{ item.url }} {
-            limit_req zone={{ item.zone }} burst=5 nodelay;
-            {% if item.auth %}{{ basic_auth(item.auth) }}{% endif %}
-
-            {{ proxy_upstream() }}
-        }
-    {% endfor %}
-
-    {% for url_realm in protected_urls %}
-        location {{ url_realm.url }} {
-            {{ basic_auth(url_realm.realm) }}
-            {{ cors(static_server_name) }}
-
-            {{ proxy_upstream() }}
-        }
-    {% endfor %}
-
-    {% for url in web_cors_for_media %}
-        location {{ url }} {
-            {{ cors(static_server_name) }}
-            {{ cors(media_server_name) }}
-
-            {{ proxy_upstream() }}
-        }
-    {% endfor %}
-
-    location / {
-        {{ cors(static_server_name) }}
-
-        {{ proxy_upstream() }}
-    }
-
-    # Error pages
-    error_page 500 /500.html;
-    location = /500.html {
-        root {{ project_path }}/{{ application_name }}/templates/;
-    }
+    {% include '_web_server.j2' %}
 }
 
 server {
@@ -235,109 +105,7 @@ server {
         {% include '_ssl.j2' %}
     {% endwith %}
 
-    {% if maintenance %}
-        set $maintenance on;
-
-        {% if maintenance_admin_ip %}
-        if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
-            set $maintenance off;
-        }
-        {% endif %}
-        if ($maintenance = on) {
-            return 503;
-        }
-    {% endif %}
-
-    expires $media_expires;
-
-    if ($bad_referrer) {
-        return 301 $bad_referrer;
-    }
-
-    error_page 403 /forbidden.html;
-    proxy_intercept_errors on;
-
-    location = /forbidden.html {
-        root {{ virtualenv_path }}/static_html/;
-    }
-
-    error_page 451 =451 /error_451.html;
-    location = /error_451.html {
-        add_header Link '<https://fragdenstaat.de/zensurheberrecht>; rel="blocked-by"' always;
-        root {{ virtualenv_path }}/static_html/;
-    }
-
-    {% if media_legal_paths is defined %}
-        {% for legal_info in media_legal_paths %}
-            location ~ {{ legal_info.path }}(.*)$ {
-              return 451;
-            }
-        {% endfor %}
-    {% endif %}
-
-    {% if media_redirect_paths is defined %}
-        {% for redirect_path in media_redirect_paths %}
-            location ~ {{ redirect_path.from }}(.*)$ {
-              return 301 {{ redirect_path.path }}$1$is_args$args;
-            }
-        {% endfor %}
-    {% endif %}
-
-    {% for prefix in nginx_private_media_prefix %}
-        location {{ prefix.url }} {
-            {{ csp_block(media_content_security_policy) }}
-
-            {{ cors(static_server_name) }}
-            {{ cors(web_server_name) }}
-
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto https;
-            proxy_set_header Host $host;
-
-            proxy_pass http://{{ application_name }}_wsgi_server;
-            proxy_hide_header Set-Cookie;
-        }
-    {% endfor %}
-
-    {% for url_dir in nginx_private_media %}
-        location {{ url_dir.url }} {
-            internal;
-
-            set $link "$upstream_http_link";
-            add_header Link $link;
-
-            {% if url_dir.force_download is defined and url_dir.force_download %}
-              add_header Content-disposition "attachment";
-            {% endif %}
-
-            {{ cors(static_server_name) }}
-            {{ cors(web_server_name) }}
-            proxy_hide_header Set-Cookie;
-            alias {{ nginx_private_media_path }}{{ url_dir.dir }};
-        }
-    {% endfor %}
-
-    {% for dir in nginx_public_media %}
-        location {{ dir }} {
-            {{ csp_block(media_content_security_policy) }}
-            {{ cors(static_server_name) }}
-            {{ cors(web_server_name) }}
-
-            alias   {{ nginx_media_dir }}{{ dir }};
-        }
-    {% endfor %}
-
-    {# privileged media has a CSP like web server #}
-    {% for dir in nginx_public_privileged_media %}
-        location {{ dir }} {
-            {{ csp_block(priviliged_media_content_security_policy) }}
-            {{ cors(static_server_name) }}
-            {{ cors(web_server_name) }}
-
-            alias   {{ nginx_media_dir }}{{ dir }};
-        }
-    {% endfor %}
+    {% include '_media_server.j2' %}
 }
 
 server {
@@ -349,27 +117,7 @@ server {
         {% include '_ssl.j2' %}
     {% endwith %}
 
-    expires $expires;
-
-    location /nope {
-        default_type text/html;
-        alias {{ virtualenv_path }}/simple_files/bad_referrer.html;
-    }
-
-    location /static/ {
-        {{ csp_block(static_content_security_policy) }}
-        add_header Access-Control-Allow-Origin https://fragdenstaat.de;
-
-        alias   {{ nginx_static_dir }};
-    }
-    {% for simple_file in simple_files %}
-        location {{ simple_file.path }} {
-            {% if simple_file.mimetype is defined %}
-                add_header Content-Type "{{ simple_file.mimetype }}";
-            {% endif %}
-            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
-        }
-    {% endfor %}
+    {% include '_static_server.j2' %}
 }
 
 server {
@@ -383,3 +131,50 @@ server {
 
 }
 
+{% if onion_service_enabled %}
+
+{% with onion_service = onion_services['onion_web'], csp_header_var="csp_header_onion" %}
+
+{{ csp_header_map(header_var=csp_header_var, web=onion_web_server_url, media=onion_media_server_url, static=onion_static_server_url) }}
+
+upstream {{ application_name }}_onion_wsgi_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:{{ virtualenv_path }}/run/gunicorn_onion.sock fail_timeout=0;
+}
+
+server {
+    listen 127.0.0.1:{{ onion_service.internal_port }};
+    server_name         {{ onion_service.hostname }};
+
+    {% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+        {% include '_web_server.j2' %}
+    {% endwith %}
+}
+{% endwith %}
+
+{% with onion_service = onion_services['onion_static_media'] %}
+
+server {
+    listen 127.0.0.1:{{ onion_service.internal_port }};
+    server_name         media.{{ onion_service.hostname }};
+
+    {% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+        {% include '_media_server.j2' %}
+    {% endwith %}
+}
+
+server {
+    listen 127.0.0.1:{{ onion_service.internal_port }};
+    server_name         static.{{ onion_service.hostname }};
+
+    {% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+        {% include '_static_server.j2' %}
+    {% endwith %}
+}
+
+{% endwith %}
+
+{% endif %}

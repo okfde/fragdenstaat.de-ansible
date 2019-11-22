@@ -1,0 +1,97 @@
+# - name: Create tor.d directory
+#   file:
+#       path: /etc/torrc.d
+#       state: directory
+#       owner: root
+#       group: root
+#       mode: 0755
+
+# - name: Add include of /etc/torrc.d into torrc
+#   lineinfile:
+#       path: /etc/tor/torrc
+#       line: "%include /etc/torrc.d"
+#       state: present
+#   notify: restart tor
+
+# - name: Creating tor.d config entries
+#   template:
+#       src: hidden_service.j2
+#       dest: "/etc/torrc.d/{{ service.key }}"
+#       owner: debian-tor
+#       group: debian-tor
+#       mode: 0644
+#   with_dict: "{{ onion_services }}"
+#   loop_control:
+#       loop_var: service
+#   notify: restart tor
+
+- name: Create hidden service directories
+  file:
+      path: "/var/lib/tor/{{ service.key }}"
+      state: directory
+      owner: debian-tor
+      group: debian-tor
+      mode: 0700
+  with_dict: "{{ onion_services }}"
+  loop_control:
+      loop_var: service
+  notify: restart tor
+
+- name: Write hostname
+  copy:
+      content: "{{ service.value.hostname }}"
+      dest: "/var/lib/tor/{{ service.key }}/hostname"
+      owner: debian-tor
+      group: debian-tor
+      mode: 0600
+  with_dict: "{{ onion_services }}"
+  loop_control:
+      loop_var: service
+  notify: restart tor
+
+- name: Write local system_tor AppArmor profile.
+  template:
+    src: apparmor_system_tor.j2
+    dest: "/etc/apparmor.d/local/system_tor"
+    owner: root
+    group: root
+    mode: "644"
+  notify: restart apparmor
+
+- name: Start tor
+  service:
+    name: tor
+    state: started
+    enabled: true
+    masked: false
+
+- name: Create the application log file
+  file:
+    path: "{{ application_log_dir }}/gunicorn_onion_supervisor.log"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    mode: 0664
+    state: touch
+
+- name: Create the Onion Gunicorn script file
+  template: src=gunicorn_onion_start.j2
+            dest={{ virtualenv_path }}/bin/gunicorn_onion_start
+            owner={{ gunicorn_user }}
+            group={{ gunicorn_group }}
+            mode=0755
+            backup=yes
+  when: onion_service_enabled
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-web
+
+- name: Create the Supervisor config file
+  template: src=supervisor_onion_config.j2
+            dest=/etc/supervisor/conf.d/{{ application_name }}_onion.conf
+            backup=yes
+
+- name: Re-read the Supervisor config files
+  supervisorctl:
+    name: "{{ application_name }}_onion"
+    state: present

@@ -1,0 +1,38 @@
+{% macro basic_auth(realm) -%}
+    auth_basic "Restricted";
+    auth_basic_user_file {{ virtualenv_path}}/conf/htpasswd_{{ realm }};
+{%- endmacro %}
+
+
+{% macro proxy_upstream() -%}
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Host $host;
+    proxy_pass http://{{ wsgi_app_name|default(application_name) }}_wsgi_server;
+{%- endmacro %}
+
+
+{% macro cors(server_url) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
+                add_header Access-Control-Allow-Origin $http_origin;
+                add_header Access-Control-Allow-Headers "pragma, cache-control";
+        }{%- endmacro %}
+
+{% macro csp_value(csp_value, web=web_server_url, media=media_server_url, static=static_server_url) -%}{{ csp_value | regex_replace('__web__', web) | regex_replace('__media__', media) | regex_replace('__static__', static) }};{%- endmacro %}
+
+{% macro csp(csp_list, web=web_server_url, media=media_server_url, static=static_server_url) -%}{% for v in csp_list %}{{ csp_value(v, web=web, media=media, static=static) }}{% endfor %}{%- endmacro %}
+
+{% macro csp_block(csp_list, web=web_server_url, media=media_server_url, static=static_server_url) -%}
+    add_header Content-Security-Policy "{{ csp(csp_list, web=web, media=media, static=static) }}";
+    add_header X-Content-Security-Policy "{{ csp(csp_list, web=web, media=media, static=static) }}";
+    add_header X-WebKit-CSP "{{ csp(csp_list, web=web, media=media, static=static) }}";
+{%- endmacro %}
+
+{% macro csp_header_map(header_var='csp_header', web=web_server_url, media=media_server_url, static=static_server_url) %}
+map $request_uri ${{ header_var }} {
+    default "{% for k, v in content_security_policy.items() %}{{ k }} {{ csp_value(v, web=web, media=media, static=static) }}{% endfor %}";
+    {% for override in content_security_policy_overrides %}
+    "{{ override.url }}" "{% for k, v in content_security_policy.items() %}{{ k }} {% if k in override.directives %}{{ csp_value(override.directives[k], web=web, media=media, static=static) }}{% else %}{{ csp_value(v, web=web, media=media, static=static) }}{% endif %}{% endfor %}";
+    {% endfor %}
+}
+{% endmacro %}

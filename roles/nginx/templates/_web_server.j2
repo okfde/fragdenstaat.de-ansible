@@ -1,0 +1,107 @@
+{% from '_utils.j2' import basic_auth, proxy_upstream, cors with context %}
+
+add_header Referrer-Policy "same-origin";
+
+error_page 502 503 504 =503 /maintenance.html;
+location = /maintenance.html {
+    root {{ virtualenv_path }}/static_html/;
+}
+
+{% if maintenance %}
+    set $maintenance on;
+
+    {% if maintenance_admin_ip %}
+    if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
+        set $maintenance off;
+    }
+    {% endif %}
+    if ($maintenance = on) {
+        return 503;
+    }
+{% endif %}
+
+expires $expires;
+
+client_max_body_size 50M;
+
+access_log {{ nginx_access_log_file }};
+error_log {{ nginx_error_log_file }};
+
+
+{% if redirect_paths is defined %}
+    {% for redirect_path in redirect_paths %}
+        location ~ {{ redirect_path.from }}(.*)$ {
+          return 301 {{ redirect_path.path }}$1$is_args$args;
+        }
+    {% endfor %}
+{% endif %}
+
+{% for simple_file in simple_files %}
+    location {{ simple_file.path }} {
+        {% if simple_file.mimetype is defined %}
+            add_header Content-Type "{{ simple_file.mimetype }}";
+        {% endif %}
+        alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
+    }
+{% endfor %}
+
+if ($bad_referrer) {
+    return 301 $bad_referrer;
+}
+
+location /favicon.ico {
+    return 404;
+}
+
+location /static/ {
+    rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
+}
+
+{% for dir in nginx_public_media %}
+    location {{ dir }} {
+        rewrite     ^ https://{{ media_server_name }}$request_uri? permanent;
+    }
+{% endfor %}
+
+add_header Content-Security-Policy ${{ csp_header_var|default('csp_header') }};
+add_header X-Content-Security-Policy ${{ csp_header_var|default('csp_header') }};
+add_header X-WebKit-CSP ${{ csp_header_var|default('csp_header') }};
+
+{% for item in rate_limited_urls %}
+    location {{ item.url }} {
+        limit_req zone={{ item.zone }} burst=5 nodelay;
+        {% if item.auth %}{{ basic_auth(item.auth) }}{% endif %}
+
+        {{ proxy_upstream() }}
+    }
+{% endfor %}
+
+{% for url_realm in protected_urls %}
+    location {{ url_realm.url }} {
+        {{ basic_auth(url_realm.realm) }}
+        {{ cors(static_server_name) }}
+
+        {{ proxy_upstream() }}
+    }
+{% endfor %}
+
+{% for url in web_cors_for_media %}
+    location {{ url }} {
+        {{ cors(static_server_name) }}
+        {{ cors(media_server_name) }}
+
+        {{ proxy_upstream() }}
+    }
+{% endfor %}
+
+location / {
+    {{ cors(static_server_name) }}
+
+    {{ proxy_upstream() }}
+}
+
+# Error pages
+error_page 500 /500.html;
+location = /500.html {
+    root {{ project_path }}/{{ application_name }}/templates/;
+}

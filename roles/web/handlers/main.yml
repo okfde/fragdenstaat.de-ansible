@@ -1,7 +1,22 @@
 ---
 
 - name: restart application
-  supervisorctl: name={{ application_name }} state=restarted
+  supervisorctl:
+    name: "{{ application_name }}"
+    state: restarted
 
 - name: restart memcached
-  service: name=memcached state=restarted enabled=yes
+  service:
+    name: memcached
+    state: restarted
+    enabled: yes
+
+- name: restart tor
+  service:
+    name: tor
+    state: restarted
+
+- name: restart apparmor
+  service:
+    name: apparmor
+    state: restarted

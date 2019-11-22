@@ -1,0 +1,105 @@
+{% from '_utils.j2' import cors, csp, csp_block with context %}
+
+{% if maintenance %}
+    set $maintenance on;
+
+    {% if maintenance_admin_ip %}
+    if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
+        set $maintenance off;
+    }
+    {% endif %}
+    if ($maintenance = on) {
+        return 503;
+    }
+{% endif %}
+
+expires $media_expires;
+
+if ($bad_referrer) {
+    return 301 $bad_referrer;
+}
+
+error_page 403 /forbidden.html;
+proxy_intercept_errors on;
+
+location = /forbidden.html {
+    root {{ virtualenv_path }}/static_html/;
+}
+
+error_page 451 =451 /error_451.html;
+location = /error_451.html {
+    add_header Link '<https://fragdenstaat.de/zensurheberrecht>; rel="blocked-by"' always;
+    root {{ virtualenv_path }}/static_html/;
+}
+
+{% if media_legal_paths is defined %}
+    {% for legal_info in media_legal_paths %}
+        location ~ {{ legal_info.path }}(.*)$ {
+          return 451;
+        }
+    {% endfor %}
+{% endif %}
+
+{% if media_redirect_paths is defined %}
+    {% for redirect_path in media_redirect_paths %}
+        location ~ {{ redirect_path.from }}(.*)$ {
+          return 301 {{ redirect_path.path }}$1$is_args$args;
+        }
+    {% endfor %}
+{% endif %}
+
+{% for prefix in nginx_private_media_prefix %}
+    location {{ prefix.url }} {
+        {{ csp_block(media_content_security_policy) }}
+
+        {{ cors(static_server_url) }}
+        {{ cors(web_server_url) }}
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Host $host;
+
+        proxy_pass http://{{ application_name }}_wsgi_server;
+        proxy_hide_header Set-Cookie;
+    }
+{% endfor %}
+
+{% for url_dir in nginx_private_media %}
+    location {{ url_dir.url }} {
+        internal;
+
+        set $link "$upstream_http_link";
+        add_header Link $link;
+
+        {% if url_dir.force_download is defined and url_dir.force_download %}
+          add_header Content-disposition "attachment";
+        {% endif %}
+
+        {{ cors(static_server_url) }}
+        {{ cors(web_server_url) }}
+        proxy_hide_header Set-Cookie;
+        alias {{ nginx_private_media_path }}{{ url_dir.dir }};
+    }
+{% endfor %}
+
+{% for dir in nginx_public_media %}
+    location {{ dir }} {
+        {{ csp_block(media_content_security_policy) }}
+        {{ cors(static_server_url) }}
+        {{ cors(web_server_url) }}
+
+        alias   {{ nginx_media_dir }}{{ dir }};
+    }
+{% endfor %}
+
+{# privileged media has a CSP like web server #}
+{% for dir in nginx_public_privileged_media %}
+    location {{ dir }} {
+        {{ csp_block(priviliged_media_content_security_policy) }}
+        {{ cors(static_server_url) }}
+        {{ cors(web_server_url) }}
+
+        alias   {{ nginx_media_dir }}{{ dir }};
+    }
+{% endfor %}

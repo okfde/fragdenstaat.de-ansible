@@ -1,0 +1,6 @@
+#
+# Managed by ansible
+#
+
+HiddenServiceDir /var/lib/tor/{{ service.key }}/
+HiddenServicePort {{ service.value.port }} 127.0.0.1:{{ service.value.internal_port }}

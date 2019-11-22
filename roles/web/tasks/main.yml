@@ -43,6 +43,9 @@
     - deploy-web
     - deploy-frontend
 
+- import_tasks: setup_onion_service.yml
+  when: onion_service_enabled
+
 - name: release notifications
   import_tasks: release_notification.yml
 
@@ -53,6 +56,17 @@
 
 - name: Reload application
   shell: "supervisorctl pid {{ application_name }} | xargs kill -s HUP"
+  notify:
+    - restart memcached
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
+    - deploy-web
+
+- name: Reload Onion application
+  shell: "supervisorctl pid {{ application_name }}_onion | xargs kill -s HUP"
+  when: onion_service_enabled
   notify:
     - restart memcached
   tags:

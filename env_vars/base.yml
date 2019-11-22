@@ -14,8 +14,11 @@ application_name: fragdenstaat_de
 mail_domain: mail.fragdenstaat.de
 domain_name: fragdenstaat.de
 web_server_name: fragdenstaat.de
+web_server_url: "https://{{ web_server_name }}"
 media_server_name: media.frag-den-staat.de
+media_server_url: "https://{{ media_server_name }}"
 static_server_name: static.frag-den-staat.de
+static_server_url: "https://{{ static_server_name }}"
 static_asset_path: "https://static.frag-den-staat.de/static/js/"
 
 https_domains:
@@ -44,6 +47,18 @@ db_user_readonly: "{{ application_name }}_readonly"
 gunicorn_num_workers: 10
 gunicorn_user: "{{ application_name }}"
 gunicorn_group: webapps
+
+onion_service_enabled: no
+gunicorn_onion_num_workers: 2
+onion_web_server: ""
+onion_web_server_url: "http://{{ onion_web_server }}"
+onion_media_server: "media."
+onion_static_server: "static."
+onion_media_server_url: "http://{{ onion_media_server }}"
+onion_static_server_url: "http://{{ onion_static_server }}"
+onion_static_url: "http://media."
+onion_media_url: "http://static."
+onion_services: {}
 
 # Temporary here
 virtualenv_path: "/var/www/fragdenstaat.de"
@@ -251,21 +266,23 @@ simple_files:
 web_cors_for_media:
   - "/api/v1/campaigninformationobject"
 
+# CSP supports __web__, __media__ and __static__ variable__s
+
 content_security_policy:
   "default-src": "'none'"
-  "script-src": "'self' 'unsafe-inline' https://static.frag-den-staat.de https://traffic.okfn.de https://js.stripe.com"
-  "style-src": "'self' 'unsafe-inline' https://static.frag-den-staat.de"
-  "img-src": "'self' data: blob: https://static.frag-den-staat.de https://media.frag-den-staat.de https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
-  "media-src": "https://static.frag-den-staat.de https://media.frag-den-staat.de"
-  "worker-src": "'self' blob: https://static.frag-den-staat.de"
-  "frame-src": "'self' blob: https://static.frag-den-staat.de https://media.frag-den-staat.de https://okfde.github.io https://www.betterplace.org https://betterplace-assets.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com https://www.foodwatch.org/de/iframe/ https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
-  "object-src": "'self' https://media.frag-den-staat.de"
-  "connect-src": "'self' https://static.frag-den-staat.de https://media.frag-den-staat.de https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com"
-  "child-src": "'self' blob: https://static.frag-den-staat.de"
+  "script-src": "'self' 'unsafe-inline' __static__ https://traffic.okfn.de https://js.stripe.com"
+  "style-src": "'self' 'unsafe-inline' __static__"
+  "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
+  "media-src": "__static__ __media__"
+  "worker-src": "'self' blob: __static__"
+  "frame-src": "'self' blob: __static__ __media__ https://okfde.github.io https://www.betterplace.org https://betterplace-assets.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com https://www.foodwatch.org/de/iframe/ https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
+  "object-src": "'self' __media__"
+  "connect-src": "'self' __static__ __media__ https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com"
+  "child-src": "'self' blob: __static__"
   "base-uri": "'none'"
-  "font-src": "data: https://static.frag-den-staat.de"
-  "manifest-src": "https://static.frag-den-staat.de"
-  "form-action": "'self' https://fragdenstaat.de https://forum.okfn.de https://www.paypal.com https://pretix.eu https://hooks.stripe.com https://stripe.com https://r.girogate.de"
+  "font-src": "data: __static__"
+  "manifest-src": "__static__"
+  "form-action": "'self' __web__ https://forum.okfn.de https://www.paypal.com https://pretix.eu https://hooks.stripe.com https://stripe.com https://r.girogate.de"
   "frame-ancestors": "*"
   "report-uri": "https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
@@ -275,9 +292,9 @@ content_security_policy_overrides:
       "form-action": "* fragdenstaat:"
 
 static_content_security_policy:
-  - "default-src 'self' data: blob: https://fragdenstaat.de https://media.frag-den-staat.de"
+  - "default-src 'self' data: blob: __web__ __media__"
   - "style-src 'self' data: 'unsafe-inline'"
-  - "connect-src 'self' https://fragdenstaat.de https://media.frag-den-staat.de"
+  - "connect-src 'self' __web__ __media__"
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
@@ -292,15 +309,15 @@ media_content_security_policy:
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
 priviliged_media_content_security_policy:
-  - "default-src 'self' data: https://static.frag-den-staat.de"
-  - "script-src 'self' 'unsafe-inline' https://static.frag-den-staat.de https://traffic.okfn.de"
-  - "style-src 'self' 'unsafe-inline' https://static.frag-den-staat.de"
-  - "img-src 'self' data: blob: https://static.frag-den-staat.de https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net *.yelpcdn.com"
-  - "worker-src 'self' blob: https://static.frag-den-staat.de"
-  - "frame-src 'self' blob: https://static.frag-den-staat.de https://fragdenstaat.de https://okfde.github.io https://www.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com"
-  - "object-src 'self' https://fragdenstaat.de"
-  - "connect-src 'self' https://fragdenstaat.de"
-  - "child-src blob: https://static.frag-den-staat.de"
+  - "default-src 'self' data: __static__"
+  - "script-src 'self' 'unsafe-inline' __static__ https://traffic.okfn.de"
+  - "style-src 'self' 'unsafe-inline' __static__"
+  - "img-src 'self' data: blob: __static__ https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net *.yelpcdn.com"
+  - "worker-src 'self' blob: __static__"
+  - "frame-src 'self' blob: __static__ __web__ https://okfde.github.io https://www.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com"
+  - "object-src 'self' __web__"
+  - "connect-src 'self' __web__"
+  - "child-src blob: __static__"
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 

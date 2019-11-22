@@ -67,3 +67,8 @@
 
 - name: Install LibreOffice
   apt: name=libreoffice state=latest update_cache=yes
+
+- name: Install Tor
+  apt: name=tor state=latest update_cache=yes
+  when: onion_service_enabled
+

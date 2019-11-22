@@ -1,11 +1,13 @@
 #!/bin/sh
 
+{% block vars %}
 NAME="{{ application_name }}"
 DJANGODIR="{{ project_path }}"
 SOCKFILE={{ virtualenv_path }}/run/gunicorn.sock
 USER={{ gunicorn_user }}
 GROUP={{ gunicorn_group }}
 NUM_WORKERS={{ gunicorn_num_workers }}
+{% endblock %}
 
 # Set this to 0 for unlimited requests. During development, you might want to
 # set this to 1 to automatically restart the process on each request (i.e. your
@@ -23,6 +25,8 @@ cd $DJANGODIR
 RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 export RELEASE_VERSION=$(cat {{ virtualenv_path}}/meta/current_release)
+
+{% block extra_env_vars %}{% endblock %}
 
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
