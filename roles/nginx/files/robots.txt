@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /anfrage/*/pdf/
+Disallow: /anfrage/*/download/
 Disallow: /payment*
 Disallow: /en/request/
 Disallow: /account/
