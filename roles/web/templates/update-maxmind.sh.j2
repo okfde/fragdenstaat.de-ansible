@@ -3,12 +3,14 @@
 ## simple cron script to update maxmindb
 set -ex
 dir={{ django_geoip_path }}
+license_key={{ geoip_license_key }}
 
 cd $dir
-for u in \
-    https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz \
-    https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz \
-    ; do
-    FILE=$(basename $u .gz)
-    wget -N -q $u -O ${u##*/} && gunzip -fc ${u##*/} > $FILE.tmp && mv $FILE.tmp $FILE
+for u in "GeoLite2-City" "GeoLite2-Country" ; do
+    wget -N -q -O ${u}.tar.gz "https://download.maxmind.com/app/geoip_download?edition_id=${u}&license_key=${license_key}&suffix=tar.gz"
+    MMDB_FILE=$(tar -tzf ${u}.tar.gz  | grep ".mmdb")
+    tar -xvzf ${u}.tar.gz $MMDB_FILE
+    cp $MMDB_FILE ${u}.mmdb
+    rm $MMDB_FILE
+    rmdir $(dirname "${MMDB_FILE}")
 done

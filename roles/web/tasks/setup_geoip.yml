@@ -16,38 +16,11 @@
 - name: Maxmind directory
   file: "path={{ django_geoip_path }} mode=0755 owner={{ gunicorn_user }} state=directory"
 
-- name: Get Maxmind databases
-  get_url:
-    url: "{{ item }}"
-    dest: "{{ django_geoip_path }}/{{ item | basename }}"
-    mode: '0444'
-  with_items:
-    - http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
-    - http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz
-  become: true
-  become_user: "{{ gunicorn_user }}"
-
-- name: extract db
-  command: "gunzip -k {{ django_geoip_path }}/{{ item }}.gz creates={{ django_geoip_path }}/{{ item }}"
-  with_items:
-    - GeoLite2-City.mmdb
-    - GeoLite2-Country.mmdb
-  become: true
-  become_user: "{{ gunicorn_user }}"
-
-- name: Ensure that the geoip databaase file permissions are set properly
-  file: path={{ django_geoip_path }}/{{ item }}
-        owner={{ gunicorn_user }}
-        group={{ gunicorn_group }}
-        mode=740
-  with_items:
-    - GeoLite2-City.mmdb
-    - GeoLite2-City.mmdb.gz
-    - GeoLite2-Country.mmdb
-    - GeoLite2-Country.mmdb.gz
-
 - name: Add script to update maxmind
   template: src=update-maxmind.sh.j2 dest={{ django_geoip_path }}/update-maxmind.sh mode=0755
+
+- name: Update maxmind database
+  shell: "{{ django_geoip_path }}/update-maxmind.sh"
 
 - name: apt | ensure cron is installed
   apt: name=cron state=present
