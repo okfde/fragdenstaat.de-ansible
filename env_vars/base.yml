@@ -143,8 +143,8 @@ celery_worker:
     worker: 1
     type: slow
   - name: celery_solo_3
-    queues: "redact"
-    worker: 1
+    queues: "redact,document"
+    worker: 2
     type: slow
 
 rabbitmq_admin_password: password
