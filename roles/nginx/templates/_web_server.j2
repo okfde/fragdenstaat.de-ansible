@@ -79,6 +79,10 @@ add_header X-WebKit-CSP ${{ csp_header_var|default('csp_header') }};
 {% for url_realm in protected_urls %}
     location {{ url_realm.url }} {
         {{ basic_auth(url_realm.realm) }}
+        {% if url_realm.only_ip is defined and url_realm.only_ip %}
+            allow {{ url_realm.only_ip }};
+            deny all;
+        {% endif %}
         {{ cors(static_server_name) }}
 
         {{ proxy_upstream() }}
