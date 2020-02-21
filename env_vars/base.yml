@@ -26,6 +26,9 @@ https_domains:
   - ["{{ media_server_name }}"]
   - ["{{ static_server_name }}"]
   - ["{{ mail_domain }}", "{{ domain_name }}"]
+  - ["app.fragdenstaat.de"]
+  - ["shop.fragdenstaat.de"]
+  - ["blog.fragdenstaat.de"]
 letsencrypt_registration_email: info@fragdenstaat.de
 letsencrypt_tmp_dir: /opt/letsencrypt/tmp
 letsencrypt_renew_hooks:
