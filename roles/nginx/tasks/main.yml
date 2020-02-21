@@ -19,6 +19,19 @@
             backup=yes
   notify: reload nginx
 
+- name: Check if HTTPS certificates exist
+  stat:
+    path: "/etc/letsencrypt/live/{{ item.from }}/{{ letsencrypt_cert_filename }}"
+  register: https_cert_check
+  with_items: "{{ redirect_domains }}"
+
+- name: Set HTTPS certificate facts
+  set_fact:
+    active_https_domains: "{{ active_https_domains|default({}) | combine( {item.item.from: item.stat.exists} ) }}"
+  with_items: "{{ https_cert_check.results }}"
+
+- debug: var=active_https_domains
+
 - name: Create the Nginx configuration file
   template: src=nginx_config.j2
             dest=/etc/nginx/sites-available/{{ application_name }}
