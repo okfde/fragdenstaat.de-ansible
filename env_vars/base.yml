@@ -230,13 +230,22 @@ nginx_private_media_prefix:
 redirect_domains:
   - from: "blog.fragdenstaat.de"
     domain: "fragdenstaat.de/blog"
+    https: true
+  - from: "shop.fragdenstaat.de"
+    domain: "fragdenstaat.de/shop"
+    https: true
+  - from: "app.fragdenstaat.de"
+    domain: "fragdenstaat.de/app"
+    https: true
   - from: "mail.fragdenstaat.de"
     domain: "fragdenstaat.de"
+    https: true
   - from: "media.frag-den-staat.de"
     domain: "media.frag-den-staat.de"
+    https: false
   - from: "static.frag-den-staat.de"
     domain: "static.frag-den-staat.de"
-
+    https: false
 
 redirect_paths:
   - from: "^/files/foi/30800/"
