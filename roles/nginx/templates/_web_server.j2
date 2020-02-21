@@ -2,11 +2,6 @@
 
 add_header Referrer-Policy "same-origin";
 
-error_page 502 503 504 =503 /maintenance.html;
-location = /maintenance.html {
-    root {{ virtualenv_path }}/static_html/;
-}
-
 {% if maintenance %}
     set $maintenance on;
 
@@ -108,4 +103,9 @@ location / {
 error_page 500 /500.html;
 location = /500.html {
     root {{ project_path }}/{{ application_name }}/templates/;
+}
+error_page 502 503 504 @maintenance;
+location @maintenance {
+    root {{ virtualenv_path }}/static_html/;
+    rewrite ^(.*)$ /maintenance.html break;
 }

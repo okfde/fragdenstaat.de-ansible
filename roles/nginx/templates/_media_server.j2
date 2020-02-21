@@ -103,3 +103,9 @@ location = /error_451.html {
         alias   {{ nginx_media_dir }}{{ dir }};
     }
 {% endfor %}
+
+error_page 502 503 504 @maintenance;
+location @maintenance {
+    root {{ virtualenv_path }}/static_html/;
+    rewrite ^(.*)$ /maintenance.html break;
+}
