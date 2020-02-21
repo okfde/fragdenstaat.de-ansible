@@ -39,19 +39,36 @@ upstream {{ application_name }}_wsgi_server {
 
 
 {% if redirect_domains is defined %}
-    {% for redirect_domain in redirect_domains %}
+  {% for redirect_domain in redirect_domains %}
     server {
-        if ($host = {{ redirect_domain.from }}) {
-            return 301 https://{{ redirect_domain.domain }}$request_uri;
-        }
-
         listen 80;
         listen [::]:80;
         server_name {{ redirect_domain.from }};
 
-        return 404; # managed by Certbot
+        location /.well-known/acme-challenge/ {
+           default_type "text/plain";
+           root {{ letsencrypt_tmp_dir }};
+        }
+
+        location / {
+            return 301 https://{{ redirect_domain.domain }}$request_uri;
+        }
     }
-    {% endfor %}
+    {% if redirect_domain.https and active_https_domains[redirect_domain.from] %}
+        server {
+            listen              443 ssl http2;
+            listen         [::]:443 ssl http2;
+            server_name         {{ redirect_domain.from }};
+
+            {% with server_name = redirect_domain.from %}
+                {% include '_ssl.j2' %}
+            {% endwith %}
+            location / {
+                return 301 https://{{ redirect_domain.domain }}$request_uri;
+            }
+        }
+    {% endif %}
+  {% endfor %}
 {% endif %}
 
 
@@ -118,17 +135,6 @@ server {
     {% endwith %}
 
     {% include '_static_server.j2' %}
-}
-
-server {
-    listen              443 ssl http2;
-    listen         [::]:443 ssl http2;
-    server_name         {{ mail_domain }};
-
-    {% with server_name = mail_domain %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
-
 }
 
 {% if onion_service_enabled %}
