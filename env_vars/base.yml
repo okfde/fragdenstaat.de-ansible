@@ -341,6 +341,7 @@ twilio_from_number: ""
 stripe_public_key: ""
 stripe_private_key: ""
 stripe_webhook_cc_signing_key: ""
+stripe_webhook_sepa_signing_key: ""
 stripe_webhook_sofort_signing_key: ""
 
 paypal_client_id: ""
@@ -348,3 +349,5 @@ paypal_client_secret: ""
 paypal_api_url: ""
 
 slack_webhook_url: ""
+
+geoip_license_key: ""

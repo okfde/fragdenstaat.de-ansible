@@ -42,6 +42,7 @@ django_environment:
   STRIPE_PUBLIC_KEY: "{{ stripe_public_key }}"
   STRIPE_PRIVATE_KEY: "{{ stripe_private_key }}"
   STRIPE_WEBHOOK_CC_SIGNING_KEY: "{{ stripe_webhook_cc_signing_key }}"
+  STRIPE_WEBHOOK_SEPA_SIGNING_KEY: "{{ stripe_webhook_sepa_signing_key }}"
   STRIPE_WEBHOOK_SOFORT_SIGNING_KEY: "{{ stripe_webhook_sofort_signing_key }}"
   PAYPAL_CLIENT_ID: "{{ paypal_client_id }}"
   PAYPAL_CLIENT_SECRET: "{{ paypal_client_secret }}"
