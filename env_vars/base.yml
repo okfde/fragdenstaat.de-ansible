@@ -84,6 +84,7 @@ django_secret_url_admin: "admin"
 protected_urls:
   - url: "/admin/"
     realm: admin
+    only_ip: no
 
 rate_limited_urls:
   - url: /account/login/
