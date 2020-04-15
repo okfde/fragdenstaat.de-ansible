@@ -278,8 +278,12 @@ simple_files:
   - path: "/BingSiteAuth.xml"
     filename: BingSiteAuth.xml
 
-web_cors_for_media:
-  - "/api/v1/campaigninformationobject"
+cors_exceptions:
+  - url: "/api/v1/campaigninformationobject"
+    origins:
+      - "__static__"
+      - "__media__"
+      - "https://okfde.github.io"
 
 # CSP supports __web__, __media__ and __static__ variable__s
 
