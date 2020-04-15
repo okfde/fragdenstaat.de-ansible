@@ -1,4 +1,4 @@
-{% from '_utils.j2' import csp_block with context %}
+{% from '_utils.j2' import csp_block, cors with context %}
 
 expires $expires;
 
@@ -9,7 +9,8 @@ location /nope {
 
 location /static/ {
     {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
-    add_header Access-Control-Allow-Origin {{ web_server_url }};
+    {{ cors(web_server_url) }}
+    {{ cors("http://localhost") }}
 
     alias   {{ nginx_static_dir }};
 }
