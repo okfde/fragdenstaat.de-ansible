@@ -1,0 +1,16 @@
+- name: Enable Bionic deb-src
+  apt_repository:
+    repo: deb-src http://de.archive.ubuntu.com/ubuntu bionic main restricted
+    state: present
+
+- name: Install the build dependencies for package "imagemagick"
+  apt:
+    pkg: imagemagick
+    state: build-dep
+
+- name: Setup imagemagick build script
+  template: src=install_imagemagick.sh.j2 dest={{ virtualenv_path }}/install_imagemagick.sh mode=0755
+
+- name: Build and install imagemagick
+  command:  "{{ virtualenv_path }}/install_imagemagick.sh"
+  args: []

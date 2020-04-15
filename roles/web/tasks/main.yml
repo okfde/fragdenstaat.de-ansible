@@ -6,6 +6,10 @@
 - import_tasks: install_latest_poppler.yml
   tags: packages
 
+- import_tasks: install_latest_imagemagick.yml
+  tags:
+    - packages
+
 - import_tasks: create_users_and_groups.yml
 
 - import_tasks: set_file_permissions.yml
