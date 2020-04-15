@@ -294,7 +294,7 @@ content_security_policy:
   "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
   "media-src": "__static__ __media__"
   "worker-src": "'self' blob: __static__"
-  "frame-src": "'self' blob: __static__ __media__ https://okfde.github.io https://www.betterplace.org https://betterplace-assets.betterplace.org https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com https://www.foodwatch.org/de/iframe/ https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
+  "frame-src": "'self' blob: __static__ __media__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
   "object-src": "'self' __media__"
   "connect-src": "'self' __static__ __media__ https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com"
   "child-src": "'self' blob: __static__"
@@ -318,6 +318,15 @@ content_security_policy_overrides:
   - url: "~^/klagen/.*$"
     directives:
       "frame-ancestors": "*"
+  - url: "~^\\w+-admin/cms/page/edit-plugin/\\d+/"
+    directives:
+      "frame-src": "*"
+  - url: "~^/aktionen/ifg-meisterschaften/.*$"
+    directives:
+      "frame-src": "'self' https://challonge.com"
+  - url: "~^(/en/action|/aktionen)/frontex/.*$"
+    directives:
+      "frame-src": "'self' https://act.wemove.eu"
 
 
 static_content_security_policy:
