@@ -201,11 +201,13 @@ nginx_media_dir: "/var/www/fragdenstaat.de/storage"
 nginx_private_media_path: "/var/www/fragdenstaat.de/storage/"
 
 nginx_public_media:
-  - /files/legalaction/
-  - /files/media/
-  - /files/profile/
-  - /files/docs/
-  - /files/export/
+  - url: "/files/legalaction/"
+  - url: "/files/media/"
+  - url: "/files/profile/"
+  - url: "/files/docs/"
+    force_download: true
+  - url: "/files/export/"
+    force_download: true
 
 nginx_public_privileged_media:
   - "/files/campaign/"

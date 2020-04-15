@@ -52,8 +52,8 @@ location /static/ {
     rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
 }
 
-{% for dir in nginx_public_media %}
-    location {{ dir }} {
+{% for loc in nginx_public_media %}
+    location {{ loc.url }} {
         rewrite     ^ https://{{ media_server_name }}$request_uri? permanent;
     }
 {% endfor %}
@@ -84,10 +84,11 @@ add_header X-WebKit-CSP ${{ csp_header_var|default('csp_header') }};
     }
 {% endfor %}
 
-{% for url in web_cors_for_media %}
-    location {{ url }} {
-        {{ cors(static_server_name) }}
-        {{ cors(media_server_name) }}
+{% for url_origins in cors_exceptions %}
+    location {{ url_origins.url }} {
+        {% for origin in url_origins.origins %}
+            {{ cors(origin | regex_replace('__media__', media_server_url) | regex_replace('__static__', static_server_url)) }}
+        {% endfor %}
 
         {{ proxy_upstream() }}
     }
