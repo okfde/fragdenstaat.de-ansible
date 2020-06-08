@@ -29,6 +29,7 @@ https_domains:
   - ["app.fragdenstaat.de"]
   - ["shop.fragdenstaat.de"]
   - ["blog.fragdenstaat.de"]
+  - ["mta-sts.fragdenstaat.de"]
 letsencrypt_registration_email: info@fragdenstaat.de
 letsencrypt_tmp_dir: /opt/letsencrypt/tmp
 letsencrypt_renew_hooks:
@@ -267,6 +268,7 @@ media_redirect_paths:
 # - from: "/files/foi/110867/bfr-stellungnahme.pdf"
 #   path: "https://fragdenstaat.de/dokumente/66/"
 
+# redone in production!
 simple_files:
   - path: "/robots.txt"
     filename: robots.txt
@@ -277,6 +279,7 @@ simple_files:
     filename: apple-developer-merchantid-domain-association.dms
   - path: "/BingSiteAuth.xml"
     filename: BingSiteAuth.xml
+  - filename: mta-sts.txt
 
 cors_exceptions:
   - url: "/api/v1/campaigninformationobject"
@@ -358,6 +361,13 @@ priviliged_media_content_security_policy:
   - "child-src blob: __static__"
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
+
+
+nginx_extra_domains:
+  - domain: mta-sts.fragdenstaat.de
+    files:
+      - path: "/.well-known/mta-sts.txt"
+        filename: mta-sts.txt
 
 
 # Fill this in

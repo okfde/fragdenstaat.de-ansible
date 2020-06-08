@@ -137,6 +137,25 @@ server {
     {% include '_static_server.j2' %}
 }
 
+{% for site in nginx_extra_domains %}
+server {
+    listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
+    server_name         {{ site.domain }};
+
+    {% with server_name = site.domain %}
+        {% include '_ssl.j2' %}
+    {% endwith %}
+
+    {% for file in site.files %}
+    location {{ file.path }} {
+        alias {{ virtualenv_path }}/simple_files/{{ file.filename }};
+    }
+    {% endfor %}
+
+}
+{% endfor %}
+
 {% if onion_service_enabled %}
 
 {% with onion_service = onion_services['onion_web'], csp_header_var="csp_header_onion" %}

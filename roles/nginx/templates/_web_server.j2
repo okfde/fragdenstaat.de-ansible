@@ -32,12 +32,14 @@ error_log {{ nginx_error_log_file }};
 {% endif %}
 
 {% for simple_file in simple_files %}
-    location {{ simple_file.path }} {
-        {% if simple_file.mimetype is defined %}
-            add_header Content-Type "{{ simple_file.mimetype }}";
-        {% endif %}
-        alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
-    }
+    {% if simple_file.path is defined %}
+        location {{ simple_file.path }} {
+            {% if simple_file.mimetype is defined %}
+                add_header Content-Type "{{ simple_file.mimetype }}";
+            {% endif %}
+            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
+        }
+    {% endif %}
 {% endfor %}
 
 if ($bad_referrer) {
