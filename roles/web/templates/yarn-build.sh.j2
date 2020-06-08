@@ -5,7 +5,7 @@ set -ex
 source {{ virtualenv_path }}/bin/activate
 
 {% for module in frontend_modules %}
-pushd $(python -c "import {{ module.package }} as mod; print(mod.__path__[0])")/..
+pushd $(python -c "import {{ module.pypackage }} as mod; print(mod.__path__[0])")/..
 yarn install
 yarn link
 popd
@@ -16,7 +16,8 @@ pushd {{ project_path }}
 yarn install
 
 {% for module in frontend_modules %}
-yarn link {{ module.package }}
+yarn link {% if module.jspackage is defined %}{{ module.jspackage }}{% else %}{{ module.pypackage }}{% endif %}
+
 {% endfor %}
 
 ASSET_PATH={{ static_asset_path }} yarn run build --bail

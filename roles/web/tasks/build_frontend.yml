@@ -6,6 +6,11 @@
 - name: Add node to the sources list
   apt_repository: repo='deb https://deb.nodesource.com/node_8.x xenial main'
                   update_cache={{ update_apt_cache }}
+                  state=absent
+
+- name: Add node to the sources list
+  apt_repository: repo='deb https://deb.nodesource.com/node_12.x xenial main'
+                  update_cache={{ update_apt_cache }}
                   state=present
 
 - name: Add yarn key
@@ -28,6 +33,8 @@
 
 - name: Setup yarn build script
   template: src=yarn-build.sh.j2 dest={{ virtualenv_path }}/yarn-build.sh mode=0755
+  tags:
+    - deploy-frontend
 
 - name: Run yarn setup script
   command: "{{ virtualenv_path }}/yarn-build.sh"

@@ -114,10 +114,11 @@ release_notifications:
     repo: okfde/froide-payment
 
 frontend_modules:
-  - package: froide
-  - package: froide_food
-  - package: froide_payment
-  - package: filingcabinet
+  - pypackage: froide
+  - pypackage: froide_food
+  - pypackage: froide_payment
+  - pypackage: filingcabinet
+    jspackage: "@okfde/filingcabinet"
 
 celery_worker:
   - name: celery
