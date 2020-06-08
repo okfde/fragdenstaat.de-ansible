@@ -35,7 +35,9 @@
 
 - name: Add reject domains file
   copy: src=reject_domains dest=/etc/postfix/reject_domains
-  notify: update postmap
+
+- name: Add blocklisted recipients file
+  copy: src=blocklisted_recipients dest=/etc/postfix/blocklisted_recipients
 
 - name: Install custom rsyslog logrotate
   template: src=rsyslog.j2 dest=/etc/logrotate.d/rsyslog
