@@ -29,12 +29,25 @@ map $http_referer $bad_referrer {
     {% endfor %}
 }
 
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
 upstream {{ application_name }}_wsgi_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
   # to return a good HTTP response (in case the Unicorn master nukes a
   # single worker for timing out).
 
   server unix:{{ virtualenv_path }}/run/gunicorn.sock fail_timeout=0;
+}
+
+upstream {{ application_name }}_asgi_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:{{ virtualenv_path }}/run/uvicorn.sock fail_timeout=0;
 }
 
 
@@ -170,11 +183,19 @@ upstream {{ application_name }}_onion_wsgi_server {
   server unix:{{ virtualenv_path }}/run/gunicorn_onion.sock fail_timeout=0;
 }
 
+upstream {{ application_name }}_onion_asgi_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:{{ virtualenv_path }}/run/uvicorn_onion.sock fail_timeout=0;
+}
+
 server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         {{ onion_service.hostname }};
 
-    {% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+    {% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", asgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
         {% include '_web_server.j2' %}
     {% endwith %}
 }
@@ -186,7 +207,7 @@ server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         media.{{ onion_service.hostname }};
 
-    {% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+    {% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsgi_app_name=application_name + "_onion" %}
         {% include '_media_server.j2' %}
     {% endwith %}
 }

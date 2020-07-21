@@ -12,6 +12,23 @@
     proxy_pass http://{{ wsgi_app_name|default(application_name) }}_wsgi_server;
 {%- endmacro %}
 
+{% macro proxy_asgi_upstream() -%}
+    proxy_read_timeout 36000s;
+    proxy_connect_timeout 36000s;
+    proxy_send_timeout 36000s;
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_buffering off;
+    proxy_redirect off;
+
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Host $host;
+    proxy_pass http://{{ asgi_app_name|default(application_name) }}_asgi_server;
+{%- endmacro %}
 
 {% macro cors(server_url) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;

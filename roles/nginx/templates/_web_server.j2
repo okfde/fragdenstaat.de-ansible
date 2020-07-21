@@ -1,4 +1,4 @@
-{% from '_utils.j2' import basic_auth, proxy_upstream, cors with context %}
+{% from '_utils.j2' import basic_auth, proxy_wsgi_upstream, proxy_asgi_upstream, cors with context %}
 
 {# add_headers need to be set on location #}
 {% macro add_web_headers() -%}
@@ -102,6 +102,12 @@ location /static/ {
         {{ proxy_wsgi_upstream() }}
     }
 {% endfor %}
+
+location /ws/ {
+    {{ add_web_headers() }}
+
+    {{ proxy_asgi_upstream() }}
+}
 
 location / {
     {{ cors(static_server_name) }}
