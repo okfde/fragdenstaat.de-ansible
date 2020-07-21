@@ -1,5 +1,11 @@
 {% from '_utils.j2' import csp_block, cors with context %}
 
+
+{# add_headers need to be set on location #}
+{% macro add_static_headers() -%}
+
+{%- endmacro %}
+
 expires $expires;
 
 location /nope {
@@ -11,6 +17,7 @@ location /static/ {
     {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
     {{ cors(web_server_url) }}
     {{ cors("http://localhost") }}
+    {{ add_static_headers() }}
 
     alias   {{ nginx_static_dir }};
 }
@@ -20,6 +27,8 @@ location /static/ {
             {% if simple_file.mimetype is defined %}
                 add_header Content-Type "{{ simple_file.mimetype }}";
             {% endif %}
+            {{ add_static_headers() }}
+
             alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
         }
     {% endif %}

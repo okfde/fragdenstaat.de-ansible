@@ -1,4 +1,9 @@
-{% from '_utils.j2' import cors, csp, csp_block with context %}
+{% from '_utils.j2' import proxy_wsgi_upstream, cors, csp, csp_block with context %}
+
+{# add_headers need to be set on location #}
+{% macro add_media_headers() -%}
+{%- endmacro %}
+
 
 {% if maintenance %}
     set $maintenance on;
@@ -54,13 +59,9 @@ location = /error_451.html {
 
         {{ cors(static_server_url) }}
         {{ cors(web_server_url) }}
+        {{ add_media_headers() }}
 
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header Host $host;
-
-        proxy_pass http://{{ application_name }}_wsgi_server;
+        {{ proxy_wsgi_upstream() }}
         proxy_hide_header Set-Cookie;
     }
 {% endfor %}
@@ -78,6 +79,7 @@ location = /error_451.html {
 
         {{ cors(static_server_url) }}
         {{ cors(web_server_url) }}
+        {{ add_media_headers() }}
         proxy_hide_header Set-Cookie;
         alias {{ nginx_private_media_path }}{{ url_dir.dir }};
     }
@@ -93,6 +95,7 @@ location = /error_451.html {
         {{ csp_block(media_content_security_policy) }}
         {{ cors(static_server_url) }}
         {{ cors(web_server_url) }}
+        {{ add_media_headers() }}
 
         alias   {{ nginx_media_dir }}{{ loc.url }};
     }
@@ -104,6 +107,7 @@ location = /error_451.html {
         {{ csp_block(priviliged_media_content_security_policy) }}
         {{ cors(static_server_url) }}
         {{ cors(web_server_url) }}
+        {{ add_media_headers() }}
 
         alias   {{ nginx_media_dir }}{{ dir }};
     }

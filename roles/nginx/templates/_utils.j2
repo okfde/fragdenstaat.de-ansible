@@ -4,7 +4,7 @@
 {%- endmacro %}
 
 
-{% macro proxy_upstream() -%}
+{% macro proxy_wsgi_upstream() -%}
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto https;
@@ -25,8 +25,6 @@
 
 {% macro csp_block(csp_list, web=web_server_url, media=media_server_url, static=static_server_url) -%}
     add_header Content-Security-Policy "{{ csp(csp_list, web=web, media=media, static=static) }}";
-    add_header X-Content-Security-Policy "{{ csp(csp_list, web=web, media=media, static=static) }}";
-    add_header X-WebKit-CSP "{{ csp(csp_list, web=web, media=media, static=static) }}";
 {%- endmacro %}
 
 {% macro csp_header_map(header_var='csp_header', web=web_server_url, media=media_server_url, static=static_server_url) %}

@@ -1,6 +1,11 @@
 {% from '_utils.j2' import basic_auth, proxy_upstream, cors with context %}
 
-add_header Referrer-Policy "same-origin";
+{# add_headers need to be set on location #}
+{% macro add_web_headers() -%}
+    add_header Referrer-Policy "same-origin";
+
+    add_header Content-Security-Policy ${{ csp_header_var|default('csp_header') }};
+{%- endmacro %}
 
 {% if maintenance %}
     set $maintenance on;
@@ -34,6 +39,7 @@ error_log {{ nginx_error_log_file }};
 {% for simple_file in simple_files %}
     {% if simple_file.path is defined %}
         location {{ simple_file.path }} {
+            {{ add_web_headers() }}
             {% if simple_file.mimetype is defined %}
                 add_header Content-Type "{{ simple_file.mimetype }}";
             {% endif %}
@@ -60,16 +66,13 @@ location /static/ {
     }
 {% endfor %}
 
-add_header Content-Security-Policy ${{ csp_header_var|default('csp_header') }};
-add_header X-Content-Security-Policy ${{ csp_header_var|default('csp_header') }};
-add_header X-WebKit-CSP ${{ csp_header_var|default('csp_header') }};
-
 {% for item in rate_limited_urls %}
     location {{ item.url }} {
         limit_req zone={{ item.zone }} burst=5 nodelay;
         {% if item.auth %}{{ basic_auth(item.auth) }}{% endif %}
+        {{ add_web_headers() }}
 
-        {{ proxy_upstream() }}
+        {{ proxy_wsgi_upstream() }}
     }
 {% endfor %}
 
@@ -80,9 +83,11 @@ add_header X-WebKit-CSP ${{ csp_header_var|default('csp_header') }};
             allow {{ url_realm.only_ip }};
             deny all;
         {% endif %}
+
+        {{ add_web_headers() }}
         {{ cors(static_server_name) }}
 
-        {{ proxy_upstream() }}
+        {{ proxy_wsgi_upstream() }}
     }
 {% endfor %}
 
@@ -92,14 +97,18 @@ add_header X-WebKit-CSP ${{ csp_header_var|default('csp_header') }};
             {{ cors(origin | regex_replace('__media__', media_server_url) | regex_replace('__static__', static_server_url)) }}
         {% endfor %}
 
-        {{ proxy_upstream() }}
+        {{ add_web_headers() }}
+
+        {{ proxy_wsgi_upstream() }}
     }
 {% endfor %}
 
 location / {
     {{ cors(static_server_name) }}
 
-    {{ proxy_upstream() }}
+    {{ add_web_headers() }}
+
+    {{ proxy_wsgi_upstream() }}
 }
 
 # Error pages
