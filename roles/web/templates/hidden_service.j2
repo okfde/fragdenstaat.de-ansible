@@ -3,4 +3,7 @@
 #
 
 HiddenServiceDir /var/lib/tor/{{ service.key }}/
+HiddenServiceVersion 3
 HiddenServicePort {{ service.value.port }} 127.0.0.1:{{ service.value.internal_port }}
+HiddenServiceSingleHopMode 1
+HiddenServiceNonAnonymousMode 1
