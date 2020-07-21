@@ -3,7 +3,7 @@
 set -ex
 
 HOME=/home/stage
-PACKAGE=poppler-0.80.0
+PACKAGE=poppler-{{ poppler_version }}
 
 mkdir -p $HOME
 
@@ -17,3 +17,4 @@ pushd build
 cmake ..
 make
 sudo checkinstall -y
+sudo ldconfig

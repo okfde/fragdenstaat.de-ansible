@@ -4,3 +4,5 @@ virtualenv_python_version: python3.6
 
 gunicorn_max_requests: 0
 git_branch: master
+
+poppler_version: 0.89.0
