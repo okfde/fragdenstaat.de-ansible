@@ -14,6 +14,12 @@ location /nope {
 }
 
 location /static/ {
+    referer_hash_bucket_size 128;
+    valid_referers none blocked {{ web_server_name }} {{ media_server_name }} {{ static_server_name }} localhost;
+    if ($invalid_referer) {
+        return   403;
+    }
+
     {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
     {{ cors(web_server_url) }}
     {{ cors("http://localhost") }}
