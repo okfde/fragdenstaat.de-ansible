@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -ex
+
+HOME=/home/stage
+PACKAGE=ImageMagick
+VERSION=7.0.10-6
+
+mkdir -p $HOME
+
+pushd $HOME
+
+wget -nc https://www.imagemagick.org/download/${PACKAGE}.tar.gz
+tar -xvf ./${PACKAGE}.tar.gz
+pushd ${PACKAGE}-${VERSION}
+./configure
+make
+sudo checkinstall -y
+sudo ldconfig /usr/local/lib
