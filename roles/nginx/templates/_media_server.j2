@@ -2,6 +2,10 @@
 
 {# add_headers need to be set on location #}
 {% macro add_media_headers() -%}
+    {% if onion_service_enabled and not ".onion" in media_server_name %}
+        add_header alt-svc 'h2="{{ onion_media_server }}:443"; ma=86400; persist=1';
+        add_header Onion-Location 'http://{{ onion_media_server }}$request_uri';
+    {% endif %}
 {%- endmacro %}
 
 
