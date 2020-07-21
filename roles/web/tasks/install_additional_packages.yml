@@ -50,7 +50,8 @@
     - "{{ django_media_root }}/foi"
     - "{{ django_media_root }}/docs"
 
-- replace:
+- name: Fix up ImageMagick policy about PDFs
+  replace:
     path: /etc/ImageMagick-6/policy.xml
     regexp: '<policy domain="coder" rights="none" pattern="PDF" />'
     replace: ''
