@@ -1,29 +1,22 @@
-# - name: Create tor.d directory
-#   file:
-#       path: /etc/torrc.d
-#       state: directory
-#       owner: root
-#       group: root
-#       mode: 0755
+- name: Disable tor socks port
+  lineinfile:
+    path: /etc/tor/torrc
+    line: "SocksPort 0"
 
-# - name: Add include of /etc/torrc.d into torrc
-#   lineinfile:
-#       path: /etc/tor/torrc
-#       line: "%include /etc/torrc.d"
-#       state: present
-#   notify: restart tor
+- name: Add torrc hidden services
+  blockinfile:
+    path: /etc/tor/torrc
+    block: |
+      HiddenServiceDir /var/lib/tor/{{ service.key }}/
+      HiddenServiceVersion 3
+      HiddenServicePort {{ service.value.port }} 127.0.0.1:{{ service.value.internal_port }}
+      HiddenServicePort 443 127.0.0.1:443
 
-# - name: Creating tor.d config entries
-#   template:
-#       src: hidden_service.j2
-#       dest: "/etc/torrc.d/{{ service.key }}"
-#       owner: debian-tor
-#       group: debian-tor
-#       mode: 0644
-#   with_dict: "{{ onion_services }}"
-#   loop_control:
-#       loop_var: service
-#   notify: restart tor
+    marker: "# {mark} ANSIBLE MANAGED BLOCK Onion Service {{ service.key }}"
+  with_dict: "{{ onion_services }}"
+  loop_control:
+    loop_var: service
+  notify: restart tor
 
 - name: Create hidden service directories
   file:
@@ -73,9 +66,34 @@
     mode: 0664
     state: touch
 
-- name: Create the Onion Gunicorn script file
-  template: src=gunicorn_onion_start.j2
-            dest={{ virtualenv_path }}/bin/gunicorn_onion_start
+- name: Create the gunicorn/uvicorn script file
+  template:
+    src: "{{ item }}_onion_start.j2"
+    dest: "{{ virtualenv_path }}/bin/{{ item }}_onion_start"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    mode: 0755
+    backup: yes
+  with_items:
+    - gunicorn
+    - uvicorn
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-web
+
+- name: Create the Supervisor config file
+  template:
+    src: "supervisor_{{ item }}.j2"
+    dest: "/etc/supervisor/conf.d/{{ item }}.conf"
+    backup: yes
+  with_items:
+    - "app_gunicorn_onion"
+    - "app_uvicorn_onion"
+
+- name: Create the Onion Uvicorn script file
+  template: src=uvicorn_onion_start.j2
+            dest={{ virtualenv_path }}/bin/uvicorn_onion_start
             owner={{ gunicorn_user }}
             group={{ gunicorn_group }}
             mode=0755
@@ -86,12 +104,10 @@
     - deploy-backend
     - deploy-web
 
-- name: Create the Supervisor config file
-  template: src=supervisor_onion_config.j2
-            dest=/etc/supervisor/conf.d/{{ application_name }}_onion.conf
-            backup=yes
-
 - name: Re-read the Supervisor config files
   supervisorctl:
-    name: "{{ application_name }}_onion"
+    name: "{{ item }}"
     state: present
+  with_items:
+    - "{{ application_name }}_gunicorn_onion"
+    - "{{ application_name }}_uvicorn_onion"

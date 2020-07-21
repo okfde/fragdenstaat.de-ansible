@@ -1,0 +1,6 @@
+{% extends "supervisor_app_uvicorn.j2" %}
+
+{% block vars %}[program:{{ application_name }}_uvicorn_onion]
+command = {{ virtualenv_path }}/bin/uvicorn_onion_start
+stdout_logfile = {{ application_log_dir }}/uvicorn_onion_supervisor.log
+{% endblock %}

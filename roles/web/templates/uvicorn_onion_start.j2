@@ -1,0 +1,10 @@
+{% extends "uvicorn_start.j2" %}
+
+{% block vars %}
+NAME="{{ application_name }}_uvicorn_onion"
+DJANGODIR="{{ project_path }}"
+SOCKFILE={{ virtualenv_path }}/run/uvicorn_onion.sock
+USER={{ gunicorn_user }}
+GROUP={{ gunicorn_group }}
+NUM_WORKERS={{ uvicorn_onion_num_workers }}
+{% endblock %}

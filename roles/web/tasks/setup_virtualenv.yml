@@ -17,13 +17,17 @@
 - name: Ensure gunicorn is installed
   pip: virtualenv={{ virtualenv_path }} name=gunicorn
 
-- name: Create the Gunicorn script file
-  template: src=gunicorn_start.j2
-            dest={{ virtualenv_path }}/bin/gunicorn_start
-            owner={{ gunicorn_user }}
-            group={{ gunicorn_group }}
-            mode=0755
-            backup=yes
+- name: Create the gunicorn/uvicorn script file
+  template:
+    src: "{{ item }}_start.j2"
+    dest: "{{ virtualenv_path }}/bin/{{ item }}_start"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    mode: 0755
+    backup: yes
+  with_items:
+    - gunicorn
+    - uvicorn
   tags:
     - deploy
     - deploy-backend

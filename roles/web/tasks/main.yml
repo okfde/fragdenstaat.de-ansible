@@ -51,19 +51,29 @@
 
 - import_tasks: setup_onion_service.yml
   when: onion_service_enabled
+  tags:
+    - onion
 
 - name: release notifications
   import_tasks: release_notification.yml
 
 - name: restart application
-  supervisorctl: name={{ application_name }} state=restarted
+  supervisorctl:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - "{{ application_name }}_gunicorn"
+    - "{{ application_name }}_uvicorn"
   notify:
     - restart memcached
 
 - name: Reload application
-  shell: "supervisorctl pid {{ application_name }} | xargs kill -s HUP"
+  shell: "supervisorctl pid {{ item }} | xargs kill -s HUP"
   notify:
     - restart memcached
+  with_items:
+    - "{{ application_name }}_gunicorn"
+    - "{{ application_name }}_uvicorn"
   tags:
     - deploy
     - deploy-backend
@@ -71,8 +81,11 @@
     - deploy-web
 
 - name: Reload Onion application
-  shell: "supervisorctl pid {{ application_name }}_onion | xargs kill -s HUP"
+  shell: "supervisorctl pid {{ item }} | xargs kill -s HUP"
   when: onion_service_enabled
+  with_items:
+    - "{{ application_name }}_gunicorn_onion"
+    - "{{ application_name }}_uvicorn_onion"
   notify:
     - restart memcached
   tags:

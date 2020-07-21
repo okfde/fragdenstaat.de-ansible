@@ -1,0 +1,19 @@
+{% extends "gunicorn_start.j2" %}
+
+{% block vars %}
+NAME="{{ application_name }}_onion"
+DJANGODIR="{{ project_path }}"
+SOCKFILE={{ virtualenv_path }}/run/gunicorn_onion.sock
+USER={{ gunicorn_user }}
+GROUP={{ gunicorn_group }}
+NUM_WORKERS={{ gunicorn_onion_num_workers }}
+{% endblock %}
+
+{% block extra_env_vars %}
+# Onion configuration overrides
+export STATIC_URL={{ onion_static_url }}
+export MEDIA_URL={{ onion_media_url }}
+export ALLOWED_HOSTS={{ onion_web_server }},{{ onion_media_server }}
+# Don't pollute other app cache
+export CACHE_URL=locmem://
+{% endblock %}

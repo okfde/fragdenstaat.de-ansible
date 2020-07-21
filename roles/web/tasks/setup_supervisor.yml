@@ -11,9 +11,19 @@
     - celery
 
 - name: Create the Supervisor config file
-  template: src=supervisor_config.j2
-            dest=/etc/supervisor/conf.d/{{ application_name }}.conf
-            backup=yes
+  template:
+    src: "supervisor_{{ item }}.j2"
+    dest: "/etc/supervisor/conf.d/{{ item }}.conf"
+    backup: yes
+  with_items:
+    - "app_gunicorn"
+    - "app_uvicorn"
 
 - name: Re-read the Supervisor config files
-  supervisorctl: name={{ application_name }} state=present
+  supervisorctl:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ application_name }}_gunicorn"
+    - "{{ application_name }}_uvicorn"
+

@@ -39,4 +39,4 @@ exec gunicorn \
     --user $USER --group $GROUP \
     --log-level info \
     --bind unix:$SOCKFILE \
-    {{ application_name }}.wsgi
+    {% block command_end %}{{ application_name }}.wsgi{% endblock %}

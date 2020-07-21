@@ -1,0 +1,8 @@
+{% block vars %}[program:{{ application_name }}_gunicorn]
+command = {{ virtualenv_path }}/bin/gunicorn_start
+stdout_logfile = {{ application_log_file }}
+{% endblock %}user = {{ gunicorn_user }}
+redirect_stderr = true
+stopsignal=TERM
+restartsignal=HUP
+reloadsignal=USR2

@@ -51,9 +51,11 @@ db_user_readonly: "{{ application_name }}_readonly"
 gunicorn_num_workers: 10
 gunicorn_user: "{{ application_name }}"
 gunicorn_group: webapps
+uvicorn_num_workers: 2
 
 onion_service_enabled: no
 gunicorn_onion_num_workers: 2
+uvicorn_onion_num_workers: 1
 onion_web_server: ""
 onion_web_server_url: "http://{{ onion_web_server }}"
 onion_media_server: "media."
