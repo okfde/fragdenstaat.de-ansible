@@ -12,6 +12,7 @@ NUM_WORKERS={{ gunicorn_onion_num_workers }}
 {% block extra_env_vars %}
 # Onion configuration overrides
 export STATIC_URL={{ onion_static_url }}
+export SITE_URL={{ onion_web_url }}
 export MEDIA_URL={{ onion_media_url }}
 export ALLOWED_HOSTS={{ onion_web_server }},{{ onion_media_server }}
 # Don't pollute other app cache
