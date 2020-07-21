@@ -1,0 +1,23 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Contact: mailto:mail@fragdenstaat.de
+Encryption: https://fragdenstaat.de/impressum/#pgp-key
+Preferred-Languages: en, de
+-----BEGIN PGP SIGNATURE-----
+
+iQJJBAEBCgAzFiEEftxoR+5CfVf4V262FCAnyWM+ugwFAl750K8VHG1haWxAZnJh
+Z2RlbnN0YWF0LmRlAAoJEBQgJ8ljProMsMEP+wQbmONOnonqhj9iAZ347oaU6FzA
+/9NvlQgcTnlokUBhxueNugkbhHIYjKuDKHtdQ6omFkcOeOeWQBD8+ic3f3Z9CFIa
+WN/iWqMehMeYS7XP591DURixwKWwfZyl44IsuD/JfxfZn0blmz3s5TfNpNRHvFno
+rhMC7MwB0RKrrh34Px1/dE7IyGuoo+KYKxXDbqsB0C0ycPQ8i+zs7DnzZo+dxOvH
+/mfLwEdmi7RU3f27sx7zQHLOqX/+V31DyyGQk9GCSAl5PfES7IDtypwKAVNb/R2F
+lfu4pQggMFeeF25LJzVANeN/pGM9Pl2dPyYr4Nr0TpdyQsl+LDwm9FHTl+hVLl7m
+F2E4Uofo2Krxf+SR5zKQxeH++Pi5tc1V8TgHMbR1z0umSPQw/WISrWg2VQ1ZjCl9
+jZNse73zMzYkiEdNUdn54xfctu8RPUuYvsuGU6Ka00rxr0O+GQGMFPoWoHdOymI+
+NgJIWNcJvKTz9IIRrO0lxDIi1ORoAKEoHkpjMQ4wYr79GeCekfP/7uiBbHUDRxSL
+bzt4p2s9WsruBplTpNZXAs5fJ6GS0mJG07xbINwLTtn8UUu6+yq02A/dbSgFAVhZ
+6WcA1XRrMsSbKFEhlQExO6Op2Vfd++Fxgl8byvrzDaPlUcY7nnXS9JlySL17Z8BL
+O+z7V/A3EaXMrXb4
+=oagQ
+-----END PGP SIGNATURE-----

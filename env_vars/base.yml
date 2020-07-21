@@ -273,6 +273,8 @@ media_redirect_paths:
 simple_files:
   - path: "/robots.txt"
     filename: robots.txt
+  - path: "/.well-known/security.txt"
+    filename: security.txt
   - path: "/.well-known/apple-app-site-association"
     filename: apple-app-site-association
     mimetype: 'application/pkcs7-mime'
