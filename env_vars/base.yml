@@ -317,25 +317,6 @@ content_security_policy_overrides:
   - url: "~^/account/authorize/"
     directives:
       "form-action": "* fragdenstaat:"
-  - url: "~^/kampagnen/lebensmittelkontrolle/app/embed/"
-    directives:
-      "frame-ancestors": "*"
-  - url: "~^/kampagne/.*/embed/$"
-    directives:
-      "frame-ancestors": "*"
-  - url: "~^/klagen/.*$"
-    directives:
-      "frame-ancestors": "*"
-  - url: "~^\\w+-admin/cms/page/edit-plugin/\\d+/"
-    directives:
-      "frame-src": "*"
-  - url: "~^/aktionen/ifg-meisterschaften/.*$"
-    directives:
-      "frame-src": "'self' https://challonge.com"
-  - url: "~^(/en/action|/aktionen)/frontex/.*$"
-    directives:
-      "frame-src": "'self' https://act.wemove.eu"
-
 
 static_content_security_policy:
   - "default-src 'self' data: blob: __web__ __media__"
