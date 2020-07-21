@@ -1,12 +1,13 @@
 #!/bin/sh
+
+export FTP_PASSWORD='{{ backup_ftp_password }}'
+export PASSPHRASE='{{ backup_gpg_password }}'
+
 set -ex
 
 PATH=/usr/bin:/bin
 DATE=`date +%F`
 DAYOFMONTH=`date +%d`
-
-export FTP_PASSWORD='{{ backup_ftp_password }}'
-export PASSPHRASE='{{ backup_gpg_password }}'
 
 umask 177
 
