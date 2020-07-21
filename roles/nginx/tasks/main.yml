@@ -18,17 +18,23 @@
             dest=/etc/nginx/nginx.conf
             backup=yes
   notify: reload nginx
+  tags:
+    - nginx
 
 - name: Check if HTTPS certificates exist
   stat:
     path: "/etc/letsencrypt/live/{{ item.from }}/{{ letsencrypt_cert_filename }}"
   register: https_cert_check
   with_items: "{{ redirect_domains }}"
+  tags:
+    - nginx
 
 - name: Set HTTPS certificate facts
   set_fact:
     active_https_domains: "{{ active_https_domains|default({}) | combine( {item.item.from: item.stat.exists} ) }}"
   with_items: "{{ https_cert_check.results }}"
+  tags:
+    - nginx
 
 - debug: var=active_https_domains
 
@@ -37,6 +43,8 @@
             dest=/etc/nginx/sites-available/{{ application_name }}
             backup=yes
   notify: reload nginx
+  tags:
+    - nginx
 
 - name: Create custom nginx log rotation file
   template: src=nginx_logrotate.j2
@@ -79,7 +87,8 @@
         dest=/etc/nginx/sites-enabled/{{ application_name }}
         state=link
   notify: reload nginx
-
+  tags:
+    - nginx
 
 - name: Create the conf folder
   file: path={{ virtualenv_path}}/conf
@@ -111,6 +120,8 @@
 
 - name: Ensure Nginx service is started
   service: name=nginx state=started enabled=yes
+  tags:
+    - nginx
 
 - name: configure http, https ports in firewall
   ufw: rule=allow port={{ item }} proto=tcp
