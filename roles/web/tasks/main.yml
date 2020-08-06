@@ -3,6 +3,9 @@
 - import_tasks: install_additional_packages.yml
   tags: packages
 
+- import_tasks: setup_virtualenv.yml
+  tags: virtualenv
+
 - import_tasks: install_latest_poppler.yml
   tags:
     - packages
@@ -13,11 +16,6 @@
     - packages
 
 - import_tasks: create_users_and_groups.yml
-
-- import_tasks: set_file_permissions.yml
-
-- import_tasks: setup_virtualenv.yml
-  tags: virtualenv
 
 - import_tasks: setup_git_repo.yml
   tags:
@@ -36,6 +34,7 @@
     - deploy-backend
 
 - import_tasks: setup_geoip.yml
+  when: geoip_license_key
 
 - import_tasks: setup_supervisor.yml
   tags: supervisor
@@ -56,6 +55,7 @@
 
 - name: release notifications
   import_tasks: release_notification.yml
+  when: collect_release_info
 
 - name: restart application
   supervisorctl:

@@ -8,3 +8,8 @@
 
 - name: Add the application user to the application group
   user: name={{ gunicorn_user }} group={{ gunicorn_group }} state=present
+
+- name: Adding user www-data to {{ gunicorn_group }}
+  user: name=www-data
+        groups={{ gunicorn_group }}
+        append=yes

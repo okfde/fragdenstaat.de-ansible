@@ -16,6 +16,13 @@
     - share
     - src
     - run
+    - meta
+
+- name: Creates storage directory
+  file:
+    path: "{{ virtualenv_path }}/storage"
+    state: directory
+    owner: "{{ gunicorn_user }}"
 
 - name: Ensure that the storage directory permissions are set properly
   # leading 2 on mode sets group id (setgid), so other files will get group www-data
@@ -24,5 +31,5 @@
 - name: Ensure that the storage directory owners are set properly
   command: "find {{ virtualenv_path }}/storage -type d -exec chown {{ gunicorn_user }} {} \\;"
 
-- name: Ensure that the storage directory owners are set properly
+- name: Ensure that the storage directory groups are set properly
   command: "find {{ virtualenv_path }}/storage -type d -exec chgrp www-data {} \\;"
