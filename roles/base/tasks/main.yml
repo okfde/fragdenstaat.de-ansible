@@ -16,12 +16,14 @@
   when: universe_installed is changed
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
-  apt: name={{ item }} update_cache={{ update_apt_cache }} state=latest
-  with_items:
-    - bash
-    - openssl
-    - libssl-dev
-    - libssl-doc
+  apt:
+    name:
+      - bash
+      - openssl
+      - libssl-dev
+      - libssl-doc
+    update_cache: "{{ update_apt_cache }}"
+    state: latest
   tags: packages
 
 - name: Install base packages
@@ -41,7 +43,9 @@
   tags: packages
 
 - name: Upgrade pip
-  pip: name=pip state=latest
+  pip:
+    name: pip
+    state: latest
   tags: packages
 
 - import_tasks: setup_unattended_upgrades.yml
