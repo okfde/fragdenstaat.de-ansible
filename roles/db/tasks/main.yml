@@ -10,16 +10,33 @@
                   state=present
 
 - name: Install PostgreSQL
-  apt: name={{ item }} update_cache={{ update_apt_cache }} state=present
-  with_items:
-    - postgresql-11
-    - postgresql-contrib
-    - libpq-dev
-    - postgis
-    - postgresql-11-postgis-scripts
-    - postgis-doc
-    - python3-psycopg2
+  apt:
+    name:
+      - postgresql-11
+      - postgresql-contrib
+      - libpq-dev
+      - postgis
+      - postgresql-11-postgis-scripts
+      - postgis-doc
+      - python3-psycopg2
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   tags: packages
+  when: ansible_distribution_version == "18.04"
+
+- name: Install PostgreSQL
+  apt:
+    name:
+      - postgresql-12
+      - postgresql-contrib
+      - libpq-dev
+      - postgis
+      - postgis-doc
+      - python3-psycopg2
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  tags: packages
+  when: ansible_distribution_version == "20.04"
 
 # # Cluster upgrade
 # sudo apt-get install postgresql-11 postgresql-11-postgis-scripts

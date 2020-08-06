@@ -1,6 +1,7 @@
-- name: Install poppler build dependencies
+- name: Install poppler build dependencies on Bionic
   apt:
     name:
+      - cmake
       - checkinstall
       - libfreetype6-dev
       - libfontconfig-dev
@@ -11,6 +12,24 @@
     update_cache: "{{ update_apt_cache }}"
     force: yes
     state: present
+  when: ansible_distribution_version == "18.04"
+
+- name: Install poppler build dependencies on Focal
+  apt:
+    name:
+      - cmake
+      - checkinstall
+      - libfreetype6-dev
+      - libfontconfig-dev
+      - libnss3-dev
+      - libjpeg-dev
+      - libtiff-dev
+      - libcairo2-dev
+      - libopenjp2-7-dev
+    update_cache: "{{ update_apt_cache }}"
+    force: yes
+    state: present
+  when: ansible_distribution_version == "20.04"
 
 - name: Setup poppler build script
   template: src=install_poppler.sh.j2 dest={{ virtualenv_path }}/install_poppler.sh mode=0755

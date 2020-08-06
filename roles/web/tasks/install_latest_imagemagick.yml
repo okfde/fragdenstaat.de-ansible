@@ -2,6 +2,13 @@
   apt_repository:
     repo: deb-src http://de.archive.ubuntu.com/ubuntu bionic main restricted
     state: present
+  when: ansible_distribution_version == "18.04"
+
+- name: Enable Focal deb-src
+  apt_repository:
+    repo: deb-src http://de.archive.ubuntu.com/ubuntu focal main restricted
+    state: present
+  when: ansible_distribution_version == "20.04"
 
 - name: Install the build dependencies for package "imagemagick"
   apt:
