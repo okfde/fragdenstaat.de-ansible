@@ -13,4 +13,5 @@
 
 - name: Build and install imagemagick
   command:  "{{ virtualenv_path }}/install_imagemagick.sh"
-  args: []
+  args:
+    creates: "/usr/local/bin/magick"
