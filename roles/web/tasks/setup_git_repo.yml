@@ -9,8 +9,27 @@
   tags:
     - release
 
+- name: Create repo directory
+  file:
+    path: "{{ project_path }}"
+    state: directory
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+
+- name: Check that repo is already setup
+  stat:
+    path: "{{ project_path }}/.git"
+  register: repo_setup
+
 - name: Record previous git info
   shell: git -C {{ project_path }} rev-parse HEAD > {{ virtualenv_path }}/meta/{{ application_name }}.gitsha
+  when: collect_release_info and repo_setup.stat.exists
+  tags:
+    - release
+
+- name: Record deployment start timestamp
+  shell: date -Iseconds > {{ virtualenv_path }}/meta/deployment_start
+  when: collect_release_info and repo_setup.stat.exists
   tags:
     - release
 
@@ -22,7 +41,6 @@
        update=yes force=yes
   become: true
   become_user: "{{ gunicorn_user }}"
-  when: setup_git_repo is defined and setup_git_repo
   tags: git
 
 - name: Delete all .pyc files

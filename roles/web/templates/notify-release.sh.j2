@@ -12,6 +12,9 @@ PREV_PROJECT_VERSION=`cat {{ virtualenv_path}}/meta/{{ application_name }}.gitsh
 LONG_VERSION="${PROJECT_VERSION}-{% for item in release_notifications %}$(git -C {{ virtualenv_path }}/src/{{ item.name }} rev-parse HEAD){% if not loop.last %}-{% endif %}{% endfor %}"
 VERSION=`echo -n "$LONG_VERSION" | md5sum | awk '{print $1}'`
 
+DEPLOYMENT_START=`cat {{ virtualenv_path }}/meta/deployment_start`
+DEPLOYMENT_END=`date -Iseconds`
+echo -n "$DEPLOYMENT_END" > {{ virtualenv_path }}/meta/deployment_end
 echo -n "$VERSION" > {{ virtualenv_path}}/meta/current_release
 
 curl "${SENTRY_URL}api/0/organizations/${SENTRY_ORG}/releases/" \
@@ -32,4 +35,17 @@ curl "${SENTRY_URL}api/0/organizations/${SENTRY_ORG}/releases/" \
  }{% if not loop.last %},{% endif %}{% endfor %}],
  "projects":["'"$SENTRY_PROJECT"'"]
 }
+'
+
+curl "${SENTRY_URL}api/0/organizations/${SENTRY_ORG}/releases/${VERSION}/deploys/" \
+-X POST \
+  -H "Authorization: Bearer ${SENTRY_AUTH_TOKEN}" \
+  -H 'Content-Type: application/json' \
+  -d '
+ {
+ "environment": "production",
+ "name": "",
+ "dateStarted": "'"$DEPLOYMENT_START"'",
+ "dateFinished": "'"$DEPLOYMENT_END"'"
+ }
 '
