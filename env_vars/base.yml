@@ -45,7 +45,11 @@ letsencrypt_renew_hooks:
 db_host: "127.0.0.1"
 db_name: "{{ application_name }}"
 db_user: "{{ application_name }}"
+db_password: "dummy"
 db_user_readonly: "{{ application_name }}_readonly"
+db_password_readonly: "dummy"
+
+collect_release_info: no
 
 # Gunicorn settings.
 gunicorn_num_workers: 10
@@ -72,9 +76,9 @@ project_path: "{{ virtualenv_path }}/{{ project_name }}"
 application_log_dir: "/var/www/fragdenstaat.de/logs"
 
 htpasswd:
-  admin:
-    - name: user
-      password: password
+  - name: user
+    password: password
+    realm: admin
 
 django_media_root: "/var/www/fragdenstaat.de/storage/files"
 django_static_root: "/var/www/fragdenstaat.de/public/static"
@@ -156,6 +160,9 @@ rabbitmq_application_vhost: "{{ application_name }}"
 rabbitmq_application_user: "{{ application_name }}"
 rabbitmq_application_password: password
 celery_broker_url: "amqp://{{ rabbitmq_application_user }}:{{ rabbitmq_application_password }}@localhost/{{ rabbitmq_application_vhost }}"
+
+elasticsearch_version: "7.x"
+elasticsearch_heapsize: "512m"
 
 # This needs tessdata/ for tesseract >= 4 starting Ubuntu 18.04
 tesseract_data_path: /usr/share/tesseract-ocr/4.00/tessdata/
@@ -302,7 +309,7 @@ content_security_policy:
   "default-src": "'none'"
   "script-src": "'self' 'unsafe-inline' __static__ https://traffic.okfn.de https://js.stripe.com"
   "style-src": "'self' 'unsafe-inline' __static__"
-  "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de https://www.betterplace.org https://betterplace-assets.betterplace.org https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
+  "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
   "media-src": "__static__ __media__"
   "worker-src": "'self' blob: __static__"
   "frame-src": "'self' blob: __static__ __media__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
@@ -370,6 +377,10 @@ sentry_project: ""
 sentry_webhook_url: ""
 
 yelp_api_key: ""
+foursquare_api_key: ""
+mapbox_api_key: ""
+google_places_api_key: ""
+here_geocode_api_key: ""
 
 twilio_account_sid: ""
 twilio_auth_token: ""
@@ -384,6 +395,7 @@ stripe_webhook_sofort_signing_key: ""
 paypal_client_id: ""
 paypal_client_secret: ""
 paypal_api_url: ""
+paypal_webhook_id: ""
 
 slack_webhook_url: ""
 
