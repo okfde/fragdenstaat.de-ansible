@@ -31,10 +31,12 @@
   service: name=postgresql state=started enabled=yes
 
 - name: ensure language packages are installed
-  apt: pkg={{ item }} state=latest update_cache={{ update_apt_cache }}
-  with_items:
-    - language-pack-en
-    - language-pack-en-base
+  apt:
+    name:
+      - language-pack-en
+      - language-pack-en-base
+    state: latest
+    update_cache: "{{ update_apt_cache }}"
   register: locale_exists
 
 - name: Ensure locale exists
@@ -52,21 +54,23 @@
 
 - name: Ensure database is created
   become_user: postgres
-  postgresql_db: name={{ db_name }}
-                 encoding='UTF-8'
-                 lc_collate='en_US.UTF-8'
-                 lc_ctype='en_US.UTF-8'
-                 template='template0'
-                 state=present
+  postgresql_db:
+    name: "{{ db_name }}"
+    encoding: 'UTF-8'
+    lc_collate: 'en_US.UTF-8'
+    lc_ctype: 'en_US.UTF-8'
+    template: 'template0'
+    state: present
 
 - name: Ensure user has access to the database
   become_user: postgres
-  postgresql_user: db={{ db_name }}
-                   name={{ db_user }}
-                   password={{ db_password }}
-                   priv=ALL
-                   state=present
-                   encrypted=yes
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "ALL"
+    state: "present"
+    encrypted: yes
 
 - name: Ensure readonly user has access to the database
   become_user: postgres
@@ -133,9 +137,10 @@
 
 - name: Ensure user does not have unnecessary privileges
   become_user: postgres
-  postgresql_user: name={{ db_user }}
-                   role_attr_flags=NOSUPERUSER,NOCREATEDB
-                   state=present
+  postgresql_user:
+    name: "{{ db_user }}"
+    role_attr_flags: "NOSUPERUSER,NOCREATEDB"
+    state: present
 
 - name: create postgis extension in db
   become_user: postgres

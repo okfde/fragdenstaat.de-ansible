@@ -24,11 +24,18 @@
                   state=present
 
 - name: Install node
-  apt: name=nodejs update_cache={{ update_apt_cache }} state=present
+  apt:
+    name:
+      - nodejs
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   tags: packages
 
 - name: Install yarn
-  apt: name=yarn update_cache={{ update_apt_cache }} state=present
+  apt:
+    name: yarn
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   tags: packages
 
 - name: Setup yarn build script
