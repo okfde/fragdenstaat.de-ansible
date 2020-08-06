@@ -14,8 +14,15 @@
            creates={{ virtualenv_path }}/bin/activate
   when: ansible_distribution_version == "18.04"
 
+- name: Create the virtualenv
+  command: virtualenv -p python3.8 {{ virtualenv_path }}
+           creates={{ virtualenv_path }}/bin/activate
+  when: ansible_distribution_version == "20.04"
+
 - name: Ensure gunicorn is installed
   pip: virtualenv={{ virtualenv_path }} name=gunicorn
+  become: true
+  become_user: "{{ gunicorn_user }}"
 
 - name: Create the gunicorn/uvicorn script file
   template:
