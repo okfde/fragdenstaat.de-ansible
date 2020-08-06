@@ -1,28 +1,47 @@
 ---
 
 - name: Install JRE
-  apt: name={{ item }} update_cache={{ update_apt_cache }} state=present
-  with_items:
-    - default-jre
+  apt:
+    name: default-jre
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   tags: packages
 
-- name: Check if elasticsearch present
-  stat: path=/usr/share/elasticsearch/bin/elasticsearch
-  register: elasticsearch_config
+- name: Add Elasticsearch apt key.
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  tags: packages
 
-- name: Get elasticsearch release
-  get_url:
-    url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.2.deb"
-    dest: "/tmp/elasticsearch-6.3.2.deb"
-  when: not elasticsearch_config.stat.exists
+- name: Add Elasticsearch repository.
+  apt_repository:
+    repo: 'deb https://artifacts.elastic.co/packages/{{ elasticsearch_version }}/apt stable main'
+    state: present
+    update_cache: true
+  tags: packages
 
-- name: Install elasticsearch
-  command: dpkg -i /tmp/elasticsearch-6.3.2.deb
-  when: not elasticsearch_config.stat.exists
+- name: Install Elasticsearch.
+  package:
+    name: elasticsearch
+    state: present
+  tags: packages
 
-- name: Install elasticsearch extensions
-  command: /usr/share/elasticsearch/bin/elasticsearch-plugin install -b http://xbib.org/repository/org/xbib/elasticsearch/plugin/elasticsearch-plugin-bundle/6.3.2.1/elasticsearch-plugin-bundle-6.3.2.1.zip
-  when: not elasticsearch_config.stat.exists
+- name: Apply heapsize start tuning for systems with greater than 64G memory
+  lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-Xms'
+    line: "-Xms{{ elasticsearch_heapsize }}"
+  notify: restart elasticsearch
+
+- name: Apply heapsize start tuning for systems with greater than 64G memory
+  lineinfile:
+    path: /etc/elasticsearch/jvm.options
+    regexp: '^-Xmx'
+    line: "-Xmx{{ elasticsearch_heapsize }}"
+  notify: restart elasticsearch
 
 - name: Ensure elasticsearch service is running
-  service: name=elasticsearch state=started enabled=yes
+  service:
+    name: elasticsearch
+    state: started
+    enabled: yes
