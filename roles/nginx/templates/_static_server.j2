@@ -9,14 +9,7 @@
     {% endif %}
 {%- endmacro %}
 
-expires $expires;
-
-location /nope {
-    default_type text/html;
-    alias {{ virtualenv_path }}/simple_files/bad_referrer.html;
-}
-
-location /static/ {
+{% macro static_location() -%}
     referer_hash_bucket_size 128;
     valid_referers none blocked {{ web_server_name }} {{ media_server_name }} {{ static_server_name }} localhost;
     if ($invalid_referer) {
@@ -27,6 +20,24 @@ location /static/ {
     {{ cors(web_server_url) }}
     {{ cors("http://localhost") }}
     {{ add_static_headers() }}
+{%- endmacro %}
+
+expires $expires;
+
+location /nope {
+    default_type text/html;
+    alias {{ virtualenv_path }}/simple_files/bad_referrer.html;
+}
+
+{% for asset in nginx_assets_dir %}
+location {{ asset.url }} {
+    {{ static_location() }}
+    alias {{ nginx_media_dir }}/{{ asset.dir }};
+}
+{% endfor %}
+
+location /static/ {
+    {{ static_location() }}
 
     alias   {{ nginx_static_dir }};
 }

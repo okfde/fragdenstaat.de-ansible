@@ -204,11 +204,14 @@ nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
 nginx_media_dir: "/var/www/fragdenstaat.de/storage"
 nginx_private_media_path: "/var/www/fragdenstaat.de/storage/"
 
+nginx_assets_dir:
+  - url: "/assets/contractor/"
+    dir: "files/contractor/"
+
 nginx_public_media:
   - url: "/files/legalaction/"
   - url: "/files/media/"
   - url: "/files/profile/"
-  - url: "/files/contractor/"
   - url: "/files/docs/"
     force_download: true
 
