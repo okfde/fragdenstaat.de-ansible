@@ -1,0 +1,14 @@
+---
+
+- name: Install Redis
+  apt: name=redis-server update_cache={{ update_apt_cache }} state=present
+  tags: packages
+
+- name: Ensure Redis is supervised by systemd
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^supervised'
+    line: supervised systemd
+
+- name: Ensure the Redis service is running
+  service: name=redis state=started enabled=yes

@@ -33,7 +33,6 @@
         - deploy-web
         - deploy-frontend
   vars:
-    - setup_git_repo: yes
     - update_apt_cache: yes
   vars_files:
     - env_vars/base.yml
@@ -45,6 +44,7 @@
     - memcached
     - rabbitmq
     - elasticsearch
+    - redis
     - web
     - celery
     - certbot
