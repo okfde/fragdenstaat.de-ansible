@@ -4,14 +4,14 @@ set -ex
 
 HOME=/home/stage
 PACKAGE=ImageMagick
-VERSION=7.0.10-6
+VERSION=7.0.10-24
 
 mkdir -p $HOME
 
 pushd $HOME
 
-wget -nc https://www.imagemagick.org/download/${PACKAGE}.tar.gz
-tar -xvf ./${PACKAGE}.tar.gz
+wget -nc https://www.imagemagick.org/download/${PACKAGE}-${VERSION}.tar.gz
+tar -xvf ./${PACKAGE}-${VERSION}.tar.gz
 pushd ${PACKAGE}-${VERSION}
 ./configure
 make
