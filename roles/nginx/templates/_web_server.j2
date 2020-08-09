@@ -1,4 +1,4 @@
-{% from '_utils.j2' import basic_auth, proxy_wsgi_upstream, proxy_asgi_upstream, cors with context %}
+{% from '_utils.j2' import basic_auth, proxy_wsgi_upstream, proxy_asgi_upstream, cors, hsts_header with context %}
 
 {# add_headers need to be set on location #}
 {% macro add_web_headers() -%}
@@ -9,7 +9,9 @@
         add_header alt-svc 'h2="{{ onion_web_server }}:443"; ma=86400; persist=1';
         add_header Onion-Location 'http://{{ onion_web_server }}$request_uri';
     {% endif %}
-
+    {% if not ".onion" in web_server_name %}
+        {{ hsts_header() }}
+    {% endif %}
 {%- endmacro %}
 
 {% if maintenance %}
@@ -36,6 +38,7 @@ error_log {{ nginx_error_log_file }};
 {% if redirect_paths is defined %}
     {% for redirect_path in redirect_paths %}
         location ~ {{ redirect_path.from }}(.*)$ {
+          {{ add_web_headers() }}
           return 301 {{ redirect_path.path }}$1$is_args$args;
         }
     {% endfor %}
@@ -58,15 +61,18 @@ if ($bad_referrer) {
 }
 
 location /favicon.ico {
+    {{ add_web_headers() }}
     return 404;
 }
 
 location /static/ {
+    {{ add_web_headers() }}
     rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
 }
 
 {% for loc in nginx_public_media %}
     location {{ loc.url }} {
+        {{ add_web_headers() }}
         rewrite     ^ https://{{ media_server_name }}$request_uri? permanent;
     }
 {% endfor %}
@@ -125,10 +131,12 @@ location / {
 # Error pages
 error_page 500 /500.html;
 location = /500.html {
+    {{ add_web_headers() }}
     root {{ project_path }}/{{ application_name }}/templates/;
 }
 error_page 502 503 504 @maintenance;
 location @maintenance {
+    {{ add_web_headers() }}
     root {{ virtualenv_path }}/static_html/;
     rewrite ^(.*)$ /maintenance.html break;
 }

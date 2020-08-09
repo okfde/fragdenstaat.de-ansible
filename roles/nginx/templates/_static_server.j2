@@ -1,11 +1,13 @@
-{% from '_utils.j2' import csp_block, cors with context %}
-
+{% from '_utils.j2' import csp_block, cors, hsts_header with context %}
 
 {# add_headers need to be set on location #}
 {% macro add_static_headers() -%}
     {% if onion_service_enabled and not ".onion" in static_server_name %}
         add_header alt-svc 'h2="{{ onion_static_server }}:443"; ma=86400; persist=1';
         add_header Onion-Location 'http://{{ onion_static_server }}$request_uri';
+    {% endif %}
+    {% if not ".onion" in static_server_name %}
+        {{ hsts_header() }}
     {% endif %}
 {%- endmacro %}
 
@@ -26,6 +28,7 @@ expires $expires;
 
 location /nope {
     default_type text/html;
+    {{ add_static_headers() }}
     alias {{ virtualenv_path }}/simple_files/bad_referrer.html;
 }
 

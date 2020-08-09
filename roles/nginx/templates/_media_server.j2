@@ -1,10 +1,13 @@
-{% from '_utils.j2' import proxy_wsgi_upstream, cors, csp, csp_block with context %}
+{% from '_utils.j2' import proxy_wsgi_upstream, cors, csp, csp_block, hsts_header with context %}
 
 {# add_headers need to be set on location #}
 {% macro add_media_headers() -%}
     {% if onion_service_enabled and not ".onion" in media_server_name %}
         add_header alt-svc 'h2="{{ onion_media_server }}:443"; ma=86400; persist=1';
         add_header Onion-Location 'http://{{ onion_media_server }}$request_uri';
+    {% endif %}
+    {% if not ".onion" in media_server_name %}
+        {{ hsts_header() }}
     {% endif %}
 {%- endmacro %}
 
@@ -32,11 +35,13 @@ error_page 403 /forbidden.html;
 proxy_intercept_errors on;
 
 location = /forbidden.html {
+    {{ add_media_headers() }}
     root {{ virtualenv_path }}/static_html/;
 }
 
 error_page 451 =451 /error_451.html;
 location = /error_451.html {
+    {{ add_media_headers() }}
     add_header Link '<https://fragdenstaat.de/zensurheberrecht>; rel="blocked-by"' always;
     root {{ virtualenv_path }}/static_html/;
 }
@@ -44,7 +49,8 @@ location = /error_451.html {
 {% if media_legal_paths is defined %}
     {% for legal_info in media_legal_paths %}
         location ~ {{ legal_info.path }}(.*)$ {
-          return 451;
+            {{ add_media_headers() }}
+            return 451;
         }
     {% endfor %}
 {% endif %}
@@ -52,7 +58,8 @@ location = /error_451.html {
 {% if media_redirect_paths is defined %}
     {% for redirect_path in media_redirect_paths %}
         location ~ {{ redirect_path.from }}(.*)$ {
-          return 301 {{ redirect_path.path }}$1$is_args$args;
+            {{ add_media_headers() }}
+            return 301 {{ redirect_path.path }}$1$is_args$args;
         }
     {% endfor %}
 {% endif %}
@@ -119,6 +126,7 @@ location = /error_451.html {
 
 error_page 502 503 504 @maintenance;
 location @maintenance {
+    {{ add_media_headers() }}
     root {{ virtualenv_path }}/static_html/;
     rewrite ^(.*)$ /maintenance.html break;
 }
