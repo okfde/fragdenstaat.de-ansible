@@ -9,5 +9,4 @@ vagrant_ansible_inventory_default
 *.retry
 
 adenauer/
-env_vars/production.yml
 ansible-env/

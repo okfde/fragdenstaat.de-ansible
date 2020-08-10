@@ -13,10 +13,10 @@ Run this to deploy FragDenStaat.de
 
 There are tags available:
 
-    - `deploy-web` – updates app and reloads app server
-    - `deploy-backend` – like `deploy-web` but also restarts workers
-    - `deploy-frontend` - rebuilds frontend and reloads app server
-    - `nginx` – rebuilds nginx config and reload nginx
+- `deploy-web` – updates app and reloads app server
+- `deploy-backend` – like `deploy-web` but also restarts workers
+- `deploy-frontend` - rebuilds frontend and reloads app server
+- `nginx` – rebuilds nginx config and reload nginx
 
 Use like this:
 
@@ -29,3 +29,20 @@ ansible-playbook fragdenstaat.de.yml -v -t deploy-web -t deploy-frontend
 Start and provision (run ansible) like this:
 
     vagrant up --provision
+
+
+## Secrets management
+
+Secrets are managed with `git-crypt` and `ansible-vault`.
+
+Unlock key file after cloning the repo:
+
+```
+git-crypt unlock
+```
+
+Edit production secrets:
+
+```
+ansible-vault edit env_vars/production.yml
+```
