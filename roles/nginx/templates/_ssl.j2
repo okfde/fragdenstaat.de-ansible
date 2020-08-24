@@ -1,4 +1,3 @@
-ssl on;
 {% if letsencrypt_enabled %}
 ssl_certificate     /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_cert_filename }};
 ssl_certificate_key /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_privkey_filename }};
