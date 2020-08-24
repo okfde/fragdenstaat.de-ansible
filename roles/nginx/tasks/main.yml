@@ -33,6 +33,17 @@
 
 - debug: var=active_https_domains
 
+- name: Create nginx log files
+  file:
+    path: "{{ item }}"
+    state: touch
+    owner: www-data
+    group: adm
+    mode: u+rw,g+r,o-rwx
+  with_items:
+    - "{{ nginx_access_log_file }}"
+    - "{{ nginx_error_log_file }}"
+
 - name: Create the Nginx configuration file
   template: src=nginx_config.j2
             dest=/etc/nginx/sites-available/{{ application_name }}
@@ -47,31 +58,47 @@
             backup=yes
 
 - name: Create the static_html folder
-  file: path={{ virtualenv_path}}/static_html
-        mode=0550
-        owner=www-data
-        state=directory
+  file:
+    path: "{{ virtualenv_path}}/static_html"
+    mode: 0550
+    owner: www-data
+    state: directory
 
 - name: Create maintenance page
-  template: src={{ item }}.html.j2
-            dest={{ virtualenv_path }}/static_html/{{ item }}.html
+  template:
+    src: "{{ item }}.html.j2"
+    dest: "{{ virtualenv_path }}/static_html/{{ item }}.html"
+    mode: 0550
+    owner: www-data
   with_items:
     - maintenance
     - forbidden
     - error_451
 
 - name: Create the simple files folder
-  file: path={{ virtualenv_path}}/simple_files
-        mode=0550
-        owner=www-data
-        state=directory
+  file:
+    path: "{{ virtualenv_path}}/simple_files"
+    mode: 0550
+    owner: www-data
+    group: www-data
+    state: directory
 
 - name: Copy simple files
-  copy: src={{ item.filename }} dest={{ virtualenv_path}}/simple_files/{{ item.filename }}
+  copy:
+    src: "{{ item.filename }}"
+    dest: "{{ virtualenv_path}}/simple_files/{{ item.filename }}"
+    mode: 0550
+    owner: www-data
+    group: www-data
   with_items: "{{ simple_files }}"
 
 - name: Setup bad referrer redirect
-  copy: src=bad_referrer.html dest={{ virtualenv_path}}/simple_files/bad_referrer.html
+  copy:
+    src: bad_referrer.html
+    mode: 0550
+    owner: www-data
+    group: www-data
+    dest: "{{ virtualenv_path}}/simple_files/bad_referrer.html"
 
 - name: Ensure that the default site is disabled
   file: path=/etc/nginx/sites-enabled/default state=absent
