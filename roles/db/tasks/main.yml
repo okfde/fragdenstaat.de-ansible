@@ -31,6 +31,7 @@
       - postgresql-contrib
       - libpq-dev
       - postgis
+      - postgresql-12-postgis-2.5
       - postgis-doc
       - python3-psycopg2
     update_cache: "{{ update_apt_cache }}"
