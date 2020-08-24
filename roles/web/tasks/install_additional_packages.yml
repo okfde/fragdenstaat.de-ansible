@@ -13,6 +13,7 @@
       - ocrmypdf
       - optipng
       - jpegoptim
+      - dirmngr
     update_cache: "{{ update_apt_cache }}"
     force: yes
     state: present
