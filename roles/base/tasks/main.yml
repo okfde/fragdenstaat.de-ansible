@@ -60,6 +60,8 @@
       - python3-pip
       - python3-pycurl
       - supervisor
+      - gpg
+      - gpg-agent
     update_cache: "{{ update_apt_cache }}"
     force: yes
     state: present
