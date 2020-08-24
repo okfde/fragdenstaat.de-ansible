@@ -1,0 +1,37 @@
+---
+
+- name: Install additional packages
+  apt:
+    name:
+      - cifs-utils
+    update_cache: "{{ update_apt_cache }}"
+    force: yes
+    state: present
+
+- name: Write CIFS credential username
+  lineinfile:
+    path: /root/.cifscredentials
+    create: yes
+    group: root
+    owner: root
+    mode: "600"
+    regexp: '^username='
+    line: "username={{ external_media_storage_username }}"
+
+- name: Write CIFS credential password
+  lineinfile:
+    path: /root/.cifscredentials
+    create: yes
+    group: root
+    owner: root
+    mode: "600"
+    regexp: '^password='
+    line: "password={{ external_media_storage_password }}"
+
+- name: Mount media storage
+  mount:
+    path: /mnt/fds-storage
+    src: //u188133-sub1.your-backup.de/u188133-sub1
+    fstype: cifs
+    opts: iocharset=utf8,rw,credentials=/root/.cifscredentials,uid={{ gunicorn_user }},gid=www-data,file_mode=0640,dir_mode=0750,vers=1.0,nounix
+    state: mounted

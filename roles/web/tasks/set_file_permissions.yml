@@ -23,6 +23,16 @@
     path: "{{ virtualenv_path }}/storage"
     state: directory
     owner: "{{ gunicorn_user }}"
+  when: not external_media_storage
+
+- name: Symlink storage directory
+  file:
+    src: "/mnt/fds-storage"
+    dest: "{{ virtualenv_path }}/storage"
+    state: link
+    owner: "{{ gunicorn_user }}"
+    group: "www-data"
+  when: external_media_storage
 
 - name: Ensure that the storage directory permissions are set properly
   # leading 2 on mode sets group id (setgid), so other files will get group www-data

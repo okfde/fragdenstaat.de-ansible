@@ -20,6 +20,10 @@ media_server_url: "https://{{ media_server_name }}"
 static_server_name: static.frag-den-staat.de
 static_server_url: "https://{{ static_server_name }}"
 static_asset_path: "https://static.frag-den-staat.de/static/js/"
+external_media_storage: no
+external_media_storage_src: ""
+external_media_storage_username: ""
+external_media_storage_password: ""
 
 https_domains:
   - ["{{ web_server_name }}", "www.{{ web_server_name }}"]
