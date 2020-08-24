@@ -19,8 +19,19 @@
            creates={{ virtualenv_path }}/bin/activate
   when: ansible_distribution_version == "20.04"
 
+- name: Change ownership of app directory
+  file:
+    path: "{{ virtualenv_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_user }}"
+
 - name: Ensure gunicorn is installed
-  pip: virtualenv={{ virtualenv_path }} name=gunicorn
+  pip:
+    virtualenv: "{{ virtualenv_path }}"
+    # extra_args: --user
+    name: "gunicorn"
   become: true
   become_user: "{{ gunicorn_user }}"
 

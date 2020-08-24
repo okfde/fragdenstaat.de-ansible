@@ -1,7 +1,9 @@
 ---
 
 - name: Add Maxmind PPA
-  apt_repository: repo='ppa:maxmind/ppa' state=present
+  apt_repository:
+    repo: 'ppa:maxmind/ppa'
+    state: present
 
 - name: Install libmaxminddb
   apt:

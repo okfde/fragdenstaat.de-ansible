@@ -41,7 +41,10 @@
   tags: packages
 
 - name: Setup yarn build script
-  template: src=yarn-build.sh.j2 dest={{ virtualenv_path }}/yarn-build.sh mode=0755
+  template:
+    src: yarn-build.sh.j2
+    dest: "{{ virtualenv_path }}/yarn-build.sh"
+    mode: 0755
   tags:
     - deploy-frontend
 
