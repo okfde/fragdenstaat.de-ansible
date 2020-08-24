@@ -371,6 +371,9 @@ nginx_extra_domains:
         filename: mta-sts.txt
 
 
+cmk_site_url: ""
+cmk_server_ip: ""
+
 # Fill this in
 
 django_sentry_dsn: ""

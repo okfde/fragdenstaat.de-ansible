@@ -1,0 +1,55 @@
+- name: Download check_mk agent
+  get_url:
+    url: "{{ cmk_site_url }}/check_mk/agents/check-mk-agent_{{ cmk_version }}-1_all.deb"
+    dest: "/tmp"
+
+- name: Install check_mk agent
+  become: yes
+  apt:
+      deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
+      state: present
+
+- name: Install check_mk plugin {{ item }}
+  get_url:
+    url: "{{ cmk_site_url }}/check_mk/agents/plugins/{{ item }}"
+    dest: "{{ cmk_plugins_path }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0500
+  with_items: "{{ cmk_host_plugins }}"
+
+- name: Install check_mk plugin config file for {{ item }}
+  copy:
+    src: "{{ cmk_host_plugins[ item ].cfg }}"
+    dest: "{{ cmk_config_path }}/{{ cmk_host_plugins[ item ].cfg }}"
+    owner: root
+    group: root
+    mode: 0400
+  when: cmk_host_plugins[ item ].cfg is defined
+  with_items: "{{ cmk_host_plugins }}"
+
+- name: xinetd service activation
+  block:
+    - name: Install xinetd package
+      package:
+        name: xinetd
+        state: present
+
+    - name: Limit check_mk xinetd service
+      lineinfile:
+        path: /etc/xinetd.d/check_mk
+        insertafter: "#only_from"
+        regexp: '^only_from'
+        line: "only_from      = 127.0.0.1 {{ cmk_server_ip }}"
+
+    - name: Start and enable xinetd
+      service:
+        name: xinetd
+        state: started
+        enabled: true
+
+    - name: Allow check_mk.socket (ufw)
+      ufw:
+        rule: allow
+        port: 6556
+        proto: tcp
