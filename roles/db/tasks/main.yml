@@ -171,3 +171,9 @@
   postgresql_ext:
     name: postgis_topology
     db: "{{ db_name }}"
+
+- name: create hstore extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: hstore
+    db: "{{ db_name }}"
