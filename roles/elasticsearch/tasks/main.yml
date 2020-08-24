@@ -40,6 +40,22 @@
     line: "-Xmx{{ elasticsearch_heapsize }}"
   notify: restart elasticsearch
 
+- name: Get dictionary file
+  get_url:
+    url: "https://raw.githubusercontent.com/uschindler/german-decompounder/6227be052f4215294b5a5d498cdcdadfcf7196e6/dictionary-dee.txt"
+    dest: "/etc/elasticsearch/analysis/de_DR.xml"
+    owner: root
+    group: elasticsearch
+    mode: 0640
+
+- name: Get hyphenation file
+  get_url:
+    url: "https://raw.githubusercontent.com/uschindler/german-decompounder/6227be052f4215294b5a5d498cdcdadfcf7196e6/de_DR.xml"
+    dest: "/etc/elasticsearch/analysis/de_DR.xml"
+    owner: root
+    group: elasticsearch
+    mode: 0640
+
 - name: Ensure elasticsearch service is running
   service:
     name: elasticsearch
