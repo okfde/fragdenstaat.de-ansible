@@ -1,20 +1,14 @@
 ---
 
-- name: Add certboot apt repo
-  apt_repository: repo="ppa:certbot/certbot" update_cache=false
-
 - name: Ensure software-properties-common installed
   apt: name=software-properties-common state=latest
   register: certbot_repo_added
-
-- apt: update_cache=true
-  when: certbot_repo_added is changed
 
 - name: Install Certbot.
   apt: name=certbot state=latest
 
 - name: Install Certbot nginx
-  apt: name=python-certbot-nginx state=latest
+  apt: name=python3-certbot-nginx state=latest
 
 - name: Check if Nginx exists
   stat: path=/etc/init.d/nginx
