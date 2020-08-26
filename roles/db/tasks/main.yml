@@ -5,7 +5,7 @@
            state=present
 
 - name: Add PostgreSQL to the sources list
-  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+  apt_repository: repo='deb [arch=amd64] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
                   update_cache={{ update_apt_cache }}
                   state=present
 
