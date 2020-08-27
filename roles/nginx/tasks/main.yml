@@ -131,6 +131,8 @@
     mode: 0550
   with_items: "{{ htpasswd }}"
   notify: reload nginx
+  tags:
+    - nginx
 
 - name: Ensure that the file permissions for static are correct
   file: path={{ django_static_root }}
