@@ -19,11 +19,10 @@
            creates={{ virtualenv_path }}/bin/activate
   when: ansible_distribution_version == "20.04"
 
-- name: Change ownership of app directory
+- name: Seet ownership of app directory
   file:
     path: "{{ virtualenv_path }}"
     state: directory
-    recurse: yes
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_user }}"
 
