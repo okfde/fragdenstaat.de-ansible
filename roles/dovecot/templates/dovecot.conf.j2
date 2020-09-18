@@ -92,6 +92,10 @@ protocol lda {
   postmaster_address = postmaster@{{ domain_name }}
 }
 
+service imap {
+  vsz_limit=512 MB
+}
+
 # A config file can also tried to be included without giving an error if
 # it's not found:
 !include_try local.conf
