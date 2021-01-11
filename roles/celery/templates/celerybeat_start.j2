@@ -11,4 +11,4 @@ export RELEASE_VERSION=$(cat {{ virtualenv_path}}/meta/current_release)
 
 # Programs meant to be run under supervisor should not daemonize themselves
 # (do not use --daemon).
-exec celery beat -A froide.celery:app -l INFO
+exec celery -A froide.celery:app beat -l INFO

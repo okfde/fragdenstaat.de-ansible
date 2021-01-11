@@ -13,4 +13,4 @@ cd $DJANGODIR
 export LD_LIBRARY_PATH=/usr/local/lib
 export RELEASE_VERSION=$(cat {{ virtualenv_path}}/meta/current_release)
 
-exec celery worker -A froide.celery:app -Q {{ item.queues }}{% if item.type is defined %} -O fair --max-tasks-per-child=1 --without-gossip{% endif %} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h
+exec celery -A froide.celery:app worker -Q {{ item.queues }}{% if item.type is defined %} -O fair --max-tasks-per-child=1 --without-gossip{% endif %} -l INFO -E --concurrency={{ item.worker }}  -n {{ item.name }}@%h
