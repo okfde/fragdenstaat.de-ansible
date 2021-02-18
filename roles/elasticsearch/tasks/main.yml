@@ -28,14 +28,14 @@
 
 - name: Apply heapsize start tuning for systems with greater than 64G memory
   lineinfile:
-    path: /etc/elasticsearch/jvm.options
+    path: /etc/elasticsearch/jvm.options.d/heapsize.options
     regexp: '^-Xms'
     line: "-Xms{{ elasticsearch_heapsize }}"
   notify: restart elasticsearch
 
 - name: Apply heapsize start tuning for systems with greater than 64G memory
   lineinfile:
-    path: /etc/elasticsearch/jvm.options
+    path: /etc/elasticsearch/jvm.options.d/heapsize.options
     regexp: '^-Xmx'
     line: "-Xmx{{ elasticsearch_heapsize }}"
   notify: restart elasticsearch
