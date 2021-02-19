@@ -1,13 +1,19 @@
 ---
 
-- name: Install duplicity and dependencies
+- name: Install duplicity dependencies
   apt:
     name:
-      - duplicity
+      - librsync-dev
       - lftp
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
+
+- name: Install duplicity from pip
+  pip:
+    name: duplicity
+    state: latest
+  become: true
 
 - name: Do not verify SSL certificate
   lineinfile:

@@ -22,16 +22,16 @@ fi
 find {{ virtualenv_path }}/backup/ -mtime +7 -exec rm -Rf -- {} \;
 
 # SQL Dump Backup
-duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M {{ virtualenv_path }}/backup/ {{ backup_ftp_url }}/fds-sql-backup >> {{ virtualenv_path }}/logs/fds-sql-backup.log
-duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/fds-sql-backup >> {{ virtualenv_path }}/logs/fds-sql-backup.log
+/usr/local/bin/duplicity --allow-source-mismatch -v 9 --full-if-older-than 1W {{ virtualenv_path }}/backup/ {{ backup_ftp_url }}/fds-sql-backup >> {{ virtualenv_path }}/logs/fds-sql-backup.log
+/usr/local/bin/duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/fds-sql-backup >> {{ virtualenv_path }}/logs/fds-sql-backup.log
 
 # Storage Backup
-duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M {{ virtualenv_path }}/storage/ {{ backup_ftp_url }}/fds-storage-backup >> {{ virtualenv_path }}/logs/fds-storage-backup.log
-duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/fds-storage-backup >> {{ virtualenv_path }}/logs/fds-storage-backup.log
+/usr/local/bin/duplicity --copy-links --allow-source-mismatch -v 9 --full-if-older-than 1M {{ virtualenv_path }}/storage/ {{ backup_ftp_url }}/fds-storage-backup >> {{ virtualenv_path }}/logs/fds-storage-backup.log
+/usr/local/bin/duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/fds-storage-backup >> {{ virtualenv_path }}/logs/fds-storage-backup.log
 
 # Mail backup
-duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M /var/vmail/ {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
-duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
+/usr/local/bin/duplicity --allow-source-mismatch -v 9 --full-if-older-than 1M /var/vmail/ {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
+/usr/local/bin/duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
 
 
 unset FTP_PASSWORD
