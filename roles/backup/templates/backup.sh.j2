@@ -34,5 +34,9 @@ find {{ virtualenv_path }}/backup/ -mtime +7 -exec rm -Rf -- {} \;
 /usr/local/bin/duplicity --allow-source-mismatch -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/mail-backup >> {{ virtualenv_path }}/logs/mail-backup.log
 
 
+/usr/local/bin/duplicity collection-status {{ backup_ftp_url }}/fds-sql-backup
+/usr/local/bin/duplicity collection-status {{ backup_ftp_url }}/fds-storage-backup
+/usr/local/bin/duplicity collection-status {{ backup_ftp_url }}/mail-backup
+
 unset FTP_PASSWORD
 unset PASSPHRASE
