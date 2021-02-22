@@ -1,7 +1,9 @@
 ---
 
 - name: Install dovecot
-  apt: name=dovecot-imapd state=latest
+  apt:
+    name: dovecot-imapd
+    state: latest
 
 - name: Create group used in passwdfile
   group:

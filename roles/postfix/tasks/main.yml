@@ -1,11 +1,12 @@
 ---
 
 - name: Ensure postfix and dependencies are installed
-  apt: name={{ item }} state=present
-  with_items:
-    - postfix
-    - postfix-pgsql
-    - postfix-pcre
+  apt:
+    name:
+      - postfix
+      - postfix-pgsql
+      - postfix-pcre
+    state: present
 
 - name: Ensure postfix is started and enabled at boot.
   service: name=postfix state=started enabled=yes
