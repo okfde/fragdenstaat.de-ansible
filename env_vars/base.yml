@@ -128,6 +128,7 @@ frontend_modules:
   - pypackage: froide_food
   - pypackage: froide_payment
   - pypackage: froide_exam
+  - pypackage: froide_legalaction
   - pypackage: froide_campaign
   - pypackage: filingcabinet
     jspackage: "@okfde/filingcabinet"
