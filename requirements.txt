@@ -1,7 +1,7 @@
 ansible==2.9.12
 bcrypt==3.2.0
 cffi==1.14.2
-cryptography==3.2
+cryptography==3.3.2
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 paramiko==2.7.1
