@@ -322,7 +322,7 @@ content_security_policy:
   "worker-src": "'self' blob: __static__"
   "frame-src": "'self' blob: __static__ __media__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
   "object-src": "'self' __media__"
-  "connect-src": "'self' __static__ __media__ https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com"
+  "connect-src": "'self' __static__ __media__ https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com https://traffic.okfn.de"
   "child-src": "'self' blob: __static__"
   "base-uri": "'none'"
   "font-src": "data: __static__"
