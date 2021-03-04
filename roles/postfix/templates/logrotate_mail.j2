@@ -4,6 +4,8 @@
 /var/log/mail.log
 {
 	rotate 16
+	su root syslog
+	create 0640 syslog adm
 	weekly
 	missingok
 	notifempty
