@@ -32,7 +32,10 @@
 - name: Run Django compilemessages
   command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
   args:
-    chdir: "{{ virtualenv_path }}/src"
+    chdir: "{{ item }}"
+  with_items:
+    - "{{ virtualenv_path }}/src"
+    - "{{ project_path }}"
   environment: "{{ django_environment }}"
   become: true
   become_user: "{{ gunicorn_user }}"
