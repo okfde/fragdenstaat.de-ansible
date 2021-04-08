@@ -60,10 +60,6 @@
     backup: yes
 
 - name: Add LibreOffice repository
-  apt_repository: repo="ppa:libreoffice/libreoffice-6-0" state=present
-  when: ansible_distribution_version == "18.04"
-
-- name: Add LibreOffice repository
   apt_repository: repo="ppa:libreoffice/libreoffice-6-4" state=present
   when: ansible_distribution_version == "20.04"
 

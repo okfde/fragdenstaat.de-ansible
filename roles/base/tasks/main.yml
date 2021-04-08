@@ -4,10 +4,6 @@
   when: create_swap_file
   tags: swap
 
-- apt_repository: repo="deb http://archive.ubuntu.com/ubuntu bionic universe" update_cache=false
-  register: universe_installed
-  when: ansible_distribution_version == "18.04"
-
 - apt_repository: repo="deb http://archive.ubuntu.com/ubuntu focal universe" update_cache=false
   register: universe_installed
   when: ansible_distribution_version == "20.04"
@@ -25,27 +21,6 @@
     update_cache: "{{ update_apt_cache }}"
     state: latest
   tags: packages
-
-- name: Install base packages 18.04
-  apt:
-    name:
-      - build-essential
-      - acl
-      - ntp
-      - ntpdate
-      - git
-      - libpq-dev
-      - python3-dev
-      - python3-pip
-      - python3-pycurl
-      - ipython
-      - supervisor
-    update_cache: "{{ update_apt_cache }}"
-    force: yes
-    state: present
-  tags: packages
-  when: ansible_distribution_version == "18.04"
-
 
 - name: Install base packages 20.04
   apt:

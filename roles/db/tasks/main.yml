@@ -12,21 +12,6 @@
 - name: Install PostgreSQL
   apt:
     name:
-      - postgresql-11
-      - postgresql-contrib
-      - libpq-dev
-      - postgis
-      - postgresql-11-postgis-scripts
-      - postgis-doc
-      - python3-psycopg2
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  tags: packages
-  when: ansible_distribution_version == "18.04"
-
-- name: Install PostgreSQL
-  apt:
-    name:
       - postgresql-12
       - postgresql-contrib
       - libpq-dev
