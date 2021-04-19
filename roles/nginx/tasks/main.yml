@@ -91,6 +91,8 @@
     owner: www-data
     group: www-data
   with_items: "{{ simple_files }}"
+  tags:
+    - nginx
 
 - name: Setup bad referrer redirect
   copy:
