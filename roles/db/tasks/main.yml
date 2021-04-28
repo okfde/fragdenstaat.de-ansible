@@ -162,3 +162,9 @@
   postgresql_ext:
     name: hstore
     db: "{{ db_name }}"
+
+- name: create citext extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: citext
+    db: "{{ db_name }}"
