@@ -20,6 +20,19 @@ map $sent_http_content_type $media_expires {
     ~image/                     max;
 }
 
+map $sent_http_content_type $mime_contentdisposition {
+    default                     attachment;
+    application/pdf             inline;
+    ~image/                     inline;
+}
+
+map $http_sec_fetch_dest $contentdisposition {
+    default                     $mime_contentdisposition;
+    document                    attachment;
+    iframe                      inline;
+}
+
+
 {{ csp_header_map() }}
 
 map $http_referer $bad_referrer {

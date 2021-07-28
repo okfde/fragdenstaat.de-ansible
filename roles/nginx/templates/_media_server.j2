@@ -11,7 +11,6 @@
     {% endif %}
 {%- endmacro %}
 
-
 {% if maintenance %}
     set $maintenance on;
 
@@ -85,7 +84,7 @@ location = /error_451.html {
         add_header Link $link;
 
         {% if url_dir.force_download is defined and url_dir.force_download %}
-          add_header Content-disposition "attachment";
+            add_header Content-disposition $contentdisposition;
         {% endif %}
 
         {{ cors(static_server_url) }}
@@ -100,7 +99,7 @@ location = /error_451.html {
     location {{ loc.url }} {
 
         {% if loc.force_download is defined and loc.force_download %}
-          add_header Content-disposition "attachment";
+            add_header Content-disposition $contentdisposition;
         {% endif %}
 
         {{ csp_block(media_content_security_policy) }}
