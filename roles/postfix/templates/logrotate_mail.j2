@@ -14,6 +14,7 @@
 	sharedscripts
 	postrotate
 		invoke-rc.d rsyslog rotate > /dev/null
+		systemctl restart syslog > /dev/null
 		/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log > /dev/null
 		/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log.1 > /dev/null
 	endscript
