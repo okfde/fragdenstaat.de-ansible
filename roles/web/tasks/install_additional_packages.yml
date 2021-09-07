@@ -14,11 +14,22 @@
       - optipng
       - jpegoptim
       - dirmngr
+      - git
+      - libpq-dev
       - python3-tk
+      - python3-dev
+      - python3-pip
+      - python3-pycurl
+      - supervisor
     update_cache: "{{ update_apt_cache }}"
     force: yes
     state: present
 
+- name: Upgrade pip
+  pip:
+    name: pip
+    state: latest
+  tags: packages
 
 - name: Comment out ImageMagick policy entries for PDF none
   replace:

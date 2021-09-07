@@ -29,12 +29,6 @@
       - acl
       - ntp
       - ntpdate
-      - git
-      - libpq-dev
-      - python3-dev
-      - python3-pip
-      - python3-pycurl
-      - supervisor
       - gpg
       - gpg-agent
     update_cache: "{{ update_apt_cache }}"
@@ -42,12 +36,6 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
-
-- name: Upgrade pip
-  pip:
-    name: pip
-    state: latest
-  tags: packages
 
 - import_tasks: setup_unattended_upgrades.yml
   when: enable_unattended_upgrades is defined and enable_unattended_upgrades
