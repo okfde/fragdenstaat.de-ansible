@@ -212,6 +212,11 @@ server {
         {% include '_web_server.j2' %}
     {% endwith %}
 }
+
+server {
+    listen 127.0.0.1:{{ onion_service.internal_port }} default_server;
+    return 444;
+}
 {% endwith %}
 
 {% with onion_service = onion_services['onion_static_media'] %}
@@ -234,6 +239,17 @@ server {
     {% endwith %}
 }
 
+server {
+    listen 127.0.0.1:{{ onion_service.internal_port }} default_server;
+    return 444;
+}
+
 {% endwith %}
 
 {% endif %}
+
+server {
+    listen 80 default_server;
+    server_name _;
+    return 444;
+}
