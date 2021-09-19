@@ -1,15 +1,26 @@
 ---
 
 - name: Create the application user
-  user: name={{ gunicorn_user }} state=present
+  user:
+    name: "{{ gunicorn_user }}"
+    uid: 1001
+    state: present
 
 - name: Create the application group
-  group: name={{ gunicorn_group }} system=yes state=present
+  group:
+    name: "{{ gunicorn_group }}"
+    gid: 998
+    system: yes
+    state: present
 
 - name: Add the application user to the application group
-  user: name={{ gunicorn_user }} group={{ gunicorn_group }} state=present
+  user:
+    name: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    state: present
 
 - name: Adding user www-data to {{ gunicorn_group }}
-  user: name=www-data
-        groups={{ gunicorn_group }}
-        append=yes
+  user:
+    name: "www-data"
+    groups: "{{ gunicorn_group }}"
+    append: yes
