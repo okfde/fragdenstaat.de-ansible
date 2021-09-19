@@ -96,6 +96,9 @@ service imap {
   vsz_limit=512 MB
 }
 
+mail_max_userip_connections=30
+
+
 # A config file can also tried to be included without giving an error if
 # it's not found:
 !include_try local.conf
