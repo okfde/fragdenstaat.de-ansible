@@ -96,9 +96,25 @@ service imap {
   vsz_limit=512 MB
 }
 
+service stats {
+    unix_listener stats-reader {
+        user = vmail
+        group = vmail
+        mode = 0660
+    }
+
+    unix_listener stats-writer {
+        user = vmail
+        group = vmail
+        mode = 0660
+    }
+}
+
+
 mail_max_userip_connections=30
 
 
 # A config file can also tried to be included without giving an error if
 # it's not found:
 !include_try local.conf
+
