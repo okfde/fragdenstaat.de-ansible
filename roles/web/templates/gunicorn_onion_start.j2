@@ -17,3 +17,5 @@ export ALLOWED_HOSTS={{ onion_web_server }},{{ onion_media_server }}
 # Don't pollute other app cache
 export CACHE_URL=locmem://
 {% endblock %}
+
+{% block extra_bind %}{% endblock %}

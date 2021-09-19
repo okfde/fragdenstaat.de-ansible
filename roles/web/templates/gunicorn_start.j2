@@ -39,4 +39,5 @@ exec gunicorn \
     --user $USER --group $GROUP \
     --log-level info \
     --bind unix:$SOCKFILE \
+    {% block extra_bind %}{% if host_data.site_ipv4 %}--bind {{ host_data.site_ipv4 }}:8000{% endblock %}
     {% block command_end %}{{ application_name }}.wsgi{% endblock %}
