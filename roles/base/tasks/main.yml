@@ -4,7 +4,10 @@
   when: create_swap_file
   tags: swap
 
-- apt_repository: repo="deb http://archive.ubuntu.com/ubuntu focal universe" update_cache=false
+- apt_repository:
+    repo: "deb http://archive.ubuntu.com/ubuntu focal universe"
+    update_cache: false
+    mode: "600"
   register: universe_installed
   when: ansible_distribution_version == "20.04"
 
