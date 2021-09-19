@@ -5,13 +5,13 @@
     name:
       - cifs-utils
     update_cache: "{{ update_apt_cache }}"
-    force: yes
+    force: true
     state: present
 
 - name: Write CIFS credential username
   lineinfile:
     path: /root/.cifscredentials
-    create: yes
+    create: true
     group: root
     owner: root
     mode: "600"
@@ -21,7 +21,7 @@
 - name: Write CIFS credential password
   lineinfile:
     path: /root/.cifscredentials
-    create: yes
+    create: true
     group: root
     owner: root
     mode: "600"

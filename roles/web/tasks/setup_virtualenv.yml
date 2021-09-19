@@ -31,7 +31,7 @@
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
     mode: 0755
-    backup: yes
+    backup: true
   with_items:
     - gunicorn
     - uvicorn

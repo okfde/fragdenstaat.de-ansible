@@ -4,9 +4,9 @@ git_repo: https://github.com/okfde/fragdenstaat_de.git
 
 ssh_port: "22"
 
-maintenance: no
-maintenance_media: no
-maintenance_admin_ip: no
+maintenance: false
+maintenance_media: false
+maintenance_admin_ip: false
 
 hostname: "{{ inventory_hostname }}"
 project_name: fragdenstaat.de
@@ -20,7 +20,7 @@ media_server_url: "https://{{ media_server_name }}"
 static_server_name: static.frag-den-staat.de
 static_server_url: "https://{{ static_server_name }}"
 static_asset_path: "https://static.frag-den-staat.de/static/js/"
-external_media_storage: no
+external_media_storage: false
 external_media_storage_src: ""
 external_media_storage_username: ""
 external_media_storage_password: ""
@@ -53,7 +53,7 @@ db_password: "dummy"
 db_user_readonly: "{{ application_name }}_readonly"
 db_password_readonly: "dummy"
 
-collect_release_info: no
+collect_release_info: false
 
 # Gunicorn settings.
 gunicorn_num_workers: 10
@@ -61,7 +61,7 @@ gunicorn_user: "{{ application_name }}"
 gunicorn_group: webapps
 uvicorn_num_workers: 2
 
-onion_service_enabled: no
+onion_service_enabled: false
 gunicorn_onion_num_workers: 2
 uvicorn_onion_num_workers: 1
 onion_web_server: ""
@@ -95,12 +95,12 @@ django_secret_url_admin: "admin"
 protected_urls:
   - url: "/admin/"
     realm: admin
-    only_ip: no
+    only_ip: false
 
 rate_limited_urls:
   - url: /account/login/
     zone: login
-    auth: no
+    auth: false
 
 release_repo: okfde/fragdenstaat_de
 release_notifications:
@@ -205,7 +205,7 @@ alias_foi_domains: []
 
 bad_referrers: []
 
-letsencrypt_enabled: no
+letsencrypt_enabled: false
 
 # For dovecot and postfix
 mail_cert_filename: "/etc/letsencrypt/live/{{ mail_domain }}/fullchain.pem"

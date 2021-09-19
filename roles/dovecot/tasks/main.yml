@@ -9,7 +9,7 @@
   group:
     name: "vmail"
     gid: 5000
-    system: yes
+    system: true
 
 - name: Create vmail user
   user:
@@ -18,7 +18,7 @@
     uid: 5000
     home: "/var/local/vmail"
     shell: "/usr/sbin/nologin"
-    system: yes
+    system: true
 
 
 - name: Create the dovecot config
@@ -30,7 +30,7 @@
   copy:
     content: ""
     dest: "{{ dovecot_passwd_file }}"
-    force: no
+    force: false
     owner: 'root'
     group: 'dovecot'
     mode: '0650'

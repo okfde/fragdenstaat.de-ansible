@@ -22,7 +22,7 @@
       - python3-pycurl
       - supervisor
     update_cache: "{{ update_apt_cache }}"
-    force: yes
+    force: true
     state: present
 
 - name: Upgrade pip
@@ -69,7 +69,7 @@
     regexp: '<policy domain="coder" rights="none" pattern="PDF" />'
     replace: ''
     after: 'Start after line.*'
-    backup: yes
+    backup: true
 
 - name: Add LibreOffice repository
   apt_repository: repo="ppa:libreoffice/libreoffice-6-4" state=present

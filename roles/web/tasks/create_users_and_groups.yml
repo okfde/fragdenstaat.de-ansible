@@ -10,7 +10,7 @@
   group:
     name: "{{ gunicorn_group }}"
     gid: 998
-    system: yes
+    system: true
     state: present
 
 - name: Add the application user to the application group
@@ -23,4 +23,4 @@
   user:
     name: "www-data"
     groups: "{{ gunicorn_group }}"
-    append: yes
+    append: true

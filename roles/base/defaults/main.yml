@@ -2,8 +2,8 @@
 
 server_user: root
 
-enable_unattended_upgrades: yes
+enable_unattended_upgrades: true
 
-enable_ufw: yes
+enable_ufw: true
 
-enable_fail2ban: yes
+enable_fail2ban: true

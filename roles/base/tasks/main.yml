@@ -35,7 +35,7 @@
       - gpg
       - gpg-agent
     update_cache: "{{ update_apt_cache }}"
-    force: yes
+    force: true
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"

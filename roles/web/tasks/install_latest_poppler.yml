@@ -11,7 +11,7 @@
       - libcairo2-dev
       - libopenjp2-7-dev
     update_cache: "{{ update_apt_cache }}"
-    force: yes
+    force: true
     state: present
   when: ansible_distribution_version == "20.04"
 

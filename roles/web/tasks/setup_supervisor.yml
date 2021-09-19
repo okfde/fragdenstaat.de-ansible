@@ -14,7 +14,7 @@
   template:
     src: "supervisor_{{ item }}.j2"
     dest: "/etc/supervisor/conf.d/{{ item }}.conf"
-    backup: yes
+    backup: true
     mode: "600"
   with_items:
     - "app_gunicorn"

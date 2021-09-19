@@ -1,12 +1,30 @@
 ---
 
-- name: Create a {{ application_name }}
+- name: "Basic setup, networking, monitoring"
   hosts: all
-  become: yes
+  vars_files:
+    - env_vars/base.yml
+    - env_vars/secrets.yml
+    - env_vars/production.yml
+  roles:
+    - base
+    - network
+    - check_mk
+
+- name: Create a db server
+  hosts: db
+
+
+- name: Create a mail server
+  hosts: mail
+
+- name: Create a web {{ application_name }}
+  hosts: web:app:db:mail
+  become: true
   become_user: root
   pre_tasks:
     - name: Send Slack notification message on start deployment
-      become: no
+      become: false
       slack:
         token: '{{ slack_token }}'
         msg: 'Deployment start on {{ inventory_hostname }}'
@@ -20,7 +38,7 @@
         - deploy-frontend
   post_tasks:
     - name: Send Slack notification message on finished deployment
-      become: no
+      become: false
       slack:
         token: '{{ slack_token }}'
         msg: 'Deployment finished on {{ inventory_hostname }}'
@@ -33,9 +51,10 @@
         - deploy-web
         - deploy-frontend
   vars:
-    - update_apt_cache: yes
+    - update_apt_cache: true
   vars_files:
     - env_vars/base.yml
+    - env_vars/secrets.yml
     - env_vars/production.yml
 
   roles:

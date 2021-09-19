@@ -4,7 +4,7 @@
     dest: "/tmp"
 
 - name: Install check_mk agent
-  become: yes
+  become: true
   apt:
       deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
       state: present

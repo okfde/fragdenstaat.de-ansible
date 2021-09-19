@@ -73,7 +73,7 @@
     password: "{{ db_password }}"
     priv: "ALL"
     state: "present"
-    encrypted: yes
+    encrypted: true
 
 - name: Ensure readonly user has access to the database
   become_user: postgres
@@ -83,7 +83,7 @@
     password: "{{ db_password_readonly }}"
     role_attr_flags: NOSUPERUSER,NOCREATEDB
     state: present
-    encrypted: yes
+    encrypted: true
 
 - name: Ensure user has access to tables
   become_user: postgres
@@ -95,7 +95,7 @@
     objs: ALL_IN_SCHEMA
     schema: public
     roles: "{{ db_user }}"
-    grant_option: yes
+    grant_option: true
 
 - name: Ensure readonly user has no privileges
   become_user: postgres
@@ -112,8 +112,8 @@
     privs: CONNECT
     type: database
     role: "{{ db_user_readonly }}"
-    grant_option: yes
-  become: yes
+    grant_option: true
+  become: true
   become_user: postgres
 
 - name: Ensure readonly user has select access to all tables in schema
@@ -122,8 +122,8 @@
     privs: SELECT
     objs: ALL_IN_SCHEMA
     role: "{{ db_user_readonly }}"
-    grant_option: yes
-  become: yes
+    grant_option: true
+  become: true
   become_user: postgres
 
 - name: Ensure user has access to all sequences
@@ -136,7 +136,7 @@
     objs: ALL_IN_SCHEMA
     schema: public
     roles: "{{ db_user }}"
-    grant_option: yes
+    grant_option: true
 
 - name: Ensure user does not have unnecessary privileges
   become_user: postgres

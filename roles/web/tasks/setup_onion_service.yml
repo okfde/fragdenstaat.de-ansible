@@ -73,7 +73,7 @@
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
     mode: 0755
-    backup: yes
+    backup: true
   with_items:
     - gunicorn
     - uvicorn
@@ -86,7 +86,7 @@
   template:
     src: "supervisor_{{ item }}.j2"
     dest: "/etc/supervisor/conf.d/{{ item }}.conf"
-    backup: yes
+    backup: true
   with_items:
     - "app_gunicorn_onion"
     - "app_uvicorn_onion"

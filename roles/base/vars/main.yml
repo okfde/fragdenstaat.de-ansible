@@ -1,5 +1,5 @@
 ---
 
-create_swap_file: no
+create_swap_file: false
 swap_file_path: /swapfile
 swap_file_size_kb: 512

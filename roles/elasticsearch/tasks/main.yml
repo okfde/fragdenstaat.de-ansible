@@ -60,4 +60,4 @@
   service:
     name: elasticsearch
     state: started
-    enabled: yes
+    enabled: true

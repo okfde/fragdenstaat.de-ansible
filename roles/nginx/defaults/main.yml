@@ -1,8 +1,8 @@
 ---
 
 nginx_ssl_dest_dir: /etc/ssl
-nginx_strong_dh_group: yes  # Strongly recomended in production. See weakdh.org.
-nginx_use_letsencrypt: no
+nginx_strong_dh_group: true  # Strongly recomended in production. See weakdh.org.
+nginx_use_letsencrypt: false
 
 # Nginx settings.
 nginx_access_log_file: "{{ application_log_dir }}/nginx_access.log"
