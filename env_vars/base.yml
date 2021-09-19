@@ -2,7 +2,7 @@
 
 git_repo: https://github.com/okfde/fragdenstaat_de.git
 
-ssh_port: 22
+ssh_port: "22"
 
 maintenance: no
 maintenance_media: no
