@@ -2,7 +2,7 @@ cmk_agent_path: "/usr/lib/check_mk_agent"
 cmk_plugins_path: "{{ cmk_agent_path }}/plugins"
 cmk_config_path: "/etc/check_mk"
 
-cmk_version: "1.6.0p5"
+cmk_version: "1.6.0p16"
 cmk_host_plugins:
   mk_apt: {}
   mk_logwatch:
