@@ -71,12 +71,15 @@
     - restart memcached
 
 - name: Reload application
-  shell: "supervisorctl pid {{ item }} | xargs kill -s HUP"
-  notify:
-    - restart memcached
+  community.general.supervisorctl:
+    name: "{{ item }}"
+    state: signalled
+    signal: HUP
   with_items:
     - "{{ application_name }}_gunicorn"
     - "{{ application_name }}_uvicorn"
+  notify:
+    - restart memcached
   tags:
     - deploy
     - deploy-backend
@@ -84,7 +87,10 @@
     - deploy-web
 
 - name: Reload Onion application
-  shell: "supervisorctl pid {{ item }} | xargs kill -s HUP"
+  community.general.supervisorctl:
+    name: "{{ item }}"
+    state: signalled
+    signal: HUP
   when: onion_service_enabled
   with_items:
     - "{{ application_name }}_gunicorn_onion"

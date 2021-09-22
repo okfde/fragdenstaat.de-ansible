@@ -1,49 +1,56 @@
 ---
 
 - name: Create the Supervisor config file for celery workers
-  template: src=supervisor_celery.conf.j2
-            dest=/etc/supervisor/conf.d/{{ item.name }}.conf
+  template:
+    src: supervisor_celery.conf.j2
+    dest: "/etc/supervisor/conf.d/{{ item.name }}.conf"
   with_items: "{{ celery_worker }}"
   tags:
     - celery
 
 - name: Create the Supervisor config file for celerybeat
-  template: src=supervisor_celerybeat.conf.j2
-            dest=/etc/supervisor/conf.d/celerybeat.conf
+  template: 
+    src: supervisor_celerybeat.conf.j2
+    dest: /etc/supervisor/conf.d/celerybeat.conf
   tags:
     - celery
 
 - name: Create the celery log directory
-  file: path={{ celery_log_dir }}
-        owner={{ celery_user }}
-        group={{ celery_group }}
-        state=directory
+  file: 
+    path: "{{ celery_log_dir }}"
+    owner: "{{ celery_user }}"
+    group: "{{ celery_group }}"
+    state: "directory"
   tags:
     - celery
 
 - name: Create the celery worker log files
-  file: path={{ celery_log_dir }}/celery_{{ item.name }}.log
-        owner={{ celery_user }}
-        group={{ celery_group }}
-        state=touch
+  file: 
+    path: "{{ celery_log_dir }}/celery_{{ item.name }}.log"
+    owner: "{{ celery_user }}"
+    group: "{{ celery_group }}"
+    state: "touch"
   with_items: "{{ celery_worker }}"
   tags:
     - celery
 
 - name: Create the celery beat application log file
-  file: path={{ celerybeat_log_file }}
-        owner={{ celery_user }}
-        group={{ celery_group }}
-        state=touch
+  file: 
+    path: "{{ celerybeat_log_file }}"
+    owner: "{{ celery_user }}"
+    group: "{{ celery_group }}"
+    state: "touch"
   tags:
     - celery
 
-- name: Re-read the Supervisor config files
-  command: supervisorctl reread
-  tags:
-    - celery
+- name: Add celery workers
+  community.general.supervisorctl:
+    name: "{{ item.name }}"
+    state: present
+  with_items: "{{ celery_worker }}"
 
-- name: Update Supervisor to add the app in the process group
-  command: supervisorctl update
-  tags:
-    - celery
+- name: Add celery beat
+  community.general.supervisorctl:
+    name: celerybeat
+    state: present
+  with_items: "{{ celery_worker }}"

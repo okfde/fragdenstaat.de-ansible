@@ -105,7 +105,7 @@
     - deploy-web
 
 - name: Re-read the Supervisor config files
-  supervisorctl:
+  community.general.supervisorctl:
     name: "{{ item }}"
     state: present
   with_items:
