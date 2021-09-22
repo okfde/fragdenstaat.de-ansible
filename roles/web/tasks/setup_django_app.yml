@@ -19,10 +19,20 @@
   become_user: "{{ gunicorn_user }}"
 
 - name: Creates public directory
-  file: path={{ virtualenv_path }}/public state=directory owner={{ gunicorn_user }}
+  file:
+    path: "{{ virtualenv_path }}/public"
+    state: "directory"
+    owner: "{{ gunicorn_user }}"
 
 - name: Creates storage directory
-  file: path={{ virtualenv_path }}/storage/files state=directory owner={{ gunicorn_user }}
+  file:
+    path: "{{ virtualenv_path }}/storage/files"
+    state: "directory"
+    owner: "{{ gunicorn_user }}"
 
 - name: Create symlink to storage
-  file: src={{ virtualenv_path }}/storage/files dest={{ virtualenv_path }}/public/files state=link owner={{ gunicorn_user }}
+  file:
+    src: "{{ virtualenv_path }}/storage/files"
+    dest: "{{ virtualenv_path }}/public/files"
+    state: "link"
+    owner: "{{ gunicorn_user }}"
