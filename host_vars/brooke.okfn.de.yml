@@ -1,0 +1,9 @@
+---
+host_data:
+  region: falkenstein1
+  datacenter: fsn1-dc1
+  interface_name: eno1
+  mac: 30:9c:23:ce:08:74
+  global_ipv4: 94.130.55.89
+  global_ipv6: 2a01:4f8:10b:2cf1::2
+  site_ipv4: 192.168.100.1

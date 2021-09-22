@@ -1,0 +1,12 @@
+---
+host_data:
+  region: falkenstein1
+  datacenter: fsn1-dc18
+  interface_name: enp7s0
+  mac: 7c:10:c9:21:fc:db
+  global_ipv4: 162.55.90.25
+  global_ipv6: 2a01:4f8:271:19b1::2
+  site_ipv4: 192.168.100.2
+  disk_type: hdd
+  # 26 TB available, 60 GB per volume, some wiggle room
+  seaweed_max_volumes: 400
