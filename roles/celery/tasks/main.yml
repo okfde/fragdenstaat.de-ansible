@@ -4,9 +4,10 @@
 
 - import_tasks: setup_supervisor.yml
 
-- name: Restart the celery workers
-  supervisorctl:
-    name: celery_{{ item.name }}
+
+- name: Update celery workers
+  community.general.supervisorctl:
+    name: "{{ item.name }}"
     state: restarted
   with_items: "{{ celery_worker }}"
   tags:
@@ -14,8 +15,11 @@
     - deploy
     - deploy-backend
 
-- name: Restart the {{ celerybeat_application_name }} app
-  supervisorctl: name={{ celerybeat_application_name }} state=restarted
+- name: Update celery beat
+  community.general.supervisorctl:
+    name: celerybeat
+    state: restarted
+  with_items: "{{ celery_worker }}"
   tags:
     - celery
     - deploy
