@@ -24,7 +24,7 @@
       state: directory
       owner: debian-tor
       group: debian-tor
-      mode: 0700
+      mode: "0700"
   with_dict: "{{ onion_services }}"
   loop_control:
       loop_var: service
@@ -36,7 +36,7 @@
       dest: "/var/lib/tor/{{ service.key }}/hostname"
       owner: debian-tor
       group: debian-tor
-      mode: 0600
+      mode: "0600"
   with_dict: "{{ onion_services }}"
   loop_control:
       loop_var: service
@@ -58,21 +58,21 @@
     enabled: true
     masked: false
 
-- name: Create the application log file
+- name: Create the onion application log file
   file:
     path: "{{ application_log_dir }}/gunicorn_onion_supervisor.log"
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
-    mode: 0664
+    mode: "0664"
     state: touch
 
-- name: Create the gunicorn/uvicorn script file
+- name: Create the onion gunicorn/uvicorn script file
   template:
     src: "{{ item }}_onion_start.j2"
     dest: "{{ virtualenv_path }}/bin/{{ item }}_onion_start"
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
-    mode: 0755
+    mode: "0755"
     backup: true
   with_items:
     - gunicorn

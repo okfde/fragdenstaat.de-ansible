@@ -1,0 +1,4 @@
+---
+
+gunicorn_max_requests: 0
+application_log_file: "{{ application_log_dir }}/gunicorn_supervisor.log"

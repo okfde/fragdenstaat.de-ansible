@@ -1,0 +1,73 @@
+---
+
+- import_tasks: setup_gunicorn.yml
+
+- import_tasks: setup_supervisor.yml
+  tags: supervisor
+
+- import_tasks: setup_onion_service.yml
+  when: onion_service_enabled
+  tags:
+    - onion
+
+- import_tasks: build_frontend.yml
+
+# Run collect stat
+- name: Run collect static
+  include_role:
+    name: app
+    tasks_from: collect_static
+  tags:
+    - deploy-frontend
+
+- name: restart application
+  supervisorctl:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - "{{ application_name }}_gunicorn"
+    - "{{ application_name }}_uvicorn"
+  notify:
+    - restart memcached
+
+- name: Reload application
+  community.general.supervisorctl:
+    name: "{{ item }}"
+    state: signalled
+    signal: HUP
+  with_items:
+    - "{{ application_name }}_gunicorn"
+    - "{{ application_name }}_uvicorn"
+  notify:
+    - restart memcached
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
+    - deploy-web
+
+- name: Reload Onion application
+  community.general.supervisorctl:
+    name: "{{ item }}"
+    state: signalled
+    signal: HUP
+  when: onion_service_enabled
+  with_items:
+    - "{{ application_name }}_gunicorn_onion"
+    - "{{ application_name }}_uvicorn_onion"
+  notify:
+    - restart memcached
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
+    - deploy-web
+
+- name: Allow app local network from media server
+  ufw:
+    rule: allow
+    port: 8000
+    to_ip: "{{ host_data.site_ipv4 }}"
+    from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
+    proto: tcp
+  with_items: "{{ groups['media'] }}"

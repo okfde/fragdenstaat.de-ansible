@@ -13,3 +13,5 @@ NUM_WORKERS={{ uvicorn_num_workers }}
 -k uvicorn.workers.UvicornWorker \
 {{ application_name }}.asgi:application
 {% endblock %}
+
+{% block extra_bind %}{% endblock %}

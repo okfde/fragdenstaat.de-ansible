@@ -1,0 +1,16 @@
+---
+
+- name: Run Django collectstatic
+  django_manage:
+    command: "collectstatic --noinput -v 0"
+    app_path: "{{ project_path }}"
+    virtualenv: "{{ virtualenv_path }}"
+    settings: "{{ django_settings_file }}"
+  environment: "{{ django_environment }}"
+  become: true
+  become_user: "{{ gunicorn_user }}"
+  tags:
+    - django.collectstatic
+    - deploy-web
+    - deploy-backend
+    - deploy-frontend
