@@ -1,0 +1,52 @@
+---
+
+- name: Ensure systemd-networkd netdev configuration files exist
+  become: true
+  template:
+    src: "systemd_netdev.j2"
+    dest: "/etc/systemd/network/10-{{ host_data.interface_name }}.{{ network_vlan.id }}.netdev"
+    owner: root
+    group: systemd-network
+    mode: 0640
+  notify: restart systemd-networkd
+
+- name: Ensure systemd-networkd vlan network configuration files exist
+  become: true
+  template:
+    src: "systemd_vlan_network.j2"
+    dest: "/etc/systemd/network/10-{{ host_data.interface_name }}.{{ network_vlan.id }}.network"
+    owner: root
+    group: systemd-network
+    mode: 0640
+  notify: restart systemd-networkd
+
+- name: Ensure systemd-networkd network configuration files exist
+  become: true
+  template:
+    src: "systemd_network.j2"
+    dest: "/etc/systemd/network/10-{{ host_data.interface_name }}.network"
+    owner: root
+    group: systemd-network
+    mode: 0640
+  notify: restart systemd-networkd
+
+- name: enable systemd-networkd
+  become: true
+  service:
+    name: systemd-networkd
+    enabled: true
+
+- name: start and enable systemd-resolved
+  become: true
+  service:
+    name: systemd-resolved
+    enabled: true
+    state: started
+
+- name: replace /etc/resolv.conf with a symlink to the systemd-resolved stub
+  become: true
+  file:
+    path: /etc/resolv.conf
+    src: /run/systemd/resolve/stub-resolv.conf
+    state: link
+    force: true
