@@ -3,30 +3,28 @@
     url: "{{ cmk_site_url }}/check_mk/agents/check-mk-agent_{{ cmk_version }}-1_all.deb"
     dest: "/tmp"
 
+- name: Make sure python is installed
+  become: true
+  apt:
+    pkg: python
+    state: present
+
 - name: Install check_mk agent
   become: true
   apt:
       deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
       state: present
 
-- name: Install check_mk plugin {{ item }}
-  get_url:
-    url: "{{ cmk_site_url }}/check_mk/agents/plugins/{{ item }}"
-    dest: "{{ cmk_plugins_path }}/{{ item }}"
-    owner: root
-    group: root
-    mode: 0500
-  with_items: "{{ cmk_host_plugins }}"
+- include_tasks: install_plugin.yml
+  loop:
+    - "{{ cmk_host_plugins }}"
+  loop_control:
+    loop_var: cmk_plugins
 
-- name: Install check_mk plugin config file for {{ item }}
-  copy:
-    src: "{{ cmk_host_plugins[ item ].cfg }}"
-    dest: "{{ cmk_config_path }}/{{ cmk_host_plugins[ item ].cfg }}"
-    owner: root
-    group: root
-    mode: 0400
-  when: cmk_host_plugins[ item ].cfg is defined
-  with_items: "{{ cmk_host_plugins }}"
+- include_tasks: install_plugin.yml
+  loop: "{{ group_names | map('extract', cmk_group_plugins) | list | select('defined') }}"
+  loop_control:
+    loop_var: cmk_plugins
 
 - name: xinetd service activation
   block:
@@ -53,3 +51,4 @@
         rule: allow
         port: 6556
         proto: tcp
+        from_ip: "{{ cmk_server_ip }}"

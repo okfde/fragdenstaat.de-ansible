@@ -1,0 +1,29 @@
+---
+
+
+- name: Install check_mk plugin
+  get_url:
+    url: "{{ cmk_site_url }}/check_mk/agents/plugins/{{ item.name }}"
+    dest: "{{ cmk_plugins_path }}/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0555"
+  loop: "{{ cmk_plugins }}"
+
+- name: Install check_mk plugin config file
+  copy:
+    src: "{{ item.cfg }}"
+    dest: "{{ cmk_config_path }}/{{ item.cfg }}"
+    owner: root
+    group: root
+    mode: "0400"
+  when: item.cfg is defined
+  loop: "{{ cmk_plugins }}"
+
+
+- name: Install check_mk plugin dependency
+  apt:
+    pkg: "{{ item.pkg }}"
+    state: present
+  when: item.pkg is defined
+  loop: "{{ cmk_plugins }}"

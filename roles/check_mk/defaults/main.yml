@@ -4,9 +4,20 @@ cmk_config_path: "/etc/check_mk"
 
 cmk_version: "1.6.0p16"
 cmk_host_plugins:
-  mk_apt: {}
-  mk_logwatch:
+  - name: mk_apt
+  - name: mk_logwatch
     cfg: logwatch.cfg
-  mk_logins: {}
-  mk_postgres: {}
-  nginx_status: {}
+  - name: mk_logins
+  - name: mk_sshd_config
+
+cmk_group_plugins:
+  db:
+    - name: mk_postgres
+  web:
+    - name: nginx_status
+      cfg: nginx_status.cfg
+    - name: mk_nfsiostat
+  media: 
+    - name: nginx_status
+    - name: smart
+      pkg: smartmontools
