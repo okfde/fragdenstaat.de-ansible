@@ -1,0 +1,59 @@
+{% from '_utils.j2' import csp_header_map with context %}
+
+map $sent_http_content_type $expires {
+    default                     off;
+    text/html                   epoch;
+    text/css                    max;
+    application/javascript      max;
+    application/x-font-ttf      max;
+    font/opentype               max;
+    application/font-woff       max;
+    application/font-woff2      max;
+    application/pdf             max;
+    ~image/                     max;
+}
+
+map $sent_http_content_type $media_expires {
+    default                     off;
+    text/html                   epoch;
+    application/pdf             off;
+    ~image/                     max;
+}
+
+map $sent_http_content_type $mime_contentdisposition {
+    default                     attachment;
+    application/pdf             inline;
+    ~image/                     inline;
+}
+
+map $http_sec_fetch_dest $contentdisposition {
+    default                     $mime_contentdisposition;
+    document                    attachment;
+    iframe                      inline;
+}
+
+
+{{ csp_header_map() }}
+
+map $http_referer $bad_referrer {
+    default                  0;
+    {% for domain in bad_referrers %}
+    "~{{ domain.domain }}"          "https://{{ static_server_name }}/nope?url={{ domain.url|urlencode() }}";
+    {% endfor %}
+}
+
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
+server {
+    listen 127.0.0.1:80;
+    server_name localhost 127.0.0.1;
+    location /nginx_status {
+        stub_status;
+        access_log off;
+        allow 127.0.0.1;        # only allow requests from localhost
+        deny all;               # deny all other hosts
+    }
+}

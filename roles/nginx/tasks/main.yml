@@ -1,7 +1,10 @@
 ---
 
 - name: Install Nginx
-  apt: name=nginx update_cache={{ update_apt_cache }} state=present
+  apt:
+    name: nginx
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   tags: packages
 
 - name: Ensure that a strong Diffie-Hellman group is used
@@ -23,6 +26,8 @@
   with_items: "{{ redirect_domains }}"
   tags:
     - nginx
+    - config_update
+
 
 - name: Set HTTPS certificate facts
   set_fact:
@@ -30,6 +35,7 @@
   with_items: "{{ https_cert_check.results }}"
   tags:
     - nginx
+    - config_update
 
 - debug: var=active_https_domains
 
@@ -43,12 +49,24 @@
   with_items:
     - "{{ nginx_access_log_file }}"
     - "{{ nginx_error_log_file }}"
+  when: inventory_hostname in groups['web']
 
-- name: Create the Nginx configuration file
-  template: src=nginx_config.j2
+- name: Create the Nginx web configuration file
+  template: src=nginx_web_config.j2
             dest=/etc/nginx/sites-available/{{ application_name }}
             backup=yes
   notify: reload nginx
+  when: inventory_hostname in groups['web']
+  tags:
+    - nginx
+    - config_update
+
+- name: Create the Nginx media configuration file
+  template: src=nginx_media_config.j2
+            dest=/etc/nginx/sites-available/{{ application_name }}
+            backup=yes
+  notify: reload nginx
+  when: inventory_hostname in groups['media']
   tags:
     - nginx
 
@@ -56,10 +74,11 @@
   template: src=nginx_logrotate.j2
             dest=/etc/logrotate.d/{{ application_name }}_nginx
             backup=yes
+  when: inventory_hostname in groups['web']
 
 - name: Create the static_html folder
   file:
-    path: "{{ virtualenv_path}}/static_html"
+    path: "{{ nginx_static_html_dir }}/static_html"
     mode: 0550
     owner: www-data
     state: directory
@@ -67,7 +86,7 @@
 - name: Create maintenance page
   template:
     src: "{{ item }}.html.j2"
-    dest: "{{ virtualenv_path }}/static_html/{{ item }}.html"
+    dest: "{{ nginx_static_html_dir }}/static_html/{{ item }}.html"
     mode: 0550
     owner: www-data
   with_items:
@@ -77,7 +96,7 @@
 
 - name: Create the simple files folder
   file:
-    path: "{{ virtualenv_path}}/simple_files"
+    path: "{{ nginx_static_html_dir }}/simple_files"
     mode: 0550
     owner: www-data
     group: www-data
@@ -86,7 +105,7 @@
 - name: Copy simple files
   copy:
     src: "{{ item.filename }}"
-    dest: "{{ virtualenv_path}}/simple_files/{{ item.filename }}"
+    dest: "{{ nginx_static_html_dir }}/simple_files/{{ item.filename }}"
     mode: 0550
     owner: www-data
     group: www-data
@@ -100,7 +119,7 @@
     mode: 0550
     owner: www-data
     group: www-data
-    dest: "{{ virtualenv_path}}/simple_files/bad_referrer.html"
+    dest: "{{ nginx_static_html_dir }}/simple_files/bad_referrer.html"
 
 - name: Ensure that the default site is disabled
   file: path=/etc/nginx/sites-enabled/default state=absent
@@ -114,43 +133,22 @@
   tags:
     - nginx
 
-- name: Create the conf folder
-  file: path={{ virtualenv_path}}/conf
-        mode=0550
-        owner=www-data
-        state=directory
-
-- name: Install python3 passlib library
-  apt: name=python3-passlib update_cache={{ update_apt_cache }} state=present
-  tags: packages
-
-- htpasswd:
-    path: "{{ virtualenv_path}}/conf/htpasswd_{{ item.realm }}"
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    owner: www-data
-    group: www-data
-    mode: 0550
-  with_items: "{{ htpasswd }}"
-  notify: reload nginx
-  tags:
-    - nginx
-
-- name: Ensure that the file permissions for static are correct
-  file: path={{ django_static_root }}
-        recurse=yes
-        owner={{ gunicorn_user }}
-        group=www-data
-        mode=u=rwx,g=rx,o=r
-        state=directory
+- include: 'setup_htaccess.yml'
+  when: inventory_hostname in groups['web']
 
 - name: Ensure Nginx service is started
-  service: name=nginx state=started enabled=yes
+  service:
+    name: nginx
+    state: started
+    enabled: yes
   tags:
     - nginx
 
 - name: configure http, https ports in firewall
-  ufw: rule=allow port={{ item }} proto=tcp
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
   with_items:
   - http
   - https

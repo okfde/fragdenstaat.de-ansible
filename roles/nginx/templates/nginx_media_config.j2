@@ -1,0 +1,21 @@
+{% include '_preamble.j2' %}
+
+upstream {{ application_name }}_wsgi_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server {{ hostvars[groups['app'][0]].host_data.site_ipv4 }}:8000 fail_timeout=0;
+}
+
+server {
+    listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
+    server_name         {{ media_server_name }};
+
+    {% with server_name = media_server_name %}
+        {% include '_ssl.j2' %}
+    {% endwith %}
+
+    {% include '_media_server.j2' %}
+}

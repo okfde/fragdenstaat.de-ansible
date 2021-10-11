@@ -7,6 +7,7 @@ nginx_use_letsencrypt: false
 # Nginx settings.
 nginx_access_log_file: "{{ application_log_dir }}/nginx_access.log"
 nginx_error_log_file: "{{ application_log_dir }}/nginx_error.log"
+nginx_static_html_dir: "{{ virtualenv_path }}"
 
 nginx_static_dir: "{{ virtualenv_path }}/public/static/"
 nginx_media_dir: "{{ virtualenv_path }}/public"

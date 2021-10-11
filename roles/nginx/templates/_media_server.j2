@@ -35,14 +35,14 @@ proxy_intercept_errors on;
 
 location = /forbidden.html {
     {{ add_media_headers() }}
-    root {{ virtualenv_path }}/static_html/;
+    root {{ nginx_static_html_dir }}/static_html/;
 }
 
 error_page 451 =451 /error_451.html;
 location = /error_451.html {
     {{ add_media_headers() }}
     add_header Link '<https://fragdenstaat.de/zensurheberrecht>; rel="blocked-by"' always;
-    root {{ virtualenv_path }}/static_html/;
+    root {{ nginx_static_html_dir }}/static_html/;
 }
 
 {% if media_legal_paths is defined %}
@@ -126,6 +126,6 @@ location = /error_451.html {
 error_page 502 503 504 @maintenance;
 location @maintenance {
     {{ add_media_headers() }}
-    root {{ virtualenv_path }}/static_html/;
+    root {{ nginx_static_html_dir }}/static_html/;
     rewrite ^(.*)$ /maintenance.html break;
 }

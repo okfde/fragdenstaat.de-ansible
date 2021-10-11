@@ -121,6 +121,24 @@ location /ws/ {
     {{ proxy_asgi_upstream() }}
 }
 
+{% for path in nginx_cache_urls %}
+location {{ path }} {
+    proxy_cache fds_cache;
+    proxy_cache_bypass $cookie_sessionid $cookie_csrftoken;
+    proxy_no_cache $cookie_sessionid $cookie_csrftoken;
+    proxy_cache_valid any 10m;
+    proxy_ignore_headers Expires;
+    proxy_ignore_headers "Cache-Control";
+    
+    add_header X-Proxy-Cache $upstream_cache_status;
+
+    {{ add_web_headers() }}
+
+    {{ proxy_wsgi_upstream() }}
+}
+
+{% endfor %}
+
 location / {
     {{ cors(static_server_name) }}
 
