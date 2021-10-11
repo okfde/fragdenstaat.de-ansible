@@ -2,5 +2,8 @@
 - name: restart ssh
   service: name=ssh state=restarted
 
+- name: reload ufw
+  service: name=ufw state=reload
+
 - name: restart fail2ban
   service: name=fail2ban state=restarted

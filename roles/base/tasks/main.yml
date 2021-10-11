@@ -1,5 +1,9 @@
 ---
 
+- name: Set a hostname
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+
 - import_tasks: create_swap_file.yml
   when: create_swap_file
   tags: swap
@@ -39,6 +43,29 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
+
+- import_tasks: add_users.yml
+
+- name: Configure sshd
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    regex: "^(#)?{{item.key}}"
+    line: "{{ item.key }} {{ item.value }}"
+    state: present
+  loop:
+    - { key: "PasswordAuthentication", value: "no" }
+    - { key: "Port", value: "{{ ssh_port }}"}
+  notify:
+    - restart ssh
+
+- name: Configure ufw opensshd config
+  lineinfile:
+    path: "/etc/ufw/applications.d/openssh-server"
+    regex: "^(#)?ports="
+    line: "ports={{ ssh_port }}/tcp"
+    state: present
+  notify:
+    - reload ufw
 
 - import_tasks: setup_unattended_upgrades.yml
   when: enable_unattended_upgrades is defined and enable_unattended_upgrades

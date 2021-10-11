@@ -1,0 +1,24 @@
+---
+
+- name: Allow passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo   ALL='
+    line: '%sudo   ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Add user with a bash shell and group
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+  with_items: "{{ ssh_users }}"
+
+- name: Set authorized keys for users
+  authorized_key:
+    user: "{{ item.name }}"
+    state: present
+    key: "{{ item.ssh_public_key }}"
+  with_items: "{{ ssh_users }}"
