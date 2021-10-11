@@ -16,44 +16,6 @@
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_user }}"
 
-- name: Ensure gunicorn is installed
-  pip:
-    virtualenv: "{{ virtualenv_path }}"
-    # extra_args: --user
-    name: "gunicorn"
-  become: true
-  become_user: "{{ gunicorn_user }}"
-
-- name: Create the gunicorn/uvicorn script file
-  template:
-    src: "{{ item }}_start.j2"
-    dest: "{{ virtualenv_path }}/bin/{{ item }}_start"
-    owner: "{{ gunicorn_user }}"
-    group: "{{ gunicorn_group }}"
-    mode: 0755
-    backup: true
-  with_items:
-    - gunicorn
-    - uvicorn
-  tags:
-    - deploy
-    - deploy-backend
-    - deploy-web
-
-- name: Create the application log folder
-  file: path={{ application_log_dir }}
-        owner={{ gunicorn_user }}
-        group={{ gunicorn_group }}
-        mode=0774
-        state=directory
-
-- name: Create the application log file
-  file: path={{ application_log_file }}
-        owner={{ gunicorn_user }}
-        group={{ gunicorn_group }}
-        mode=0664
-        state=touch
-
 - name: Create the virtualenv postactivate script to set environment variables
   template: src=virtualenv_postactivate.j2
             dest={{ virtualenv_path }}/bin/postactivate
@@ -65,8 +27,3 @@
     - deploy
     - deploy-backend
     - deploy-web
-
-- name: Create the maintenance page
-  template: src=maintenance_off.html
-            dest={{ virtualenv_path }}/maintenance_off.html
-            mode=0664

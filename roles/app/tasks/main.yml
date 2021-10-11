@@ -39,11 +39,6 @@
 - import_tasks: setup_geoip.yml
   when: geoip_license_key != ""
 
-- import_tasks: setup_supervisor.yml
-  tags: supervisor
-
-- import_tasks: build_frontend.yml
-
 - import_tasks: run_django_tasks.yml
   tags:
     - deploy
@@ -51,57 +46,10 @@
     - deploy-web
     - deploy-frontend
 
-- import_tasks: setup_onion_service.yml
-  when: onion_service_enabled
-  tags:
-    - onion
-
 - name: release notifications
   import_tasks: release_notification.yml
   when: collect_release_info
 
-- name: restart application
-  supervisorctl:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - "{{ application_name }}_gunicorn"
-    - "{{ application_name }}_uvicorn"
-  notify:
-    - restart memcached
-
-- name: Reload application
-  community.general.supervisorctl:
-    name: "{{ item }}"
-    state: signalled
-    signal: HUP
-  with_items:
-    - "{{ application_name }}_gunicorn"
-    - "{{ application_name }}_uvicorn"
-  notify:
-    - restart memcached
-  tags:
-    - deploy
-    - deploy-backend
-    - deploy-frontend
-    - deploy-web
-
-- name: Reload Onion application
-  community.general.supervisorctl:
-    name: "{{ item }}"
-    state: signalled
-    signal: HUP
-  when: onion_service_enabled
-  with_items:
-    - "{{ application_name }}_gunicorn_onion"
-    - "{{ application_name }}_uvicorn_onion"
-  notify:
-    - restart memcached
-  tags:
-    - deploy
-    - deploy-backend
-    - deploy-frontend
-    - deploy-web
-
-- import_tasks: setup_cron_tasks.yml
-  tags: maintenance
+# TODO: run through celery tasks
+# - import_tasks: setup_cron_tasks.yml
+#   tags: maintenance

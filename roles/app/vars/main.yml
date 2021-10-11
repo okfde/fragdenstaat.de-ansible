@@ -1,7 +1,6 @@
 ---
 
 # Application settings.
-application_log_file: "{{ application_log_dir }}/gunicorn_supervisor.log"
 requirements_file: "{{ project_path }}/requirements-production.txt"
 
 
@@ -18,6 +17,7 @@ django_environment:
   DATABASE_HOST: "{{ db_host }}"
   DATABASE_PASSWORD: "{{ db_password }}"
   CACHE_URL: "pymemcached://127.0.0.1:11211?key_prefix=fragdenstaat&timeout=3600"
+  DJANGO_ELASTICSEARCH_HOSTS: "{% for host in groups['search'] %}{{ hostvars[host].host_data.site_ipv4 }}:9200{%if not loop.last %},{% endif %}{% endfor %}"
   DJANGO_CELERY_BROKER_URL: "{{ celery_broker_url }}"
   DJANGO_EMAIL_HOST: "{{ email_host }}"
   DJANGO_EMAIL_HOST_USER: "{{ email_host_user }}"

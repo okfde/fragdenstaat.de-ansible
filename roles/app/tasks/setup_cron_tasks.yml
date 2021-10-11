@@ -1,5 +1,8 @@
 - name: Add maintenance script
-  template: src=maintenance.sh.j2 dest={{ virtualenv_path }}/maintenance.sh mode=0755
+  template:
+    src: maintenance.sh.j2
+    dest: "{{ virtualenv_path }}/maintenance.sh"
+    mode: "0755"
 
 - cron:
     name: "Run maintenance script"

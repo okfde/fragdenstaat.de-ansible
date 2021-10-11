@@ -27,19 +27,19 @@
 
 - name: Symlink storage directory
   file:
-    src: "/mnt/fds-storage"
+    src: "{{ external_media_storage_target }}"
     dest: "{{ virtualenv_path }}/storage"
     state: link
     owner: "{{ gunicorn_user }}"
     group: "www-data"
   when: external_media_storage
 
-- name: Ensure that the storage directory permissions are set properly
-  # leading 2 on mode sets group id (setgid), so other files will get group www-data
-  command: "find {{ virtualenv_path }}/storage -type d -exec chmod 2750 {} \\;"
+# - name: Ensure that the storage directory permissions are set properly
+#   # leading 2 on mode sets group id (setgid), so other files will get group www-data
+#   command: "find {{ virtualenv_path }}/storage -type d -exec chmod 2750 {} \\;"
 
-- name: Ensure that the storage directory owners are set properly
-  command: "find {{ virtualenv_path }}/storage -type d -exec chown {{ gunicorn_user }} {} \\;"
+# - name: Ensure that the storage directory owners are set properly
+#   command: "find {{ virtualenv_path }}/storage -type d -exec chown {{ gunicorn_user }} {} \\;"
 
-- name: Ensure that the storage directory groups are set properly
-  command: "find {{ virtualenv_path }}/storage -type d -exec chgrp www-data {} \\;"
+# - name: Ensure that the storage directory groups are set properly
+#   command: "find {{ virtualenv_path }}/storage -type d -exec chgrp www-data {} \\;"
