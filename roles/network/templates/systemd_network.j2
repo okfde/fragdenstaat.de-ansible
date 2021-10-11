@@ -2,5 +2,7 @@
 Name={{ host_data.interface_name }}
 
 [Network]
-DHCP=on
-VLAN={{ host_data.interface_name }}.4000
+DHCP=ipv4
+VLAN={{ host_data.interface_name }}.{{ network_vlan.id }}
+Address={{ host_data.global_ipv6 }}/64
+Gateway=fe80::1
