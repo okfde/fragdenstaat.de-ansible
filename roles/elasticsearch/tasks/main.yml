@@ -26,6 +26,21 @@
     state: present
   tags: packages
 
+- name: Create jvm options dir
+  ansible.builtin.file:
+    path: /etc/elasticsearch/jvm.options.d
+    owner: root
+    group: elasticsearch
+    state: directory
+
+- name: Create heapsize option file
+  ansible.builtin.file:
+    path: /etc/elasticsearch/jvm.options.d/heapsize.options
+    owner: root
+    group: elasticsearch
+    mode: '0644'
+    state: touch
+
 - name: Apply heapsize start tuning for systems with greater than 64G memory
   lineinfile:
     path: /etc/elasticsearch/jvm.options.d/heapsize.options
@@ -40,10 +55,38 @@
     line: "-Xmx{{ elasticsearch_heapsize }}"
   notify: restart elasticsearch
 
+- name: Set elasticsearch options
+  lineinfile:
+    path: /etc/elasticsearch/jvm.options.d/heapsize.options
+    regexp: '^-Xmx'
+    line: "-Xmx{{ elasticsearch_heapsize }}"
+  notify: restart elasticsearch
+
+- name: Set elasticsearch options
+  lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regex: "^(#)?{{item.key}}"
+    line: "{{ item.key }}: {{ item.value }}"
+    state: present
+  loop:
+    - { key: "cluster.name", value: "{{ elasticsearch_cluster_name }}" }
+    - { key: "node.name", value: "{{ inventory_hostname }}" }
+    - { key: "network.bind_host", value: "[_local_, _site_]" }
+    - { key: "discovery.type", value: "single-node"}
+  notify:
+    - restart elasticsearch
+
+- name: Create analysis dir
+  ansible.builtin.file:
+    path: /etc/elasticsearch/analysis
+    owner: root
+    group: elasticsearch
+    state: directory
+
 - name: Get dictionary file
   get_url:
-    url: "https://raw.githubusercontent.com/uschindler/german-decompounder/6227be052f4215294b5a5d498cdcdadfcf7196e6/dictionary-dee.txt"
-    dest: "/etc/elasticsearch/analysis/de_DR.xml"
+    url: "https://raw.githubusercontent.com/uschindler/german-decompounder/6227be052f4215294b5a5d498cdcdadfcf7196e6/dictionary-de.txt"
+    dest: "/etc/elasticsearch/analysis/dictionary-de.txt"
     owner: root
     group: elasticsearch
     mode: 0640
@@ -61,3 +104,21 @@
     name: elasticsearch
     state: started
     enabled: true
+
+- name: Allow ES on local network from app
+  ufw:
+    rule: allow
+    port: 9200
+    to_ip: "{{ host_data.site_ipv4 }}"
+    from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
+    proto: tcp
+  with_items: "{{ groups['app'] }}"
+
+- name: Allow ES on local network from worker
+  ufw:
+    rule: allow
+    port: 9200
+    to_ip: "{{ host_data.site_ipv4 }}"
+    from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
+    proto: tcp
+  with_items: "{{ groups['worker'] }}"
