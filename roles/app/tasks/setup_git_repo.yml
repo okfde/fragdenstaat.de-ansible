@@ -42,6 +42,8 @@
   become: true
   become_user: "{{ gunicorn_user }}"
   tags: git
+  notify:
+    - Trigger release notification
 
 - name: Delete all .pyc files
   command: find . -name '*.pyc' -delete

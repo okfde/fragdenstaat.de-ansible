@@ -1,0 +1,11 @@
+---
+
+- name: Trigger release notification
+  command: "{{ virtualenv_path }}/notify-release.sh"
+  become: true
+  become_user: "{{ gunicorn_user }}"
+  tags:
+    - deploy
+    - deploy-frontend
+    - deploy-web
+    - deploy-backend
