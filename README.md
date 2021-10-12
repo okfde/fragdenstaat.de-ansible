@@ -2,8 +2,16 @@
 
 Based on [ansible-django-stack](https://github.com/jcalazan/ansible-django-stack).
 
-Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue, Redis server and a full email server with postfix and dovecot on Ubuntu 18.04 / 20.04.
+Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue, Redis server and a full email server with postfix and dovecot on Ubuntu 20.04.
 
+
+## Install this repo
+
+```bash
+python -m venv ansible-env
+source ansible-env/bin/activate
+pip install -r requirements.txt
+```
 
 ## Configure your SSH user
 
