@@ -1,0 +1,12 @@
+---
+
+https_domains:
+  - ["{{ web_server_name }}", "www.{{ web_server_name }}"]
+  - ["{{ static_server_name }}"]
+  - ["{{ mail_domain }}", "{{ domain_name }}"]
+  - ["app.fragdenstaat.de"]
+  - ["shop.fragdenstaat.de"]
+  - ["blog.fragdenstaat.de"]
+  - ["mta-sts.fragdenstaat.de"]
+
+nginx_cache_urls: []

@@ -1,0 +1,5 @@
+---
+
+# For dovecot and postfix
+mail_cert_filename: "/etc/letsencrypt/live/{{ mail_domain }}/fullchain.pem"
+mail_privkey_filename: "/etc/letsencrypt/live/{{ mail_domain }}/privkey.pem"

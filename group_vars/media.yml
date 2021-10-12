@@ -1,0 +1,4 @@
+---
+
+https_domains:
+  - ["{{ media_server_name }}"]
