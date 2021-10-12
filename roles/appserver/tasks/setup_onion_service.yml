@@ -91,19 +91,6 @@
     - "app_gunicorn_onion"
     - "app_uvicorn_onion"
 
-- name: Create the Onion Uvicorn script file
-  template: src=uvicorn_onion_start.j2
-            dest={{ virtualenv_path }}/bin/uvicorn_onion_start
-            owner={{ gunicorn_user }}
-            group={{ gunicorn_group }}
-            mode=0755
-            backup=yes
-  when: onion_service_enabled
-  tags:
-    - deploy
-    - deploy-backend
-    - deploy-web
-
 - name: Re-read the Supervisor config files
   community.general.supervisorctl:
     name: "{{ item }}"
