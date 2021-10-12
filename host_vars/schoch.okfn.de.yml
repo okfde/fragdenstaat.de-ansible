@@ -10,3 +10,7 @@ host_data:
   disk_type: hdd
   # 26 TB available, 60 GB per volume, some wiggle room
   seaweed_max_volumes: 400
+
+nginx_media_dir: "/home/storage-box/home"
+nginx_private_media_path: "/home/storage-box/home/"
+nginx_static_html_dir: "/var/www/static"
