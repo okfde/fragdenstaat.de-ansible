@@ -15,8 +15,8 @@
     dest: "{{ celery_scripts_dir }}/celery_{{ item.name }}"
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
-    mode: 0755
-  with_items: "{{ celery_worker }}"
+    mode: "0755"
+  with_items: "{{ celery_workers }}"
   tags:
     - celery
 
@@ -26,6 +26,6 @@
     dest: "{{ celery_scripts_dir }}/celerybeat_start"
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
-    mode: 0755
+    mode: "0755"
   tags:
     - celery

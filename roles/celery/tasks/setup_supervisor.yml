@@ -4,7 +4,7 @@
   template:
     src: supervisor_celery.conf.j2
     dest: "/etc/supervisor/conf.d/{{ item.name }}.conf"
-  with_items: "{{ celery_worker }}"
+  with_items: "{{ celery_workers }}"
   tags:
     - celery
 
@@ -30,7 +30,7 @@
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
     state: "touch"
-  with_items: "{{ celery_worker }}"
+  with_items: "{{ celery_workers }}"
   tags:
     - celery
 
@@ -47,10 +47,10 @@
   community.general.supervisorctl:
     name: "{{ item.name }}"
     state: present
-  with_items: "{{ celery_worker }}"
+  with_items: "{{ celery_workers }}"
 
 - name: Add celery beat
   community.general.supervisorctl:
     name: celerybeat
     state: present
-  with_items: "{{ celery_worker }}"
+  with_items: "{{ celery_workers }}"

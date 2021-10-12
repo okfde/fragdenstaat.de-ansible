@@ -1,10 +1,12 @@
 ---
 
 - name: restart celery workers
-  supervisorctl:
+  community.general.supervisorctl:
     name: "celery_{{ item.name }}"
     state: restarted
-  with_items: "{{ celery_worker }}"
+  with_items: "{{ celery_workers }}"
 
 - name: restart celery beat
-  supervisorctl: name={{ celerybeat_application_name }} state=restarted
+  community.general.supervisorctl:
+    name: "{{ celerybeat_application_name }}"
+    state: restarted
