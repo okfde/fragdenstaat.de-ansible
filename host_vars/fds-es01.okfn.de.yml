@@ -1,0 +1,13 @@
+---
+host_data:
+  region: falkenstein1
+  datacenter: fsn1-dc16
+  interface_name: enp35s0
+  mac: a8:a1:59:55:3e:96
+  global_ipv4: 157.90.130.85
+  global_ipv6: 2a01:4f8:252:43e8::2
+  site_ipv4: 192.168.100.3
+  disk_type: ssd
+
+create_swap_file: false
+elasticsearch_heapsize: 31g
