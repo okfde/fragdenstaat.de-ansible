@@ -5,6 +5,10 @@ Based on [ansible-django-stack](https://github.com/jcalazan/ansible-django-stack
 Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue, Redis server and a full email server with postfix and dovecot on Ubuntu 18.04 / 20.04.
 
 
+## Configure your SSH user
+
+Copy `local_config.yml.example` to `local_config.yml` and set your SSH username.
+
 ## Deploy FragDenStaat.de
 
 Run this to deploy FragDenStaat.de
@@ -24,13 +28,6 @@ Use like this:
 ansible-playbook fragdenstaat.de.yml -v -t deploy-web -t deploy-frontend
 ```
 
-## Deploy VirtualBox with Vagrant
-
-Start and provision (run ansible) like this:
-
-    vagrant up --provision
-
-
 ## Secrets management
 
 Secrets are managed with `git-crypt` and `ansible-vault`.
@@ -44,5 +41,5 @@ git-crypt unlock
 Edit production secrets:
 
 ```
-ansible-vault edit env_vars/production.yml
+ansible-vault edit group_vars/all/secrets.yml
 ```

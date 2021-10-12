@@ -10,3 +10,4 @@ vagrant_ansible_inventory_default
 
 adenauer/
 ansible-env/
+local_config.yml
