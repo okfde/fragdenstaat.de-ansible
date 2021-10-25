@@ -11,6 +11,7 @@
   become_user: "{{ gunicorn_user }}"
   tags:
     - django.collectstatic
+    - deploy
     - deploy-web
     - deploy-backend
     - deploy-frontend

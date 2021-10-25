@@ -18,6 +18,8 @@
     name: app
     tasks_from: collect_static
   tags:
+    - deploy-web
+    - deploy-backend
     - deploy-frontend
 
 - name: restart application
