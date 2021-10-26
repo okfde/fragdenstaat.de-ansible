@@ -411,6 +411,11 @@ twilio_account_sid: ""
 twilio_auth_token: ""
 twilio_from_number: ""
 
+telnyx_app_id: ""
+telnyx_api_key: ""
+telnyx_public_key: ""
+telnyx_from_number: ""
+
 stripe_public_key: ""
 stripe_private_key: ""
 stripe_webhook_cc_signing_key: ""

@@ -57,4 +57,9 @@ django_environment:
   TWILIO_ACCOUNT_SID: "{{ twilio_account_sid }}"
   TWILIO_AUTH_TOKEN: "{{ twilio_auth_token }}"
   TWILIO_FROM_NUMBER: "{{ twilio_from_number }}"
+  TELNYX_APP_ID: "{{ telnyx_app_id }}"
+  TELNYX_API_KEY: "{{ telnyx_api_key }}"
+  TELNYX_PUBLIC_KEY: "{{ telnyx_public_key }}"
+  TELNYX_FROM_NUMBER: "{{ telnyx_from_number }}"
+
   DJANGO_TESSERACT_DATA_PATH: "{{ tesseract_data_path }}"
