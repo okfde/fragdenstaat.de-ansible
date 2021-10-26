@@ -24,6 +24,7 @@
   roles:
     - app
     - appserver
+    - celery
 
   post_tasks:
     - name: Send Slack notification message on finished deployment
