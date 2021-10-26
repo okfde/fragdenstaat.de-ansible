@@ -6,7 +6,7 @@
 
 - name: Update celery workers
   community.general.supervisorctl:
-    name: "{{ item.name }}"
+    name: "celery_{{ item.name }}"
     state: restarted
   with_items: "{{ celery_workers }}"
   tags:

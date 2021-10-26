@@ -45,7 +45,7 @@
 
 - name: Add celery workers
   community.general.supervisorctl:
-    name: "{{ item.name }}"
+    name: "celery_{{ item.name }}"
     state: present
   with_items: "{{ celery_workers }}"
 
