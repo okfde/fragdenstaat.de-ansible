@@ -1,0 +1,11 @@
+[Interface]
+# {{ client_name }}
+PrivateKey = {{ private_key.stdout }}
+Address = {{ vpn_network }}{{ peer_id | int }}/32, {{ vpn_networkv6 }}{{ '%0x' % (peer_id | int) }}/128
+
+{% for host in groups['vpn'] %}
+[Peer]
+PublicKey = {{ hostvars[host].host_data.wg_publickey }}
+AllowedIPs = {{ hostvars[host].host_data.global_ipv4 }}/32, {{ hostvars[host].host_data.global_ipv6 }}/128
+Endpoint = {{ host }}:{{ vpn_port }}
+{% endfor %}

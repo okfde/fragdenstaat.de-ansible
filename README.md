@@ -51,3 +51,34 @@ Edit production secrets:
 ```
 ansible-vault edit group_vars/all/secrets.yml
 ```
+
+## Add VPN clients
+
+Make sure vpn server is setup.
+
+Copy example client configuration
+
+```
+cp env_vars/vpnclients.yml.example env_vars/vpnclients.yml
+```
+
+Setup VPN server:
+```
+ansible-playbook -v vpnserver.yml
+```
+
+Store public key in host variables file in `host_vars/` under the key `host_data.wg_publickey`
+
+Run this script to add a client:
+
+```
+ansible-playbook -v vpn_add_client.yml
+```
+
+After it's done, a client configuration file is in your local directory and the public key has been recorded in `env_vars/vpnclients.yml`.
+
+Update the peers on the server:
+
+```
+ansible-playbook -v vpnserver.yml
+```

@@ -1,0 +1,13 @@
+---
+
+vpn_clientgroups:
+{% for clientgroup in vpn_clientgroups %}  - name: {{ clientgroup.name }}
+    group: {{ clientgroup.group }}
+    peers:
+{% for peer in clientgroup.peers %}      - name: {{ peer.name }}
+        publickey: {{ peer.publickey }}
+        peer_id: {{ peer.peer_id }}
+{% endfor %}{% if clientgroup.group == "vpn" %}      - name: {{ client_name }}
+        publickey: {{ public_key.stdout }}
+        peer_id: {{ peer_id | int }}
+{% endif %}{% endfor %}

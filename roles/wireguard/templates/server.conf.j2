@@ -1,0 +1,19 @@
+[Interface]
+Address = {{ vpn_network }}{{ hostvars[inventory_hostname].host_data.vpn_peer_id }}/32
+Address = {{ vpn_networkv6 }}{{ '%0x' % hostvars[inventory_hostname].host_data.vpn_peer_id }}/128
+ListenPort = {{ vpn_port }}
+PrivateKey = {{ var_privatekey.stdout }}
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE
+
+{% for clientgroup in vpn_clientgroups %}
+{% if clientgroup.group in group_names %}
+# {{ clientgroup.name }}
+{% for peer in clientgroup.peers %}
+[Peer]
+# {{ peer.name }}
+PublicKey = {{ peer.publickey }}
+AllowedIPs = {{ vpn_network }}{{ peer.peer_id }}/32, {{ vpn_networkv6 }}{{ '%0x' % peer.peer_id }}/128
+{% endfor %}
+{% endif %}
+{% endfor %}

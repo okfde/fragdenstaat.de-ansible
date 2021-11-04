@@ -1,0 +1,117 @@
+---
+# tasks file for wireguard_role
+
+- name: Install WireGuard and other requirements
+  apt:
+    name:
+      - wireguard
+    state: present
+    update_cache: true
+
+- name: Enable IPv4 traffic forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    sysctl_set: true
+    state: present
+    reload: true
+
+- name: Enable IPv4 forwarding continued
+  command: echo 1 > /proc/sys/net/ipv4/ip_forward
+
+- name: Check if wg0-server.conf already exists
+  stat:
+    path: /etc/wireguard/wg0.conf
+  register: wg0_conf
+
+- name: mkdir -p /etc/wireguard/keys
+  file:
+    path: /etc/wireguard/keys
+    state: directory
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+
+- name: Generate private and public keys for the server
+  shell: umask 077; wg genkey | tee privatekey | wg pubkey > server.public
+  args:
+    chdir: /etc/wireguard/keys
+  register: key_files
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+
+- name: cat privatekey => var_privatekey
+  shell: cat privatekey
+  register: var_privatekey
+  args:
+    chdir: /etc/wireguard/keys
+
+- name: cat server.public => var_publickey
+  shell: cat server.public
+  register: var_publickey
+  args:
+    chdir: /etc/wireguard/keys
+
+- name: Add vars vpn client
+  include_vars: env_vars/vpnclients.yml
+
+- name: Generate server config
+  template:
+    src: "templates/server.conf.j2"
+    dest: "/etc/wireguard/wg0.conf"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - restart wireguard
+
+- name: Print server public key
+  debug:
+    var: var_publickey
+
+- name: Enable wireguard interface
+  systemd:
+    name: wg-quick@wg0
+    enabled: true
+    state: started
+  # when is omitted since state should be `started` regardless
+
+# - name: Register the clients on the vpn server
+#   shell: wg set wg0 peer {{ public_key_files.results[item|int].stdout }} allowed-ips {{ vpn_network }}.{{item|int + 1}}/32
+#   with_sequence: start=1 end={{ clients }}
+#   when: wg0_conf is not defined or wg0_conf.stat.exists == false
+
+# - name: Restart the VPN service to save changes
+#   systemd:
+#     name: wg-quick@wg0.service
+#     state: restarted
+#   when: wg0_conf is not defined or wg0_conf.stat.exists == false
+
+- name: Allow wireguard
+  ufw:
+    rule: allow
+    port: "{{ vpn_port }}"
+    proto: udp
+
+# - name: Set up nat and firewall rules
+#   include: 'nat_and_firewall.yml'
+#   tags: nat_and_firewall
+
+# - name: Set up unbound for DNS operations
+#   include: 'dns.yml'
+#   tags: dns
+
+# - name: Download client configs
+#   include: 'download_configs.yml'
+#   tags: download_configs
+
+
+#When you need to add new clients in future specify the tag "add_client"
+#Set the "new_client" variable to the name of your new client config file
+#Set the "new_client_ip" variable to the IP of the new client
+#The new client config will be downloaded to the "wireguard_role/profiles/" folder on your local host
+
+
+# - name: Add another client - will only run if the add_client tag is specified
+#   include: 'additional_client.yml'
+#   vars:
+#     new_client: newclient
+#     new_client_ip: 10.200.200.12
+#   tags: ['never', 'add_client']
