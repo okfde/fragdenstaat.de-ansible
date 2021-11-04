@@ -7,3 +7,5 @@ host_data:
   global_ipv4: 94.130.55.89
   global_ipv6: 2a01:4f8:10b:2cf1::2
   site_ipv4: 192.168.100.1
+  wg_publickey: "l3eERIhs8c4yJI54VIrLY8w/BiRFuB4o7HQVGqZMvnY="
+  vpn_peer_id: 200
