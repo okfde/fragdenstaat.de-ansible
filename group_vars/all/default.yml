@@ -109,7 +109,7 @@ django_geoip_path: "/var/www/fragdenstaat.de/data"
 # protected_urls:
 #   - url: "/admin/"
 #     realm: admin
-#     only_ip: false
+#     only_ip: []
 
 ## in secrets.yml
 # rate_limited_urls:

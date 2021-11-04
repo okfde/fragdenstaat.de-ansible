@@ -91,8 +91,10 @@ location /static/ {
 {% for url_realm in protected_urls %}
     location {{ url_realm.url }} {
         {{ basic_auth(url_realm.realm) }}
-        {% if url_realm.only_ip is defined and url_realm.only_ip %}
-            allow {{ url_realm.only_ip }};
+        {% if url_realm.only_ip is defined %}
+            {% for ip in url_realm.only_ip %}
+            allow {{ ip }};
+            {% endfor %}
             deny all;
         {% endif %}
 
