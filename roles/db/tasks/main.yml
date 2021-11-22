@@ -12,23 +12,17 @@
 - name: Install PostgreSQL
   apt:
     name:
-      - postgresql-12
+      - postgresql-14
       - postgresql-contrib
       - libpq-dev
       - postgis
-      - postgresql-12-postgis-2.5
+      - postgresql-14-postgis-3
       - postgis-doc
       - python3-psycopg2
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
-
-# # Cluster upgrade
-# sudo apt-get install postgresql-11 postgresql-11-postgis-scripts
-# sudo pg_dropcluster 11 main --stop
-# sudo pg_upgradecluster 10 main
-# sudo pg_dropcluster 10 main
 
 - name: Ensure the PostgreSQL service is running
   service: name=postgresql state=started enabled=yes
