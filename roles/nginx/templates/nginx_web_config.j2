@@ -134,7 +134,7 @@ server {
 
 {% with onion_service = onion_services['onion_web'], csp_header_var="csp_header_onion" %}
 
-{{ csp_header_map(header_var=csp_header_var, web=onion_web_server_url, media=onion_media_server_url, static=onion_static_server_url) }}
+{{ csp_header_map(header_var=csp_header_var, web=onion_web_server_url, media=onion_media_server_url, static=onion_static_server_url, wsweb=onion_wsweb_server_url) }}
 
 upstream {{ application_name }}_onion_wsgi_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
@@ -156,7 +156,7 @@ server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         {{ onion_service.hostname }};
 
-    {% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", asgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+    {% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", asgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url %}
         {% include '_web_server.j2' %}
     {% endwith %}
 }
@@ -173,7 +173,7 @@ server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         media.{{ onion_service.hostname }};
 
-    {% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsgi_app_name=application_name + "_onion" %}
+    {% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsgi_app_name=application_name + "_onion", wsweb_server_url=onion_wsweb_server_url %}
         {% include '_media_server.j2' %}
     {% endwith %}
 }
@@ -182,7 +182,7 @@ server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         static.{{ onion_service.hostname }};
 
-    {% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url %}
+    {% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url %}
         {% include '_static_server.j2' %}
     {% endwith %}
 }

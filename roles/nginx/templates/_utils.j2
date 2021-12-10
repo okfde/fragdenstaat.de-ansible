@@ -39,19 +39,19 @@
                 add_header Vary "Origin";
         }{%- endmacro %}
 
-{% macro csp_value(csp_value, web=web_server_url, media=media_server_url, static=static_server_url) -%}{{ csp_value | regex_replace('__web__', web) | regex_replace('__media__', media) | regex_replace('__static__', static) }};{%- endmacro %}
+{% macro csp_value(csp_value, web=web_server_url, media=media_server_url, static=static_server_url, wsweb=wsweb_server_url) -%}{{ csp_value | regex_replace('__web__', web) | regex_replace('__media__', media) | regex_replace('__static__', static) | regex_replace('__wsweb__', wsweb) }};{%- endmacro %}
 
-{% macro csp(csp_list, web=web_server_url, media=media_server_url, static=static_server_url) -%}{% for v in csp_list %}{{ csp_value(v, web=web, media=media, static=static) }}{% endfor %}{%- endmacro %}
+{% macro csp(csp_list, web=web_server_url, media=media_server_url, static=static_server_url, wsweb=wsweb_server_url) -%}{% for v in csp_list %}{{ csp_value(v, web=web, media=media, static=static, wsweb=wsweb) }}{% endfor %}{%- endmacro %}
 
-{% macro csp_block(csp_list, web=web_server_url, media=media_server_url, static=static_server_url) -%}
-    add_header Content-Security-Policy "{{ csp(csp_list, web=web, media=media, static=static) }}";
+{% macro csp_block(csp_list, web=web_server_url, media=media_server_url, static=static_server_url, wsweb=wsweb_server_url) -%}
+    add_header Content-Security-Policy "{{ csp(csp_list, web=web, media=media, static=static, wsweb=wsweb) }}";
 {%- endmacro %}
 
-{% macro csp_header_map(header_var='csp_header', web=web_server_url, media=media_server_url, static=static_server_url) %}
+{% macro csp_header_map(header_var='csp_header', web=web_server_url, media=media_server_url, static=static_server_url, wsweb=wsweb_server_url) %}
 map $request_uri ${{ header_var }} {
     default "{% for k, v in content_security_policy.items() %}{{ k }} {{ csp_value(v, web=web, media=media, static=static) }}{% endfor %}";
     {% for override in content_security_policy_overrides %}
-    "{{ override.url }}" "{% for k, v in content_security_policy.items() %}{{ k }} {% if k in override.directives %}{{ csp_value(override.directives[k], web=web, media=media, static=static) }}{% else %}{{ csp_value(v, web=web, media=media, static=static) }}{% endif %}{% endfor %}";
+    "{{ override.url }}" "{% for k, v in content_security_policy.items() %}{{ k }} {% if k in override.directives %}{{ csp_value(override.directives[k], web=web, media=media, static=static, wsweb=wsweb) }}{% else %}{{ csp_value(v, web=web, media=media, static=static, wsweb=wsweb) }}{% endif %}{% endfor %}";
     {% endfor %}
 }
 {% endmacro %}

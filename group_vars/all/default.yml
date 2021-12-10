@@ -22,6 +22,7 @@ mail_domain: mail.fragdenstaat.de
 domain_name: fragdenstaat.de
 web_server_name: fragdenstaat.de
 web_server_url: "https://{{ web_server_name }}"
+wsweb_server_url: "wss://{{ web_server_name }}"
 media_server_name: media.frag-den-staat.de
 media_server_url: "https://{{ media_server_name }}"
 static_server_name: static.frag-den-staat.de
@@ -67,6 +68,7 @@ gunicorn_onion_num_workers: 2
 uvicorn_onion_num_workers: 1
 onion_web_server: "fdstaat23zv6kdmntgkvdzkr7hipl5oqswwi3xawzkj2w2gwsbxmrwyd.onion"
 onion_web_server_url: "http://{{ onion_web_server }}"
+onion_wsweb_server_url: "ws://{{ onion_web_server }}"
 onion_media_server: "media.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad.onion"
 onion_static_server: "static.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad.onion"
 onion_media_server_url: "http://{{ onion_media_server }}"
@@ -329,7 +331,7 @@ cors_exceptions:
       - "__media__"
       - "https://okfde.github.io"
 
-# CSP supports __web__, __media__ and __static__ variable__s
+# CSP supports __wsweb__ __web__, __media__ and __static__ variable__s
 
 content_security_policy:
   "default-src": "'none'"
@@ -340,7 +342,7 @@ content_security_policy:
   "worker-src": "'self' blob: __static__"
   "frame-src": "'self' blob: __static__ __media__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
   "object-src": "'self' __media__"
-  "connect-src": "'self' __static__ __media__ https://api.betterplace.org/ https://sentry.okfn.de https://api.stripe.com https://traffic.okfn.de"
+  "connect-src": "'self' __wsweb__ __static__ __media__ https://sentry.okfn.de https://api.stripe.com https://traffic.okfn.de"
   "child-src": "'self' blob: __static__"
   "base-uri": "'none'"
   "font-src": "data: __static__"
@@ -358,7 +360,7 @@ content_security_policy_overrides:
 static_content_security_policy:
   - "default-src 'self' data: blob: __web__ __media__"
   - "style-src 'self' data: 'unsafe-inline'"
-  - "connect-src 'self' __web__ __media__"
+  - "connect-src 'self' __wsweb__ __web__ __media__"
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
@@ -380,7 +382,7 @@ priviliged_media_content_security_policy:
   - "worker-src 'self' blob: __static__"
   - "frame-src 'self' blob: __static__ __web__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de"
   - "object-src 'self' __web__"
-  - "connect-src 'self' __web__"
+  - "connect-src 'self' __web__ __wsweb__"
   - "child-src blob: __static__"
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
