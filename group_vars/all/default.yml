@@ -378,7 +378,7 @@ priviliged_media_content_security_policy:
   - "style-src 'self' 'unsafe-inline' __static__"
   - "img-src 'self' data: blob: __static__ https://traffic.okfn.de https://i.vimeocdn.com https://raw.githubusercontent.com *.tile.openstreetmap.org *.global.ssl.fastly.net *.yelpcdn.com"
   - "worker-src 'self' blob: __static__"
-  - "frame-src 'self' blob: __static__ __web__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de https://challonge.com"
+  - "frame-src 'self' blob: __static__ __web__ https://okfde.github.io https://player.vimeo.com https://www.youtube-nocookie.com https://media.ccc.de"
   - "object-src 'self' __web__"
   - "connect-src 'self' __web__"
   - "child-src blob: __static__"
