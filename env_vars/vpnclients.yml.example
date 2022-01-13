@@ -1,0 +1,6 @@
+---
+
+vpn_clientgroups:
+  - name: VPN users
+    group: vpn
+    peers: []
