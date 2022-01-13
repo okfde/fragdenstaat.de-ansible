@@ -5,10 +5,11 @@
   register: certbot_repo_added
 
 - name: Install Certbot.
-  apt: name=certbot state=latest
-
-- name: Install Certbot nginx
-  apt: name=python3-certbot-nginx state=latest
+  apt:
+    name: 
+    - certbot
+    - python3-certbot-nginx
+    state: latest
 
 - name: Check if Nginx exists
   stat: path=/etc/init.d/nginx
@@ -21,6 +22,15 @@
   command: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
   args:
     creates: "{{ certbot_output_dir }}{{ item[0] }}"
+  loop: "{{ https_domains }}"
+
+- name: Add renew_hooks
+  ini_file:
+    section: renewalparams
+    option: renew_hook
+    value: "{{ letsencrypt_renew_hooks[item[0]] }}"
+    dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
+  when: "letsencrypt_renew_hooks[item[0]] is defined"
   loop: "{{ https_domains }}"
 
 - name: Add custom webroot_map to renewal files
@@ -40,17 +50,10 @@
   when: item[1] is defined
   loop: "{{ https_domains }}"
 
-- name: Add renew_hooks
-  ini_file:
-    section: renewalparams
-    option: renew_hook
-    value: "{{ item.command }}"
-    dest: "/etc/letsencrypt/renewal/{{ item.domain }}.conf"
-  with_items: "{{ letsencrypt_renew_hooks }}"
-
 - name: Ensure a cron job to auto-renew the cert exists
-  cron: name="daily auto renew cert"
-        special_time=daily
-        job="{{ certbot_script }} renew"
-        state=present
-  when: "{{ certbot_auto_renew }}"
+  cron:
+    name: daily auto renew cert
+    special_time: daily
+    job: "{{ certbot_script }} renew"
+    state: present
+  when: certbot_auto_renew
