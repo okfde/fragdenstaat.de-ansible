@@ -126,9 +126,10 @@
   notify: reload nginx
 
 - name: Ensure that the application site is enabled
-  file: src=/etc/nginx/sites-available/{{ application_name }}
-        dest=/etc/nginx/sites-enabled/{{ application_name }}
-        state=link
+  file:
+    src: "/etc/nginx/sites-available/{{ application_name }}"
+    dest: "/etc/nginx/sites-enabled/{{ application_name }}"
+    state: link
   notify: reload nginx
   tags:
     - nginx
