@@ -33,11 +33,18 @@
     proxy_pass http://{{ asgi_app_name|default(application_name) }}_asgi_server;
 {%- endmacro %}
 
-{% macro cors(server_url) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
+{% macro cors(server_url, null_fallback=False) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;
                 add_header Access-Control-Allow-Headers "pragma, cache-control";
                 add_header Vary "Origin";
-        }{%- endmacro %}
+        }
+        {% if null_fallback and ".onion" in server_url %}
+        if ($http_origin = 'null') {
+            add_header Access-Control-Allow-Origin {{ server_url }};
+            add_header Access-Control-Allow-Headers "pragma, cache-control";
+            add_header Vary "Origin";            
+        }{% endif %}
+{%- endmacro %}
 
 {% macro csp_value(csp_value, web=web_server_url, media=media_server_url, static=static_server_url, wsweb=wsweb_server_url) -%}{{ csp_value | regex_replace('__web__', web) | regex_replace('__media__', media) | regex_replace('__static__', static) | regex_replace('__wsweb__', wsweb) }};{%- endmacro %}
 

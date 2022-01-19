@@ -19,7 +19,7 @@
     }
 
     {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
-    {{ cors(web_server_url) }}
+    {{ cors(web_server_url, null_fallback=True) }}
     {{ cors("http://localhost") }}
     {{ add_static_headers() }}
 {%- endmacro %}
