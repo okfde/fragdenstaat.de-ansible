@@ -76,7 +76,7 @@ smtpd_relay_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
     defer_unauth_destination
-    # check_policy_service unix:private/policy-spf
+    check_policy_service unix:private/policy-spf
 
 smtpd_recipient_restrictions = check_recipient_access pcre:/etc/postfix/blocklisted_recipients, permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
 
@@ -134,7 +134,7 @@ tls_random_source = dev:/dev/urandom
 
 
 # SPF https://help.ubuntu.com/community/Postfix/SPF
-# policy-spf_time_limit = 3600s
+policy-spf_time_limit = 3600s
 
 
 # DKIM

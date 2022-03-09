@@ -6,6 +6,7 @@
       - postfix
       - postfix-pgsql
       - postfix-pcre
+      - postfix-policyd-spf-python
     state: present
 
 - name: Ensure postfix is started and enabled at boot.

@@ -138,3 +138,6 @@ smtp-amavis unix -      -       n     -       2  smtp
     -o smtpd_client_connection_rate_limit=0
     -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
     -o local_header_rewrite_clients= 
+
+policy-spf  unix  -       n       n       -       -       spawn
+     user=nobody argv=/usr/bin/policyd-spf
