@@ -125,6 +125,8 @@ release_notifications:
     repo: okfde/froide-campaign
   - name: froide-crowdfunding
     repo: okfde/froide-crowdfunding
+  - name: froide-govplan
+    repo: okfde/froide-govplan
   - name: froide-exam
     repo: okfde/froide-exam
   - name: froide-fax
