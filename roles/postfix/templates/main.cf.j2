@@ -76,9 +76,13 @@ smtpd_relay_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
     defer_unauth_destination
-    check_policy_service unix:private/policy-spf
 
-smtpd_recipient_restrictions = check_recipient_access pcre:/etc/postfix/blocklisted_recipients, permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
+smtpd_recipient_restrictions =
+    check_recipient_access pcre:/etc/postfix/blocklisted_recipients,
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination,
+    check_policy_service unix:private/policy-spf
 
 mydomain = {{ domain_name }}
 myhostname = {{ postfix_hostname }}
