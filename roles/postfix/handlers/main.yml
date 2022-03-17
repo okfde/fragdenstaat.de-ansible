@@ -10,3 +10,8 @@
 
 - name: restart opendkim
   service: name=opendkim state=restarted
+
+- name: restart opendmarc
+  service:
+    name: opendmarc
+    state: restarted

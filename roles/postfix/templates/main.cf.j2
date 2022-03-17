@@ -140,5 +140,7 @@ policy-spf_time_limit = 3600s
 # DKIM
 milter_default_action = accept
 milter_protocol = 6
-smtpd_milters = inet:localhost:12301
+smtpd_milters = 
+    inet:127.0.0.1:12301
+    inet:127.0.0.1:8893
 non_smtpd_milters = inet:localhost:12301

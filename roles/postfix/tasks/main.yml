@@ -62,3 +62,5 @@
   - submission
 
 - import_tasks: opendkim.yml
+
+- import_tasks: opendmarc.yml

@@ -1,0 +1,47 @@
+---
+- name: opendmarc packages are installed
+  apt:
+    name:
+      - opendmarc
+    state: present
+
+- name: mkdir /etc/opendmarc 
+  file:
+    path: /etc/opendmarc
+    state: directory
+    owner: "opendmarc"
+
+- name: Get public suffic file
+  get_url:
+    url: "https://publicsuffix.org/list/public_suffix_list.dat"
+    dest: "/etc/opendmarc/public_suffix_list.dat"
+    owner: opendmarc
+    group: opendmarc
+    mode: 0640
+
+- name: Configure opendmarc
+  lineinfile:
+    path: "/etc/opendmarc.conf"
+    regex: "^(#)?{{item.key}}"
+    line: "{{ item.key }} {{ item.value }}"
+    state: present
+  loop:
+    # https://raw.githubusercontent.com/trusteddomainproject/OpenDMARC/master/opendmarc/opendmarc.conf.sample
+    - { key: "AuthservID", value: "OpenDMARC" }
+    - { key: "TrustedAuthservIDs", value: "{{ mail_domain }}" } 
+    - { key: "IgnoreAuthenticatedClients", value: "true" }
+    - { key: "RequiredHeaders", value: "true" }
+    - { key: "Socket", value: "inet:8893@127.0.0.1" }
+    - { key: "FailureReports", value: "true" }
+    - { key: "FailureReportsSentBy", value: "{{ admin_email }}" }
+    - { key: "Syslog", value: "true" }
+    - { key: "SyslogFacility", value: "mail" }
+    - { key: "PublicSuffixList", value: "/etc/opendmarc/public_suffix_list.dat" }
+  notify:
+    - restart opendmarc
+
+- name: opendmarc is started
+  service:
+    name: opendmarc
+    state: started
+    enabled: yes
