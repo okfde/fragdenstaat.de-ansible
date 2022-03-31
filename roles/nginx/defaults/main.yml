@@ -15,3 +15,4 @@ nginx_media_dir: "{{ virtualenv_path }}/public"
 # Only used when nginx_use_letsencrypt is set to yes/true. The 'certbot' role will automatically generate these files.
 letsencrypt_cert_filename: fullchain.pem
 letsencrypt_privkey_filename: privkey.pem
+nginx_log_retention_days: 7

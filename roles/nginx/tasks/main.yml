@@ -70,6 +70,19 @@
   tags:
     - nginx
 
+- name: Set nginx logrotate settings
+  lineinfile:
+    path: "/etc/logrotate.d/nginx"
+    regex: "^(#)?\\s*{{item.key}}"
+    line: "        {{ item.key }} {{ item.value }}"
+    state: present
+  loop:
+    - { key: "rotate", value: "{{ nginx_log_retention_days }}" }
+  tags:
+    - nginx
+  notify:
+    - reload nginx
+
 - name: Create custom nginx log rotation file
   template: src=nginx_logrotate.j2
             dest=/etc/logrotate.d/{{ application_name }}_nginx

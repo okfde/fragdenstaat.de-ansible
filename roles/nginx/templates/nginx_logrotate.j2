@@ -1,7 +1,7 @@
 {{ application_log_dir }}/nginx_*.log {
         daily
         missingok
-        rotate 14
+        rotate {{ nginx_log_retention_days }}
         compress
         delaycompress
         notifempty
