@@ -21,3 +21,5 @@ cmk_group_plugins:
     - name: nginx_status
     - name: smart
       pkg: smartmontools
+  auxiliary:
+    - name: mk_docker.py
