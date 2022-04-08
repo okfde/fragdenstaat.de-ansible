@@ -1,0 +1,88 @@
+---
+
+- name: Add the PostgreSQL public GPG key to the apt repo
+  apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc
+           state=present
+
+- name: Add PostgreSQL to the sources list
+  apt_repository: repo='deb [arch=amd64] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+                  update_cache={{ update_apt_cache }}
+                  state=present
+
+- name: Install PostgreSQL
+  apt:
+    name:
+      - "postgresql-{{ pg_version }}"
+      - postgresql-contrib
+      - libpq-dev
+      - postgis
+      - "postgresql-{{ pg_version }}-postgis-3"
+      - postgis-doc
+      - python3-psycopg2
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  tags: packages
+  when: ansible_distribution_version == "20.04"
+
+- name: Ensure the PostgreSQL service is running
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: ensure language packages are installed
+  apt:
+    name:
+      - language-pack-en
+      - language-pack-en-base
+    state: latest
+    update_cache: "{{ update_apt_cache }}"
+  register: locale_exists
+
+- name: Ensure locale exists
+  locale_gen: name={{ item }}
+  with_items:
+    - en_US.UTF-8
+
+- name: ensure dpkg is reconfigured
+  command: dpkg-reconfigure -f noninteractive locales
+  when: locale_exists.changed
+
+- name: restart postgres on locale change
+  service: name=postgresql state=restarted enabled=yes
+  when: locale_exists.changed
+
+- name: Adjust basic settings on primary/replica
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }} = {{ item.value }}"
+    state: present
+  loop:
+    - { key: "max_connections", value: "200" }
+
+- name: Adjust performance settings on primary
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }} = {{ item.value }}"
+    state: present
+  loop:
+    - { key: "shared_buffers", value: "8GB" }
+    - { key: "effective_cache_size", value: "24GB" }
+    - { key: "maintenance_work_mem", value: "2GB" }
+    - { key: "checkpoint_completion_target", value: "0.9" }
+    - { key: "wal_buffers", value: "16MB" }
+    - { key: "default_statistics_target", value: "100" }
+    - { key: "random_page_cost", value: "1.1" }
+    - { key: "effective_io_concurrency", value: "200" }
+    - { key: "work_mem", value: "20971kB" }
+    - { key: "min_wal_size", value: "1GB" }
+    - { key: "max_wal_size", value: "4GB" }
+    - { key: "max_worker_processes", value: "3" }
+    - { key: "max_parallel_workers_per_gather", value: "2" }
+    - { key: "max_parallel_workers", value: "3" }
+    - { key: "max_parallel_maintenance_workers", value: "2" }
+  when: inventory_hostname in groups['db']
+  notify:
+    - restart postgresql

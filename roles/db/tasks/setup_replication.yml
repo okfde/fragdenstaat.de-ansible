@@ -1,0 +1,51 @@
+---
+
+- name: Add replication user
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user_replication }}"
+    password: "{{ db_password_replication }}"
+    role_attr_flags: replication
+    state: "present"
+    encrypted: true
+
+- name: Allow from all replica IPs
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
+    line: "host    replication     {{ db_user_replication }}    {{ hostvars[item].host_data.site_ipv4 }}/32   md5"
+    state: present
+  with_items: "{{ groups['dbreplica'] }}"
+  notify:
+    - restart postgresql
+
+- name: Listen on localhost and vlan, set replication config
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }} = {{ item.value }}"
+    state: present
+  loop:
+    - { key: "listen_addresses", value: "'127.0.0.1,{{ host_data.site_ipv4 }}'" }
+    - { key: "wal_level", value: "replica" }
+    - { key: "max_wal_senders", value: "10" }
+    - { key: "wal_keep_size", value: "1GB" }
+    - { key: "wal_compression", value: "on" }
+  notify:
+    - restart postgresql
+
+- name: Allow postgres on vlan network from replicas
+  ufw:
+    rule: allow
+    port: 5432
+    to_ip: "{{ host_data.site_ipv4 }}"
+    from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
+    proto: tcp
+  with_items: "{{ groups['dbreplica'] }}"
+
+- name: Create replication slot if doesn't exist
+  become_user: postgres
+  community.postgresql.postgresql_slot:
+    slot_name: "{{ item.replace('.', '_') }}"
+    db: "{{ db_name }}"
+  with_items: "{{ groups['dbreplica'] }}"

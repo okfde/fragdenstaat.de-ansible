@@ -1,0 +1,115 @@
+---
+
+- name: Ensure database is created
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db_name }}"
+    encoding: 'UTF-8'
+    lc_collate: 'en_US.UTF-8'
+    lc_ctype: 'en_US.UTF-8'
+    template: 'template0'
+    state: present
+
+- name: Ensure user has access to the database
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "ALL"
+    state: "present"
+    encrypted: true
+
+- name: Ensure readonly user has access to the database
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user_readonly }}"
+    password: "{{ db_password_readonly }}"
+    role_attr_flags: NOSUPERUSER,NOCREATEDB
+    state: present
+    encrypted: true
+
+- name: Ensure user has access to tables
+  become_user: postgres
+  postgresql_privs:
+    database: "{{ db_name }}"
+    state: present
+    privs: ALL
+    type: table
+    objs: ALL_IN_SCHEMA
+    schema: public
+    roles: "{{ db_user }}"
+    grant_option: true
+
+- name: Ensure readonly user has no privileges
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ db_name }}"
+    state: absent
+    role: "{{ db_user_readonly }}"
+    privs: ALL
+    objs: ALL_IN_SCHEMA
+
+- name: Ensure readonly user has connect access to db
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: CONNECT
+    type: database
+    role: "{{ db_user_readonly }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: Ensure readonly user has select access to all tables in schema
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+    role: "{{ db_user_readonly }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: Ensure user has access to all sequences
+  become_user: postgres
+  postgresql_privs:
+    database: "{{ db_name }}"
+    state: present
+    privs: ALL
+    type: sequence
+    objs: ALL_IN_SCHEMA
+    schema: public
+    roles: "{{ db_user }}"
+    grant_option: true
+
+- name: Ensure user does not have unnecessary privileges
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db_user }}"
+    role_attr_flags: "NOSUPERUSER,NOCREATEDB"
+    state: present
+
+- name: create postgis extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: postgis
+    db: "{{ db_name }}"
+
+- name: create postgis_topology extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: postgis_topology
+    db: "{{ db_name }}"
+
+- name: create hstore extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: hstore
+    db: "{{ db_name }}"
+
+- name: create citext extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: citext
+    db: "{{ db_name }}"
