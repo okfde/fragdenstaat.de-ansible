@@ -11,6 +11,9 @@ brooke.okfn.de
 [db]
 brooke.okfn.de
 
+[dbreplica]
+schaar.okfn.de
+
 [mail]
 brooke.okfn.de
 
