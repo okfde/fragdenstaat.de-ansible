@@ -1,6 +1,8 @@
 ---
 
 - name: Record previous git info
+  become: true
+  become_user: "{{ gunicorn_user }}"
   shell: git -C {{ virtualenv_path }}/src/{{ item.name }} rev-parse HEAD || true > {{ virtualenv_path }}/meta/{{ item.name }}.gitsha
   with_items: "{{ release_notifications }}"
   when: collect_release_info
