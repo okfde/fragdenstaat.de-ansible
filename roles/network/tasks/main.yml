@@ -50,3 +50,17 @@
     src: /run/systemd/resolve/stub-resolv.conf
     state: link
     force: true
+
+- lineinfile:
+  path: "/etc/hosts"
+  regex: "\s+{{ item }}$"
+  line: "{{ hostvars[groups[item][0]].host_data.site_ipv4 }} {{ item }}"
+  state: present
+  loop:
+    - db
+    - mail
+    - queue
+    - search
+    - broker
+    - cache
+    - media
