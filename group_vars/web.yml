@@ -7,6 +7,7 @@ https_domains:
   - ["app.fragdenstaat.de"]
   - ["shop.fragdenstaat.de"]
   - ["blog.fragdenstaat.de"]
+  - ["zerschlagdenstaat.de", "www.zerschlagdenstaat.de"]
   - ["mta-sts.fragdenstaat.de"]
 
 nginx_cache_urls: []

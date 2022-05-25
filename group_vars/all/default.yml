@@ -287,6 +287,9 @@ redirect_domains:
   - from: "static.frag-den-staat.de"
     domain: "static.frag-den-staat.de"
     https: false
+  - from: "zerschlagdenstaat.de"
+    domain: "fragdenstaat.de"
+    https: true
 
 redirect_paths:
   - from: "^/files/foi/30800/"
@@ -339,7 +342,7 @@ content_security_policy:
   "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
   "media-src": "__static__ __media__"
   "worker-src": "'self' blob: __static__"
-  "frame-src": "'self' blob: __static__ __media__ https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com"
+  "frame-src": "'self' blob: __static__ __media__ https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://datawrapper.dwcdn.net"
   "object-src": "'self' __media__"
   "connect-src": "'self' __wsweb__ __static__ __media__ https://sentry.okfn.de https://api.stripe.com https://traffic.okfn.de"
   "child-src": "'self' blob: __static__"
