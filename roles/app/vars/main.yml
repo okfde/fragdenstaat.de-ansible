@@ -63,3 +63,5 @@ django_environment:
   TELNYX_FROM_NUMBER: "{{ telnyx_from_number }}"
 
   DJANGO_TESSERACT_DATA_PATH: "{{ tesseract_data_path }}"
+  FDS_LEGAL_BACKUP_CREDENTIALS: "{{ fds_legal_backup_credentials }}"
+  FDS_LEGAL_BACKUP_FOLDER_ID: "{{ fds_legal_backup_folder_id }}"

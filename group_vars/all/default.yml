@@ -434,3 +434,6 @@ paypal_webhook_id: ""
 slack_webhook_url: ""
 
 geoip_license_key: ""
+
+fds_legal_backup_credentials: ""
+fds_legal_backup_folder_id: ""
