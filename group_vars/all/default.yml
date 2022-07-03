@@ -411,10 +411,6 @@ mapbox_api_key: ""
 google_places_api_key: ""
 here_geocode_api_key: ""
 
-twilio_account_sid: ""
-twilio_auth_token: ""
-twilio_from_number: ""
-
 telnyx_app_id: ""
 telnyx_api_key: ""
 telnyx_public_key: ""
