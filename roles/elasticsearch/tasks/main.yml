@@ -105,6 +105,42 @@
     state: started
     enabled: true
 
+- name: Create a elasticsearch.service override directory
+  file:
+    owner: root
+    group: root
+    mode: 0755
+    path: /etc/systemd/system/elasticsearch.service.d
+    state: directory
+  notify:
+    - reload systemd
+    - restart elasticsearch
+- name: Set up elasticsearch.service override Restart
+  ini_file:
+    dest: /etc/systemd/system/elasticsearch.service.d/restart_override.conf
+    owner: root
+    group: root
+    mode: 0644
+    section: Service
+    option: Restart
+    value: on-failure
+  notify:
+    - reload systemd
+    - restart elasticsearch
+
+- name: Set up elasticsearch.service override
+  ini_file:
+    dest: /etc/systemd/system/elasticsearch.service.d/restart_override.conf
+    owner: root
+    group: root
+    mode: 0644
+    section: Service
+    option: RestartSec
+    value: "10s"
+  notify:
+    - reload systemd
+    - restart elasticsearch
+
 - name: Allow ES on local network from app
   ufw:
     rule: allow
