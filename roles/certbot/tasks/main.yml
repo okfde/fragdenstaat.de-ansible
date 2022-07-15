@@ -28,9 +28,8 @@
   ini_file:
     section: renewalparams
     option: renew_hook
-    value: "{{ letsencrypt_renew_hooks[item[0]] }}"
+    value: "{{ letsencrypt_renew_hooks[item[0]] | default('systemctl reload nginx') }}"
     dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
-  when: "letsencrypt_renew_hooks[item[0]] is defined"
   loop: "{{ https_domains }}"
 
 - name: Add custom webroot_map to renewal files

@@ -37,9 +37,6 @@ letsencrypt_enabled: true
 letsencrypt_registration_email: root@fragdenstaat.de
 letsencrypt_tmp_dir: /opt/letsencrypt/tmp
 letsencrypt_renew_hooks:
-  "fragdenstaat.de": "systemctl reload nginx"
-  "media.frag-den-staat.de": "systemctl reload nginx"
-  "static.frag-den-staat.de": "systemctl reload nginx"
   "mail.fragdenstaat.de": "systemctl reload nginx postfix dovecot"
 
 db_host: "127.0.0.1"
