@@ -96,6 +96,7 @@ django_settings_file: "{{ application_name }}.settings.production"
 django_configuration: "FragDenStaat"
 
 django_geoip_path: "/var/www/fragdenstaat.de/data"
+frontex_captcha_model_path: "/var/www/fragdenstaat.de/data/model.pth"
 
 ## in secrets.yml
 # django_secret_url_admin: "admin"

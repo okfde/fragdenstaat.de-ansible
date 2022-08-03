@@ -62,3 +62,4 @@ django_environment:
   DJANGO_TESSERACT_DATA_PATH: "{{ tesseract_data_path }}"
   FDS_LEGAL_BACKUP_CREDENTIALS: "{{ fds_legal_backup_credentials }}"
   FDS_LEGAL_BACKUP_FOLDER_ID: "{{ fds_legal_backup_folder_id }}"
+  FRONTEX_CAPTCHA_MODEL_PATH: "{{ frontex_captcha_model_path }}"
