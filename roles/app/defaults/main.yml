@@ -2,7 +2,7 @@
 
 virtualenv_python_version: python3.8
 
-git_branch: master
+git_branch: main
 
 poppler_version: 0.89.0
 
