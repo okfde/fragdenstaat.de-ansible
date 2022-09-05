@@ -4,7 +4,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Mount]
-What={{ hostvars[groups['storagemaster'][0]].host_data.site_ipv4 }}:{{ external_media_storage_src }}
+What={{ hostvars[groups['media'][0]].host_data.site_ipv4 }}:{{ external_media_storage_src }}
 Where={{ external_media_storage_target }}
 Type=nfs
 Options=_netdev,auto
