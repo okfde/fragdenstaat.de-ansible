@@ -14,6 +14,7 @@ network_vlan:
 maintenance: false
 maintenance_media: false
 maintenance_admin_ip: false
+update_apt_cache: true
 
 hostname: "{{ inventory_hostname }}"
 project_name: fragdenstaat.de
