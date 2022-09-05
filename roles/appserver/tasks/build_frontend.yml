@@ -34,11 +34,20 @@
     state: present
   tags: packages
 
+- name: Creates public directory
+  file:
+    path: "{{ virtualenv_path }}/build"
+    state: "directory"
+    owner: "{{ gunicorn_user }}"
+
 - name: Setup yarn build script
   template:
     src: yarn-build.sh.j2
     dest: "{{ virtualenv_path }}/yarn-build.sh"
     mode: 0755
+  tags:
+    - deploy
+    - deploy-frontend
 
 - name: Run yarn setup script
   command: "{{ virtualenv_path }}/yarn-build.sh"

@@ -11,14 +11,25 @@ yarn link
 popd
 {% endfor %}
 
-pushd {{ project_path }}
 
-yarn install
+echo "Linking frontend dependencies..."
+
+{% for module in frontend_modules %}
+    dep=froide
+    if [ "$name" != "$dep" ]; then
+        pushd $(python -c "import {{ module.pypackage }} as mod; print(mod.__path__[0])")/..
+        yarn link $dep
+        popd
+    fi
+{% endfor %}
+
+pushd {{ project_path }}
 
 {% for module in frontend_modules %}
 yarn link {% if module.jspackage is defined %}{{ module.jspackage }}{% else %}{{ module.pypackage }}{% endif %}
 
 {% endfor %}
+yarn install
 
 ASSET_PATH={{ static_asset_path }} yarn run build
 
