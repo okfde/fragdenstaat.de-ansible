@@ -28,7 +28,7 @@ media_server_name: media.frag-den-staat.de
 media_server_url: "https://{{ media_server_name }}"
 static_server_name: static.frag-den-staat.de
 static_server_url: "https://{{ static_server_name }}"
-static_asset_path: "/static/js/"
+
 external_media_storage: true
 external_media_storage_src: "/home/storage-box/home"
 external_media_storage_target: "/mnt/schoch"
@@ -136,16 +136,6 @@ release_notifications:
     repo: okfde/froide-legalaction
   - name: froide-payment
     repo: okfde/froide-payment
-
-frontend_modules:
-  - pypackage: froide
-  - pypackage: froide_food
-  - pypackage: froide_payment
-  - pypackage: froide_exam
-  - pypackage: froide_legalaction
-  - pypackage: froide_campaign
-  - pypackage: filingcabinet
-    jspackage: "@okfde/filingcabinet"
 
 celery_workers:
   - name: celery
