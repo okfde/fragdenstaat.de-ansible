@@ -28,6 +28,7 @@ media_server_name: media.frag-den-staat.de
 media_server_url: "https://{{ media_server_name }}"
 static_server_name: static.frag-den-staat.de
 static_server_url: "https://{{ static_server_name }}"
+static_asset_path: "{{ static_server_url }}/static/"
 
 external_media_storage: true
 external_media_storage_src: "/home/storage-box/home"

@@ -7,6 +7,6 @@ source {{ virtualenv_path }}/bin/activate
 pushd {{ project_path }}
 
 bash devsetup.sh frontend
-yarn run build
+ASSET_PATH={{ static_asset_path }} yarn run build
 
 popd
