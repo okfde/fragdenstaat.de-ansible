@@ -22,6 +22,8 @@
     - "{{ virtualenv_path }}/src"
     - "{{ project_path }}"
   environment: "{{ django_environment }}"
+  register: compile_result
+  changed_when: "'processing file' in compile_result.stdout"
   become: true
   become_user: "{{ gunicorn_user }}"
   tags:
