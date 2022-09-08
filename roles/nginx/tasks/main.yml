@@ -147,7 +147,7 @@
   tags:
     - nginx
 
-- include: 'setup_htaccess.yml'
+- import_tasks: 'setup_htaccess.yml'
   when: inventory_hostname in groups['web']
 
 - name: Ensure Nginx service is started
