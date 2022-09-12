@@ -72,7 +72,7 @@
     state: started
 
 - name: Allow wireguard
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ vpn_port }}"
     proto: udp

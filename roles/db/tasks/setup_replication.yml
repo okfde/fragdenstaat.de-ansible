@@ -35,7 +35,7 @@
     - restart postgresql
 
 - name: Allow postgres on vlan network from replicas
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 5432
     to_ip: "{{ host_data.site_ipv4 }}"

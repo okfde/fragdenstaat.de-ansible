@@ -47,7 +47,7 @@
         enabled: true
 
     - name: Allow check_mk.socket (ufw)
-      ufw:
+      community.general.ufw:
         rule: allow
         port: 6556
         proto: tcp

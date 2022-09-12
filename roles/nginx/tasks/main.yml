@@ -159,7 +159,7 @@
     - nginx
 
 - name: configure http, https ports in firewall
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ item }}"
     proto: tcp

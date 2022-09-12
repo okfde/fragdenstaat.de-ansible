@@ -66,7 +66,7 @@
     - deploy-web
 
 - name: Allow app local network from media server
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 8000
     to_ip: "{{ host_data.site_ipv4 }}"

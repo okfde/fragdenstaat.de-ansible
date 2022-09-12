@@ -7,12 +7,12 @@
     state: present 
 
 - name: Allow ssh connections
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "{{ ssh_port }}"
     proto: tcp
 
 - name: Enable ufw/firewall
-  ufw:
+  community.general.ufw:
     state: enabled
     policy: deny

@@ -44,7 +44,10 @@
   notify: restart dovecot
 
 - name: configure imaps port in ufw
-  ufw: rule=allow port={{ item }} proto=tcp
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
   with_items:
   - imap
   - imaps

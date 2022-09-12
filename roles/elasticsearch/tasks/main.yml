@@ -142,7 +142,7 @@
     - restart elasticsearch
 
 - name: Allow ES on local network from app
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 9200
     to_ip: "{{ host_data.site_ipv4 }}"
@@ -151,7 +151,7 @@
   with_items: "{{ groups['app'] }}"
 
 - name: Allow ES on local network from worker
-  ufw:
+  community.general.ufw:
     rule: allow
     port: 9200
     to_ip: "{{ host_data.site_ipv4 }}"
