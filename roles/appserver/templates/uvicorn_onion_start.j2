@@ -14,6 +14,7 @@ NUM_WORKERS={{ uvicorn_onion_num_workers }}
 export STATIC_URL={{ onion_static_url }}
 export MEDIA_URL={{ onion_media_url }}
 export ALLOWED_HOSTS={{ onion_web_server }},{{ onion_media_server }}
+export CSRF_TRUSTED_ORIGINS={{ onion_web_server }}
 # Don't pollute other app cache
 export CACHE_URL=locmem://
 {% endblock %}
