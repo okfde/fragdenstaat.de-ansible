@@ -1,5 +1,3 @@
 ---
 
-elasticsearch_heapsize: 31g
-elasticsearch_version: "7.x"
 elasticsearch_cluster_name: "fds-production"

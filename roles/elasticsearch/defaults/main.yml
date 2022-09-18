@@ -1,0 +1,4 @@
+---
+elasticsearch_version: "7.x"
+elasticsearch_cluster_name: "elasticsearch"
+elasticsearch_heapsize: 2g

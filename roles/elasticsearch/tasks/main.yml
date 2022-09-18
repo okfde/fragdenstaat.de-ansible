@@ -47,6 +47,7 @@
     regexp: '^-Xms'
     line: "-Xms{{ elasticsearch_heapsize }}"
   notify: restart elasticsearch
+  when: "elasticsearch_heapsize is defined"
 
 - name: Apply heapsize start tuning for systems with greater than 64G memory
   lineinfile:
@@ -54,13 +55,7 @@
     regexp: '^-Xmx'
     line: "-Xmx{{ elasticsearch_heapsize }}"
   notify: restart elasticsearch
-
-- name: Set elasticsearch options
-  lineinfile:
-    path: /etc/elasticsearch/jvm.options.d/heapsize.options
-    regexp: '^-Xmx'
-    line: "-Xmx{{ elasticsearch_heapsize }}"
-  notify: restart elasticsearch
+  when: "elasticsearch_heapsize is defined"
 
 - name: Set elasticsearch options
   lineinfile:
@@ -149,6 +144,7 @@
     from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
     proto: tcp
   with_items: "{{ groups['app'] }}"
+  when: "'site_ipv4' in host_data"
 
 - name: Allow ES on local network from worker
   community.general.ufw:
@@ -158,3 +154,4 @@
     from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
     proto: tcp
   with_items: "{{ groups['worker'] }}"
+  when: "'site_ipv4' in host_data"
