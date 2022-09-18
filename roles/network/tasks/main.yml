@@ -51,11 +51,12 @@
     state: link
     force: true
 
-- lineinfile:
-  path: "/etc/hosts"
-  regex: "\s+{{ item }}$"
-  line: "{{ hostvars[groups[item][0]].host_data.site_ipv4 }} {{ item }}"
-  state: present
+- name: Add host name to hosts file
+  lineinfile:
+    path: "/etc/hosts"
+    regex: "\\s+{{ item }}$"
+    line: "{{ hostvars[groups[item][0]].host_data.site_ipv4 }} {{ item }}"
+    state: present
   loop:
     - db
     - mail
