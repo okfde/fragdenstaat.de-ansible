@@ -182,7 +182,7 @@ server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         static.{{ onion_service.hostname }};
 
-    {% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url %}
+    {% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url, nginx_static_dir=onion_nginx_static_dir %}
         {% include '_static_server.j2' %}
     {% endwith %}
 }

@@ -12,7 +12,7 @@
 
 - import_tasks: build_frontend.yml
 
-# Run collect stat
+# Run collect static
 - name: Run collect static
   include_role:
     name: app
@@ -21,6 +21,32 @@
     - deploy-web
     - deploy-backend
     - deploy-frontend
+
+- name: Copy static file built for onion page
+  ansible.builtin.copy:
+    src: "{{ nginx_static_dir }}"
+    remote_src: true
+    dest: "{{ onion_nginx_static_dir }}"
+    owner: "{{ gunicorn_user }}"
+    group: "www-data"
+  when: onion_service_enabled
+  tags:
+    - onion
+    - deploy-web
+    - deploy-backend
+    - deploy-frontend
+
+- name: Fix-up all static URLs in css files
+  command:
+    cmd: "find . -name '*.css' -exec sed -i -e 's@{{ static_asset_path }}@{{ onion_static_url }}@g' {} \\;"
+    chdir: "{{ onion_nginx_static_dir }}"
+  when: onion_service_enabled
+  tags:
+    - onion
+    - deploy
+    - deploy-frontend
+    - deploy-web
+    - deploy-backend
 
 - name: restart application
   supervisorctl:

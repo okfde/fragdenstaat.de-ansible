@@ -70,6 +70,7 @@ onion_media_server_url: "http://{{ onion_media_server }}"
 onion_static_server_url: "http://{{ onion_static_server }}"
 onion_static_url: "http://{{ onion_static_server }}/static/"
 onion_media_url: "http://{{ onion_media_server }}/files/"
+onion_nginx_static_dir: "/var/www/fragdenstaat.de/public/onion/static/"
 onion_services:
   onion_web:
     hostname: "fdstaat23zv6kdmntgkvdzkr7hipl5oqswwi3xawzkj2w2gwsbxmrwyd.onion"
