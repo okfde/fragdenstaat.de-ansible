@@ -20,7 +20,6 @@
   when: item.cfg is defined
   loop: "{{ cmk_plugins }}"
 
-
 - name: Install check_mk plugin dependency
   apt:
     pkg: "{{ item.pkg }}"

@@ -3,10 +3,10 @@
     url: "{{ cmk_site_url }}/check_mk/agents/check-mk-agent_{{ cmk_version }}-1_all.deb"
     dest: "/tmp"
 
-- name: Make sure python is installed
+- name: Make sure python3 is installed
   become: true
   apt:
-    pkg: python
+    pkg: python3
     state: present
 
 - name: Install check_mk agent
