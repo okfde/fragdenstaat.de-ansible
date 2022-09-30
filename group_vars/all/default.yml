@@ -421,6 +421,7 @@ paypal_webhook_id: ""
 slack_webhook_url: ""
 
 geoip_license_key: ""
+suspicious_asn_list: ""
 
 # use base64 encoded JSON
 fds_legal_backup_credentials: ""
