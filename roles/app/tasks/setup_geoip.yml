@@ -16,17 +16,31 @@
   tags: packages
 
 - name: Maxmind directory
-  file: "path={{ django_geoip_path }} mode=0755 owner={{ gunicorn_user }} state=directory"
+  file:
+    path: "{{ django_geoip_path }}"
+    mode: 0755
+    owner: "{{ gunicorn_user }}"
+    state: directory
 
 - name: Add script to update maxmind
-  template: src=update-maxmind.sh.j2 dest={{ django_geoip_path }}/update-maxmind.sh mode=0755
+  template:
+    src: update-maxmind.sh.j2
+    dest: "{{ django_geoip_path }}/update-maxmind.sh"
+    mode: 0755
 
 - name: Update maxmind database
+  become_user: "{{ gunicorn_user }}"
   shell: "{{ django_geoip_path }}/update-maxmind.sh"
 
 - name: apt | ensure cron is installed
-  apt: name=cron state=present
+  apt:
+    name: cron
+    state: present
 
 - name: cron task to update daily
-  cron: name="maxmind autoupdate" minute=0 hour=3
-        user={{ gunicorn_user }} job="{{ django_geoip_path }}/update-maxmind.sh > /tmp/update_maxmind.log 2>&1"
+  cron:
+    name: "maxmind autoupdate"
+    minute: 0
+    hour: 3
+    user: "{{ gunicorn_user }}"
+    job: "{{ django_geoip_path }}/update-maxmind.sh > /tmp/update_maxmind.log 2>&1"
