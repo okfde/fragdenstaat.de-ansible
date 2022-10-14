@@ -36,13 +36,13 @@
 {% macro cors(server_url, null_fallback=False) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
                 add_header Access-Control-Allow-Origin $http_origin;
                 add_header Access-Control-Allow-Headers "pragma, cache-control";
-                add_header Vary "Origin";
+                add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";
         }
         {% if null_fallback and ".onion" in server_url %}
         if ($http_origin = 'null') {
             add_header Access-Control-Allow-Origin {{ server_url }};
             add_header Access-Control-Allow-Headers "pragma, cache-control";
-            add_header Vary "Origin";            
+            add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";            
         }{% endif %}
 {%- endmacro %}
 
