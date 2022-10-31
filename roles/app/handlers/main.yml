@@ -1,5 +1,4 @@
 ---
-
 - name: Trigger release notification
   command: "{{ virtualenv_path }}/notify-release.sh"
   become: true
@@ -9,3 +8,10 @@
     - deploy-frontend
     - deploy-web
     - deploy-backend
+
+- name: restart application
+  supervisorctl:
+    name: "all"
+    state: restarted
+  notify:
+    - restart memcached
