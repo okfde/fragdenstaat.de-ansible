@@ -27,3 +27,4 @@
     - deploy
     - deploy-backend
     - deploy-web
+  notify: restart application
