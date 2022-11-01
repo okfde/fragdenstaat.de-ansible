@@ -5,7 +5,7 @@
            state=present
 
 - name: Add PostgreSQL to the sources list
-  apt_repository: repo='deb [arch=amd64] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+  apt_repository: repo='deb https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
                   update_cache={{ update_apt_cache }}
                   state=present
 
@@ -23,6 +23,22 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
+
+- name: Install PostgreSQL
+  apt:
+    name:
+      - "postgresql-{{ pg_version }}"
+      - postgresql-contrib
+      - libpq-dev
+      - postgis
+      - "postgresql-{{ pg_version }}-postgis-3"
+      - postgis-doc
+      - python3-psycopg2
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  tags: packages
+  when: ansible_distribution_version == "22.04"
+
 
 - name: Ensure the PostgreSQL service is running
   service:

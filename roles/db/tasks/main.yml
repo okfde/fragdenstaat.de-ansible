@@ -6,7 +6,7 @@
   when: inventory_hostname in groups['db']
 
 - import_tasks: setup_replication.yml
-  when: groups['dbreplica'] and inventory_hostname in groups['db']
+  when: groups.get('dbreplica') and inventory_hostname in groups['db']
 
 - import_tasks: setup_replicas.yml
-  when: inventory_hostname in groups['dbreplica']
+  when: inventory_hostname in groups.get('dbreplica', [])
