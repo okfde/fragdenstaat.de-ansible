@@ -1,0 +1,18 @@
+sentry_domain: sentry.okfn.de
+sentry_git_repo: https://github.com/getsentry/self-hosted.git
+sentry_dir: "/var/www/{{ sentry_domain }}"
+
+sentry_github_app_id: 0
+sentry_github_app_name: "" 
+sentry_github_app_webhook_secret: ""
+sentry_github_app_client_id: ""
+sentry_github_app_client_secret: ""
+sentry_github_app_private_key: ""
+sentry_slack_client_id: ""
+sentry_slack_client_secret: ""
+sentry_slack_signing_secret: ""
+sentry_mail_from: ""
+sentry_mail_host: ""
+sentry_mail_password: ""
+sentry_mail_port: 587
+sentry_mail_username: ""

@@ -1,0 +1,92 @@
+- name: Setup Sentry Git repo
+  git:
+    repo: "{{ sentry_git_repo }}"
+    dest: "{{ sentry_dir }}"
+    update: true
+  become: true
+
+- name: "Install sentry"
+  command:
+    cmd: "./install.sh --skip-user-creation --report-self-hosted-issues"
+    chdir: "{{ sentry_dir }}"
+ 
+- name: Set sentry config options
+  lineinfile:
+    path: "{{ sentry_dir }}/sentry/config.yml"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }}: {{ item.value | replace('\n', '\\n') }}"
+    state: present
+  loop:
+    - { key: "github-app.id", value: '{{ sentry_github_app_id }}' }
+    - { key: "github-app.name", value: '"{{ sentry_github_app_name }}"' }
+    - { key: "github-app.webhook-secret", value: '"{{ sentry_github_app_webhook_secret }}"' }
+    - { key: "github-app.client-id", value: '"{{ sentry_github_app_client_id }}"' }
+    - { key: "github-app.client-secret", value: '"{{ sentry_github_app_client_secret }}"' }
+    - { key: "github-app.private-key", value: '"{{ sentry_github_app_private_key }}"' }
+    - { key: "slack.client-id", value: '"{{ sentry_slack_client_id }}"' }
+    - { key: "slack.client-secret", value: '"{{ sentry_slack_client_secret }}"' }
+    - { key: "slack.signing-secret", value: '"{{ sentry_slack_signing_secret }}"' }
+    - { key: "mail.host", value: '"{{ sentry_mail_host }}"' }
+    - { key: "mail.port", value: '{{ sentry_mail_port }}' }
+    - { key: "mail.username", value: '"{{ sentry_mail_username }}"' }
+    - { key: "mail.password", value: '"{{ sentry_mail_password }}"' }
+    - { key: "mail.use-tls", value: "true" }
+    - { key: "mail.from", value: '"{{ sentry_mail_from }}"' }
+
+- name: Disable Sentry Beacon
+  lineinfile:
+    path: "{{ sentry_dir }}/sentry/sentry.conf.py"
+    regex: "^(#)? ?{{ item.key }} ="
+    line: "{{ item.key }} = {{ item.value }}"
+    state: present
+  loop:
+    - { key: "SENTRY_BEACON", value: "False" }
+    - { key: "SECURE_PROXY_SSL_HEADER", value: "('HTTP_X_FORWARDED_PROTO', 'https')" }
+    - { key: "SESSION_COOKIE_SECURE", value: "True" }
+    - { key: "CSRF_COOKIE_SECURE", value: "True" }
+    - { key: "SOCIAL_AUTH_REDIRECT_IS_HTTPS", value: "True" }
+
+- name: Copy Sentry .env to .env.custom
+  ansible.builtin.copy:
+    src: "{{ sentry_dir }}/.env"
+    remote_src: true
+    dest: "{{ sentry_dir }}/.env.custom"
+
+- name: Customize sentry env vars
+  lineinfile:
+    path: "{{ sentry_dir }}/.env.custom"
+    line: "{{ item }}"
+  loop:
+    - "SENTRY_MAIL_HOST={{ sentry_domain }}"
+    - "SENTRY_EVENT_RETENTION_DAYS=90"
+    - "SENTRY_BIND=127.0.0.1:9000"
+
+- name: Add GeoIP configuration
+  template:
+    src: geoip.conf.j2
+    dest: "{{ sentry_dir }}/geoip/GeoIP.conf"
+
+- name: Set sentry systemd service
+  template:
+    src: sentry.service.j2
+    dest: /etc/systemd/system/sentry.service
+    mode: 0444
+
+- name: Start sentry service
+  systemd:
+    name: sentry
+    state: started
+
+- name: Create the Nginx site configuration
+  template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/{{ sentry_domain }}"
+    backup: yes
+  notify: reload nginx
+
+- name: Ensure that the application site is enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ sentry_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ sentry_domain }}"
+    state: link
+  notify: reload nginx
