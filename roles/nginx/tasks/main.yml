@@ -1,23 +1,6 @@
 ---
 
-- name: Install Nginx
-  apt:
-    name: nginx
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  tags: packages
-
-- name: Ensure that a strong Diffie-Hellman group is used
-  command: openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096 creates=/etc/ssl/certs/dhparams.pem
-  when: nginx_strong_dh_group is defined and nginx_strong_dh_group
-
-- name: Overwrite the nginx.conf file
-  template: src=nginx.conf.j2
-            dest=/etc/nginx/nginx.conf
-            backup=yes
-  notify: reload nginx
-  tags:
-    - nginx
+- import_tasks: 'install.yml'
 
 - name: Check if HTTPS certificates exist
   stat:
@@ -27,7 +10,6 @@
   tags:
     - nginx
     - config_update
-
 
 - name: Set HTTPS certificate facts
   set_fact:
@@ -39,22 +21,11 @@
 
 - debug: var=active_https_domains
 
-- name: Create nginx log files
-  file:
-    path: "{{ item }}"
-    state: touch
-    owner: www-data
-    group: adm
-    mode: u+rw,g+r,o-rwx
-  with_items:
-    - "{{ nginx_access_log_file }}"
-    - "{{ nginx_error_log_file }}"
-  when: inventory_hostname in groups['web']
-
 - name: Create the Nginx web configuration file
-  template: src=nginx_web_config.j2
-            dest=/etc/nginx/sites-available/{{ application_name }}
-            backup=yes
+  template:
+    src: nginx_web_config.j2
+    dest: "/etc/nginx/sites-available/{{ application_name }}"
+    backup: true
   notify: reload nginx
   when: inventory_hostname in groups['web']
   tags:
@@ -62,9 +33,10 @@
     - config_update
 
 - name: Create the Nginx media configuration file
-  template: src=nginx_media_config.j2
-            dest=/etc/nginx/sites-available/{{ application_name }}
-            backup=yes
+  template:
+    src: nginx_media_config.j2
+    dest: "/etc/nginx/sites-available/{{ application_name }}"
+    backup: yes
   notify: reload nginx
   when: inventory_hostname in groups['media']
   tags:
@@ -84,9 +56,10 @@
     - reload nginx
 
 - name: Create custom nginx log rotation file
-  template: src=nginx_logrotate.j2
-            dest=/etc/logrotate.d/{{ application_name }}_nginx
-            backup=yes
+  template: 
+    src: "nginx_logrotate.j2"
+    dest: "/etc/logrotate.d/{{ application_name }}_nginx"
+    backup: true
   when: inventory_hostname in groups['web']
 
 - name: Create the static_html folder
@@ -133,10 +106,7 @@
     owner: www-data
     group: www-data
     dest: "{{ nginx_static_html_dir }}/simple_files/bad_referrer.html"
-
-- name: Ensure that the default site is disabled
-  file: path=/etc/nginx/sites-enabled/default state=absent
-  notify: reload nginx
+  when: inventory_hostname in groups['web']
 
 - name: Ensure that the application site is enabled
   file:
@@ -144,25 +114,9 @@
     dest: "/etc/nginx/sites-enabled/{{ application_name }}"
     state: link
   notify: reload nginx
+  when: inventory_hostname in groups['web'] or inventory_hostname in groups['media']
   tags:
     - nginx
 
 - import_tasks: 'setup_htaccess.yml'
   when: inventory_hostname in groups['web']
-
-- name: Ensure Nginx service is started
-  service:
-    name: nginx
-    state: started
-    enabled: yes
-  tags:
-    - nginx
-
-- name: configure http, https ports in firewall
-  community.general.ufw:
-    rule: allow
-    port: "{{ item }}"
-    proto: tcp
-  with_items:
-  - http
-  - https

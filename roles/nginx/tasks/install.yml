@@ -1,0 +1,44 @@
+---
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  tags: packages
+
+- name: Ensure that a strong Diffie-Hellman group is used
+  command: openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096 creates=/etc/ssl/certs/dhparams.pem
+  when: nginx_strong_dh_group is defined and nginx_strong_dh_group
+
+- name: Overwrite the nginx.conf file
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    backup: true
+  notify: reload nginx
+  tags:
+    - nginx
+
+- name: Ensure that the default site is disabled
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx
+
+- name: Ensure Nginx service is started
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  tags:
+    - nginx
+
+- name: configure http, https ports in firewall
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+  - http
+  - https
