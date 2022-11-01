@@ -422,6 +422,7 @@ paypal_webhook_id: ""
 
 slack_webhook_url: ""
 
+geoip_account_id: 0
 geoip_license_key: ""
 suspicious_asn_list: ""
 
