@@ -11,10 +11,6 @@
     - python3-certbot-nginx
     state: latest
 
-- name: Check if Nginx exists
-  stat: path=/etc/init.d/nginx
-  register: nginx_status
-
 - name: Make letsencrypt tmp dir
   file: path={{ letsencrypt_tmp_dir }} state=directory
 
