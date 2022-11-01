@@ -8,7 +8,6 @@
   tags:
     - packages
     - redis
-  when: ansible_distribution_version == "20.04"
 
 - name: Ensure Redis is supervised by systemd
   lineinfile:
@@ -16,9 +15,11 @@
     regexp: '^supervised'
     line: supervised systemd
   tags: redis
-  when: ansible_distribution_version == "20.04"
+  notify: Restart Redis service
 
 - name: Ensure the Redis service is running
-  service: name=redis state=started enabled=yes
+  service:
+    name: redis
+    state: started
+    enabled: yes
   tags: redis
-  when: ansible_distribution_version == "20.04"

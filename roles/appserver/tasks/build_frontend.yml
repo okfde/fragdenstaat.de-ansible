@@ -4,10 +4,19 @@
     state: present
 
 - name: Add node to the sources list
-  apt_repository: repo='deb https://deb.nodesource.com/node_12.x focal main'
-                  update_cache={{ update_apt_cache }}
-                  state=present
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_12.x focal main"
+    update_cache: "{{ update_apt_cache }}"
+    state: present
   when: ansible_distribution_version == "20.04"
+
+
+- name: Add node to the sources list
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_16.x jammy main"
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  when: ansible_distribution_version == "22.04"
 
 - name: Add yarn key
   apt_key:

@@ -4,24 +4,14 @@
     state: present
   when: ansible_distribution_version == "20.04"
 
+- name: Enable Focal deb-src
+  apt_repository:
+    repo: deb-src http://de.archive.ubuntu.com/ubuntu jammy main restricted
+    state: present
+  when: ansible_distribution_version == "22.04"
+
 - name: Install the imagemagick
   apt:
     pkg: imagemagick
     state: present
-  when: ansible_distribution_version == "20.04"
 
-- name: Install the build dependencies for package "imagemagick"
-  apt:
-    pkg: imagemagick
-    state: build-dep
-  when: ansible_distribution_version != "20.04"
-
-- name: Setup imagemagick build script
-  template: src=install_imagemagick.sh.j2 dest={{ virtualenv_path }}/install_imagemagick.sh mode=0755
-  when: ansible_distribution_version != "20.04"
-
-- name: Build and install imagemagick
-  command:  "{{ virtualenv_path }}/install_imagemagick.sh"
-  args:
-    creates: "/usr/local/bin/magick"
-  when: ansible_distribution_version != "20.04"

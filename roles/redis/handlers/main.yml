@@ -1,0 +1,7 @@
+---
+
+- name: Restart Redis service
+  service:
+    name: redis
+    state: restarted
+    enabled: yes

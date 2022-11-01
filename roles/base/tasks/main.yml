@@ -8,14 +8,25 @@
   when: create_swap_file
   tags: swap
 
-- apt_repository:
+- name: Add apt universe
+  apt_repository:
     repo: "deb http://archive.ubuntu.com/ubuntu focal universe"
     update_cache: false
     mode: "600"
   register: universe_installed
   when: ansible_distribution_version == "20.04"
 
-- apt: update_cache=true
+- name: Add apt universe
+  apt_repository:
+    repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy universe"
+    update_cache: false
+    mode: "600"
+  register: universe_installed
+  when: ansible_distribution_version == "22.04"
+
+- name: Update apt  cache
+  apt:
+    update_cache: true
   when: universe_installed is changed
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
@@ -43,6 +54,21 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
+
+- name: Install base packages 22.04
+  apt:
+    name:
+      - build-essential
+      - acl
+      - ntp
+      - ntpdate
+      - gpg
+      - gpg-agent
+    update_cache: "{{ update_apt_cache }}"
+    force: true
+    state: present
+  tags: packages
+  when: ansible_distribution_version == "22.04"
 
 - import_tasks: add_users.yml
 

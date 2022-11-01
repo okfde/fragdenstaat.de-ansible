@@ -15,11 +15,21 @@
     state: present
   when: ansible_distribution_version == "20.04"
 
+- name: Install poppler on Jammy
+  apt:
+    name:
+      - poppler-utils
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  when: ansible_distribution_version == "22.04"
+
 - name: Setup poppler build script
   template: src=install_poppler.sh.j2 dest={{ virtualenv_path }}/install_poppler.sh mode=0755
+  when: ansible_distribution_version == "20.04"
 
 - name: Build and install poppler-utils
   command: "{{ virtualenv_path }}/install_poppler.sh"
   args:
     creates: "/usr/local/lib/libpoppler.so"
   become: true
+  when: ansible_distribution_version == "20.04"
