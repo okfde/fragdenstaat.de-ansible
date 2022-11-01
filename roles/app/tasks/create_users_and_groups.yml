@@ -3,13 +3,13 @@
 - name: Create the application user
   user:
     name: "{{ gunicorn_user }}"
-    uid: 1001
+    uid: "{{ gunicorn_user_uid }}"
     state: present
 
 - name: Create the application group
   group:
     name: "{{ gunicorn_group }}"
-    gid: 998
+    gid: "{{ gunicorn_group_gid }}"
     system: true
     state: present
 

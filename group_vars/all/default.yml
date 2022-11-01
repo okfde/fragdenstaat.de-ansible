@@ -55,7 +55,9 @@ collect_release_info: true
 # Gunicorn settings.
 gunicorn_num_workers: 10
 gunicorn_user: "{{ application_name }}"
+gunicorn_user_uid: 1001
 gunicorn_group: webapps
+gunicorn_group_gid: 998
 uvicorn_num_workers: 2
 
 onion_service_enabled: true
