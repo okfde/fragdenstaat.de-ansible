@@ -21,6 +21,12 @@
   loop_control:
     loop_var: cmk_plugins
 
+- name: "Disable Ubuntu advertisement interfering with apt output parsing"
+  command: mv /etc/apt/apt.conf.d/20apt-esm-hook.conf /etc/apt/apt.conf.d/20apt-esm-hook.conf.disabled
+  args:
+    removes: /etc/apt/apt.conf.d/20apt-esm-hook.conf
+    creates: /etc/apt/apt.conf.d/20apt-esm-hook.conf.disabled
+
 - include_tasks: install_plugin.yml
   loop: "{{ group_names | map('extract', cmk_group_plugins) | list | select('defined') }}"
   loop_control:
