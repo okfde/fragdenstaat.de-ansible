@@ -1,0 +1,22 @@
+[Unit]
+Description=SeaweedFS volume
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart={{ seaweed.location }}/weed volume -port {{ seaweed.volume.port }} \
+                                  -publicUrl http://{{ domain }} -max {{ host_data.seaweed_max_volumes }} \
+                                  -ip.bind {{ host_data.site_ipv4 }} -ip {{ host_data.site_ipv4 }} \
+                                  -dir {{ seaweed.volume.dir }} \
+                                  -index leveldb \
+                                  -mserver {% for host in groups['storagemaster'] %}{{ hostvars[host].host_data.site_ipv4 }}:{{ seaweed.master.port }}{%if not loop.last %},{% endif %}{% endfor %} \
+                                  -dataCenter {{ host_data.datacenter }} -rack {{ seaweed.volume.rack | default('DefaultRack') }} \
+                                  -disk {{ host_data.disk_type }}
+                                  {{ seaweed.volume.additional_args }}
+
+User={{ seaweed.user }}
+SyslogIdentifier=weed-volume
+
+[Install]
+WantedBy=multi-user.target

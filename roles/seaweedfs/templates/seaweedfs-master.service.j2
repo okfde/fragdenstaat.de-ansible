@@ -1,0 +1,19 @@
+[Unit]
+Description=SeaweedFS master
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart={{ seaweed.location }}/weed master -ip.bind {{ host_data.site_ipv4 }} -ip {{ host_data.site_ipv4 }} \
+                                          -port {{ seaweed.master.port }} \
+                                          -mdir {{ seaweed.master.dir }} \
+                                          -volumeSizeLimitMB 60000 \
+                                          -volumePreallocate \
+                                          -defaultReplication {{ seaweed.defaultReplication }} \
+                                        {{ seaweed.master.additional_args }}
+User={{ seaweed.user }}
+SyslogIdentifier=weed-master
+
+[Install]
+WantedBy=multi-user.target

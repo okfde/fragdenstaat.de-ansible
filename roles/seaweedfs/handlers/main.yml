@@ -1,0 +1,20 @@
+---
+# handlers file for bmillemathias.seaweedfs
+
+- name: restart seaweedfs-master.service
+  systemd:
+    name: seaweedfs-master.service
+    state: "{% if weed_download.changed or weed_master_service_file.changed %}restarted{% else %}started{% endif %}"
+    daemon_reload: "{% if weed_master_service_file.changed %}yes{% else %}no{% endif %}"
+
+- name: restart seaweedfs-volume.service
+  systemd:
+    name: seaweedfs-volume.service
+    state: "{% if weed_download.changed or weed_volume_service_file.changed %}restarted{% else %}started{% endif %}"
+    daemon_reload: "{% if weed_volume_service_file.changed %}yes{% else %}no{% endif %}"
+
+- name: restart seaweedfs-filer.service
+  systemd:
+    name: seaweedfs-filer.service
+    state: "{% if weed_download.changed or weed_filer_service_file.changed %}restarted{% else %}started{% endif %}"
+    daemon_reload: "{% if weed_filer_service_file.changed %}yes{% else %}no{% endif %}"

@@ -1,0 +1,28 @@
+---
+
+- name: "check the release {{ seaweed.version }} exists on GitHub"
+  uri:
+    url: "https://api.github.com/repos/chrislusf/seaweedfs/releases/tags/{{ seaweed.version }}"
+  run_once: true
+  delegate_to: localhost
+  check_mode: false
+
+- name: ensure tools are installed
+  package:
+    name:
+      - tar
+      - gzip
+
+- name: Download seaweed archive
+  unarchive:
+    src: "{{ seaweed_download_url }}"
+    dest: "{{ seaweed.location }}"
+    remote_src: true
+  register: weed_download
+
+- name: check correct seaweed version is installed
+  command:
+    cmd: weed version
+  register: weed_installed_version
+  failed_when: weed_installed_version.stdout.split()[2] is version(seaweed.version, '<>')
+  changed_when: false

@@ -1,0 +1,11 @@
+---
+
+- name: Mount seaweed filer via fuse
+  mount: 
+    name: none
+    src: 
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: present

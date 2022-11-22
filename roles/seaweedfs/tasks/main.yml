@@ -1,0 +1,8 @@
+---
+
+- name: "Install seaweed"
+  include_tasks: "install.yml"
+
+- name: "Setup seaweed master, volume, filer"
+  include_tasks: "setup.yml"
+  when: "'storagemaster' in group_names or "'storagevolume' in group_names""

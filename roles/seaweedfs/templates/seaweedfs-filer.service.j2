@@ -1,0 +1,21 @@
+[Unit]
+Description=SeaweedFS filer
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart={{ seaweed.location }}/weed filer -port {{ seaweed.filer.port }} \
+                                -ip.bind {{ host_data.site_ipv4 }} -ip {{ host_data.site_ipv4 }} \
+                                -master {% for host in groups['storagemaster'] %}{{ hostvars[host].host_data.site_ipv4 }}:{{ seaweed.master.port }}{%if not loop.last %},{% endif %}{% endfor %} \
+                                -dataCenter={{ host_data.datacenter }} -rack={{ seaweed.volume.rack | default('DefaultRack') }} \
+                                -defaultStoreDir {{ seaweed.filer.dir }} \
+                                {{ seaweed.filer.additional_args }}
+User={{ seaweed.user }}
+# As to set WorkingDirectory because there is no directory options
+# bug: https://github.com/chrislusf/seaweedfs/issues/1659
+WorkingDirectory={{ seaweed.filer.dir }}
+SyslogIdentifier=weed-filer
+
+[Install]
+WantedBy=multi-user.target

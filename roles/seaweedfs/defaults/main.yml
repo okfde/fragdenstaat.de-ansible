@@ -1,0 +1,30 @@
+
+seaweed:
+  # version has to be quoted, else the the value will be treated as float and
+  # trailing zeros may be trimmed.
+  version: '2.98'
+  large_disk: True
+  location: /usr/local/sbin
+  user: seaweed
+  # defaultReplication is set by a triplet, see
+  # https://github.com/chrislusf/seaweedfs/wiki/Replication#the-meaning-of-replication-type
+  defaultReplication: "000"
+  volumeSizeLimitMB: 60000
+  master:
+    port: 9333
+    dir: "/var/seaweedfs/master"
+    additional_args:
+  volume:
+    port: 8080
+    dir: "/var/seaweedfs/volume"
+    dataCenter: DefaultDataCenter
+    rack: DefaultRack
+    max_volumes: 400
+    additional_args:
+  filer:
+    port: 8889
+    dir: "/var/seaweedfs/filer"
+    encryptData: false
+    additional_args:
+
+seaweed_download_url: "https://github.com/chrislusf/seaweedfs/releases/download/{{ weed.version }}/{{ ansible_system|lower }}_{{ arch[ansible_architecture] }}{% if weed.large_disk %}_large_disk{% endif %}.tar.gz"

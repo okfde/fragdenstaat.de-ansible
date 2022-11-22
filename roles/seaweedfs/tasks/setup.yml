@@ -1,0 +1,99 @@
+
+- name: create seaweedfs user
+  user:
+    name: "{{ seaseaweed.user }}"
+    shell: /bin/false
+    system: true
+    create_home: false
+
+- name: configure seaweedfs master server
+  when: "'storagemaster' in group_names"
+  block:
+    - name: Ensure master datapath exists
+      file:
+        path: "{{ seaweed.master.dir }}"
+        state: directory
+        owner: "{{ seaweed.user.name }}"
+        mode: "700"
+
+    - name: place seaweedfs-master.service file
+      template:
+        src: seaweedfs-master.service.j2
+        dest: /etc/systemd/system/seaweedfs-master.service
+        mode: 0444
+      register: weed_master_service_file
+      notify:
+        - restart seaweedfs-master.service
+
+    - name: manage seaweedfs-master.service runtime
+      systemd:
+        name: seaweedfs-master.service
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: check master port is opened
+      wait_for:
+        port: "{{ seaweed.master.port | int }}"
+        timeout: 30
+
+- name: configure volume server
+  block:
+    - name: Ensure volume datapath exists
+      file:
+        path: "{{ seaweed.volume.dir }}"
+        state: directory
+        owner: "{{ seaweed.user.name }}"
+        mode: "700"
+
+    - name: place seaweedfs-volume.service file
+      template:
+        src: seaweedfs-volume.service.j2
+        dest: /etc/systemd/system/seaweedfs-volume.service
+        mode: 0444
+      register: weed_volume_service_file
+      notify:
+        - restart seaweedfs-volume.service
+
+    - name: manage seaweedfs-volume.service runtime
+      systemd:
+        name: seaweedfs-volume.service
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: check volume port is opened
+      wait_for:
+        port: "{{ seaweed.volume.port | int }}"
+        timeout: 30
+
+- name: configure filer server
+  when: "'weed_filer' in group_names"
+  block:
+    - name: Ensure filer datapath exists
+      file:
+        path: "{{ seaweed.filer.dir }}"
+        state: directory
+        owner: "{{ seaweed.user.name }}"
+        mode: "700"
+
+    - name: place seaweedfs-filer.service file
+      template:
+        src: seaweedfs-filer.service.j2
+        dest: /etc/systemd/system/seaweedfs-filer.service
+        mode: 0444
+      register: weed_filer_service_file
+      notify:
+        - restart seaweedfs-filer.service
+
+    - name: manage seaweedfs-filer.service runtime
+      systemd:
+        name: seaweedfs-filer.service
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: check filer port is opened
+      wait_for:
+        port: "{{ seaweed.filer.port | int }}"
+        timeout: 30
