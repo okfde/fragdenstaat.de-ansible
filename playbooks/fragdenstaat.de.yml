@@ -25,6 +25,7 @@
     - app
     - appserver
     - celery
+    - nginx
 
   post_tasks:
     - name: Send Slack notification message on finished deployment
