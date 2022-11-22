@@ -3,25 +3,19 @@
 - name: Create a {{ application_name }} virtual machine via vagrant
   hosts: all
   become: true
-  become_user: root
-  remote_user: vagrant
-  vars:
-    - setup_git_repo: true
-    - update_apt_cache: true
+  remote_user: root
   vars_files:
-    - env_vars/base.yml
     - env_vars/vagrant.yml
 
   roles:
     - base
     - db
     - memcached
-    - rabbitmq
+    # - rabbitmq
     - elasticsearch
-    - web
+    - redis
+    - app
+    - appserver
     - celery
-    # - certbot
+    # # - certbot
     - nginx
-    # - postfix
-    # - dovecot
-    # - backup
