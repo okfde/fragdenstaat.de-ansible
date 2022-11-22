@@ -1,0 +1,4 @@
+farmsubsidy_domain: api.farmsubsidy.org
+farmsubsidy_port: 5000
+farmsubsidy_git_repo: https://github.com/okfde/farmsubsidy-store.git
+farmsubsidy_dir: "/var/www/{{ farmsubsidy_domain }}"

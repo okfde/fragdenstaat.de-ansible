@@ -1,0 +1,49 @@
+# apt install python3.10-venv pkg-config libicu-dev python3-all-dev parallel
+# setup venv
+# activate
+# pip install -e .
+
+
+- name: Setup FarmSubsidy Git repo
+  git:
+    repo: "{{ farmsubsidy_git_repo }}"
+    dest: "{{ farmsubsidy_dir }}"
+    update: true
+  become: true
+
+- name: Customize farmsubsidy env vars
+  lineinfile:
+    create: yes
+    path: "{{ farmsubsidy_dir }}/.env"
+    regex: "^(#)? ?{{ item.key }} ="
+    line: "{{ item.key }} = {{ item.value }}"
+    state: present
+  loop:
+    - { key: "API_KEY", value: "{{ farmsubsidy_api_key }}" }
+    - { key: "API_ALLOWED_ORIGIN", value: "https://farmsubsidy-org-next.vercel.app" }
+
+- name: Set Farmsubsidy systemd service
+  template:
+    src: farmsubsidy.service.j2
+    dest: /etc/systemd/system/farmsubsidy.service
+    mode: 0444
+
+- name: Start farmsubsidy service
+  systemd:
+    name: farmsubsidy
+    state: restarted
+    daemon_reload: yes
+
+- name: Create the Nginx site configuration
+  template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/{{ farmsubsidy_domain }}"
+    backup: yes
+  notify: reload nginx
+
+- name: Ensure that the application site is enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ farmsubsidy_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ farmsubsidy_domain }}"
+    state: link
+  notify: reload nginx
