@@ -10,4 +10,7 @@ host_data:
   disk_type: ssd
 
 create_swap_file: false
-elasticsearch_heapsize: 31g
+elasticsearch_heapsize: 22g
+
+https_domains:
+  - ["api.farmsubsidy.org"]
