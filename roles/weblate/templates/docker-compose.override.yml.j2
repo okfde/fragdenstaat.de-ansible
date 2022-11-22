@@ -1,0 +1,32 @@
+x-override: &override
+  restart: unless-stopped
+  environment:
+    WEBLATE_DEBUG: 0
+    WEBLATE_SITE_DOMAIN: {{ weblate_domain }}
+    WEBLATE_ADMIN_EMAIL: {{ weblate_admin_email }}
+    WEBLATE_ADMIN_PASSWORD: {{ weblate_admin_password }}
+    WEBLATE_SERVER_EMAIL: {{ weblate_mail_from }}
+    WEBLATE_DEFAULT_FROM_EMAIL: {{ weblate_mail_from }}
+    WEBLATE_ALLOWED_HOSTS: {{ weblate_domain }}
+    WEBLATE_REGISTRATION_OPEN: 0
+    WEBLATE_TIME_ZONE: Europe/Berlin
+    WEBLATE_SOCIAL_AUTH_GITHUB_KEY: {{ weblate_github_key }}
+    WEBLATE_SOCIAL_AUTH_GITHUB_SECRET: {{ weblate_github_secret }}
+    WEBLATE_ENABLE_HTTPS: 1
+    WEBLATE_IP_PROXY_HEADER: HTTP_X_FORWARDED_FOR
+    WEBLATE_REQUIRE_LOGIN: 1
+    WEBLATE_EMAIL_HOST: {{ weblate_mail_host }}
+    WEBLATE_EMAIL_HOST_USER: {{ weblate_mail_username }}
+    WEBLATE_EMAIL_HOST_PASSWORD: "{{ weblate_mail_password }}"
+    SENTRY_DSN: {{ weblate_sentry_dsn }}
+
+version: '3'
+services:
+  weblate:
+    <<: *override
+    ports:
+      - 127.0.0.1:{{ weblate_port }}:8080
+  database:
+    <<: *override
+  cache:
+    <<: *override

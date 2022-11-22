@@ -1,0 +1,37 @@
+- name: Setup Weblate Git repo
+  git:
+    repo: "{{ weblate_git_repo }}"
+    dest: "{{ weblate_dir }}"
+    version: a214e5d3d84c85e61a1453c08d998be67cef1a75
+  become: true
+
+- name: Set weblate docker compose override
+  template:
+    src: docker-compose.override.yml.j2
+    dest: "{{ weblate_dir }}/docker-compose.override.yml"
+
+- name: Set weblate systemd service
+  template:
+    src: weblate.service.j2
+    dest: /etc/systemd/system/weblate.service
+    mode: 0444
+
+- name: Start weblate service
+  systemd:
+    name: weblate
+    state: restarted
+    daemon_reload: yes
+
+- name: Create the Nginx site configuration
+  template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/{{ weblate_domain }}"
+    backup: yes
+  notify: reload nginx
+
+- name: Ensure that the application site is enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ weblate_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ weblate_domain }}"
+    state: link
+  notify: reload nginx
