@@ -21,8 +21,8 @@ server {
 
 
     listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/sentry.okfn.de/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/sentry.okfn.de/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/{{ sentry_domain }}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{ sentry_domain }}/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
@@ -37,6 +37,5 @@ server {
   server_name     {{ sentry_domain }};
     listen 80;
     return 404; # managed by Certbot
-
 
 }
