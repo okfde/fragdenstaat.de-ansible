@@ -1,0 +1,11 @@
+---
+
+- name: Deploy a sentry instance
+  hosts: auxiliary
+  become: true
+  become_user: root
+  roles:
+    - docker
+    - certbot
+    - nginx
+    - sentry

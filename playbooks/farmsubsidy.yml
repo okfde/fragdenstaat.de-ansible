@@ -1,0 +1,13 @@
+---
+
+- name: Deploy a farmsubsidy server
+  hosts: search
+  become: true
+  become_user: root
+  vars:
+    - update_apt_cache: true
+  roles:
+    - docker
+    - nginx
+    - certbot
+    - farmsubsidy
