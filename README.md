@@ -2,7 +2,7 @@
 
 Based on [ansible-django-stack](https://github.com/jcalazan/ansible-django-stack).
 
-Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue, Redis server and a full email server with postfix and dovecot on Ubuntu 20.04.
+Ansible to deploy FragDenStaat.de - a Django app with Postgres database, ElasticSearch search engine, Celery+RabbitMQ background queue, Redis server and a full email server with postfix and dovecot on Ubuntu 22.04.
 
 
 ## Install this repo
@@ -15,13 +15,13 @@ pip install -r requirements.txt
 
 ## Configure your SSH user
 
-Copy `local_config.yml.example` to `local_config.yml` and set your SSH username.
+Copy `playbooks/local_config.yml.example` to `playbooks/local_config.yml` and set your SSH username.
 
 ## Deploy FragDenStaat.de
 
 Run this to deploy FragDenStaat.de
 
-    ansible-playbook fragdenstaat.de.yml -v
+    ansible-playbook playbooks/fragdenstaat.de.yml -v
 
 There are tags available:
 
@@ -64,7 +64,7 @@ cp env_vars/vpnclients.yml.example env_vars/vpnclients.yml
 
 Setup VPN server:
 ```
-ansible-playbook -v vpnserver.yml
+ansible-playbook -v playbooks/vpnserver.yml
 ```
 
 Store public key in host variables file in `host_vars/` under the key `host_data.wg_publickey`
@@ -72,7 +72,7 @@ Store public key in host variables file in `host_vars/` under the key `host_data
 Run this script to add a client:
 
 ```
-ansible-playbook -v vpn_add_client.yml
+ansible-playbook -v playbooks/vpn_add_client.yml
 ```
 
 After it's done, a client configuration file is in your local directory and the public key has been recorded in `env_vars/vpnclients.yml`.
@@ -80,5 +80,5 @@ After it's done, a client configuration file is in your local directory and the 
 Update the peers on the server:
 
 ```
-ansible-playbook -v vpnserver.yml
+ansible-playbook -v playbooks/vpnserver.yml
 ```
