@@ -54,6 +54,7 @@
     - nginx
   notify:
     - reload nginx
+  when: inventory_hostname in groups['web'] 
 
 - name: Create custom nginx log rotation file
   template: 
@@ -68,6 +69,7 @@
     mode: 0550
     owner: www-data
     state: directory
+  when: inventory_hostname in groups['web'] 
 
 - name: Create maintenance page
   template:
@@ -79,6 +81,7 @@
     - maintenance
     - forbidden
     - error_451
+  when: inventory_hostname in groups['web'] 
 
 - name: Create the simple files folder
   file:
@@ -87,6 +90,7 @@
     owner: www-data
     group: www-data
     state: directory
+  when: inventory_hostname in groups['web'] 
 
 - name: Copy simple files
   copy:
@@ -96,6 +100,7 @@
     owner: www-data
     group: www-data
   with_items: "{{ simple_files }}"
+  when: inventory_hostname in groups['web'] 
   tags:
     - nginx
 
