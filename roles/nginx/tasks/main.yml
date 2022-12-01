@@ -4,16 +4,16 @@
 
 - name: Check if HTTPS certificates exist
   stat:
-    path: "/etc/letsencrypt/live/{{ item.from }}/{{ letsencrypt_cert_filename }}"
+    path: "/etc/letsencrypt/live/{{ item }}/{{ letsencrypt_cert_filename }}"
   register: https_cert_check
-  with_items: "{{ redirect_domains }}"
+  with_items: "{{ https_domains }}"
   tags:
     - nginx
     - config_update
 
 - name: Set HTTPS certificate facts
   set_fact:
-    active_https_domains: "{{ active_https_domains|default({}) | combine( {item.item.from: item.stat.exists} ) }}"
+    active_https_domains: "{{ active_https_domains|default({}) | combine( {item.item: item.stat.exists} ) }}"
   with_items: "{{ https_cert_check.results }}"
   tags:
     - nginx
