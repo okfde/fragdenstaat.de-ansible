@@ -49,7 +49,7 @@
     chdir: /etc/wireguard/keys
 
 - name: Add vars vpn client
-  include_vars: env_vars/vpnclients.yml
+  include_vars: ../env_vars/vpnclients.yml
 
 - name: Generate server config
   template:

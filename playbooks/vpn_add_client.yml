@@ -29,22 +29,22 @@
       register: public_key
 
     - name: Include role vars
-      include_vars: "roles/wireguard/defaults/main.yml"
+      include_vars: "../roles/wireguard/defaults/main.yml"
 
     - name: Make peer config
       local_action:
         module: template
-        src: "roles/wireguard/templates/client.conf.j2"
+        src: "../roles/wireguard/templates/client.conf.j2"
         dest: "FDS VPN {{ peer_id }}.conf"
 
     - name: Include role vars
-      include_vars: "env_vars/vpnclients.yml"
+      include_vars: "../env_vars/vpnclients.yml"
 
     - name: Store peer config
       local_action:
         module: template
-        src: "roles/wireguard/templates/clientgroups.yml.j2"
-        dest: "env_vars/vpnclients.yml"
+        src: "../roles/wireguard/templates/clientgroups.yml.j2"
+        dest: "../env_vars/vpnclients.yml"
 
     - name: Print public key
       local_action:
