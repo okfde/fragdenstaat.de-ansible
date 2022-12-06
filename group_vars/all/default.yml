@@ -343,7 +343,6 @@ content_security_policy:
   "font-src": "data: __static__"
   "manifest-src": "__static__"
   "form-action": "'self' __web__ https://forum.okfn.de https://www.paypal.com https://pretix.eu https://hooks.stripe.com https://stripe.com https://r.girogate.de"
-  "frame-ancestors": "'self'"
   "report-uri": "https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
 ## in secret.yml
