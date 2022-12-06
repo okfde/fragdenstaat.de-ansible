@@ -1,8 +1,31 @@
+{% macro cors(server_url, null_fallback=False) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
+  add_header Access-Control-Allow-Origin $http_origin;
+  add_header Access-Control-Allow-Headers "pragma, cache-control";
+  add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";
+}
+{%- endmacro %}
+
+upstream farmsubsidyapi {
+  server localhost:{{ farmsubsidy_port }};
+  {% if inventory_hostname in groups['farmsubsidyapi'] %}
+    server n1.{{ farmsubsidy_domain }};
+  {% endif %}
+}
+
 server {
   server_name     {{ farmsubsidy_domain }};
 
+  listen 80;
+  {% if inventory_hostname in groups['farmsubsidyapi'] and active_https_domains[farmsubsidy_domain] %}
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/{{ farmsubsidy_domain }}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{ farmsubsidy_domain }}/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+  {% endif %}
+
   location / {
-    proxy_pass              http://localhost:{{ farmsubsidy_port }};
+    proxy_pass              http://farmsubsidyapi;
     proxy_http_version 1.1;
     proxy_redirect off;
     proxy_buffering off;
@@ -17,26 +40,14 @@ server {
     proxy_set_header        X-Real-IP $remote_addr;
     proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
     expires             6h;
+
+    {{ cors("https://farmsubsidy.org") }}
+    {{ cors("http://localhost:30000") }}
   }
 
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/{{ farmsubsidy_domain }}/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/{{ farmsubsidy_domain }}/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
-
-server {
-    if ($host = {{ farmsubsidy_domain }}) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-  server_name     {{ farmsubsidy_domain }};
-    listen 80;
-    return 404; # managed by Certbot
-
+  location /.well-known/acme-challenge/ {
+    default_type "text/plain";
+    root {{ letsencrypt_tmp_dir }};
+  }
 
 }

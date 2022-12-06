@@ -1,0 +1,6 @@
+---
+
+- name: restart farmsubsidy
+  service:
+    name: farmsubsidy
+    state: restarted

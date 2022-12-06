@@ -1,7 +1,7 @@
 ---
 
 - name: Deploy a farmsubsidy server
-  hosts: search
+  hosts: farmsubsidyapi_backend
   become: true
   become_user: root
   vars:

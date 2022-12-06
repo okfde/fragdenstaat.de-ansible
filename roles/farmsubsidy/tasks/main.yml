@@ -10,6 +10,7 @@
     dest: "{{ farmsubsidy_dir }}"
     update: true
   become: true
+  notify: restart farmsubsidy
 
 - name: Customize farmsubsidy env vars
   lineinfile:
@@ -21,6 +22,8 @@
   loop:
     - { key: "API_KEY", value: "{{ farmsubsidy_api_key }}" }
     - { key: "API_ALLOWED_ORIGIN", value: "https://farmsubsidy-org-next.vercel.app" }
+    - { key: "API_BASIC_AUTH", value: "{{ farmsubsidy_basic_auth }}" }
+  notify: restart farmsubsidy
 
 - name: Set Farmsubsidy systemd service
   template:
@@ -31,10 +34,10 @@
 - name: Start farmsubsidy service
   systemd:
     name: farmsubsidy
-    state: restarted
+    state: started
     daemon_reload: yes
 
-- name: Create the Nginx site configuration
+- name: Create the Nginx site API configuration
   template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/{{ farmsubsidy_domain }}"
