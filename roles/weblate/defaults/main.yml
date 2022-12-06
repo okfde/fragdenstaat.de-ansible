@@ -2,3 +2,4 @@ weblate_domain: weblate.frag-den-staat.de
 weblate_port: 8020
 weblate_git_repo: https://github.com/WeblateOrg/docker-compose.git
 weblate_dir: "/var/www/weblate-docker"
+weblate_github_username: fdsbot
