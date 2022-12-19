@@ -38,13 +38,7 @@ ansible-playbook fragdenstaat.de.yml -v -t deploy-web -t deploy-frontend
 
 ## Secrets management
 
-Secrets are managed with `git-crypt` and `ansible-vault`.
-
-Unlock key file after cloning the repo:
-
-```
-git-crypt unlock
-```
+Secrets are managed with `ansible-vault`.
 
 Edit production secrets:
 
