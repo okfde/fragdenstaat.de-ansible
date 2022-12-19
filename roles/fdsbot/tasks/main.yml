@@ -20,17 +20,6 @@
     force: yes
   become_user: fdsbot
 
-# - name: Install git-crypt
-#   apt:
-#     name:
-#       - git-crypt
-#       - gpg
-#     update_cache: "{{ update_apt_cache }}"
-#     state: present
-
-# Setup gpg key
-# or just do this??
-
 - name: Get Vault Key
   copy:
     src: "../../../vault.key"
