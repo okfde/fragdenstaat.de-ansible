@@ -13,3 +13,5 @@ ansible-env/
 local_config.yml
 
 env_vars/vpnclients.yml
+vault.key
+
