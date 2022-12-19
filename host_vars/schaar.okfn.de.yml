@@ -1,0 +1,12 @@
+---
+host_data:
+  region: falkenstein1
+  datacenter: fsn1-dc1
+  interface_name: enp0s31f6
+  mac: 7c:10:c9:21:fc:db
+  global_ipv4: 88.99.57.224
+  global_ipv6: 2a01:4f8:10a:a1f::2
+  site_ipv4: 192.168.100.4
+  disk_type: hdd
+  wg_publickey: "n77Y3S6AkvoTUztuSlr8H9UzkkDs2RzhrhQaHJUPLVY="
+  vpn_peer_id: 201
