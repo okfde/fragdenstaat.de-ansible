@@ -1,0 +1,6 @@
+---
+
+fdsbot_git_repo: https://github.com/fragdenstaat/fdsbot.git
+fdsbot_ansible_git_repo: https://github.com/okfde/fragdenstaat.de-ansible.git
+fdsbot_dir: "/home/fdsbot/fdsbot"
+fdsbot_ansible_dir: "/home/fdsbot/fragdenstaat.de-ansible"

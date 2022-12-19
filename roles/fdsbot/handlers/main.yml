@@ -1,0 +1,6 @@
+---
+
+- name: restart fdsbot
+  service:
+    name: fdsbot
+    state: restarted

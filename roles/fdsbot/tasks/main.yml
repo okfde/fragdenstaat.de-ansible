@@ -1,0 +1,65 @@
+---
+
+- name: Ensure group "fdsbot" exists
+  ansible.builtin.group:
+    name: fdsbot
+    state: present
+
+- name: Add user with a bash shell and group
+  ansible.builtin.user:
+    name: fdsbot
+    state: present
+    shell: /bin/bash
+    groups: fdsbot
+    append: yes
+
+- name: Setup ansible Git repo
+  git:
+    repo: "{{ fdsbot_ansible_git_repo }}"
+    dest: "{{ fdsbot_ansible_dir }}"
+    force: yes
+  become_user: fdsbot
+
+# - name: Install git-crypt
+#   apt:
+#     name:
+#       - git-crypt
+#       - gpg
+#     update_cache: "{{ update_apt_cache }}"
+#     state: present
+
+# Setup gpg key
+# or just do this??
+
+- name: Get Vault Key
+  copy:
+    src: "../../../vault.key"
+    dest: "{{ fdsbot_ansible_dir }}/vault.key"
+  become_user: fdsbot
+
+- name: Create the virtualenv
+  command: python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env
+           creates={{ fdsbot_ansible_dir }}/ansible-env/bin/activate
+  become_user: fdsbot
+
+- name: Install ansible dependencies
+  pip:
+    virtualenv: "{{ fdsbot_ansible_dir }}/ansible-env"
+    chdir: "{{ fdsbot_ansible_dir }}"
+    requirements: "requirements.txt"
+    state: latest
+  become_user: fdsbot
+
+- name: Setup local config file
+  copy:
+    src: "{{ fdsbot_ansible_dir }}/local_config.yml.example"
+    remote_src: true
+    dest: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+  become_user: fdsbot
+
+- name: Set ansible user in local config
+  lineinfile:
+    path: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+    state: present
+    regexp: '^ansible_user:'
+    line: 'ansible_user: fdsbot'
