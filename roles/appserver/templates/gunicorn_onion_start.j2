@@ -19,7 +19,7 @@ export CSRF_COOKIE_SECURE=0
 export SESSION_COOKIE_SECURE=0
 export LANGUAGE_COOKIE_SECURE=0
 # Don't pollute other app cache
-export CACHE_URL=locmem://
+export CACHE_KEY_PREFIX=fds_onion
 {% endblock %}
 
 {% block extra_bind %}{% endblock %}
