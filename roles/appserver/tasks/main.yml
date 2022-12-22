@@ -58,6 +58,17 @@
   notify:
     - restart memcached
 
+- name: restart onion application
+  supervisorctl:
+    name: "{{ item }}"
+    state: restarted
+  when: onion_service_enabled
+  with_items:
+    - "{{ application_name }}_gunicorn_onion"
+    - "{{ application_name }}_uvicorn_onion"
+  notify:
+    - restart memcached
+
 - name: Reload application
   community.general.supervisorctl:
     name: "{{ item }}"
