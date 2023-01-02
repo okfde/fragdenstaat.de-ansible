@@ -8,13 +8,11 @@
         state=directory
   with_items:
     - bin
-    - fragdenstaat.de
     - include
     - data
     - lib
     - scripts
     - share
-    - src
     - run
     - meta
 
