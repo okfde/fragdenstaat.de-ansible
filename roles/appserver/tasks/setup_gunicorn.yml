@@ -33,6 +33,7 @@
   with_items:
     - gunicorn
     - uvicorn
+  notify: restart app server
   tags:
     - deploy
     - deploy-backend

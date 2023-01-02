@@ -1,8 +1,25 @@
 ---
-- name: restart application
+
+- name: restart app server
   supervisorctl:
-    name: "{{ application_name }}"
+    name: "{{ application_name }}_{{ item }}"
     state: restarted
+  with_items:
+    - "gunicorn"
+    - "uvicorn"
+  notify:
+    - restart memcached
+
+- name: restart onion app server
+  supervisorctl:
+    name: "{{ application_name }}_{{ item }}_onion"
+    state: restarted
+  when: onion_service_enabled
+  with_items:
+    - "gunicorn"
+    - "uvicorn"
+  notify:
+    - restart memcached
 
 - name: restart memcached
   service:
