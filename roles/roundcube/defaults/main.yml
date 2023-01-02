@@ -1,0 +1,4 @@
+---
+
+roundcube_dir: /var/www/roundcube
+roundcube_ip: "10.9.0.{{ host_data.vpn_peer_id }}"

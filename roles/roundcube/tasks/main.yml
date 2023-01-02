@@ -1,0 +1,46 @@
+---
+
+- name: Setup directory
+  ansible.builtin.file:
+    path: "{{ roundcube_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Add docker compose config
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ roundcube_dir }}/docker-compose.yml"
+
+- name: Set roundcube systemd service
+  template:
+    src: roundcube.service.j2
+    dest: /etc/systemd/system/roundcube.service
+    mode: 0444
+
+- name: Start roundcube service
+  systemd:
+    name: roundcube
+    state: restarted
+    daemon_reload: yes
+
+- name: Create the Nginx site API configuration
+  template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/roundcube"
+    backup: yes
+  notify: reload nginx
+
+- name: Ensure that the application site is enabled
+  file:
+    src: "/etc/nginx/sites-available/roundcube"
+    dest: "/etc/nginx/sites-enabled/roundcube"
+    state: link
+  notify: reload nginx
+
+- name: Allow roundcube on VPN network
+  community.general.ufw:
+    rule: allow
+    port: 9800
+    to_ip: "{{ roundcube_ip }}"
+    proto: tcp
+

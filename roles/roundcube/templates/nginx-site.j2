@@ -1,0 +1,22 @@
+server {
+    server_name {{ roundcube_ip }};
+  
+    location / {
+      proxy_pass              http://localhost:9800;
+      proxy_http_version 1.1;
+      proxy_redirect off;
+      proxy_buffering off;
+      proxy_next_upstream error timeout invalid_header http_502 http_503 non_idempotent;
+      proxy_next_upstream_tries 2;
+      proxy_read_timeout 30s;
+      proxy_send_timeout 5s;
+      proxy_set_header Connection '';
+      # proxy_set_header Host $host;
+      # proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header        X-Real-IP $remote_addr;
+      proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+      expires             6h;
+    }
+  
+    listen {{ roundcube_ip }}:9800; # managed by Certbot  
+}

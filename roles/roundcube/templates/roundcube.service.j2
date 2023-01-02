@@ -1,0 +1,19 @@
+[Unit]
+Description=roundcube service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+User=root
+Group=docker
+WorkingDirectory={{ roundcube_dir }}
+# Shutdown container (if running) when unit is started
+ExecStartPre=docker compose down
+# Start container when unit is started
+ExecStart=docker compose up --build
+# Stop container when unit is stopped
+ExecStop=docker compose down
+
+[Install]
+WantedBy=multi-user.target
