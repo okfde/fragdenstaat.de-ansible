@@ -1,0 +1,7 @@
+---
+
+- name: restart weblate
+  systemd:
+    name: weblate
+    state: restarted
+    daemon_reload: yes

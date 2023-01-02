@@ -1,0 +1,37 @@
+---
+
+- name: Install duplicity dependencies
+  apt:
+    name:
+      - librsync-dev
+      - lftp
+      - duplicity
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  tags: packages
+
+- name: Do not verify SSL certificate
+  lineinfile:
+    path: /etc/lftp.conf
+    line: "set ssl:verify-certificate no"
+
+- name: Create the folder for the backup files
+  file:
+    path: "/var/backup/sentry"
+    owner: root
+    state: directory
+  tags: backup
+
+- name: Place backup script
+  template:
+    src: backup.sh.j2
+    dest: /usr/local/bin/backup_sentry.sh
+    mode: 0755
+  tags: backup
+
+- name: Setup cron script
+  cron:
+    name: "Run backup sentry script"
+    minute: "0"
+    hour: "20"
+    job: "bash /usr/local/bin/backup_sentry.sh"

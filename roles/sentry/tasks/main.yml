@@ -4,12 +4,20 @@
     dest: "{{ sentry_dir }}"
     update: true
   become: true
+  register: sentry_updated
+
+- name: Start sentry service
+  systemd:
+    name: stopped
+    state: started
+  when: sentry_updated.changed
 
 - name: "Install sentry"
   command:
-    cmd: "./install.sh --skip-user-creation --report-self-hosted-issues"
+    cmd: "./install.sh --skip-user-creation --no-report-self-hosted-issues"
     chdir: "{{ sentry_dir }}"
- 
+  when: sentry_updated.changed
+
 - name: Set sentry config options
   lineinfile:
     path: "{{ sentry_dir }}/sentry/config.yml"
@@ -90,3 +98,5 @@
     dest: "/etc/nginx/sites-enabled/{{ sentry_domain }}"
     state: link
   notify: reload nginx
+
+- import_tasks: setup_backup.yml

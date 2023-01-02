@@ -21,29 +21,37 @@
     line: "set ssl:verify-certificate no"
 
 - name: Create the folder for the backup files
-  file: path={{ virtualenv_path }}/backup
-        owner=root
-        state=directory
+  file:
+    path: "{{ virtualenv_path }}/backup"
+    owner: root
+    state: directory
   tags: backup
 
 - name: Place backup script
-  template: src=backup.sh.j2
-            dest=/usr/local/bin/backup.sh
+  template:
+    src: backup.sh.j2
+    dest: /usr/local/bin/backup.sh
   tags: backup
 
-- cron:
+- name: Setup cron script
+  cron:
     name: "Run backup script"
     minute: "0"
     hour: "5"
     job: "sh /usr/local/bin/backup.sh"
 
 - name: set mailto env in cron
-  cron: user="root" name="MAILTO" env="yes" value="{{ backup_cron_email }}"
+  cron:
+    user: root
+    name: MAILTO
+    env: yes
+    value: "{{ backup_cron_email }}"
   when: backup_cron_email is defined and backup_cron_email
   tags:
     - cron
 
 - name: Create custom backup log rotation file
-  template: src=fds_backup_logrotate.j2
-            dest=/etc/logrotate.d/{{ application_name }}_backup
-            backup=yes
+  template:
+    src: fds_backup_logrotate.j2
+    dest: "/etc/logrotate.d/{{ application_name }}_backup"
+    backup: yes

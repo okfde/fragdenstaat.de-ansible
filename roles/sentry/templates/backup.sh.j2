@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export FTP_PASSWORD='{{ backup_ftp_password }}'
+export PASSPHRASE='{{ backup_gpg_password }}'
+
+set -ex
+
+PATH=/usr/bin:/bin
+DATE=`date +%F`
+DAYOFMONTH=`date +%d`
+
+umask 177
+
+mkdir -p /var/backup
+mkdir -p /var/backup/sentry
+
+pushd {{ sentry_dir }}
+
+docker compose run --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export > /var/backup/sentry/backup.json
+
+popd
+
+# SQL Dump Backup
+/usr/bin/duplicity -v 9 --full-if-older-than 1W /var/backup/sentry {{ backup_ftp_url }}/sentry
+/usr/bin/duplicity -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/sentry
+
+unset FTP_PASSWORD
+unset PASSPHRASE
