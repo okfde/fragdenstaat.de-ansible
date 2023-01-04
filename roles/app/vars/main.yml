@@ -16,6 +16,7 @@ django_environment:
   DATABASE_USER: "{{ db_user }}"
   DATABASE_HOST: "{{ db_host }}"
   DATABASE_PASSWORD: "{{ db_password }}"
+  DJANGO_MEMCACHED_LOCATION: "{{ hostvars[groups['cache'][0]].host_data.site_ipv4 }}"
   DJANGO_ELASTICSEARCH_HOSTS: "{% for host in groups['search'] %}{{ hostvars[host].host_data.site_ipv4 }}:9200{%if not loop.last %},{% endif %}{% endfor %}"
   DJANGO_CELERY_BROKER_URL: "{{ celery_broker_url }}"
   DJANGO_EMAIL_HOST: "{{ email_host }}"
