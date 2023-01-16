@@ -428,3 +428,6 @@ suspicious_asn_list: ""
 # use base64 encoded JSON
 fds_legal_backup_credentials: ""
 fds_legal_backup_folder_id: ""
+
+donation_backup_url: ""
+donation_backup_credentials: ""
