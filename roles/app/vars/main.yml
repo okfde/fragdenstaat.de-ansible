@@ -59,8 +59,9 @@ django_environment:
   TELNYX_API_KEY: "{{ telnyx_api_key }}"
   TELNYX_PUBLIC_KEY: "{{ telnyx_public_key }}"
   TELNYX_FROM_NUMBER: "{{ telnyx_from_number }}"
-
   DJANGO_TESSERACT_DATA_PATH: "{{ tesseract_data_path }}"
   FDS_LEGAL_BACKUP_CREDENTIALS: "{{ fds_legal_backup_credentials }}"
   FDS_LEGAL_BACKUP_FOLDER_ID: "{{ fds_legal_backup_folder_id }}"
   FRONTEX_CAPTCHA_MODEL_PATH: "{{ frontex_captcha_model_path }}"
+  DONATION_BACKUP_URL: "{{ donation_backup_url }}"
+  DONATION_BACKUP_CREDENTIALS: "{{ donation_backup_credentials }}"
