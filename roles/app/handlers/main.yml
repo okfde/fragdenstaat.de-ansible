@@ -10,8 +10,8 @@
     - deploy-backend
 
 - name: restart application
-  supervisorctl:
-    name: "all"
+  community.general.supervisorctl:
+    name: all
     state: restarted
   notify:
     - restart memcached
