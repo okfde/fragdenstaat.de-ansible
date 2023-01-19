@@ -39,6 +39,11 @@
     state: latest
   become_user: fdsbot
 
+- name: Upgrade ansible galaxy
+  command:
+    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
+  become_user: fdsbot
+
 - name: Setup local config file
   copy:
     src: "{{ fdsbot_ansible_dir }}/local_config.yml.example"
