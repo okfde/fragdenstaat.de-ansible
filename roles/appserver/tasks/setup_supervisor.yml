@@ -29,4 +29,3 @@
   with_items:
     - "{{ application_name }}_gunicorn"
     - "{{ application_name }}_uvicorn"
-

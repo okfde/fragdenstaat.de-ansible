@@ -17,7 +17,7 @@
     creates: "{{ virtualenv_path }}/bin/activate"
   when: ansible_distribution_version == "22.04"
 
-- name: Seet ownership of app directory
+- name: Set ownership of app directory
   file:
     path: "{{ virtualenv_path }}"
     state: directory
