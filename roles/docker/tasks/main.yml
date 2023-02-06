@@ -24,5 +24,6 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
+      - apparmor-utils
     state: latest
     update_cache: true
