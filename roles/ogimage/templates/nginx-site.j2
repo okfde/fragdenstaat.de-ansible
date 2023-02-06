@@ -1,0 +1,40 @@
+proxy_cache_path {{ ogimage_cache }} levels=1:2 keys_zone=fdsogimage:10m max_size=1g
+                 inactive=1440m use_temp_path=off;
+
+server {
+  server_name     {{ ogimage_domain}};
+
+    if ($http_user_agent ~ (Yandex)) {
+        return 403;
+    }
+  location / {
+    proxy_cache fdsogimage;
+    proxy_pass              http://localhost:{{ ogimage_port }};
+    proxy_cache_use_stale error timeout http_500 http_502 http_503 http_504;
+    proxy_cache_lock on;
+    proxy_read_timeout 30s;
+    proxy_send_timeout 5s;
+  }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/{{ ogimage_domain }}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{ ogimage_domain }}/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+
+
+server {
+    if ($host = {{ ogimage_domain }}) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+  server_name     {{ ogimage_domain }};
+    listen 80;
+    return 404; # managed by Certbot
+
+
+}

@@ -1,0 +1,6 @@
+ogimage_domain: ogimage.frag-den-staat.de
+ogimage_cache: "/var/www/fds-ogimage/cache"
+ogimage_port: 3000
+ogimage_git_repo: https://github.com/fragdenstaat/fds-ogimage.git
+ogimage_dir: "/var/www/fds-ogimage"
+ogimage_allowed_paths: 'profil/[\w-\.]+,en/profile/[\w-\.]+,anfrage/[\w-]+,en/request/[\w-]+,koalitionstracker/[\w-]+/vorhaben/[\w\.-]+,koalitionstracker/[\w-]+/[\w\.-]+'

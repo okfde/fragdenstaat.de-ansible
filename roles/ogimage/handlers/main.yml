@@ -1,0 +1,7 @@
+---
+
+- name: restart ogimage
+  systemd:
+    name: ogimage
+    state: restarted
+    daemon_reload: yes

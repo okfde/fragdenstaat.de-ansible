@@ -1,0 +1,11 @@
+---
+
+- name: Deploy an ogimage instance
+  hosts: auxiliary
+  become: true
+  become_user: root
+  roles:
+    - docker
+    - nginx
+    - certbot
+    - ogimage

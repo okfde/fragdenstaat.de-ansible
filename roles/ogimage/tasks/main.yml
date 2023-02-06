@@ -1,0 +1,40 @@
+---
+
+- name: Setup FDS OGImage Git repo
+  git:
+    repo: "{{ ogimage_git_repo }}"
+    dest: "{{ ogimage_dir }}"
+  become: true
+  notify: restart ogimage
+
+- name: Set FDS OGImage env
+  template:
+    src: env.j2
+    dest: "{{ ogimage_dir }}/.env"
+  notify: restart ogimage
+
+- name: Set ogimage systemd service
+  template:
+    src: ogimage.service.j2
+    dest: /etc/systemd/system/ogimage.service
+    mode: 0444
+
+- name: Start ogimage service
+  systemd:
+    name: ogimage
+    state: started
+    daemon_reload: yes
+
+- name: Create the Nginx site configuration
+  template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/{{ ogimage_domain }}"
+    backup: yes
+  notify: reload nginx
+
+- name: Ensure that the nginx ocnfiguration is enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ ogimage_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ ogimage_domain }}"
+    state: link
+  notify: reload nginx
