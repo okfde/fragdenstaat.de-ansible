@@ -5,14 +5,16 @@
     repo: "{{ fdsbot_git_repo }}"
     dest: "{{ fdsbot_dir }}"
     update: true
+    force: true
   become_user: fdsbot
   notify: restart fdsbot
 
 - name: Set fdsbot systemd service
   template:
-    src: farmsubsidy.service.j2
+    src: fdsbot.service.j2
     dest: /etc/systemd/system/fdsbot.service
     mode: 0444
+  notify: restart fdsbot
 
 - name: Start fdsbot service
   systemd:

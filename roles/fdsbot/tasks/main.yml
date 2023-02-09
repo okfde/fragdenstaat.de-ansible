@@ -57,3 +57,5 @@
     state: present
     regexp: '^ansible_user:'
     line: 'ansible_user: fdsbot'
+
+- import_tasks: setup_slack_bot.yml
