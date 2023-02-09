@@ -17,7 +17,7 @@
     state: present
   with_items: "{{ groups['dbreplica'] }}"
   notify:
-    - restart postgresql
+    - reload postgresql config
 
 - name: Listen on localhost and vlan, set replication config
   lineinfile:
@@ -32,7 +32,7 @@
     - { key: "wal_keep_size", value: "1GB" }
     - { key: "wal_compression", value: "on" }
   notify:
-    - restart postgresql
+    - reload postgresql config
 
 - name: Allow postgres on vlan network from replicas
   community.general.ufw:

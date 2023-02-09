@@ -13,4 +13,4 @@
     - { key: "max_standby_archive_delay", value: "120s" }
     - { key: "max_standby_streaming_delay", value: "120s" }
   notify:
-    - restart postgresql
+    - reload postgresql config

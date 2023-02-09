@@ -113,3 +113,12 @@
   postgresql_ext:
     name: citext
     db: "{{ db_name }}"
+
+- name: Allow read-only from auxiliary
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
+    line: "host    {{ db_name }}     {{ db_user_readonly }}    {{ hostvars[item].host_data.site_ipv4 }}/32   md5"
+    state: present
+  with_items: "{{ groups['auxiliary'] }}"
+  notify:
+    - reload postgresql config
