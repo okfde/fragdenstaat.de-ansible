@@ -124,7 +124,7 @@ location /ws/ {
 }
 
 {% for path in nginx_cache_urls %}
-location {{ path }} {
+location = {{ path }} {
     proxy_cache fds_cache;
     proxy_cache_bypass $cookie_sessionid $cookie_csrftoken;
     proxy_no_cache $cookie_sessionid $cookie_csrftoken;
