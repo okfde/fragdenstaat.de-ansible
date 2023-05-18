@@ -2,8 +2,10 @@ user www-data;
 worker_processes auto;
 pid /run/nginx.pid;
 
+worker_rlimit_nofile 4096;
+
 events {
-	worker_connections 768;
+	worker_connections 4096;
 	# multi_accept on;
 }
 

@@ -20,6 +20,21 @@
   tags:
     - nginx
 
+- name: Add or modify nofile soft limit for the user
+  community.general.pam_limits:
+    domain: www-data
+    limit_type: "{{ item.limit_type }}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { limit_type: 'soft', limit_item: 'nofile', value: 65535 }
+    - { limit_type: 'hard', limit_item: 'nofile', value: 65535 }
+  register: nginx_pam_limits
+
+- name: reload settings from all system configuration files
+  shell: sysctl --system
+  when: nginx_pam_limits is changed
+
 - name: Ensure that the default site is disabled
   file:
     path: /etc/nginx/sites-enabled/default
