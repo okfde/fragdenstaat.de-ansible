@@ -190,19 +190,19 @@ dovecot_passwdfile_scheme: 'sha512-crypt'
 #   - user: mail@fragdenstaat.de
 #     password: "password"
 
-email_host: "127.0.0.1"
+email_host: "mail.fragdenstaat.de"
 ## in secrets.yml
 # email_host_user: "mail@fragdenstaat.de"
 # email_host_password: password
-foi_email_host: "127.0.0.1"
+foi_email_host: "mail.fragdenstaat.de"
 ## in secrets.yml
 # foi_email_host_user: "mail@fragdenstaat.de"
 # foi_email_host_password: password
-bounce_email_host: "127.0.0.1"
+bounce_email_host: "mail.fragdenstaat.de"
 ## in secrets.yml
 # bounce_email_host_user: "mail@fragdenstaat.de"
 # bounce_email_host_password: password
-unsubscribe_email_host: "127.0.0.1"
+unsubscribe_email_host: "mail.fragdenstaat.de"
 ## in secrets.yml
 # unsubscribe_email_host_user: "mail@fragdenstaat.de"
 # unsubscribe_email_host_password: password
