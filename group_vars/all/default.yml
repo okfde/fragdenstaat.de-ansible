@@ -11,6 +11,11 @@ ssh_port: "22"
 network_vlan:
   id: 4000
 
+# Declare the VPN subnet
+vpn_network: '10.9.0.'
+vpn_network_subnet: '10.9.0.0/24'
+vpn_networkv6: 'fc00::'
+
 maintenance: false
 maintenance_media: false
 maintenance_admin_ip: false
