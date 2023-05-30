@@ -1,0 +1,33 @@
+---
+
+- name: Set fdsbot light dump scripts
+  template:
+    src: dump_light.sh.j2
+    dest: "{{ fdsbot_backup_dir }}/dump_light.sh"
+    mode: 0744
+
+- cron:
+    name: "Run backup light script"
+    minute: "30"
+    hour: "7"
+    job: "bash {{ fdsbot_backup_dir }}/dump_light.sh"
+    user: fdsbot
+
+- name: Set fdsbot light backup server systemd service
+  template:
+    src: fdsbot_backup_server.service.j2
+    dest: /etc/systemd/system/fdsbot_backup_server.service
+    mode: 0444
+
+- name: Start fdsbot_backup_server service
+  systemd:
+    name: fdsbot_backup_server
+    state: started
+    daemon_reload: yes
+
+- name: Allow light backup server on VPN IP
+  community.general.ufw:
+    rule: allow
+    port: "{{ fdsbot_backup_serve_port }}"
+    to_ip: "10.9.0.{{ host_data.vpn_peer_id }}"
+    proto: tcp

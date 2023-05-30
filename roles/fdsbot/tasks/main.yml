@@ -59,3 +59,5 @@
     line: 'ansible_user: fdsbot'
 
 - import_tasks: setup_slack_bot.yml
+
+- import_tasks: setup_light_backup.yml
