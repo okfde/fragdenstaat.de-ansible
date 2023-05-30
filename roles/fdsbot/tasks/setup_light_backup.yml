@@ -29,5 +29,5 @@
   community.general.ufw:
     rule: allow
     port: "{{ fdsbot_backup_serve_port }}"
-    to_ip: "10.9.0.{{ host_data.vpn_peer_id }}"
+    to_ip: "{{ vpn_network }}{{ host_data.vpn_peer_id }}"
     proto: tcp
