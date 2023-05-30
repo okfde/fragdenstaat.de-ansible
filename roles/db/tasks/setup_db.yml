@@ -84,6 +84,21 @@
     db: "{{ db_name }}"
     privs: SELECT
     objs: ALL_IN_SCHEMA
+    schema: "{{ item }}"
+    role: "{{ db_user_readonly }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+  with_items:
+    - public
+    - topology
+
+- name: Ensure readonly user has schema access to all tables in schema
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: USAGE
+    type: "schema"
+    objs: "public,topology"
     role: "{{ db_user_readonly }}"
     grant_option: true
   become: true
