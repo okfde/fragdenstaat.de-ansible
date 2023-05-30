@@ -10,6 +10,24 @@
     template: 'template0'
     state: present
 
+- name: create postgis extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: postgis
+    db: "{{ db_name }}"
+
+- name: create postgis_topology extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: postgis_topology
+    db: "{{ db_name }}"
+
+- name: create hstore extension in db
+  become_user: postgres
+  postgresql_ext:
+    name: hstore
+    db: "{{ db_name }}"
+
 - name: Ensure user has access to the database
   become_user: postgres
   postgresql_user:
@@ -89,30 +107,6 @@
     name: "{{ db_user }}"
     role_attr_flags: "NOSUPERUSER,NOCREATEDB"
     state: present
-
-- name: create postgis extension in db
-  become_user: postgres
-  postgresql_ext:
-    name: postgis
-    db: "{{ db_name }}"
-
-- name: create postgis_topology extension in db
-  become_user: postgres
-  postgresql_ext:
-    name: postgis_topology
-    db: "{{ db_name }}"
-
-- name: create hstore extension in db
-  become_user: postgres
-  postgresql_ext:
-    name: hstore
-    db: "{{ db_name }}"
-
-- name: create citext extension in db
-  become_user: postgres
-  postgresql_ext:
-    name: citext
-    db: "{{ db_name }}"
 
 - name: Allow read-only from auxiliary
   lineinfile:
