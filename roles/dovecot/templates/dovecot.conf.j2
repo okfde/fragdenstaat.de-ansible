@@ -79,6 +79,7 @@ ssl_cert = <{{ mail_cert_filename }}
 ssl_key = <{{ mail_privkey_filename }}
 
 ssl_cipher_list = TLSv1+HIGH:!SSLv2:!EXPORT:!RC4:!aNULL:!eNULL:!3DES:@STRENGTH
+disable_plaintext_auth = yes
 {% endif %}
 
 protocol lda {
