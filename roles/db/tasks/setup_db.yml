@@ -104,6 +104,17 @@
   become: true
   become_user: postgres
 
+- name: Ensure readonly user has schema access to all sequences in schema
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: SELECT
+    type: "sequence"
+    objs: "ALL_IN_SCHEMA"
+    role: "{{ db_user_readonly }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+
 - name: Ensure user has access to all sequences
   become_user: postgres
   postgresql_privs:
