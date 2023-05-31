@@ -50,8 +50,9 @@
     rule: allow
     port: "{{ item }}"
     proto: tcp
+    interface: wg0
+    direction: in
   with_items:
-  - imap
   - imaps
 
 - name: Ensure dovecot is started and enabled at boot.
