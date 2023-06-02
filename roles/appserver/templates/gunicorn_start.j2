@@ -13,6 +13,7 @@ NUM_WORKERS={{ gunicorn_num_workers }}
 # set this to 1 to automatically restart the process on each request (i.e. your
 # code will be reloaded on every request).
 MAX_REQUESTS={{ gunicorn_max_requests }}
+MAX_REQUESTS_JITTER={{ gunicorn_max_requests_jitter }}
 
 echo "Starting $NAME as `whoami`"
 
@@ -35,7 +36,9 @@ exec gunicorn \
     --chdir $DJANGODIR \
     --workers $NUM_WORKERS \
     --max-requests $MAX_REQUESTS \
+    --max-requests-jitter $MAX_REQUESTS_JITTER \
     --timeout {{ gunicorn_timeout_seconds|default(30) }} \
+    --graceful-timeout {{ gunicorn_timeout_seconds|default(30) }} \
     --user $USER --group $GROUP \
     --log-level info \
     --bind unix:$SOCKFILE \
