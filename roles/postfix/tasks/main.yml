@@ -67,3 +67,5 @@
 - import_tasks: opendkim.yml
 
 - import_tasks: opendmarc.yml
+
+- import_tasks: spf.yml

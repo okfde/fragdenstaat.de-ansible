@@ -140,4 +140,4 @@ smtp-amavis unix -      -       n     -       2  smtp
     -o local_header_rewrite_clients= 
 
 policy-spf  unix  -       n       n       -       -       spawn
-     user=nobody argv=/usr/bin/policyd-spf
+     user=nobody argv=/usr/bin/policyd-spf /etc/postfix-policyd-spf-python/policyd-spf.conf
