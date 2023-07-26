@@ -50,6 +50,7 @@ django_environment:
   PAYPAL_WEBHOOK_ID: "{{ paypal_webhook_id }}"
   SUSPICIOUS_ASN: "{{ suspicious_asn_list }}"
   SLACK_WEBHOOK_URL: "{{ slack_webhook_url }}"
+  MATOMO_API_URL: "{{ matomo_api_url }}"
   YELP_API_KEY: "{{ yelp_api_key }}"
   MAPBOX_API_KEY: "{{ mapbox_api_key }}"
   FOURSQUARE_API_KEY: "{{ foursquare_api_key }}"

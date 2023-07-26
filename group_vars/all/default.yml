@@ -425,6 +425,7 @@ paypal_api_url: ""
 paypal_webhook_id: ""
 
 slack_webhook_url: ""
+matomo_api_url: ""
 
 geoip_account_id: 0
 geoip_license_key: ""
