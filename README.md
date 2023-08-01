@@ -99,8 +99,8 @@ flowchart TB
     subgraph schoch
         schochssh[[SSH access]]
         schochnginx[nginx frontend server]
-        schochnginx-->nfs[NFS server]
         schochnginx--authenticating access --> appserver
+        schochnginx-->schochhdd[(HDD storage)]
         nfs-->schochhdd[(HDD storage)]
     end
     subgraph fds-es01
