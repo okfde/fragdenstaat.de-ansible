@@ -290,6 +290,8 @@ redirect_domains:
     domain: "fragdenstaat.de"
     https: true
 
+## in secret.yml
+temp_redirect_paths: []
 valid_referrers: []
 
 redirect_paths:
