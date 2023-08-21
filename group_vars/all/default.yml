@@ -15,6 +15,7 @@ network_vlan:
 vpn_network: '10.9.0.'
 vpn_network_subnet: '10.9.0.0/24'
 vpn_networkv6: 'fc00::'
+vpn_networkv6_subnet: 'fc00::0/120'
 
 maintenance: false
 maintenance_media: false
