@@ -290,6 +290,8 @@ redirect_domains:
     domain: "fragdenstaat.de"
     https: true
 
+valid_referrers: []
+
 redirect_paths:
   - from: "^/files/foi/30800/"
     path: "/media-30800/"

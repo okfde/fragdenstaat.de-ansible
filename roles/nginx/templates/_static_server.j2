@@ -13,7 +13,7 @@
 
 {% macro static_location() -%}
     referer_hash_bucket_size 128;
-    valid_referers none blocked {{ web_server_name }} {{ media_server_name }} {{ static_server_name }} localhost;
+    valid_referers none blocked {{ web_server_name }} {{ media_server_name }} {{ static_server_name }} {% for valid_ref in valid_referrers %}{{ valid_ref }} {% endfor%} localhost;
     if ($invalid_referer) {
         return   403;
     }
@@ -21,6 +21,7 @@
     {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
     {{ cors(web_server_url, null_fallback=True) }}
     {{ cors("http://localhost") }}
+    {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref) }}{% endfor %}
     {{ add_static_headers() }}
 {%- endmacro %}
 
