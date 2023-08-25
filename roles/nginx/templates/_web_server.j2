@@ -56,7 +56,7 @@ error_log {{ nginx_error_log_file }};
 
 {% for simple_file in simple_files %}
     {% if simple_file.path is defined %}
-        location {{ simple_file.path }} {
+        location = {{ simple_file.path }} {
             {{ add_web_headers() }}
             {% if simple_file.mimetype is defined %}
                 add_header Content-Type "{{ simple_file.mimetype }}";

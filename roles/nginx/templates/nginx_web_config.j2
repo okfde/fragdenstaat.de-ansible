@@ -122,7 +122,7 @@ server {
     {% endwith %}
 
     {% for file in site.files %}
-    location {{ file.path }} {
+    location = {{ file.path }} {
         alias {{ virtualenv_path }}/simple_files/{{ file.filename }};
     }
     {% endfor %}
