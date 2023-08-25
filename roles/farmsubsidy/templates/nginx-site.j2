@@ -1,4 +1,4 @@
-{% macro cors(server_url, null_fallback=False) -%}if ($http_origin ~* (^{{ server_url }}(:[0-9]+)?$)) {
+{% macro cors(server_url, null_fallback=False) -%}if ($http_origin ~* (^{{ server_url|replace(".", "\\.") }}$)) {
   add_header Access-Control-Allow-Origin $http_origin;
   add_header Access-Control-Allow-Headers "pragma, cache-control";
   add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";
