@@ -38,7 +38,7 @@ error_log {{ nginx_error_log_file }};
 
 {% if temp_redirect_paths is defined %}
     {% for redirect_path in temp_redirect_paths %}
-        location ~ {{ redirect_path.from }}(.*)$ {
+        location ~ {{ redirect_path.from }}([^\s]*)$ {
           {{ add_web_headers() }}
           return 302 {{ redirect_path.path }}$1$is_args$args;
         }
@@ -47,7 +47,7 @@ error_log {{ nginx_error_log_file }};
 
 {% if redirect_paths is defined %}
     {% for redirect_path in redirect_paths %}
-        location ~ {{ redirect_path.from }}(.*)$ {
+        location ~ {{ redirect_path.from }}([^\s]*)$ {
           {{ add_web_headers() }}
           return 301 {{ redirect_path.path }}$1$is_args$args;
         }

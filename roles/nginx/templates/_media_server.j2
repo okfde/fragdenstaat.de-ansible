@@ -56,7 +56,7 @@ location = /error_451.html {
 
 {% if media_redirect_paths is defined %}
     {% for redirect_path in media_redirect_paths %}
-        location ~ {{ redirect_path.from }}(.*)$ {
+        location ~ {{ redirect_path.from }}([^\s]*)$ {
             {{ add_media_headers() }}
             return 301 {{ redirect_path.path }}$1$is_args$args;
         }
