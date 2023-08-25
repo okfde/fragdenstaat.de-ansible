@@ -22,8 +22,6 @@ ssl_stapling_verify on;
 ssl_trusted_certificate /etc/letsencrypt/live/{{ server_name }}/fullchain.pem;
 {% endif %}
 
-resolver 8.8.8.8 8.8.4.4 [2001:4860:4860::8888] [2001:4860:4860::8844] valid=300s;
-
 {% if nginx_strong_dh_group %}
 ssl_dhparam          /etc/ssl/certs/dhparams.pem;
 {% endif %}
