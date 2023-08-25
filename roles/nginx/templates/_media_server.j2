@@ -65,11 +65,10 @@ location = /error_451.html {
 
 {% for prefix in nginx_private_media_prefix %}
     location {{ prefix.url }} {
-        {{ csp_block(media_content_security_policy) }}
-
-        {{ cors(static_server_url) }}
-        {{ cors(web_server_url) }}
-        {{ add_media_headers() }}
+        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) %}
+        {{ default_headers }}
+        {{ cors(static_server_url, repeat_headers=default_headers) }}
+        {{ cors(web_server_url, repeat_headers=default_headers) }}
 
         {{ proxy_wsgi_upstream() }}
         proxy_hide_header Set-Cookie;
@@ -80,16 +79,19 @@ location = /error_451.html {
     location {{ url_dir.url }} {
         internal;
 
-        set $link "$upstream_http_link";
-        add_header Link $link;
+        {% set extra_headers %}
+            set $link "$upstream_http_link";
+            add_header Link $link;
 
-        {% if url_dir.force_download is defined and url_dir.force_download %}
-            add_header Content-disposition $contentdisposition;
-        {% endif %}
+            {% if url_dir.force_download is defined and url_dir.force_download %}
+                add_header Content-disposition $contentdisposition;
+            {% endif %}
+        {% endset %}
+        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) ~ "\n" ~ extra_headers %}
+        {{ default_headers }}
+        {{ cors(static_server_url, repeat_headers=default_headers) }}
+        {{ cors(web_server_url, repeat_headers=default_headers) }}
 
-        {{ cors(static_server_url) }}
-        {{ cors(web_server_url) }}
-        {{ add_media_headers() }}
         proxy_hide_header Set-Cookie;
         alias {{ nginx_private_media_path }}{{ url_dir.dir }};
     }
@@ -98,14 +100,15 @@ location = /error_451.html {
 {% for loc in nginx_public_media %}
     location {{ loc.url }} {
 
-        {% if loc.force_download is defined and loc.force_download %}
-            add_header Content-disposition $contentdisposition;
-        {% endif %}
-
-        {{ csp_block(media_content_security_policy) }}
-        {{ cors(static_server_url) }}
-        {{ cors(web_server_url) }}
-        {{ add_media_headers() }}
+        {% set extra_headers %}
+            {% if loc.force_download is defined and loc.force_download %}
+                add_header Content-disposition $contentdisposition;
+            {% endif %}
+        {% endset %}
+        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) ~ "\n" ~ extra_headers %}
+        {{ default_headers }}
+        {{ cors(static_server_url, repeat_headers=default_headers) }}
+        {{ cors(web_server_url, repeat_headers=default_headers) }}
 
         alias   {{ nginx_media_dir }}{{ loc.url }};
     }
@@ -114,10 +117,10 @@ location = /error_451.html {
 {# privileged media has a CSP like web server #}
 {% for dir in nginx_public_privileged_media %}
     location {{ dir }} {
-        {{ csp_block(priviliged_media_content_security_policy) }}
-        {{ cors(static_server_url) }}
-        {{ cors(web_server_url) }}
-        {{ add_media_headers() }}
+        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(priviliged_media_content_security_policy) %}
+        {{ default_headers }}
+        {{ cors(static_server_url, repeat_headers=default_headers) }}
+        {{ cors(web_server_url, repeat_headers=default_headers) }}
 
         alias   {{ nginx_media_dir }}{{ dir }};
     }

@@ -17,12 +17,15 @@
     if ($invalid_referer) {
         return   403;
     }
-
-    {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
-    {{ cors(web_server_url, null_fallback=True) }}
-    {{ cors("http://localhost") }}
-    {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref) }}{% endfor %}
-    {{ add_static_headers() }}
+    {% set default_headers %}
+        {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
+        {{ add_static_headers() }}
+    {% endset %}
+    {{ default_headers }}
+    {{ cors(web_server_url, null_fallback=True, repeat_headers=default_headers) }}
+    {{ cors("http://localhost", repeat_headers=default_headers) }}
+    {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
+    
 {%- endmacro %}
 
 expires $expires;
