@@ -5,6 +5,10 @@
 - import_tasks: setup_db.yml
   when: inventory_hostname in groups['db']
 
+# TODO: Fix for fresh db before migrations happen?
+- import_tasks: setup_reporting.yml
+  when: inventory_hostname in groups['db']
+
 - import_tasks: setup_replication.yml
   when: groups.get('dbreplica') and inventory_hostname in groups['db']
 

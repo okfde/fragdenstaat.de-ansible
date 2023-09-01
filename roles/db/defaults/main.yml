@@ -3,3 +3,16 @@
 pg_version: 14
 db_user_replication: "replication"
 # db_password_replication
+db_reporting_schema: "reporting"
+db_user_reporting: "fds_report"
+# db_password_reporting
+
+db_reporting_views:
+  - name: donations
+    query: "SELECT id, timestamp, completed, amount, reference, donor_id, purpose, method, received_timestamp, recurring, amount_received, first_recurring, keyword, number, project FROM public.fds_donation_donation;"
+  - name: donors
+    query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor;"
+  - name: subscribers
+    query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id FROM public.fds_newsletter_subscriber;"
+  - name: foirequests
+    query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason FROM public.foirequest_foirequest;"

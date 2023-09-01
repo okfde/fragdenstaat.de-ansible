@@ -1,0 +1,73 @@
+
+- name: Create reporting schema
+  become_user: postgres
+  community.postgresql.postgresql_schema:
+    db: "{{ db_name }}"
+    name: "{{ db_reporting_schema }}"
+
+- name: Setup reporting views
+  become_user: postgres
+  community.postgresql.postgresql_query:
+    db: "{{ db_name }}"
+    query: CREATE OR REPLACE VIEW {{ db_reporting_schema }}.{{ item.name }} AS {{ item.query }}
+  with_items: "{{ db_reporting_views }}"
+
+- name: Ensure reporting user has access to the database
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db_name }}"
+    name: "{{ db_user_reporting }}"
+    password: "{{ db_password_reporting }}"
+    role_attr_flags: NOSUPERUSER,NOCREATEDB
+    state: present
+    encrypted: true
+
+- name: Ensure reporting user has no privileges
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ db_name }}"
+    state: absent
+    role: "{{ db_user_reporting }}"
+    privs: ALL
+    objs: ALL_IN_SCHEMA
+
+- name: Ensure reporting user has connect access to db
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: CONNECT
+    type: database
+    role: "{{ db_user_reporting }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: Ensure reporting user has usage schema access to all tables in schema
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: USAGE
+    type: "schema"
+    objs: "{{ db_reporting_schema }}"
+    role: "{{ db_user_reporting }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: Ensure reporting user has select access to all tables in schema
+  postgresql_privs:
+    db: "{{ db_name }}"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+    schema: "{{ db_reporting_schema }}"
+    role: "{{ db_user_reporting }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: Allow reporting user connection from auxiliary
+  lineinfile:
+    path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
+    line: "host    {{ db_name }}     {{ db_user_reporting }}    {{ hostvars[item].host_data.site_ipv4 }}/32   md5"
+    state: present
+  with_items: "{{ groups['auxiliary'] }}"
+  notify:
+    - reload postgresql config
