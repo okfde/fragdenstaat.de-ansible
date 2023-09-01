@@ -1,0 +1,3 @@
+metabase_domain: metabase.frag-den-staat.de
+metabase_port: 8042
+metabase_dir: "/var/www/metabase"

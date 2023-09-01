@@ -1,0 +1,50 @@
+{% if active_https_domains[metabase_domain] %}
+server {
+  server_name     {{ metabase_domain }};
+
+  location / {
+    allow {{ vpn_network_subnet }};
+    allow {{ vpn_networkv6_subnet }};
+    deny all;
+
+    proxy_pass              http://localhost:{{ metabase_port }};
+    proxy_http_version 1.1;
+    proxy_redirect off;
+    proxy_buffering off;
+    proxy_next_upstream error timeout invalid_header http_502 http_503 non_idempotent;
+    proxy_next_upstream_tries 2;
+    proxy_read_timeout 30s;
+    proxy_send_timeout 5s;
+    proxy_set_header Connection '';
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Request-Id $request_id;
+    proxy_set_header        X-Real-IP $remote_addr;
+    proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    expires             6h;
+  }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/{{ metabase_domain }}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{ metabase_domain }}/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+{% endif %}
+
+server {
+    if ($host = {{ metabase_domain }}) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+  server_name     {{ metabase_domain }};
+    listen 80;
+    allow {{ vpn_network_subnet }};
+    allow {{ vpn_networkv6_subnet }};
+    deny all;
+    return 404; # managed by Certbot
+
+}

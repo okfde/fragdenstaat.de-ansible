@@ -1,0 +1,39 @@
+---
+
+- name: Create metabase directory
+  file:
+    path: "{{ metabase_dir }}"
+    state: directory
+    owner: root
+
+- name: Set metabase docker compose
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ metabase_dir }}/docker-compose.yml"
+  notify: restart metabase
+
+- name: Set metabase systemd service
+  template:
+    src: metabase.service.j2
+    dest: /etc/systemd/system/metabase.service
+    mode: 0444
+
+- name: Start metabase service
+  systemd:
+    name: metabase
+    state: started
+    daemon_reload: yes
+
+- name: Create the Nginx site configuration
+  template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/{{ metabase_domain }}"
+    backup: yes
+  notify: reload nginx
+
+- name: Ensure that the application site is enabled
+  file:
+    src: "/etc/nginx/sites-available/{{ metabase_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ metabase_domain }}"
+    state: link
+  notify: reload nginx

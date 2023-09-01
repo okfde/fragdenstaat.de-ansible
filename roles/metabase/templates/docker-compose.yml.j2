@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    volumes:
+      - "./db_data:/var/lib/postgresql/data"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: metabase
+      POSTGRES_USER: metabase_user
+      POSTGRES_PASSWORD: metabase
+
+  metabase:
+    depends_on:
+      - postgres
+    image: metabase/metabase
+    ports:
+      - "127.0.0.1:{{ metabase_port }}:3000"
+    restart: unless-stopped
+    environment:
+      JAVA_TIMEZONE: Europe/Berlin
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase_user
+      MB_DB_PASS: metabase
+      MB_DB_HOST: postgres
