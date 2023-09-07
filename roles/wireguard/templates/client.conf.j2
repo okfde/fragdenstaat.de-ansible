@@ -6,6 +6,6 @@ Address = {{ vpn_network }}{{ peer_id | int }}/32, {{ vpn_networkv6 }}{{ '%0x' %
 {% for host in groups['vpn'] %}
 [Peer]
 PublicKey = {{ hostvars[host].host_data.wg_publickey }}
-AllowedIPs = {{ hostvars[host].host_data.global_ipv4 }}/32, {{ hostvars[host].host_data.global_ipv6 }}/128
+AllowedIPs = {{ hostvars[host].host_data.global_ipv4 }}/32, {{ hostvars[host].host_data.global_ipv6 }}/128, {{ vpn_network }}{{ hostvars[host].host_data.vpn_peer_id | int }}/32, {{ vpn_networkv6 }}{{ '%0x' % (hostvars[host].host_data.vpn_peer_id | int) }}/128
 Endpoint = {{ host }}:{{ vpn_port }}
 {% endfor %}
