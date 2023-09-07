@@ -1,0 +1,2 @@
+{% for helo in postfix_reject_helo_list %}/^{{ helo }}$/ REJECT
+{% endfor %}
