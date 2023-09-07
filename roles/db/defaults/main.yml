@@ -8,6 +8,7 @@ db_user_reporting: "fds_report"
 # db_password_reporting
 
 db_reporting_views:
+  # Only append columns! Or delete views on server and start fresh.
   - name: donations
     query: "SELECT id, timestamp, completed, amount, reference, donor_id, purpose, method, received_timestamp, recurring, amount_received, first_recurring, keyword, number, project FROM public.fds_donation_donation;"
   - name: donors
@@ -15,4 +16,8 @@ db_reporting_views:
   - name: subscribers
     query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id FROM public.fds_newsletter_subscriber;"
   - name: foirequests
-    query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason FROM public.foirequest_foirequest;"
+    query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason, public, status, visibility, law_id, is_foi, same_as_id, same_as_count, jurisdiction_id, resolution, reference, project_id, closed, campaign_id, language FROM public.foirequest_foirequest;"
+  - name: documents
+    query: "SELECT id, title, slug, description, num_pages, language, public, publicbody_id, foirequest_id, file_size, pending, properties, data, content_hash FROM public.document_document;"
+  - name: articles
+    query: "SELECT id, title, slug, status, creation_date, start_publication, language FROM public.fds_blog_article;"
