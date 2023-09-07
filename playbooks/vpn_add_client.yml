@@ -35,7 +35,7 @@
       local_action:
         module: template
         src: "../roles/wireguard/templates/client.conf.j2"
-        dest: "../FDS VPN {{ peer_id }}.conf"
+        dest: "../FDS_VPN_{{ client_name }}.conf"
 
     - name: Include role vars
       include_vars: "../env_vars/vpnclients.yml"
