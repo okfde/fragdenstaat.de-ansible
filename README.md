@@ -153,7 +153,9 @@ flowchart TB
             schaarnginx-->weblate
             schaarnginx-->sentry
             schaarnginx-->fds-ogimage
+            schaarnginx-->metabase
         end
+        metabase-- reporting schema views -->db
     end
     subgraph internet
         slack([Slack])==>fdsbot
@@ -163,7 +165,7 @@ flowchart TB
         %% fdsdev==>fdses01ssh
         user([User])== media.frag-den-staat.de ==>schochnginx
         user== fragdenstaat.de / static.frag-den-staat.de ==>brookenginx
-        user== sentry.okfn.de / ogimage.frag-den-staat.de / weblate.okfn.de ==>schaarnginx
+        user== sentry.okfn.de / ogimage.frag-den-staat.de / weblate / metabase ==>schaarnginx
         mailuser([Email])==>postfix
         fdsstaff([FDS staff])==>dovecot
         fdsstaff==>schaarnginx
