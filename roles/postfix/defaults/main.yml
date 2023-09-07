@@ -7,3 +7,4 @@ dkim_selector: mail
 dkim_domains:
  - fragdenstaat.de
 admin_email: postmaster@fragdenstaat.de
+postfix_reject_helo_list: []

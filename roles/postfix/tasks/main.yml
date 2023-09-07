@@ -41,6 +41,11 @@
 - name: Add blocklisted recipients file
   copy: src=blocklisted_recipients dest=/etc/postfix/blocklisted_recipients
 
+- name: Add helo reject file
+  template:
+    src: reject_helo.j2
+    dest: /etc/postfix/reject_helo
+
 - name: Install custom rsyslog logrotate
   template: src=rsyslog.j2 dest=/etc/logrotate.d/rsyslog
 

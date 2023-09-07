@@ -84,6 +84,11 @@ smtpd_recipient_restrictions =
     reject_unauth_destination,
     check_policy_service unix:private/policy-spf
 
+smtpd_helo_restrictions =
+    permit_mynetworks,
+    check_helo_access pcre:/etc/postfix/reject_helo,
+    permit
+
 mydomain = {{ domain_name }}
 myhostname = {{ postfix_hostname }}
 alias_maps = hash:/etc/aliases
