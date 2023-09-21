@@ -1,12 +1,57 @@
 ---
 
+- name: Setup ansible Git repo
+  git:
+    repo: "{{ fdsbot_ansible_git_repo }}"
+    dest: "{{ fdsbot_ansible_dir }}"
+    force: yes
+  become_user: "{{ fdsbot_user }}"
+
+- name: Get Vault Key
+  copy:
+    src: "../../../vault.key"
+    dest: "{{ fdsbot_ansible_dir }}/vault.key"
+  become_user: "{{ fdsbot_user }}"
+
+- name: Create the virtualenv
+  command: python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env
+           creates={{ fdsbot_ansible_dir }}/ansible-env/bin/activate
+  become_user: "{{ fdsbot_user }}"
+
+- name: Install ansible dependencies
+  pip:
+    virtualenv: "{{ fdsbot_ansible_dir }}/ansible-env"
+    chdir: "{{ fdsbot_ansible_dir }}"
+    requirements: "requirements.txt"
+    state: latest
+  become_user: "{{ fdsbot_user }}"
+
+- name: Upgrade ansible galaxy
+  command:
+    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
+  become_user: "{{ fdsbot_user }}"
+
+- name: Setup local config file
+  copy:
+    src: "{{ fdsbot_ansible_dir }}/local_config.yml.example"
+    remote_src: true
+    dest: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+  become_user: "{{ fdsbot_user }}"
+
+- name: Set ansible user in local config
+  lineinfile:
+    path: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+    state: present
+    regexp: '^ansible_user:'
+    line: 'ansible_user: {{ fdsbot_user }}'
+
 - name: Setup fdsbot Git repo
   git:
     repo: "{{ fdsbot_git_repo }}"
     dest: "{{ fdsbot_dir }}"
     update: true
     force: true
-  become_user: fdsbot
+  become_user: "{{ fdsbot_user }}"
   notify: restart fdsbot
 
 - name: Set fdsbot systemd service

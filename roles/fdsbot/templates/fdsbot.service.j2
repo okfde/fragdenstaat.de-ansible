@@ -2,9 +2,9 @@
 Description=FDSBot
 
 [Service]
-User=fdsbot
-WorkingDirectory=/home/fdsbot/fdsbot
-ExecStart=/home/fdsbot/fdsbot/bin/hubot --adapter slack
+User={{ fdsbot_user }}
+WorkingDirectory={{ fdsbot_dir }}
+ExecStart={{ fdsbot_dir }}/bin/hubot --adapter slack
 Restart=always
 Environment="ALLOWED_USERS={{ fdsbot_slack_users }}"
 Environment="OCTOKIT_TOKEN={{ fdsbot_octokit_token }}"

@@ -2,7 +2,7 @@
 Description=FDSBot Light Backup Server
 
 [Service]
-User=fdsbot
+User={{ fdsbot_user }}
 WorkingDirectory={{ fdsbot_backup_hosted_dir}}
 ExecStart=python3 -m http.server --bind {{ vpn_network }}{{ host_data.vpn_peer_id }} {{ fdsbot_backup_serve_port }}
 Restart=always

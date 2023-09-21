@@ -1,0 +1,14 @@
+---
+
+- name: Ensure group "fdsbot" exists
+  ansible.builtin.group:
+    name: "{{ fdsbot_user }}"
+    state: present
+
+- name: Add user with a bash shell and group
+  ansible.builtin.user:
+    name: "{{ fdsbot_user }}"
+    state: present
+    shell: /bin/bash
+    groups: "{{ fdsbot_user }}"
+    append: yes

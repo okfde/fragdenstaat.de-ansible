@@ -1,5 +1,41 @@
 ---
 
+- name: create the dev cluster database
+  become: yes
+  become_user: postgres
+  command: pg_createcluster -p {{ fdsbot_db_light_port }} {{ pg_version }} {{ fdsbot_db_light_clustername }}
+  args:
+    creates: "/etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}"
+
+- name: Add fdsbot user to database
+  become_user: postgres
+  postgresql_user:
+    port: "{{ fdsbot_db_light_port }}"
+    name: "{{ fdsbot_user }}"
+    role_attr_flags: CREATEDB,SUPERUSER,CREATEROLE
+    state: "present"
+
+- name: Add default user to database
+  become_user: postgres
+  postgresql_user:
+    port: "{{ fdsbot_db_light_port }}"
+    name: "{{ db_user }}"
+    state: "present"
+
+- name: Grant fdsbot user peer access to cluster
+  become: true
+  community.postgresql.postgresql_pg_hba:
+    dest: /etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}/pg_hba.conf
+    contype: host
+    users: "{{ fdsbot_user }}"
+    source: "127.0.0.1/32"
+    databases: "{{ item }}"
+    method: peer
+    state: present
+  with_items:
+    - "{{ fdsbot_db_light }}"
+    - "{{ db_name }}"
+
 - name: Set fdsbot light dump scripts
   template:
     src: dump_light.sh.j2
