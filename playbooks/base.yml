@@ -1,0 +1,9 @@
+- name: Base
+  hosts: all
+  become: yes
+  become_user: root
+  vars_files:
+    - local_config.yml
+
+  roles:
+    - base
