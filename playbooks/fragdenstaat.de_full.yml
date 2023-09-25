@@ -1,0 +1,106 @@
+---
+- name: Basic setup, networking, monitoring
+  hosts: all
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - base
+    - network
+    - check_mk
+
+- name: Create db server
+  hosts: db
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - db
+
+- name: Create mail server
+  hosts: mail
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - postfix
+    - dovecot
+
+- name: Create search server
+  hosts: search
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - elasticsearch
+
+- name: Create queue server
+  hosts: queue
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - rabbitmq
+
+- name: Create broker server
+  hosts: broker
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - redis
+
+- name: Create cache server
+  hosts: cache
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - memcached
+
+- name: Create media server
+  hosts: media
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - certbot
+    - nginx
+
+- name: Create app server
+  hosts: app
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - app
+    - appserver
+
+- name: Create web server
+  hosts: web
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - certbot
+    - nginx
+
+- name: Create worker server
+  hosts: app
+  become: true
+  become_user: root
+  vars_files:
+    - local_config.yml
+  roles:
+    - app
+    - celery
