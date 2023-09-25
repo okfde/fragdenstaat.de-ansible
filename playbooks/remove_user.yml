@@ -1,0 +1,17 @@
+- name: Base
+  hosts: all
+  become: yes
+  become_user: root
+  vars_files:
+    - local_config.yml
+
+  vars_prompt:
+    - name: user_name
+      prompt: "Name of the user?"
+      private: no
+
+  tasks:
+    - name: Remove user
+      ansible.builtin.user:
+        name: "{{ user_name }}"
+        state: absent
