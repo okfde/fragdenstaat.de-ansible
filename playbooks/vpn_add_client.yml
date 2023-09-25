@@ -1,7 +1,8 @@
 ---
 
 - name: Add VPN client
-  hosts: vpn
+  hosts: localhost
+  connection: local 
   vars_prompt:
 
     - name: client_name
@@ -37,14 +38,26 @@
         src: "../roles/wireguard/templates/client.conf.j2"
         dest: "../FDS_VPN_{{ client_name }}.conf"
 
-    - name: Include role vars
-      include_vars: "../env_vars/vpnclients.yml"
+    - name: Load vpn client list
+      ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+      vars:
+        params:
+          files:
+            - vpnclients.yml
+            - vpnclients-default.yml
+          paths:
+            - '../env_vars'
 
     - name: Store peer config
       local_action:
         module: template
         src: "../roles/wireguard/templates/clientgroups.yml.j2"
         dest: "../env_vars/vpnclients.yml"
+
+    - name: Encrypt vpn client list
+      local_action:
+        module: command
+        cmd: "ansible-vault encrypt --vault-password-file ../vault.key ../env_vars/vpnclients.yml"
 
     - name: Print public key
       local_action:

@@ -50,12 +50,6 @@ ansible-vault edit group_vars/all/secrets.yml
 
 Make sure vpn server is setup.
 
-Copy example client configuration
-
-```
-cp env_vars/vpnclients.yml.example env_vars/vpnclients.yml
-```
-
 Setup VPN server:
 ```
 ansible-playbook -v playbooks/vpnserver.yml
@@ -69,7 +63,8 @@ Run this script to add a client:
 ansible-playbook -v playbooks/vpn_add_client.yml
 ```
 
-After it's done, a client configuration file is in your local directory and the public key has been recorded in `env_vars/vpnclients.yml`.
+After it's done, a client configuration file is in your local directory and the public key has been recorded in encrypted form `env_vars/vpnclients.yml`.
+You should commit `env_vars/vpnclients.yml`.
 
 Update the peers on the server:
 
