@@ -1,10 +1,8 @@
 ---
-
 - name: Add VPN client
   hosts: localhost
-  connection: local 
+  connection: local
   vars_prompt:
-
     - name: client_name
       prompt: "Name of the client?"
       private: no
@@ -36,8 +34,8 @@
             - vpnclients.yml
             - vpnclients-default.yml
           paths:
-            - '../env_vars'
-    
+            - "../env_vars"
+
     - name: Find max VPN peer id
       ansible.builtin.set_fact:
         max_peer_id: "{{ vpn_clientgroups.0.peers | map(attribute='peer_id') | max }}"
@@ -48,8 +46,8 @@
 
     - name: Fail when peer id too large
       ansible.builtin.fail:
-        msg: "Peer id too large! Please cleanup client list or set peer id manually!"
-      when: peer_id >= 200
+        msg: "Peer id {{peer_id}} too large! Please cleanup client list or set peer id manually!"
+      when: peer_id|int >= 200
 
     - name: Make peer config
       local_action:
