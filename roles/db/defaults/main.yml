@@ -21,3 +21,5 @@ db_reporting_views:
     query: "SELECT id, title, slug, description, num_pages, language, public, publicbody_id, foirequest_id, file_size, pending, properties, data, content_hash FROM public.document_document;"
   - name: articles
     query: "SELECT id, title, slug, status, creation_date, start_publication, language FROM public.fds_blog_article;"
+  - name: publicbodies
+    query: "SELECT id, name, other_names, slug, description, parent_id, root_id, depth, classification_id, email, fax, contact, address, request_note, source_reference, alternative_emails, extra_data, change_history, file_index, org_chart, _created_by_id AS created_by_id, _updated_by_id AS updated_by_id, created_at, updated_at, confirmed, wikidata_item, jurisdiction_id, geo FROM public.publicbody_publicbody;"
