@@ -18,7 +18,7 @@
 
 - name: Set authorized keys for users
   authorized_key:
-    user: "{{ item.name }}"
+    user: "{{ item.0.name }}"
     state: present
-    key: "{{ item.ssh_public_key }}"
-  with_items: "{{ ssh_users }}"
+    key: "{{ item.1 }}"
+  loop: "{{ ssh_users | subelements('ssh_public_keys', 'skip_missing=True') }}"
