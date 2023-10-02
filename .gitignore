@@ -1,6 +1,9 @@
 # PyCharm IDE
 .idea
 
+# vscodium
+.vscode
+
 # Vagrant
 .vagrant
 vagrant_ansible_inventory_default
