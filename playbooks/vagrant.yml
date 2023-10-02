@@ -4,8 +4,8 @@
   hosts: all
   become: true
   remote_user: root
-  vars_files:
-    - env_vars/vagrant.yml
+#  vars_files:
+#    - env_vars/vagrant.yml
 
   roles:
     - base
