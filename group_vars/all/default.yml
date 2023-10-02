@@ -6,7 +6,9 @@ ssh_port: "22"
 ## in secrets.yml
 # ssh_users:
 #   - name: <name>
-#     ssh_public_keys: 
+#     ssh_public_keys:
+#       - ""
+#     revoked_ssh_public_keys:
 #       - ""
 
 network_vlan:

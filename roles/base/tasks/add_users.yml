@@ -22,3 +22,10 @@
     state: present
     key: "{{ item.1 }}"
   loop: "{{ ssh_users | subelements('ssh_public_keys', 'skip_missing=True') }}"
+
+- name: Remove authorized keys for users
+  authorized_key:
+    user: "{{ item.0.name }}"
+    state: absent
+    key: "{{ item.1 }}"
+  loop: "{{ ssh_users | subelements('revoked_ssh_public_keys', 'skip_missing=True') }}"
