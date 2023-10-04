@@ -27,7 +27,7 @@
   ansible.builtin.template:
     src: nginx_web_config.j2
     dest: "/etc/nginx/sites-available/{{ application_name }}"
-    mode: "0644"
+    mode: "0600"
     backup: true
   notify: reload nginx
   when: inventory_hostname in groups['web']
@@ -53,7 +53,8 @@
     line: "        {{ item.key }} {{ item.value }}"
     state: present
   loop:
-    - "{ key: \"rotate\", value: \"{{ nginx_log_retention_days }}\" }"
+    - key: "rotate"
+      value: "{{ nginx_log_retention_days }}"
   tags:
     - nginx
   notify:
