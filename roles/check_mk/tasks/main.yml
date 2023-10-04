@@ -3,6 +3,12 @@
     url: "{{ cmk_site_url }}/check_mk/agents/check-mk-agent_{{ cmk_version }}-1_all.deb"
     dest: "/tmp"
 
+- name: Ensure downloaded file exists
+  ansible.builtin.stat:
+    path: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
+    get_checksum: false
+  register: check_mk_agent_download
+
 - name: Make sure python3 is installed
   become: true
   ansible.builtin.apt:
@@ -14,6 +20,7 @@
   ansible.builtin.apt:
     deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
     state: present
+  when: check_mk_agent_download.stat.exists
 
 - include_tasks: install_plugin.yml
   loop:
@@ -55,6 +62,6 @@
     - name: Allow check_mk.socket (ufw)
       community.general.ufw:
         rule: allow
-        port: 6556
+        port: "6556"
         proto: tcp
         from_ip: "{{ cmk_server_ip }}"
