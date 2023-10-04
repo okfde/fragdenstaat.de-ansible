@@ -23,7 +23,7 @@
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
     state: "directory"
-    mode: "0770"
+    mode: "0774"
   tags:
     - celery
 
