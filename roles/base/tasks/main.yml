@@ -9,7 +9,7 @@
   tags: swap
 
 - name: Add apt universe
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb http://archive.ubuntu.com/ubuntu focal universe"
     update_cache: false
     mode: "600"
@@ -17,20 +17,23 @@
   when: ansible_distribution_version == "20.04"
 
 - name: Add apt universe
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy universe"
     update_cache: false
     mode: "600"
   register: universe_installed
   when: ansible_distribution_version == "22.04"
 
-- name: Update apt  cache
-  apt:
+- name: Update apt cache
+  ansible.builtin.apt:
     update_cache: true
   when: universe_installed is changed
+  changed_when: false
+  tags:
+    - skip_ansible_lint
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
-  apt:
+  ansible.builtin.apt:
     name:
       - bash
       - openssl
@@ -41,7 +44,7 @@
   tags: packages
 
 - name: Install base packages 20.04
-  apt:
+  ansible.builtin.apt:
     name:
       - build-essential
       - acl
@@ -56,7 +59,7 @@
   when: ansible_distribution_version == "20.04"
 
 - name: Install base packages 22.04
-  apt:
+  ansible.builtin.apt:
     name:
       - build-essential
       - acl
@@ -73,19 +76,19 @@
 - import_tasks: add_users.yml
 
 - name: Configure sshd
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/ssh/sshd_config"
-    regex: "^(#)?{{item.key}}"
+    regex: "^(#)?{{ item.key }}"
     line: "{{ item.key }} {{ item.value }}"
     state: present
   loop:
-    - { key: "PasswordAuthentication", value: "no" }
-    - { key: "Port", value: "{{ ssh_port }}"}
+    - "{ key: \"PasswordAuthentication\", value: \"no\" }"
+    - "{ key: \"Port\", value: \"{{ ssh_port }}\"}"
   notify:
     - restart ssh
 
 - name: Configure ufw opensshd config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/ufw/applications.d/openssh-server"
     regex: "^(#)?ports="
     line: "ports={{ ssh_port }}/tcp"

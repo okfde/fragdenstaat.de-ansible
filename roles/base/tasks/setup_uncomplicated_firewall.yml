@@ -4,7 +4,7 @@
   apt:
     update_cache: "{{ update_apt_cache }}"
     pkg: ufw
-    state: present 
+    state: present
 
 - name: Allow ssh connections
   community.general.ufw:

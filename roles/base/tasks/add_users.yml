@@ -13,7 +13,7 @@
     name: "{{ item.name }}"
     shell: /bin/bash
     groups: sudo
-    append: yes
+    append: true
   with_items: "{{ ssh_users }}"
 
 - name: Set authorized keys for users
