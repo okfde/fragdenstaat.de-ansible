@@ -4,7 +4,8 @@
     dest: "{{ virtualenv_path }}/maintenance.sh"
     mode: "0755"
 
-- cron:
+- name: Add maintenance script cronjob
+  cron:
     name: "Run maintenance script"
     minute: "0"
     hour: "2"
