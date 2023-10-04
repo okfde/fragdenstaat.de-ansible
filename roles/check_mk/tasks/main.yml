@@ -1,19 +1,19 @@
 - name: Download check_mk agent
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ cmk_site_url }}/check_mk/agents/check-mk-agent_{{ cmk_version }}-1_all.deb"
     dest: "/tmp"
 
 - name: Make sure python3 is installed
   become: true
-  apt:
+  ansible.builtin.apt:
     pkg: python3
     state: present
 
 - name: Install check_mk agent
   become: true
-  apt:
-      deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
-      state: present
+  ansible.builtin.apt:
+    deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
+    state: present
 
 - include_tasks: install_plugin.yml
   loop:
@@ -22,7 +22,7 @@
     loop_var: cmk_plugins
 
 - name: "Disable Ubuntu advertisement interfering with apt output parsing"
-  command: mv /etc/apt/apt.conf.d/20apt-esm-hook.conf /etc/apt/apt.conf.d/20apt-esm-hook.conf.disabled
+  ansible.builtin.command: mv /etc/apt/apt.conf.d/20apt-esm-hook.conf /etc/apt/apt.conf.d/20apt-esm-hook.conf.disabled
   args:
     removes: /etc/apt/apt.conf.d/20apt-esm-hook.conf
     creates: /etc/apt/apt.conf.d/20apt-esm-hook.conf.disabled
@@ -35,19 +35,19 @@
 - name: xinetd service activation
   block:
     - name: Install xinetd package
-      package:
+      ansible.builtin.package:
         name: xinetd
         state: present
 
     - name: Limit check_mk xinetd service
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/xinetd.d/check_mk
         insertafter: "#only_from"
         regexp: '^only_from'
         line: "only_from      = 127.0.0.1 {{ cmk_server_ip }}"
 
     - name: Start and enable xinetd
-      service:
+      ansible.builtin.service:
         name: xinetd
         state: started
         enabled: true

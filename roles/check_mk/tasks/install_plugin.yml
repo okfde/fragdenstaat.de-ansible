@@ -1,8 +1,7 @@
 ---
 
-
 - name: Install check_mk plugin
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ cmk_site_url }}/check_mk/agents/plugins/{{ item.name }}"
     dest: "{{ cmk_plugins_path }}/{{ item.name }}"
     owner: root
@@ -11,7 +10,7 @@
   loop: "{{ cmk_plugins }}"
 
 - name: Install check_mk plugin config file
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.cfg }}"
     dest: "{{ cmk_config_path }}/{{ item.cfg }}"
     owner: root
@@ -21,7 +20,7 @@
   loop: "{{ cmk_plugins }}"
 
 - name: Install check_mk plugin dependency
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ item.pkg }}"
     state: present
   when: item.pkg is defined

@@ -17,7 +17,7 @@ cmk_group_plugins:
     - name: nginx_status.py
       cfg: nginx_status.cfg
     - name: mk_nfsiostat
-  media: 
+  media:
     - name: nginx_status.py
     - name: smart
       pkg: smartmontools
