@@ -1,7 +1,7 @@
 ---
 
 - name: Install Redis
-  apt:
+  ansible.builtin.apt:
     name: redis-server
     update_cache: "{{ update_apt_cache }}"
     state: present
@@ -10,7 +10,7 @@
     - redis
 
 - name: Ensure Redis is supervised by systemd
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/redis/redis.conf
     regexp: '^supervised'
     line: supervised systemd
@@ -18,8 +18,8 @@
   notify: Restart Redis service
 
 - name: Ensure the Redis service is running
-  service:
+  ansible.builtin.service:
     name: redis
     state: started
-    enabled: yes
+    enabled: true
   tags: redis
