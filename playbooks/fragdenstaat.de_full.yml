@@ -28,6 +28,8 @@
   roles:
     - postfix
     - dovecot
+  tags:
+    - mail
 
 - name: Create search server
   hosts: search
