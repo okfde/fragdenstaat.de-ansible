@@ -1,7 +1,6 @@
-
 - name: Update app
   hosts: app
-  become: yes
+  become: true
   become_user: root
   vars_files:
     - local_config.yml

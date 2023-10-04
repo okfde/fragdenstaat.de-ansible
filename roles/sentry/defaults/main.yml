@@ -3,7 +3,7 @@ sentry_git_repo: https://github.com/getsentry/self-hosted.git
 sentry_dir: "/var/www/{{ sentry_domain }}"
 
 sentry_github_app_id: 0
-sentry_github_app_name: "" 
+sentry_github_app_name: ""
 sentry_github_app_webhook_secret: ""
 sentry_github_app_client_id: ""
 sentry_github_app_client_secret: ""
