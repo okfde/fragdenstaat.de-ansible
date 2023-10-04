@@ -120,7 +120,7 @@
     - key: "max_worker_processes"
       value: 3
     - key: "max_parallel_workers_per_gather"
-      value: 2"
+      value: 2
     - key: "max_parallel_workers"
       value: 3
     - key: "max_parallel_maintenance_workers"
