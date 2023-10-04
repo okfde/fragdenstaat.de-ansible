@@ -8,7 +8,7 @@
 - name: Add RabbitMQ to the sources list
   ansible.builtin.apt_repository: 
     repo: 'deb https://www.rabbitmq.com/debian/ testing main'
-    update_cache: {{ update_apt_cache }}
+    update_cache: "{{ update_apt_cache }}"
     state: present
 
 - name: Install RabbitMQ server
