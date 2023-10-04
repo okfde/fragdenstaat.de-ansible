@@ -1,29 +1,29 @@
 ---
 
 - name: Add Docker GPG apt Key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
 - name: Add Docker Repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu focal stable
     state: present
   when: ansible_distribution_version == "20.04"
 
 - name: Add Docker Repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu jammy stable
     state: present
   when: ansible_distribution_version == "22.04"
 
 - name: Update apt and install docker-ce
-  apt:
-    name:
-      - 'docker-ce=5:20.10.23~3-0~ubuntu-focal'
-      - docker-ce-cli
-      - containerd.io
-      - docker-compose-plugin
-      - apparmor-utils
+  ansible.builtin.apt:
+    pkg:
+      - "docker-ce=5:20.10.23~3-0~ubuntu-focal"
+      - "docker-ce-cli"
+      - "containerd.io"
+      - "docker-compose-plugin"
+      - "apparmor-utils"
     state: latest
     update_cache: true
