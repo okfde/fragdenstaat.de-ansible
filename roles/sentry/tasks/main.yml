@@ -1,5 +1,5 @@
 - name: Setup Sentry Git repo
-  git:
+  ansible.builtin.git:
     repo: "{{ sentry_git_repo }}"
     dest: "{{ sentry_dir }}"
     update: true
@@ -7,7 +7,7 @@
   register: sentry_updated
 
 - name: Start sentry service
-  systemd:
+  ansible.builtin.systemd:
     name: stopped
     state: started
   when: sentry_updated.changed
@@ -15,7 +15,7 @@
     - skip_ansible_lint
 
 - name: "Install sentry"
-  command:
+  ansible.builtin.command:
     cmd: "./install.sh --skip-user-creation --no-report-self-hosted-issues"
     chdir: "{{ sentry_dir }}"
   when: sentry_updated.changed
@@ -23,7 +23,7 @@
     - skip_ansible_lint
 
 - name: Set sentry config options
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ sentry_dir }}/sentry/config.yml"
     regex: "^(#)?{{ item.key }}"
     line: "{{ item.key }}: {{ item.value | replace('\n', '\\n') }}"
@@ -46,7 +46,7 @@
     - "{ key: \"mail.from\", value: '\"{{ sentry_mail_from }}\"' }"
 
 - name: Disable Sentry Beacon
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ sentry_dir }}/sentry/sentry.conf.py"
     regex: "^(#)? ?{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
@@ -66,7 +66,7 @@
     mode: "0644"
 
 - name: Customize sentry env vars
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ sentry_dir }}/.env.custom"
     line: "{{ item }}"
   loop:
@@ -75,24 +75,24 @@
     - "SENTRY_BIND=127.0.0.1:9000"
 
 - name: Add GeoIP configuration
-  template:
+  ansible.builtin.template:
     src: geoip.conf.j2
     dest: "{{ sentry_dir }}/geoip/GeoIP.conf"
     mode: "0644"
 
 - name: Set sentry systemd service
-  template:
+  ansible.builtin.template:
     src: sentry.service.j2
     dest: /etc/systemd/system/sentry.service
     mode: "0444"
 
 - name: Start sentry service
-  systemd:
+  ansible.builtin.systemd:
     name: sentry
     state: started
 
 - name: Create the Nginx site configuration
-  template:
+  ansible.builtin.template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/{{ sentry_domain }}"
     mode: "0644"
@@ -100,7 +100,7 @@
   notify: reload nginx
 
 - name: Ensure that the application site is enabled
-  file:
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ sentry_domain }}"
     dest: "/etc/nginx/sites-enabled/{{ sentry_domain }}"
     state: link
