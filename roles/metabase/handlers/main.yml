@@ -1,7 +1,7 @@
 ---
 
 - name: restart metabase
-  systemd:
+  ansible.builtin.systemd:
     name: metabase
     state: restarted
-    daemon_reload: yes
+    daemon_reload: true

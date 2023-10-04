@@ -1,38 +1,41 @@
 ---
 
 - name: Create metabase directory
-  file:
+  ansible.builtin.file:
     path: "{{ metabase_dir }}"
     state: directory
     owner: root
+    mode: "0755"
 
 - name: Set metabase docker compose
-  template:
+  ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: "{{ metabase_dir }}/docker-compose.yml"
+    mode: "0644"
   notify: restart metabase
 
 - name: Set metabase systemd service
-  template:
+  ansible.builtin.template:
     src: metabase.service.j2
     dest: /etc/systemd/system/metabase.service
-    mode: 0444
+    mode: "0444"
 
 - name: Start metabase service
-  systemd:
+  ansible.builtin.systemd:
     name: metabase
     state: started
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Create the Nginx site configuration
-  template:
+  ansible.builtin.template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/{{ metabase_domain }}"
-    backup: yes
+    mode: "0644"
+    backup: true
   notify: reload nginx
 
 - name: Ensure that the application site is enabled
-  file:
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ metabase_domain }}"
     dest: "/etc/nginx/sites-enabled/{{ metabase_domain }}"
     state: link
