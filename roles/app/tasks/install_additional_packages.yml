@@ -87,4 +87,3 @@
 - name: Install Tor
   apt: name=tor state=latest update_cache=yes
   when: onion_service_enabled
-
