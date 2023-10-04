@@ -8,7 +8,7 @@
 
 - name: Start sentry service
   ansible.builtin.systemd:
-    name: stopped
+    name: sentry
     state: started
   when: sentry_updated.changed
   tags:
@@ -29,21 +29,36 @@
     line: "{{ item.key }}: {{ item.value | replace('\n', '\\n') }}"
     state: present
   loop:
-    - "{ key: \"github-app.id\", value: '{{ sentry_github_app_id }}' }"
-    - "{ key: \"github-app.name\", value: '\"{{ sentry_github_app_name }}\"' }"
-    - "{ key: \"github-app.webhook-secret\", value: '\"{{ sentry_github_app_webhook_secret }}\"' }"
-    - "{ key: \"github-app.client-id\", value: '\"{{ sentry_github_app_client_id }}\"' }"
-    - "{ key: \"github-app.client-secret\", value: '\"{{ sentry_github_app_client_secret }}\"' }"
-    - "{ key: \"github-app.private-key\", value: '\"{{ sentry_github_app_private_key }}\"' }"
-    - "{ key: \"slack.client-id\", value: '\"{{ sentry_slack_client_id }}\"' }"
-    - "{ key: \"slack.client-secret\", value: '\"{{ sentry_slack_client_secret }}\"' }"
-    - "{ key: \"slack.signing-secret\", value: '\"{{ sentry_slack_signing_secret }}\"' }"
-    - "{ key: \"mail.host\", value: '\"{{ sentry_mail_host }}\"' }"
-    - "{ key: \"mail.port\", value: '{{ sentry_mail_port }}' }"
-    - "{ key: \"mail.username\", value: '\"{{ sentry_mail_username }}\"' }"
-    - "{ key: \"mail.password\", value: '\"{{ sentry_mail_password }}\"' }"
-    - "{ key: \"mail.use-tls\", value: \"true\" }"
-    - "{ key: \"mail.from\", value: '\"{{ sentry_mail_from }}\"' }"
+    - key: "github-app.id"
+      value: "{{ sentry_github_app_id }}"
+    - key: "github-app.name"
+      value: '"{{ sentry_github_app_name }}"'
+    - key: "github-app.webhook-secret"
+      value: '"{{ sentry_github_app_webhook_secret }}"'
+    - key: "github-app.client-id"
+      value: '"{{ sentry_github_app_client_id }}"'
+    - key: "github-app.client-secret"
+      value: '"{{ sentry_github_app_client_secret }}"'
+    - key: "github-app.private-key"
+      value: '"{{ sentry_github_app_private_key }}"'
+    - key: "slack.client-id"
+      value: '"{{ sentry_slack_client_id }}"'
+    - key: "slack.client-secret"
+      value: '"{{ sentry_slack_client_secret }}"'
+    - key: "slack.signing-secret"
+      value: '"{{ sentry_slack_signing_secret }}"'
+    - key: "mail.host"
+      value: '"{{ sentry_mail_host }}"'
+    - key: "mail.port"
+      value: "{{ sentry_mail_port }}"
+    - key: "mail.username"
+      value: '"{{ sentry_mail_username }}"'
+    - key: "mail.password"
+      value: '"{{ sentry_mail_password }}"'
+    - key: "mail.use-tls"
+      value: "true"
+    - key: "mail.from"
+      value: '"{{ sentry_mail_from }}"'
 
 - name: Disable Sentry Beacon
   ansible.builtin.lineinfile:
@@ -52,11 +67,16 @@
     line: "{{ item.key }} = {{ item.value }}"
     state: present
   loop:
-    - "{ key: \"SENTRY_BEACON\", value: \"False\" }"
-    - "{ key: \"SECURE_PROXY_SSL_HEADER\", value: \"('HTTP_X_FORWARDED_PROTO', 'https')\" }"
-    - "{ key: \"SESSION_COOKIE_SECURE\", value: \"True\" }"
-    - "{ key: \"CSRF_COOKIE_SECURE\", value: \"True\" }"
-    - "{ key: \"SOCIAL_AUTH_REDIRECT_IS_HTTPS\", value: \"True\" }"
+    - key: "SENTRY_BEACON"
+      value: "False"
+    - key: "SECURE_PROXY_SSL_HEADER"
+      value: "('HTTP_X_FORWARDED_PROTO', 'https')"
+    - key: "SESSION_COOKIE_SECURE"
+      value: "True"
+    - key: "CSRF_COOKIE_SECURE"
+      value: "True"
+    - key: "SOCIAL_AUTH_REDIRECT_IS_HTTPS"
+      value: "True"
 
 - name: Copy Sentry .env to .env.custom
   ansible.builtin.copy:
