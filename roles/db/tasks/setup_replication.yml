@@ -26,11 +26,16 @@
     line: "{{ item.key }} = {{ item.value }}"
     state: present
   loop:
-    - "{ key: \"listen_addresses\", value: \"'127.0.0.1,{{ host_data.site_ipv4 }}'\" }"
-    - "{ key: \"wal_level\", value: \"replica\" }"
-    - "{ key: \"max_wal_senders\", value: \"10\" }"
-    - "{ key: \"wal_keep_size\", value: \"1GB\" }"
-    - "{ key: \"wal_compression\", value: \"on\" }"
+    - key: "listen_addresses"
+      value: "'127.0.0.1,{{ host_data.site_ipv4 }}'"
+    - key: "wal_level"
+      value: "replica"
+    - key: "max_wal_senders"
+      value: "10"
+    - key: "wal_keep_size"
+      value: "1GB"
+    - key: "wal_compression"
+      value: "on"
   notify:
     - reload postgresql config
 

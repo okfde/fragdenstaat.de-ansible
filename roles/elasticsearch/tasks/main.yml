@@ -65,10 +65,14 @@
     line: "{{ item.key }}: {{ item.value }}"
     state: present
   loop:
-    - "{ key: \"cluster.name\", value: \"{{ elasticsearch_cluster_name }}\" }"
-    - "{ key: \"node.name\", value: \"{{ inventory_hostname }}\" }"
-    - "{ key: \"network.bind_host\", value: \"[_local_, _site_]\" }"
-    - "{ key: \"discovery.type\", value: \"single-node\" }"
+    - key: "cluster.name"
+      value: "{{ elasticsearch_cluster_name }}"
+    - key: "node.name"
+      value: "{{ inventory_hostname }}"
+    - key: "network.bind_host"
+      value: "[_local_, _site_]"
+    - key: "discovery.type"
+      value: "single-node"
   notify:
     - restart elasticsearch
 

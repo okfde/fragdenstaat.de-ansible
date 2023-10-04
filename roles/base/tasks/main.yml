@@ -82,8 +82,10 @@
     line: "{{ item.key }} {{ item.value }}"
     state: present
   loop:
-    - "{ key: \"PasswordAuthentication\", value: \"no\" }"
-    - "{ key: \"Port\", value: \"{{ ssh_port }}\"}"
+    - key: "PasswordAuthentication"
+      value: "no"
+    - key: "Port"
+      value: "{{ ssh_port }}"
   notify:
     - restart ssh
 

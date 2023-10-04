@@ -7,10 +7,14 @@
     line: "{{ item.key }} = {{ item.value }}"
     state: present
   loop:
-    - "{ key: \"primary_conninfo\", value: \"'user={{ db_user_replication }} port=5432 host={{ hostvars[groups['db'][0]].host_data.site_ipv4 }} application_name={{ inventory_hostname }}.repl'\" }"
-    - "{ key: \"primary_slot_name\", value: \"'{{ inventory_hostname.replace('.', '_') }}'\" }"
-#      Set delay to 2 minutes, to allow COPY of large tables in backups
-    - "{ key: \"max_standby_archive_delay\", value: \"120s\" }"
-    - "{ key: \"max_standby_streaming_delay\", value: \"120s\" }"
+    - key: "primary_conninfo"
+      value: "user={{ db_user_replication }} port=5432 host={{ hostvars[groups['db'][0]].host_data.site_ipv4 }} application_name={{ inventory_hostname }}.repl"
+    - key: "primary_slot_name"
+      value: "{{ inventory_hostname.replace('.', '_') }}"
+    # Set delay to 2 minutes, to allow COPY of large tables in backups
+    - key: "max_standby_archive_delay"
+      value: "120s"
+    - key: "max_standby_streaming_delay"
+      value: "120s"
   notify:
     - reload postgresql config

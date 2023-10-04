@@ -20,9 +20,12 @@
     state: present
     mode: "0644"
   loop:
-    - "{ key: \"API_KEY\", value: \"{{ farmsubsidy_api_key }}\" }"
-    - "{ key: \"API_ALLOWED_ORIGIN\", value: \"https://farmsubsidy-org-next.vercel.app\" }"
-    - "{ key: \"API_BASIC_AUTH\", value: \"{{ farmsubsidy_basic_auth }}\" }"
+    - key: "API_KEY"
+      value: "{{ farmsubsidy_api_key }}"
+    - key: "API_ALLOWED_ORIGIN"
+      value: "https://farmsubsidy-org-next.vercel.app"
+    - key: "API_BASIC_AUTH"
+      value: "{{ farmsubsidy_basic_auth }}"
   notify: restart farmsubsidy
 
 - name: Set Farmsubsidy systemd service
