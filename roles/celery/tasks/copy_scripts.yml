@@ -1,7 +1,7 @@
 ---
 
 - name: Create the folder for the celery scripts
-  file: path={{ celery_scripts_dir }}
+  ansible.builtin.file: path={{ celery_scripts_dir }}
         owner={{ celery_user }}
         group={{ celery_group }}
         mode=0774
@@ -10,7 +10,7 @@
     - celery
 
 - name: Create the celery worker script file
-  template:
+  ansible.builtin.template:
     src: celery_worker.j2
     dest: "{{ celery_scripts_dir }}/celery_{{ item.name }}"
     owner: "{{ celery_user }}"
@@ -21,7 +21,7 @@
     - celery
 
 - name: Create the celery beat script file
-  template:
+  ansible.builtin.template:
     src: "{{ celerybeat_template_file }}"
     dest: "{{ celery_scripts_dir }}/celerybeat_start"
     owner: "{{ celery_user }}"
