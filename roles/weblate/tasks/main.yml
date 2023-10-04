@@ -1,7 +1,7 @@
 ---
 
 - name: Setup Weblate Git repo
-  git:
+  ansible.builtin.git:
     repo: "{{ weblate_git_repo }}"
     dest: "{{ weblate_dir }}"
     version: a214e5d3d84c85e61a1453c08d998be67cef1a75
@@ -9,32 +9,34 @@
   notify: restart weblate
 
 - name: Set weblate docker compose override
-  template:
+  ansible.builtin.template:
     src: docker-compose.override.yml.j2
     dest: "{{ weblate_dir }}/docker-compose.override.yml"
+    mode: "0644"
   notify: restart weblate
 
 - name: Set weblate systemd service
-  template:
+  ansible.builtin.template:
     src: weblate.service.j2
     dest: /etc/systemd/system/weblate.service
-    mode: 0444
+    mode: "0444"
 
 - name: Start weblate service
-  systemd:
+  ansible.builtin.systemd:
     name: weblate
     state: started
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Create the Nginx site configuration
-  template:
+  ansible.builtin.template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/{{ weblate_domain }}"
-    backup: yes
+    mode: "0644"
+    backup: true
   notify: reload nginx
 
 - name: Ensure that the application site is enabled
-  file:
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ weblate_domain }}"
     dest: "/etc/nginx/sites-enabled/{{ weblate_domain }}"
     state: link

@@ -1,7 +1,7 @@
 ---
 
 - name: Install duplicity dependencies
-  apt:
+  ansible.builtin.apt:
     name:
       - librsync-dev
       - lftp
@@ -11,26 +11,27 @@
   tags: packages
 
 - name: Do not verify SSL certificate
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/lftp.conf
     line: "set ssl:verify-certificate no"
 
 - name: Create the folder for the backup files
-  file:
+  ansible.builtin.file:
     path: "/var/backup/weblate"
     owner: root
     state: directory
+    mode: "0755"
   tags: backup
 
 - name: Place backup script
-  template:
+  ansible.builtin.template:
     src: backup.sh.j2
     dest: /usr/local/bin/backup_weblate.sh
-    mode: 0755
+    mode: "0755"
   tags: backup
 
 - name: Setup cron script
-  cron:
+  ansible.builtin.cron:
     name: "Run weblate backup script"
     minute: "0"
     hour: "5"
