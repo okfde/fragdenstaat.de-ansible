@@ -1,12 +1,12 @@
 ---
 
 - name: Add Maxmind PPA
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'ppa:maxmind/ppa'
     state: present
 
 - name: Install libmaxminddb
-  apt:
+  ansible.builtin.apt:
     name:
       - libmaxminddb0
       - libmaxminddb-dev
@@ -16,29 +16,31 @@
   tags: packages
 
 - name: Maxmind directory
-  file:
+  ansible.builtin.file:
     path: "{{ django_geoip_path }}"
     mode: 0755
     owner: "{{ gunicorn_user }}"
     state: directory
 
 - name: Add script to update maxmind
-  template:
+  ansible.builtin.template:
     src: update-maxmind.sh.j2
     dest: "{{ django_geoip_path }}/update-maxmind.sh"
     mode: 0755
 
 - name: Update maxmind database
+  ansible.builtin.command:
+    cmd: "{{ django_geoip_path }}/update-maxmind.sh"
   become_user: "{{ gunicorn_user }}"
-  shell: "{{ django_geoip_path }}/update-maxmind.sh"
+  changed_when: false
 
 - name: apt | ensure cron is installed
-  apt:
+  ansible.builtin.apt:
     name: cron
     state: present
 
 - name: cron task to update daily
-  cron:
+  ansible.builtin.cron:
     name: "maxmind autoupdate"
     minute: 0
     hour: 3
