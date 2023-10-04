@@ -4,34 +4,36 @@
   ansible.builtin.file:
     path: "{{ roundcube_dir }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Add docker compose config
-  template:
+  ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: "{{ roundcube_dir }}/docker-compose.yml"
+    mode: "0644"
 
 - name: Set roundcube systemd service
-  template:
+  ansible.builtin.template:
     src: roundcube.service.j2
     dest: /etc/systemd/system/roundcube.service
-    mode: 0444
+    mode: "0444"
 
 - name: Start roundcube service
-  systemd:
+  ansible.builtin.systemd:
     name: roundcube
     state: restarted
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Create the Nginx site API configuration
-  template:
+  ansible.builtin.template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/roundcube"
-    backup: yes
+    mode: "0600"
+    backup: true
   notify: reload nginx
 
 - name: Ensure that the application site is enabled
-  file:
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/roundcube"
     dest: "/etc/nginx/sites-enabled/roundcube"
     state: link
@@ -43,4 +45,3 @@
     port: 9800
     to_ip: "{{ roundcube_ip }}"
     proto: tcp
-
