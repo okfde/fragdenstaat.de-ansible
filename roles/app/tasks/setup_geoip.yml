@@ -18,7 +18,7 @@
 - name: Maxmind directory
   ansible.builtin.file:
     path: "{{ django_geoip_path }}"
-    mode: 0755
+    mode: "0755"
     owner: "{{ gunicorn_user }}"
     state: directory
 
@@ -26,7 +26,7 @@
   ansible.builtin.template:
     src: update-maxmind.sh.j2
     dest: "{{ django_geoip_path }}/update-maxmind.sh"
-    mode: 0755
+    mode: "0755"
 
 - name: Update maxmind database
   ansible.builtin.command:
@@ -42,7 +42,7 @@
 - name: cron task to update daily
   ansible.builtin.cron:
     name: "maxmind autoupdate"
-    minute: 0
-    hour: 3
+    minute: "0"
+    hour: "3"
     user: "{{ gunicorn_user }}"
     job: "{{ django_geoip_path }}/update-maxmind.sh > /tmp/update_maxmind.log 2>&1"

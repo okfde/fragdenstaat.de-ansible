@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure that the application file permissions are set properly
-  file: path={{ virtualenv_path }}/{{ item }}
+  ansible.builtin.file: path={{ virtualenv_path }}/{{ item }}
         recurse=yes
         owner={{ gunicorn_user }}
         group={{ gunicorn_group }}
@@ -17,29 +17,29 @@
     - meta
 
 - name: Creates public directory
-  file:
+  ansible.builtin.file:
     path: "{{ virtualenv_path }}/public"
     state: "directory"
     owner: "{{ gunicorn_user }}"
-    mode: 0755
+    mode: "0755"
 
 - name: Creates storage directory
-  file:
+  ansible.builtin.file:
     path: "{{ virtualenv_path }}/storage"
     state: directory
     owner: "{{ gunicorn_user }}"
-    mode: 0755
+    mode: "0755"
   when: not external_media_storage
 
 - name: Creates storage sub-directory
-  file:
+  ansible.builtin.file:
     path: "{{ virtualenv_path }}/storage/files"
     state: "directory"
     owner: "{{ gunicorn_user }}"
-    mode: 0750
+    mode: "02750"
 
 - name: Symlink storage directory
-  file:
+  ansible.builtin.file:
     src: "{{ external_media_storage_target }}"
     dest: "{{ virtualenv_path }}/storage"
     state: link
@@ -49,13 +49,13 @@
 
 - name: Ensure that the storage directory permissions are set properly
   # leading 2 on mode sets group id (setgid), so other files will get group www-data
-  command: "find {{ virtualenv_path }}/storage -type d -exec chmod 2750 {} \\;"
+  ansible.builtin.command: "find {{ virtualenv_path }}/storage -type d -exec chmod 2750 {} \\;"
   changed_when: false
 
 - name: Ensure that the storage directory owners are set properly
-  command: "find {{ virtualenv_path }}/storage -type d -exec chown {{ gunicorn_user }} {} \\;"
+  ansible.builtin.command: "find {{ virtualenv_path }}/storage -type d -exec chown {{ gunicorn_user }} {} \\;"
   changed_when: false
 
 - name: Ensure that the storage directory groups are set properly
-  command: "find {{ virtualenv_path }}/storage -type d -exec chgrp www-data {} \\;"
+  ansible.builtin.command: "find {{ virtualenv_path }}/storage -type d -exec chgrp www-data {} \\;"
   changed_when: false
