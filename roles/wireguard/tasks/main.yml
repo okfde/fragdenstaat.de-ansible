@@ -16,7 +16,7 @@
     reload: true
 
 - name: Enable IPv4 forwarding continued
-  ansible.builtin.ansible.builtin.command:
+  ansible.builtin.command:
     cmd: echo 1 > /proc/sys/net/ipv4/ip_forward
   changed_when: false
 
