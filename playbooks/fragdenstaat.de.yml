@@ -14,6 +14,7 @@
         username: fds-bot
         channel: '#fragdenstaat-alerts'
       when: slack_token is defined
+      changed_when: false
       tags:
         - deploy
         - deploy-backend
@@ -35,6 +36,7 @@
         username: fds-bot
         channel: '#fragdenstaat-alerts'
       when: slack_token is defined
+      changed_when: false
       tags:
         - deploy
         - deploy-backend
