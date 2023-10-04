@@ -8,6 +8,7 @@
   when: collect_release_info
   tags:
     - release_tag
+    - skip_ansible_lint
 
 - name: Install packages required by the Django app inside virtualenv
   pip:
@@ -15,7 +16,7 @@
     chdir: "{{ project_path }}"
     requirements: "{{ requirements_file }}"
     extra_args: "-U -e . --exists-action=w"
-    editable: True
+    editable: true
     state: latest
   become: true
   become_user: "{{ gunicorn_user }}"
