@@ -14,4 +14,3 @@
   apt:
     pkg: imagemagick
     state: present
-
