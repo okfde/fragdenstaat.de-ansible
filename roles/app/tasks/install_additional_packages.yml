@@ -1,7 +1,7 @@
 ---
 
 - name: Install additional packages
-  apt:
+  ansible.builtin.apt:
     name:
       - gettext
       - imagemagick
@@ -28,25 +28,25 @@
     state: present
 
 - name: Upgrade pip
-  pip:
+  ansible.builtin.pip:
     name: pip
     state: latest
   tags: packages
 
 - name: Comment out ImageMagick policy entries for PDF none
-  replace:
+  ansible.builtin.replace:
     path: /etc/ImageMagick-6/policy.xml
     regexp: '^(  <policy domain="coder" rights="none" pattern="PDF" />)$'
     replace: '<!-- \1 -->'
 
 - name: Increase ImageMagick cache disk resources
-  replace:
+  ansible.builtin.replace:
     path: /etc/ImageMagick-6/policy.xml
     regexp: '<policy domain="resource" name="disk" value="1GiB"/>'
     replace: '<policy domain="resource" name="disk" value="8GiB"/>'
 
 - name: Add ImageMagick policy entries tmp resource and PDF read/write
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/ImageMagick-6/policy.xml
     insertbefore: '</policymap>'
     block: |
@@ -55,7 +55,7 @@
     marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
 
 - name: Add ImageMagick policy entries for paths
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/ImageMagick-6/policy.xml
     insertbefore: '</policymap>'
     block: |
@@ -66,7 +66,7 @@
     - "{{ django_media_root }}/docs"
 
 - name: Fix up ImageMagick policy about PDFs
-  replace:
+  ansible.builtin.replace:
     path: /etc/ImageMagick-6/policy.xml
     regexp: '<policy domain="coder" rights="none" pattern="PDF" />'
     replace: ''
@@ -74,16 +74,16 @@
     backup: true
 
 - name: Add LibreOffice repository
-  apt_repository: repo="ppa:libreoffice/libreoffice-6-4" state=present
+  ansible.builtin.apt_repository: repo="ppa:libreoffice/libreoffice-6-4" state=present
   when: ansible_distribution_version == "20.04"
 
 - name: Add LibreOffice repository
-  apt_repository: repo="ppa:libreoffice/ppa" state=present
+  ansible.builtin.apt_repository: repo="ppa:libreoffice/ppa" state=present
   when: ansible_distribution_version == "22.04"
 
 - name: Install LibreOffice
-  apt: name=libreoffice state=latest update_cache=yes
+  ansible.builtin.apt: name=libreoffice state=latest update_cache=yes
 
 - name: Install Tor
-  apt: name=tor state=latest update_cache=yes
+  ansible.builtin.apt: name=tor state=latest update_cache=yes
   when: onion_service_enabled
