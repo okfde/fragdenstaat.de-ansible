@@ -4,7 +4,7 @@
   service:
     name: postgresql
     state: restarted
-    enabled: yes
+    enabled: true
 
 - name: reload postgresql config
   become_user: postgres

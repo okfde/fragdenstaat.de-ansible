@@ -1,4 +1,3 @@
-
 - name: Create reporting schema
   become_user: postgres
   community.postgresql.postgresql_schema:
@@ -14,7 +13,7 @@
 
 - name: Ensure reporting user has access to the database
   become_user: postgres
-  postgresql_user:
+  ansible.builtin.postgresql_user:
     db: "{{ db_name }}"
     name: "{{ db_user_reporting }}"
     password: "{{ db_password_reporting }}"
@@ -24,7 +23,7 @@
 
 - name: Ensure reporting user has no privileges
   become_user: postgres
-  postgresql_privs:
+  ansible.builtin.postgresql_privs:
     db: "{{ db_name }}"
     state: absent
     role: "{{ db_user_reporting }}"
@@ -32,7 +31,7 @@
     objs: ALL_IN_SCHEMA
 
 - name: Ensure reporting user has connect access to db
-  postgresql_privs:
+  ansible.builtin.postgresql_privs:
     db: "{{ db_name }}"
     privs: CONNECT
     type: database
@@ -42,7 +41,7 @@
   become_user: postgres
 
 - name: Ensure reporting user has usage schema access to all tables in schema
-  postgresql_privs:
+  ansible.builtin.postgresql_privs:
     db: "{{ db_name }}"
     privs: USAGE
     type: "schema"
@@ -53,7 +52,7 @@
   become_user: postgres
 
 - name: Ensure reporting user has select access to all tables in schema
-  postgresql_privs:
+  ansible.builtin.postgresql_privs:
     db: "{{ db_name }}"
     privs: SELECT
     objs: ALL_IN_SCHEMA
@@ -64,7 +63,7 @@
   become_user: postgres
 
 - name: Allow reporting user connection from auxiliary
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
     line: "host    {{ db_name }}     {{ db_user_reporting }}    {{ hostvars[item].host_data.site_ipv4 }}/32   md5"
     state: present

@@ -2,7 +2,7 @@
 
 - name: Add replication user
   become_user: postgres
-  postgresql_user:
+  ansible.builtin.postgresql_user:
     db: "{{ db_name }}"
     name: "{{ db_user_replication }}"
     password: "{{ db_password_replication }}"
@@ -11,7 +11,7 @@
     encrypted: true
 
 - name: Allow from all replica IPs
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ pg_version }}/main/pg_hba.conf"
     line: "host    replication     {{ db_user_replication }}    {{ hostvars[item].host_data.site_ipv4 }}/32   md5"
     state: present
@@ -20,17 +20,17 @@
     - reload postgresql config
 
 - name: Listen on localhost and vlan, set replication config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ pg_version }}/main/postgresql.conf"
     regex: "^(#)?{{ item.key }}"
     line: "{{ item.key }} = {{ item.value }}"
     state: present
   loop:
-    - { key: "listen_addresses", value: "'127.0.0.1,{{ host_data.site_ipv4 }}'" }
-    - { key: "wal_level", value: "replica" }
-    - { key: "max_wal_senders", value: "10" }
-    - { key: "wal_keep_size", value: "1GB" }
-    - { key: "wal_compression", value: "on" }
+    - "{ key: \"listen_addresses\", value: \"'127.0.0.1,{{ host_data.site_ipv4 }}'\" }"
+    - "{ key: \"wal_level\", value: \"replica\" }"
+    - "{ key: \"max_wal_senders\", value: \"10\" }"
+    - "{ key: \"wal_keep_size\", value: \"1GB\" }"
+    - "{ key: \"wal_compression\", value: \"on\" }"
   notify:
     - reload postgresql config
 
