@@ -1,39 +1,41 @@
 ---
 
 - name: Setup FDS OGImage Git repo
-  git:
+  ansible.builtin.git:
     repo: "{{ ogimage_git_repo }}"
     dest: "{{ ogimage_dir }}"
   become: true
   notify: restart ogimage
 
 - name: Set FDS OGImage env
-  template:
+  ansible.builtin.template:
     src: env.j2
     dest: "{{ ogimage_dir }}/.env"
+    mode: "0755"
   notify: restart ogimage
 
 - name: Set ogimage systemd service
-  template:
+  ansible.builtin.template:
     src: ogimage.service.j2
     dest: /etc/systemd/system/ogimage.service
-    mode: 0444
+    mode: "0444"
 
 - name: Start ogimage service
-  systemd:
+  ansible.builtin.systemd:
     name: ogimage
     state: started
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Create the Nginx site configuration
-  template:
+  ansible.builtin.template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/{{ ogimage_domain }}"
-    backup: yes
+    mode: "0600"
+    backup: true
   notify: reload nginx
 
 - name: Ensure that the nginx ocnfiguration is enabled
-  file:
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ ogimage_domain }}"
     dest: "/etc/nginx/sites-enabled/{{ ogimage_domain }}"
     state: link
