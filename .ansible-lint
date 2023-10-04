@@ -1,0 +1,7 @@
+skip_list:
+  - package-latest
+  - line-length
+
+warn_list:
+  - yaml
+  - ignore-errors
