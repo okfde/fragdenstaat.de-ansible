@@ -1,14 +1,14 @@
 ---
 
 - name: Install WireGuard and other requirements
-  apt:
+  ansible.builtin.apt:
     name:
       - wireguard
     state: present
     update_cache: true
 
 - name: Enable IPv4 traffic forwarding
-  sysctl:
+  ansible.builtin.sysctl:
     name: net.ipv4.ip_forward
     value: 1
     sysctl_set: true
@@ -16,43 +16,53 @@
     reload: true
 
 - name: Enable IPv4 forwarding continued
-  command: echo 1 > /proc/sys/net/ipv4/ip_forward
+  ansible.builtin.ansible.builtin.command:
+    cmd: echo 1 > /proc/sys/net/ipv4/ip_forward
+  changed_when: false
 
 - name: Check if wg0-server.conf already exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/wireguard/wg0.conf
   register: wg0_conf
 
 - name: mkdir -p /etc/wireguard/keys
-  file:
+  ansible.builtin.file:
     path: /etc/wireguard/keys
     state: directory
-  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+    mode: "0755"
+  when: wg0_conf is not defined or not wg0_conf.stat.exists
 
 - name: Generate private and public keys for the server
-  shell: umask 077; wg genkey | tee privatekey | wg pubkey > server.public
+  ansible.builtin.shell: |
+    set -o pipefail
+    umask 077
+    wg genkey | tee privatekey | wg pubkey > server.public
   args:
     chdir: /etc/wireguard/keys
   register: key_files
-  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+  when: wg0_conf is not defined or not wg0_conf.stat.exists
 
 - name: cat privatekey => var_privatekey
-  shell: cat privatekey
+  ansible.builtin.command:
+    cmd: "cat privatekey"
   register: var_privatekey
   args:
     chdir: /etc/wireguard/keys
+  changed_when: false
 
 - name: cat server.public => var_publickey
-  shell: cat server.public
+  ansible.builtin.command:
+    cmd: "cat server.public"
   register: var_publickey
   args:
     chdir: /etc/wireguard/keys
+  changed_when: false
 
 - name: Add vars vpn client
   include_vars: ../env_vars/vpnclients.yml
 
 - name: Generate server config
-  template:
+  ansible.builtin.template:
     src: "templates/server.conf.j2"
     dest: "/etc/wireguard/wg0.conf"
     owner: root
@@ -62,11 +72,11 @@
     - restart wireguard
 
 - name: Print server public key
-  debug:
+  ansible.builtin.debug:
     var: var_publickey
 
 - name: Enable wireguard interface
-  systemd:
+  ansible.builtin.systemd:
     name: wg-quick@wg0
     enabled: true
     state: started
