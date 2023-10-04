@@ -1,7 +1,7 @@
 ---
 
 - name: Create default admin user
-  rabbitmq_user:
+  ansible.builtin.rabbitmq_user:
     user: "{{ rabbitmq_admin_user }}"
     password: "{{ rabbitmq_admin_password }}"
     node: "{{ rabbitmq_node }}"
@@ -10,7 +10,7 @@
     state: present
 
 - name: Create application user
-  rabbitmq_user:
+  ansible.builtin.rabbitmq_user:
     user: "{{ rabbitmq_application_user }}"
     node: "{{ rabbitmq_node }}"
     password: "{{ rabbitmq_application_password }}"
@@ -21,7 +21,7 @@
     state: present
 
 - name: Ensure the default 'guest' user doesn't exist
-  rabbitmq_user:
+  ansible.builtin.rabbitmq_user:
     node: "{{ rabbitmq_node }}"
     user: guest
     state: absent
