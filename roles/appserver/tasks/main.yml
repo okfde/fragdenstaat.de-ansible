@@ -85,7 +85,7 @@
 - name: Allow app local network from media server
   community.general.ufw:
     rule: allow
-    port: 8000
+    port: "8000"
     to_ip: "{{ host_data.site_ipv4 }}"
     from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
     proto: tcp
