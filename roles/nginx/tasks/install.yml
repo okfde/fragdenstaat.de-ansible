@@ -1,20 +1,22 @@
 ---
 
 - name: Install Nginx
-  apt:
+  ansible.builtin.apt:
     name: nginx
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
 
 - name: Ensure that a strong Diffie-Hellman group is used
-  command: openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096 creates=/etc/ssl/certs/dhparams.pem
+  ansible.builtin.command:
+    cmd: "openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096 creates=/etc/ssl/certs/dhparams.pem"
   when: nginx_strong_dh_group is defined and nginx_strong_dh_group
 
 - name: Overwrite the nginx.conf file
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
+    mode: "0644"
     backup: true
   notify: reload nginx
   tags:
@@ -27,25 +29,28 @@
     limit_item: "{{ item.limit_item }}"
     value: "{{ item.value }}"
   with_items:
-    - { limit_type: 'soft', limit_item: 'nofile', value: 65535 }
-    - { limit_type: 'hard', limit_item: 'nofile', value: 65535 }
+    - "{ limit_type: 'soft', limit_item: 'nofile', value: 65535 }"
+    - "{ limit_type: 'hard', limit_item: 'nofile', value: 65535 }"
   register: nginx_pam_limits
 
 - name: reload settings from all system configuration files
-  shell: sysctl --system
+  ansible.builtin.command:
+    cmd: "sysctl --system"
   when: nginx_pam_limits is changed
+  tags:
+    - skip_ansible_lint
 
 - name: Ensure that the default site is disabled
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: reload nginx
 
 - name: Ensure Nginx service is started
-  service:
+  ansible.builtin.service:
     name: nginx
     state: started
-    enabled: yes
+    enabled: true
   tags:
     - nginx
 
@@ -55,5 +60,5 @@
     port: "{{ item }}"
     proto: tcp
   with_items:
-  - http
-  - https
+    - http
+    - https
