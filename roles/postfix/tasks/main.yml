@@ -1,8 +1,8 @@
 ---
 
 - name: Ensure postfix and dependencies are installed
-  apt:
-    name:
+  ansible.builtin.apt:
+    pkg:
       - postfix
       - postfix-pgsql
       - postfix-pcre
@@ -10,54 +10,91 @@
     state: present
 
 - name: Ensure postfix is started and enabled at boot.
-  service: name=postfix state=started enabled=yes
+  ansible.builtin.service:
+    name: postfix
+    state: started
+    enabled: true
 
 - name: configure mailname
-  copy: content={{ domain_name }} dest=/etc/mailname
+  ansible.builtin.copy:
+    content: "{{ domain_name }}"
+    dest: /etc/mailname
+    mode: "0644"
 
 - name: Install postfix main.cf config
-  template: src=main.cf.j2 dest=/etc/postfix/main.cf
+  ansible.builtin.template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+    mode: "0644"
   notify: restart postfix
 
 - name: Install postfix master.cf config
-  template: src=master.cf.j2 dest=/etc/postfix/master.cf
+  ansible.builtin.template:
+    src: master.cf.j2
+    dest: /etc/postfix/master.cf
+    mode: "0644"
   notify: restart postfix
 
 - name: Install vmail_domains
-  template: src=vmail_domains.j2 dest=/etc/postfix/vmail_domains
+  ansible.builtin.template:
+    src: vmail_domains.j2
+    dest: /etc/postfix/vmail_domains
+    mode: "0600"
   notify: update postmap
 
 - name: Install vmail_mailbox
-  template: src=vmail_mailbox.j2 dest=/etc/postfix/vmail_mailbox
+  ansible.builtin.template:
+    src: vmail_mailbox.j2
+    dest: /etc/postfix/vmail_mailbox
+    mode: "0600"
   notify: update postmap
 
 - name: Install virtual alias map configuration
-  template: src=postgres-virtual-alias-maps.cf.j2 dest=/etc/postfix/postgres-virtual-alias-maps.cf
+  ansible.builtin.template:
+    src: postgres-virtual-alias-maps.cf.j2
+    dest: /etc/postfix/postgres-virtual-alias-maps.cf
+    mode: "0600"
   notify: update postmap
 
 - name: Add reject domains file
-  copy: src=reject_domains dest=/etc/postfix/reject_domains
+  ansible.builtin.copy:
+    src: reject_domains
+    dest: /etc/postfix/reject_domains
+    mode: "0600"
 
 - name: Add blocklisted recipients file
-  copy: src=blocklisted_recipients dest=/etc/postfix/blocklisted_recipients
+  ansible.builtin.copy:
+    src: blocklisted_recipients
+    dest: /etc/postfix/blocklisted_recipients
+    mode: "0600"
 
 - name: Add helo reject file
-  template:
+  ansible.builtin.template:
     src: reject_helo.j2
     dest: /etc/postfix/reject_helo
+    mode: "0644"
 
 - name: Install custom rsyslog logrotate
-  template: src=rsyslog.j2 dest=/etc/logrotate.d/rsyslog
+  ansible.builtin.template:
+    src: rsyslog.j2
+    dest: /etc/logrotate.d/rsyslog
+    mode: "0644"
 
 - name: Install custom mail logrotate
-  template: src=logrotate_mail.j2 dest=/etc/logrotate.d/mail
+  ansible.builtin.template:
+    src: logrotate_mail.j2
+    dest: /etc/logrotate.d/mail
+    mode: "0600"
 
-- stat: path=/var/log/mail.log.1
+- name: Get file info for /var/log/mail.log.1
+  ansible.builtin.stat:
+    path: /var/log/mail.log.1
   register: mail_log_rotated
 
 - name: Make sure log permission is present
-  command: /usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log
-  when: mail_log_rotated.stat.exists == False
+  ansible.builtin.command:
+    cmd: "/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log"
+  when: not mail_log_rotated.stat.exists
 
 - name: configure smtp ports in firewall
   community.general.ufw:
@@ -65,9 +102,9 @@
     port: "{{ item }}"
     proto: tcp
   with_items:
-  - smtp
-  - ssmtp
-  - submission
+    - smtp
+    - ssmtp
+    - submission
 
 - import_tasks: opendkim.yml
 

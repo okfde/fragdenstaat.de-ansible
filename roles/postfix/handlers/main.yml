@@ -1,17 +1,24 @@
 - name: restart postfix
-  service: name=postfix state=restarted enabled=yes
+  ansible.builtin.service:
+    name: postfix
+    state: restarted
+    enabled: true
 
 - name: update postmap
-  shell: "postmap /etc/postfix/{{ item }}"
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/{{ item }}"
   notify: restart postfix
+  changed_when: false
   with_items:
     - "vmail_domains"
     - "vmail_mailbox"
 
 - name: restart opendkim
-  service: name=opendkim state=restarted
+  ansible.builtin.service:
+    name: opendkim
+    state: restarted
 
 - name: restart opendmarc
-  service:
+  ansible.builtin.service:
     name: opendmarc
     state: restarted

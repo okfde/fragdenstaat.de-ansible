@@ -1,47 +1,48 @@
 ---
 - name: opendmarc packages are installed
-  apt:
+  ansible.builtin.apt:
     name:
       - opendmarc
     state: present
 
-- name: mkdir /etc/opendmarc 
-  file:
+- name: mkdir /etc/opendmarc
+  ansible.builtin.file:
     path: /etc/opendmarc
     state: directory
     owner: "opendmarc"
+    mode: "0755"
 
 - name: Get public suffic file
-  get_url:
+  ansible.builtin.get_url:
     url: "https://publicsuffix.org/list/public_suffix_list.dat"
     dest: "/etc/opendmarc/public_suffix_list.dat"
     owner: opendmarc
     group: opendmarc
-    mode: 0640
+    mode: "0640"
 
 - name: Configure opendmarc
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/opendmarc.conf"
-    regex: "^(#)?{{item.key}}"
+    regex: "^(#)?{{ item.key }}"
     line: "{{ item.key }} {{ item.value }}"
     state: present
   loop:
     # https://raw.githubusercontent.com/trusteddomainproject/OpenDMARC/master/opendmarc/opendmarc.conf.sample
-    - { key: "AuthservID", value: "OpenDMARC" }
-    - { key: "TrustedAuthservIDs", value: "{{ mail_domain }}" } 
-    - { key: "IgnoreAuthenticatedClients", value: "true" }
-    - { key: "RequiredHeaders", value: "true" }
-    - { key: "Socket", value: "inet:8893@127.0.0.1" }
-    - { key: "FailureReports", value: "true" }
-    - { key: "FailureReportsSentBy", value: "{{ admin_email }}" }
-    - { key: "Syslog", value: "true" }
-    - { key: "SyslogFacility", value: "mail" }
-    - { key: "PublicSuffixList", value: "/etc/opendmarc/public_suffix_list.dat" }
+    - "{ key: \"AuthservID\", value: \"OpenDMARC\" }"
+    - "{ key: \"TrustedAuthservIDs\", value: \"{{ mail_domain }}\" }"
+    - "{ key: \"IgnoreAuthenticatedClients\", value: \"true\" }"
+    - "{ key: \"RequiredHeaders\", value: \"true\" }"
+    - "{ key: \"Socket\", value: \"inet:8893@127.0.0.1\" }"
+    - "{ key: \"FailureReports\", value: \"true\" }"
+    - "{ key: \"FailureReportsSentBy\", value: \"{{ admin_email }}\" }"
+    - "{ key: \"Syslog\", value: \"true\" }"
+    - "{ key: \"SyslogFacility\", value: \"mail\" }"
+    - "{ key: \"PublicSuffixList\", value: \"/etc/opendmarc/public_suffix_list.dat\" }"
   notify:
     - restart opendmarc
 
 - name: opendmarc is started
-  service:
+  ansible.builtin.service:
     name: opendmarc
     state: started
-    enabled: yes
+    enabled: true

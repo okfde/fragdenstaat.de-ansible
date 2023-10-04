@@ -1,51 +1,74 @@
 ---
 - name: opendkim packages are installed
-  apt:
-    name:
+  ansible.builtin.apt:
+    pkg:
       - opendkim
       - opendkim-tools
     state: present
 
 - name: opendkim socket configured
-  lineinfile: dest=/etc/default/opendkim regexp=^SOCKET= line='SOCKET="inet:12301@localhost"'
+  ansible.builtin.lineinfile:
+    dest: /etc/default/opendkim
+    regexp: "^SOCKET="
+    line: 'SOCKET="inet:12301@localhost"'
   notify:
-   - restart opendkim
+    - restart opendkim
 
 - name: opendkim directory present
-  file: path=/etc/opendkim/keys state=directory owner=opendkim group=opendkim
+  ansible.builtin.file:
+    path: /etc/opendkim/keys
+    state: directory
+    owner: opendkim
+    group: opendkim
+    mode: "0750"
 
 - name: opendkim TrustedHosts present
-  copy: src=TrustedHosts dest=/etc/opendkim/TrustedHosts
+  ansible.builtin.copy:
+    src: TrustedHosts
+    dest: /etc/opendkim/TrustedHosts
+    mode: "0600"
   notify:
-   - restart opendkim
+    - restart opendkim
 
 - name: opendkim is configured
-  template: src=opendkim/opendkim.conf.j2 dest=/etc/opendkim.conf
+  ansible.builtin.template:
+    src: opendkim/opendkim.conf.j2
+    dest: /etc/opendkim.conf
+    mode: "0600"
   notify:
-   - restart opendkim
+    - restart opendkim
 
 - name: opendkim KeyTable is configured
-  template: src=opendkim/KeyTable.j2 dest=/etc/opendkim/KeyTable
+  ansible.builtin.template:
+    src: opendkim/KeyTable.j2
+    dest: /etc/opendkim/KeyTable
+    mode: "0600"
   notify:
-   - restart opendkim
+    - restart opendkim
 
 - name: opendkim SigningTable is configured
-  template: src=opendkim/SigningTable.j2 dest=/etc/opendkim/SigningTable
+  ansible.builtin.template:
+    src: opendkim/SigningTable.j2
+    dest: /etc/opendkim/SigningTable
+    mode: "0600"
   notify:
-   - restart opendkim
+    - restart opendkim
 
 - name: ensure signing key is present
-  stat: path=/etc/opendkim/keys/{{ dkim_selector }}.private get_md5=no
+  ansible.builtin.stat:
+    path: /etc/opendkim/keys/{{ dkim_selector }}.private
+    get_md5: false
   register: dkim_key
 
 - name: generate signing key
-  shell: opendkim-genkey -s {{ dkim_selector }} -d {{ dkim_domains[0] }} -D /etc/opendkim/keys
+  ansible.builtin.command:
+    cmd: "opendkim-genkey -s {{ dkim_selector }} -d {{ dkim_domains[0] }} -D /etc/opendkim/keys"
   when: not dkim_key.stat.exists
   notify:
-   - restart opendkim
+    - restart opendkim
 
 - name: ensure signing key owner
-  file: path=/etc/opendkim/keys/{{ dkim_selector }}.private owner=opendkim group=opendkim mode=700
+  ansible.builtin.file: path=/etc/opendkim/keys/{{ dkim_selector }}.private owner=opendkim group=opendkim mode=700
 
 - name: opendkim is started
-  service: name=opendkim state=started enabled=yes
+  ansible.builtin.service: name=opendkim state=started enabled=yes

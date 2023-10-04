@@ -1,17 +1,17 @@
 ---
 
 - name: Set SPF policyd defaults
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "/etc/postfix-policyd-spf-python/policyd-spf.conf"
-    regex: "^(#)?{{item.key}}"
+    regex: "^(#)?{{ item.key }}"
     line: "{{ item.key }} = {{ item.value }}"
     state: present
   loop:
     # TestOnly = 1 means NO test mode, but production mode
-    - { key: "TestOnly", value: "1" }
-    - { key: "HELO_reject", value: "False" }
-    - { key: "Mail_From_reject", value: "False" }
-    - { key: "skip_addresses", value: "127.0.0.0/8,::ffff:127.0.0.0/104,::1"}
-    - { key: "Header_Type", value: "AR" }
-    - { key: "Authserv_Id", value: "{{ mail_domain }}" }
-    - { key: "debugLevel", value: "1" }
+    - "{ key: \"TestOnly\", value: \"1\" }"
+    - "{ key: \"HELO_reject\", value: \"False\" }"
+    - "{ key: \"Mail_From_reject\", value: \"False\" }"
+    - "{ key: \"skip_addresses\", value: \"127.0.0.0/8,::ffff:127.0.0.0/104,::1\"}"
+    - "{ key: \"Header_Type\", value: \"AR\" }"
+    - "{ key: \"Authserv_Id\", value: \"{{ mail_domain }}\" }"
+    - "{ key: \"debugLevel\", value: \"1\" }"
