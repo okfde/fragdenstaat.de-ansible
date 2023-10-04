@@ -23,6 +23,7 @@
     state: directory
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_user }}"
+    mode: 0755
 
 - name: Create the virtualenv postactivate script to set environment variables
   template:
@@ -31,7 +32,7 @@
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
     mode: 0640
-    backup: yes
+    backup: true
   tags:
     - deploy
     - deploy-backend
