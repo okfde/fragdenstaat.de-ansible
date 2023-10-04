@@ -1,18 +1,18 @@
 ---
 
 - name: Install dovecot
-  apt:
+  ansible.builtin.apt:
     name: dovecot-imapd
     state: latest
 
 - name: Create group used in passwdfile
-  group:
+  ansible.builtin.group:
     name: "vmail"
     gid: 5000
     system: true
 
 - name: Create vmail user
-  user:
+  ansible.builtin.user:
     name: "vmail"
     group: "vmail"
     uid: 5000
@@ -20,24 +20,24 @@
     shell: "/usr/sbin/nologin"
     system: true
 
-
 - name: Create the dovecot config
-  template:
+  ansible.builtin.template:
     src: dovecot.conf.j2
     dest: /etc/dovecot/dovecot.conf
+    mode: "0644"
   notify: restart dovecot
 
 - name: Create dovecot passwd file
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: "{{ dovecot_passwd_file }}"
     force: false
-    owner: 'root'
-    group: 'dovecot'
-    mode: '0650'
+    owner: "root"
+    group: "dovecot"
+    mode: "0650"
 
 - name: Add dovecot passwords
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ dovecot_passwd_file }}"
     regexp: "^{{ item.user }}"
     line: "{{ item.user }}:{plain}{{ item.password }}"
@@ -53,10 +53,10 @@
     interface: wg0
     direction: in
   with_items:
-  - imaps
+    - imaps
 
 - name: Ensure dovecot is started and enabled at boot.
   service:
     name: dovecot
     state: started
-    enabled: yes
+    enabled: true
