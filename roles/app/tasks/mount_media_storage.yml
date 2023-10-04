@@ -12,6 +12,7 @@
   template:
     src: systemd_mount_media.j2
     dest: "/etc/systemd/system/{{ external_media_storage_unitname }}.mount"
+    mode: 0644
 
 - name: Start NFS media mount
   ansible.builtin.systemd:
