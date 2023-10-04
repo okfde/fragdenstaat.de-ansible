@@ -1,5 +1,6 @@
 skip_list:
   - package-latest
+  - git-latest
   - line-length
 
 warn_list:
