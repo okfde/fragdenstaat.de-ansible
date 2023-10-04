@@ -34,7 +34,7 @@
 
 - name: Add custom webroot_map to renewal files
   community.general.ini_file:
-    section: "[webroot_map]"
+    section: "webroot_map"
     option: "{{ item[0] }}"
     value: "{{ letsencrypt_tmp_dir }}"
     dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
@@ -43,7 +43,7 @@
 
 - name: Add custom webroot_map to renewal for second domain
   community.general.ini_file:
-    section: "[webroot_map]"
+    section: "webroot_map"
     option: "{{ item[1] }}"
     value: "{{ letsencrypt_tmp_dir }}"
     dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
