@@ -1,52 +1,58 @@
 ---
 
 - name: Ensure software-properties-common installed
-  apt: name=software-properties-common state=latest
+  ansible.builtin.apt: name=software-properties-common state=latest
   register: certbot_repo_added
 
 - name: Install Certbot.
-  apt:
-    name: 
-    - certbot
-    - python3-certbot-nginx
+  ansible.builtin.apt:
+    pkg:
+      - certbot
+      - python3-certbot-nginx
     state: latest
 
 - name: Make letsencrypt tmp dir
-  file: path={{ letsencrypt_tmp_dir }} state=directory
+  ansible.builtin.file:
+    path: "{{ letsencrypt_tmp_dir }}"
+    state: directory
+    mode: "0755"
 
 - name: Generate cert for HTTPS domains
-  command: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
+  ansible.builtin.command: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
   args:
     creates: "{{ certbot_output_dir }}{{ item[0] }}"
   loop: "{{ https_domains }}"
 
 - name: Add renew_hooks
-  ini_file:
+  community.general.ini_file:
     section: renewalparams
     option: renew_hook
     value: "{{ letsencrypt_renew_hooks[item[0]] | default('systemctl reload nginx') }}"
     dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
+    mode: "0644"
   loop: "{{ https_domains }}"
 
 - name: Add custom webroot_map to renewal files
-  ini_file:
+  community.general.ini_file:
     section: "[webroot_map]"
     option: "{{ item[0] }}"
     value: "{{ letsencrypt_tmp_dir }}"
     dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
+    mode: "0644"
   loop: "{{ https_domains }}"
 
 - name: Add custom webroot_map to renewal for second domain
-  ini_file:
+  community.general.ini_file:
     section: "[webroot_map]"
     option: "{{ item[1] }}"
     value: "{{ letsencrypt_tmp_dir }}"
     dest: "/etc/letsencrypt/renewal/{{ item[0] }}.conf"
+    mode: "0644"
   when: item[1] is defined
   loop: "{{ https_domains }}"
 
 - name: Ensure a cron job to auto-renew the cert exists
-  cron:
+  ansible.builtin.cron:
     name: daily auto renew cert
     special_time: daily
     job: "{{ certbot_script }} renew"
