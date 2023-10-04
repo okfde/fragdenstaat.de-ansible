@@ -48,6 +48,7 @@
     path: "{{ virtualenv_path }}/build"
     state: "directory"
     owner: "{{ gunicorn_user }}"
+    mode: 0755
 
 - name: Setup yarn build script
   template:
@@ -59,6 +60,7 @@
   command: "{{ virtualenv_path }}/yarn-build.sh"
   become: true
   become_user: "{{ gunicorn_user }}"
+  changed_when: false
   tags:
     - deploy
     - deploy-frontend
