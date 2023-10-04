@@ -15,6 +15,7 @@
     state: directory
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
+    mode: 0755
 
 - name: Check that repo is already setup
   stat:
@@ -28,6 +29,7 @@
   when: collect_release_info and repo_setup.stat.exists
   tags:
     - release
+    - skip_ansible_lint
 
 - name: Record deployment start timestamp
   shell: date -Iseconds > {{ virtualenv_path }}/meta/deployment_start
@@ -52,3 +54,4 @@
   args:
     chdir: "{{ project_path }}"
   tags: git
+  changed_when: false
