@@ -29,6 +29,7 @@
     dest: "{{ onion_nginx_static_dir }}"
     owner: "{{ gunicorn_user }}"
     group: "www-data"
+    mode: 0755
   when: onion_service_enabled
   tags:
     - onion

@@ -20,26 +20,26 @@
 
 - name: Create hidden service directories
   file:
-      path: "/var/lib/tor/{{ service.key }}"
-      state: directory
-      owner: debian-tor
-      group: debian-tor
-      mode: "0700"
+    path: "/var/lib/tor/{{ service.key }}"
+    state: directory
+    owner: debian-tor
+    group: debian-tor
+    mode: "0700"
   with_dict: "{{ onion_services }}"
   loop_control:
-      loop_var: service
+    loop_var: service
   notify: restart tor
 
 - name: Write hostname
   copy:
-      content: "{{ service.value.hostname }}"
-      dest: "/var/lib/tor/{{ service.key }}/hostname"
-      owner: debian-tor
-      group: debian-tor
-      mode: "0600"
+    content: "{{ service.value.hostname }}"
+    dest: "/var/lib/tor/{{ service.key }}/hostname"
+    owner: debian-tor
+    group: debian-tor
+    mode: "0600"
   with_dict: "{{ onion_services }}"
   loop_control:
-      loop_var: service
+    loop_var: service
   notify: restart tor
 
 - name: Write local system_tor AppArmor profile.
@@ -87,6 +87,7 @@
   template:
     src: "supervisor_{{ item }}.j2"
     dest: "/etc/supervisor/conf.d/{{ item }}.conf"
+    mode: 0600
     backup: true
   with_items:
     - "app_gunicorn_onion"

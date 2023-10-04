@@ -10,7 +10,7 @@
   service:
     name: supervisor
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Create the Supervisor config file
   template:
