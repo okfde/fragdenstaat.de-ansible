@@ -42,7 +42,7 @@
 - name: Allow postgres on vlan network from replicas
   community.general.ufw:
     rule: allow
-    port: 5432
+    port: "5432"
     to_ip: "{{ host_data.site_ipv4 }}"
     from_ip: "{{ hostvars[item].host_data.site_ipv4 }}"
     proto: tcp
