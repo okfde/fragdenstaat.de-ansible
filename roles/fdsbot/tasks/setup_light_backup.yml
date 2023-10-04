@@ -1,29 +1,29 @@
 ---
 
 - name: create the dev cluster database
-  become: yes
+  ansible.builtin.command:
+    cmd: "pg_createcluster -p {{ fdsbot_db_light_port }} {{ pg_version }} {{ fdsbot_db_light_clustername }}"
+  become: true
   become_user: postgres
-  command: pg_createcluster -p {{ fdsbot_db_light_port }} {{ pg_version }} {{ fdsbot_db_light_clustername }}
   args:
     creates: "/etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}"
 
 - name: Add fdsbot user to database
-  become_user: postgres
-  postgresql_user:
+  ansible.builtin.postgresql_user:
     port: "{{ fdsbot_db_light_port }}"
     name: "{{ fdsbot_user }}"
     role_attr_flags: CREATEDB,SUPERUSER,CREATEROLE
     state: "present"
+  become_user: postgres
 
 - name: Add default user to database
-  become_user: postgres
-  postgresql_user:
+  ansible.builtin.postgresql_user:
     port: "{{ fdsbot_db_light_port }}"
     name: "{{ db_user }}"
     state: "present"
+  become_user: postgres
 
 - name: Grant fdsbot user peer access to cluster
-  become: true
   community.postgresql.postgresql_pg_hba:
     dest: /etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}/pg_hba.conf
     contype: host
@@ -35,14 +35,16 @@
   with_items:
     - "{{ fdsbot_db_light }}"
     - "{{ db_name }}"
+  become: true
 
 - name: Set fdsbot light dump scripts
-  template:
+  ansible.builtin.template:
     src: dump_light.sh.j2
     dest: "{{ fdsbot_backup_dir }}/dump_light.sh"
     mode: 0744
 
-- cron:
+- name: Create backup light cronjob
+  ansible.builtin.cron:
     name: "Run backup light script"
     minute: "30"
     hour: "7"
@@ -50,16 +52,16 @@
     user: fdsbot
 
 - name: Set fdsbot light backup server systemd service
-  template:
+  ansible.builtin.template:
     src: fdsbot_backup_server.service.j2
     dest: /etc/systemd/system/fdsbot_backup_server.service
     mode: 0444
 
 - name: Start fdsbot_backup_server service
-  systemd:
+  ansible.builtin.systemd:
     name: fdsbot_backup_server
     state: started
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Allow light backup server on VPN IP
   community.general.ufw:

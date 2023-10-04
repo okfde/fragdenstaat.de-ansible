@@ -1,25 +1,28 @@
 ---
 
 - name: Setup ansible Git repo
-  git:
+  ansible.builtin.git:
     repo: "{{ fdsbot_ansible_git_repo }}"
     dest: "{{ fdsbot_ansible_dir }}"
-    force: yes
+    force: true
   become_user: "{{ fdsbot_user }}"
 
 - name: Get Vault Key
-  copy:
+  ansible.builtin.copy:
     src: "../../../vault.key"
     dest: "{{ fdsbot_ansible_dir }}/vault.key"
+    mode: "0640"
   become_user: "{{ fdsbot_user }}"
 
 - name: Create the virtualenv
-  command: python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env
-           creates={{ fdsbot_ansible_dir }}/ansible-env/bin/activate
+  ansible.builtin.command:
+    cmd: "python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env"
+    creates: "{{ fdsbot_ansible_dir }}/ansible-env/bin/activate"
   become_user: "{{ fdsbot_user }}"
+  changed_when: false
 
 - name: Install ansible dependencies
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ fdsbot_ansible_dir }}/ansible-env"
     chdir: "{{ fdsbot_ansible_dir }}"
     requirements: "requirements.txt"
@@ -27,26 +30,28 @@
   become_user: "{{ fdsbot_user }}"
 
 - name: Upgrade ansible galaxy
-  command:
+  ansible.builtin.command:
     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
   become_user: "{{ fdsbot_user }}"
+  changed_when: false
 
 - name: Setup local config file
-  copy:
+  ansible.builtin.copy:
     src: "{{ fdsbot_ansible_dir }}/local_config.yml.example"
     remote_src: true
     dest: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+    mode: "0664"
   become_user: "{{ fdsbot_user }}"
 
 - name: Set ansible user in local config
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
     state: present
     regexp: '^ansible_user:'
     line: 'ansible_user: {{ fdsbot_user }}'
 
 - name: Setup fdsbot Git repo
-  git:
+  ansible.builtin.git:
     repo: "{{ fdsbot_git_repo }}"
     dest: "{{ fdsbot_dir }}"
     update: true
@@ -55,14 +60,14 @@
   notify: restart fdsbot
 
 - name: Set fdsbot systemd service
-  template:
+  ansible.builtin.template:
     src: fdsbot.service.j2
     dest: /etc/systemd/system/fdsbot.service
-    mode: 0444
+    mode: "0444"
   notify: restart fdsbot
 
 - name: Start fdsbot service
-  systemd:
+  ansible.builtin.systemd:
     name: fdsbot
     state: started
-    daemon_reload: yes
+    daemon_reload: true
