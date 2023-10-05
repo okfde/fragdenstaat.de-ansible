@@ -5,7 +5,7 @@
   become: true
   become_user: root
   roles:
-    # - docker
+    - docker
     - nginx
-    # - certbot
+    - certbot
     - weblate
