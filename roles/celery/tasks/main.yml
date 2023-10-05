@@ -13,6 +13,7 @@
     - celery
     - deploy
     - deploy-backend
+  changed_when: false
 
 - name: Update celery beat
   community.general.supervisorctl:
@@ -22,3 +23,4 @@
     - celery
     - deploy
     - deploy-backend
+  changed_when: false
