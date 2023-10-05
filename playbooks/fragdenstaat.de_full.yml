@@ -9,6 +9,10 @@
     - base
     - network
     - check_mk
+  tags:
+    - base
+    - network
+    - check_mk
 
 - name: Create db server
   hosts: db
@@ -17,6 +21,8 @@
   vars_files:
     - local_config.yml
   roles:
+    - db
+  tags:
     - db
 
 - name: Create mail server
@@ -39,6 +45,8 @@
     - local_config.yml
   roles:
     - elasticsearch
+  tags:
+    - elasticsearch
 
 - name: Create queue server
   hosts: queue
@@ -47,6 +55,8 @@
   vars_files:
     - local_config.yml
   roles:
+    - rabbitmq
+  tags:
     - rabbitmq
 
 - name: Create broker server
@@ -57,6 +67,8 @@
     - local_config.yml
   roles:
     - redis
+  tags:
+    - redis
 
 - name: Create cache server
   hosts: cache
@@ -65,6 +77,8 @@
   vars_files:
     - local_config.yml
   roles:
+    - memcached
+  tags:
     - memcached
 
 - name: Create media server
@@ -76,6 +90,10 @@
   roles:
     - certbot
     - nginx
+  tags:
+    - nginx
+    - certbot
+    - mediaserver
 
 - name: Create app server
   hosts: app
@@ -84,6 +102,9 @@
   vars_files:
     - local_config.yml
   roles:
+    - app
+    - appserver
+  tags:
     - app
     - appserver
 
@@ -96,6 +117,10 @@
   roles:
     - certbot
     - nginx
+  tags:
+    - nginx
+    - certbot
+    - webserver
 
 - name: Create worker server
   hosts: app
@@ -104,5 +129,8 @@
   vars_files:
     - local_config.yml
   roles:
+    - app
+    - celery
+  tags:
     - app
     - celery
