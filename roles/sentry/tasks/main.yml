@@ -84,6 +84,9 @@
     remote_src: true
     dest: "{{ sentry_dir }}/.env.custom"
     mode: "0644"
+  when: sentry_updated.changed
+  tags:
+    - skip_ansible_lint
 
 - name: Customize sentry env vars
   ansible.builtin.lineinfile:
