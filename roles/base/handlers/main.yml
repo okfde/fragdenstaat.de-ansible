@@ -1,9 +1,15 @@
 ---
 - name: restart ssh
-  service: name=ssh state=restarted
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
 
 - name: reload ufw
-  service: name=ufw state=reloaded
+  ansible.builtin.service:
+    name: ufw
+    state: reloaded
 
 - name: restart fail2ban
-  service: name=fail2ban state=restarted
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
