@@ -1,15 +1,15 @@
 ---
 
-- name: Add the RabbitMQ public GPG key to the apt repo
-  ansible.builtin.apt_key:
-    url: https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
-    state: present
+# - name: Add the RabbitMQ public GPG key to the apt repo
+#   ansible.builtin.apt_key:
+#     url: https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
+#     state: present
 
-- name: Add RabbitMQ to the sources list
-  ansible.builtin.apt_repository:
-    repo: 'deb https://www.rabbitmq.com/debian/ testing main'
-    update_cache: "{{ update_apt_cache }}"
-    state: present
+# - name: Add RabbitMQ to the sources list
+#   ansible.builtin.apt_repository:
+#     repo: 'deb https://www.rabbitmq.com/debian/ testing main'
+#     update_cache: "{{ update_apt_cache }}"
+#     state: present
 
 - name: Install RabbitMQ server
   ansible.builtin.apt:
