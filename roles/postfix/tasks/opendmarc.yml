@@ -23,7 +23,7 @@
 - name: Configure opendmarc
   ansible.builtin.lineinfile:
     path: "/etc/opendmarc.conf"
-    regex: "^(#)?{{ item.key }}"
+    regex: "^(#)?{{ item.key }} "
     line: "{{ item.key }} {{ item.value }}"
     state: present
   loop:
