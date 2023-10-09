@@ -1,7 +1,7 @@
 ---
 
 - name: Run Django database migrations
-  django_manage:
+  community.general.django_manage:
     command: "migrate --noinput"
     app_path: "{{ project_path }}"
     virtualenv: "{{ virtualenv_path }}"
@@ -15,7 +15,7 @@
   become_user: "{{ gunicorn_user }}"
 
 - name: Run Django compilemessages
-  command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
+  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
   args:
     chdir: "{{ item }}"
   with_items:

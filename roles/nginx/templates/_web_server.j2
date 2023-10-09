@@ -142,7 +142,7 @@ location = {{ path }} {
     proxy_cache_valid 10m;
     proxy_ignore_headers Expires;
     proxy_ignore_headers "Cache-Control";
-    
+
     add_header X-Proxy-Cache $upstream_cache_status;
 
     {{ add_web_headers() }}

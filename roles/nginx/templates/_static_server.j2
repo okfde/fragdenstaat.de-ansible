@@ -25,7 +25,7 @@
     {{ cors(web_server_url, null_fallback=True, repeat_headers=default_headers) }}
     {{ cors("http://localhost", repeat_headers=default_headers) }}
     {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
-    
+
 {%- endmacro %}
 
 expires $expires;

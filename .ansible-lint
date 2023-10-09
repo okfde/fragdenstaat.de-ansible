@@ -6,3 +6,6 @@ skip_list:
 warn_list:
   - yaml
   - ignore-errors
+
+exclude_paths:
+  - .pre-commit-config.yaml

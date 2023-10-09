@@ -48,7 +48,7 @@
         if ($http_origin = 'null') {
             add_header Access-Control-Allow-Origin {{ server_url }};
             add_header Access-Control-Allow-Headers "pragma, cache-control";
-            add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";            
+            add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";
             {{ repeat_headers }}
         }
     {% endif %}

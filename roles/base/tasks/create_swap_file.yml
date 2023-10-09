@@ -1,6 +1,7 @@
 - name: Create swap file
-  ansible.builtin.command: dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ swap_file_size_kb }}k
-           creates="{{ swap_file_path }}"
+  ansible.builtin.command:
+    cmd: "dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ swap_file_size_kb }}k"
+    creates: "{{ swap_file_path }}"
   tags: swap.file.create
 
 - name: Change swap file permissions
@@ -22,13 +23,14 @@
   tags: swap.file.mkswap
 
 - name: Write swap entry in fstab
-  ansible.builtin.mount: name=none
-         src={{ swap_file_path }}
-         fstype=swap
-         opts=sw
-         passno=0
-         dump=0
-         state=present
+  ansible.builtin.mount:
+    name: none
+    src: "{{ swap_file_path }}"
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: present
   tags: swap.fstab
 
 - name: Mount swap
