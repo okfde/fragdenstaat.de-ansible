@@ -1,6 +1,7 @@
 skip_list:
   - package-latest
   - git-latest
+  - line-length
   - yaml[line-length]
   - var-naming[no-role-prefix]
   - name[casing]
