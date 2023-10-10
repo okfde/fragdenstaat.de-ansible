@@ -1,10 +1,11 @@
 ---
+
 - name: Basic setup, networking, monitoring
   hosts: all
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - base
     - network
@@ -19,7 +20,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - db
   tags:
@@ -30,7 +31,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - postfix
     - dovecot
@@ -42,7 +43,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - elasticsearch
   tags:
@@ -53,7 +54,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - rabbitmq
   tags:
@@ -64,7 +65,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - redis
   tags:
@@ -75,7 +76,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - memcached
   tags:
@@ -86,7 +87,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - certbot
     - nginx
@@ -100,7 +101,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - app
     - appserver
@@ -113,7 +114,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - certbot
     - nginx
@@ -127,7 +128,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
   roles:
     - app
     - celery

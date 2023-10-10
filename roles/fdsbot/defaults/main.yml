@@ -6,8 +6,9 @@ fdsbot_ansible_git_repo: https://github.com/okfde/fragdenstaat.de-ansible.git
 fdsbot_dir: "/home/fdsbot/fdsbot"
 fdsbot_backup_dir: "/home/fdsbot/backups"
 fdsbot_backup_hosted_dir: "/home/fdsbot/backups/backup_light"
-fdsbot_backup_serve_port: 9000
+fdsbot_backup_serve_port: "9000"
 fdsbot_ansible_dir: "/home/fdsbot/fragdenstaat.de-ansible"
 fdsbot_db_light: fragdenstaat_de_light
-fdsbot_db_light_port: 5433
+fdsbot_db_light_port: "5433"
 fdsbot_db_light_clustername: dev
+pg_version: "14"

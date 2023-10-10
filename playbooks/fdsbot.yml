@@ -1,0 +1,8 @@
+---
+
+- name: Deploy fdsbot
+  hosts: fdsbot
+  become: true
+  become_user: root
+  roles:
+    - fdsbot

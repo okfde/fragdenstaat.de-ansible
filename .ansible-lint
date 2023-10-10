@@ -12,4 +12,3 @@ warn_list:
 
 exclude_paths:
   - .pre-commit-config.yaml
-  - ./playbooks/local_config.yml

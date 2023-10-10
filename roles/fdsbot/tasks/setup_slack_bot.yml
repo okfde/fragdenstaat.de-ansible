@@ -33,25 +33,46 @@
   become_user: "{{ fdsbot_user }}"
   become: true
 
-- name: Upgrade ansible galaxy
+- name: Upgrade ansible galaxy community.general
   ansible.builtin.command:
     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
   become_user: "{{ fdsbot_user }}"
   become: true
   changed_when: false
 
+- name: Upgrade ansible galaxy community.postgresql
+  ansible.builtin.command:
+    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.postgresql"
+  become_user: "{{ fdsbot_user }}"
+  become: true
+  changed_when: false
+
+- name: Upgrade ansible galaxy ansible.posix
+  ansible.builtin.command:
+    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U ansible.posix"
+  become_user: "{{ fdsbot_user }}"
+  become: true
+  changed_when: false
+
+- name: Upgrade ansible galaxy community.rabbitmq
+  ansible.builtin.command:
+    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.rabbitmq"
+  become_user: "{{ fdsbot_user }}"
+  become: true
+  changed_when: false
+
 - name: Setup local config file
   ansible.builtin.copy:
-    src: "{{ fdsbot_ansible_dir }}/local_config.yml.example"
+    src: "{{ fdsbot_ansible_dir }}/local_vars/local_config.yml.example"
     remote_src: true
-    dest: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+    dest: "{{ fdsbot_ansible_dir }}/local_vars/local_config.yml"
     mode: "0664"
   become_user: "{{ fdsbot_user }}"
   become: true
 
 - name: Set ansible user in local config
   ansible.builtin.lineinfile:
-    path: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
+    path: "{{ fdsbot_ansible_dir }}/local_vars/local_config.yml"
     state: present
     regexp: '^ansible_user:'
     line: 'ansible_user: {{ fdsbot_user }}'

@@ -3,7 +3,7 @@
   become: true
   become_user: root
   vars_files:
-    - local_config.yml
+    - ../local_vars/local_config.yml
 
   vars_prompt:
     - name: user_name
