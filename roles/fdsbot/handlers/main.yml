@@ -6,7 +6,8 @@
     state: restarted
 
 - name: reload light cluster postgresql config
-  become_user: postgres
   community.postgresql.postgresql_query:
     port: "{{ fdsbot_db_light_port }}"
     query: SELECT pg_reload_conf()
+  become_user: postgres
+  become: true

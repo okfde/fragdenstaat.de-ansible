@@ -1,37 +1,41 @@
 - name: Create reporting schema
-  become_user: postgres
   community.postgresql.postgresql_schema:
     db: "{{ db_name }}"
     name: "{{ db_reporting_schema }}"
+  become_user: postgres
+  become: true
 
 - name: Setup reporting views
-  become_user: postgres
   community.postgresql.postgresql_query:
     db: "{{ db_name }}"
     query: CREATE OR REPLACE VIEW {{ db_reporting_schema }}.{{ item.name }} AS {{ item.query }}
   with_items: "{{ db_reporting_views }}"
+  become_user: postgres
+  become: true
 
 - name: Ensure reporting user has access to the database
-  become_user: postgres
-  ansible.builtin.postgresql_user:
+  community.postgresql.postgresql_user:
     db: "{{ db_name }}"
     name: "{{ db_user_reporting }}"
     password: "{{ db_password_reporting }}"
     role_attr_flags: NOSUPERUSER,NOCREATEDB
     state: present
     encrypted: true
+  become_user: postgres
+  become: true
 
 - name: Ensure reporting user has no privileges
-  become_user: postgres
-  ansible.builtin.postgresql_privs:
+  community.postgresql.postgresql_privs:
     db: "{{ db_name }}"
     state: absent
     role: "{{ db_user_reporting }}"
     privs: ALL
     objs: ALL_IN_SCHEMA
+  become_user: postgres
+  become: true
 
 - name: Ensure reporting user has connect access to db
-  ansible.builtin.postgresql_privs:
+  community.postgresql.postgresql_privs:
     db: "{{ db_name }}"
     privs: CONNECT
     type: database
@@ -41,7 +45,7 @@
   become_user: postgres
 
 - name: Ensure reporting user has usage schema access to all tables in schema
-  ansible.builtin.postgresql_privs:
+  community.postgresql.postgresql_privs:
     db: "{{ db_name }}"
     privs: USAGE
     type: "schema"
@@ -52,7 +56,7 @@
   become_user: postgres
 
 - name: Ensure reporting user has select access to all tables in schema
-  ansible.builtin.postgresql_privs:
+  community.postgresql.postgresql_privs:
     db: "{{ db_name }}"
     privs: SELECT
     objs: ALL_IN_SCHEMA

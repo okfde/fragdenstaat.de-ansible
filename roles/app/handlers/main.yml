@@ -1,6 +1,6 @@
 ---
 - name: Trigger release notification
-  command: "{{ virtualenv_path }}/notify-release.sh"
+  ansible.builtin.command: "{{ virtualenv_path }}/notify-release.sh"
   become: true
   become_user: "{{ gunicorn_user }}"
   tags:
@@ -8,6 +8,7 @@
     - deploy-frontend
     - deploy-web
     - deploy-backend
+    - skip_ansible_lint
 
 - name: restart application
   community.general.supervisorctl:

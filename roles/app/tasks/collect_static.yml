@@ -1,7 +1,7 @@
 ---
 
 - name: Run Django collectstatic
-  django_manage:
+  community.general.django_manage:
     command: "collectstatic --noinput -v 0"
     app_path: "{{ project_path }}"
     virtualenv: "{{ virtualenv_path }}"

@@ -95,6 +95,7 @@
   ansible.builtin.command:
     cmd: "/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log"
   when: not mail_log_rotated.stat.exists
+  changed_when: false
 
 - name: configure smtp ports in firewall
   community.general.ufw:
@@ -106,8 +107,11 @@
     - ssmtp
     - submission
 
-- import_tasks: opendkim.yml
+- name: Import opendkim.yml
+  ansible.builtin.import_tasks: opendkim.yml
 
-- import_tasks: opendmarc.yml
+- name: Import opendmarc.yml
+  ansible.builtin.import_tasks: opendmarc.yml
 
-- import_tasks: spf.yml
+- name: Import spf.yml
+  ansible.builtin.import_tasks: spf.yml

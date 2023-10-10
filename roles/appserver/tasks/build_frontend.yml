@@ -1,35 +1,35 @@
 - name: Add node key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     state: present
 
 - name: Add node to the sources list
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb https://deb.nodesource.com/node_16.x focal main"
     update_cache: "{{ update_apt_cache }}"
     state: present
   when: ansible_distribution_version == "20.04"
 
-
 - name: Add node to the sources list
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb https://deb.nodesource.com/node_20.x jammy main"
     update_cache: "{{ update_apt_cache }}"
     state: present
   when: ansible_distribution_version == "22.04"
 
 - name: Add yarn key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://dl.yarnpkg.com/debian/pubkey.gpg
     state: present
 
 - name: Add yarn to the sources list
-  apt_repository: repo='deb https://dl.yarnpkg.com/debian/ stable main'
-                  update_cache={{ update_apt_cache }}
-                  state=present
+  ansible.builtin.apt_repository:
+    repo: "deb https://dl.yarnpkg.com/debian/ stable main"
+    update_cache: "{{ update_apt_cache }}"
+    state: present
 
 - name: Install node
-  apt:
+  ansible.builtin.apt:
     name:
       - nodejs
     update_cache: "{{ update_apt_cache }}"
@@ -37,27 +37,27 @@
   tags: packages
 
 - name: Install yarn
-  apt:
+  ansible.builtin.apt:
     name: yarn
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
 
 - name: Creates public directory
-  file:
+  ansible.builtin.file:
     path: "{{ virtualenv_path }}/build"
     state: "directory"
     owner: "{{ gunicorn_user }}"
-    mode: 0755
+    mode: "0755"
 
 - name: Setup yarn build script
-  template:
+  ansible.builtin.template:
     src: yarn-build.sh.j2
     dest: "{{ virtualenv_path }}/yarn-build.sh"
-    mode: 0755
+    mode: "0755"
 
 - name: Run yarn setup script
-  command: "{{ virtualenv_path }}/yarn-build.sh"
+  ansible.builtin.command: "{{ virtualenv_path }}/yarn-build.sh"
   become: true
   become_user: "{{ gunicorn_user }}"
   changed_when: false

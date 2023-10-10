@@ -1,14 +1,15 @@
 ---
 
 - name: Add replication user
-  become_user: postgres
-  ansible.builtin.postgresql_user:
+  community.postgresql.postgresql_user:
     db: "{{ db_name }}"
     name: "{{ db_user_replication }}"
     password: "{{ db_password_replication }}"
     role_attr_flags: replication
     state: "present"
     encrypted: true
+  become_user: postgres
+  become: true
 
 - name: Allow from all replica IPs
   ansible.builtin.lineinfile:
@@ -49,8 +50,9 @@
   with_items: "{{ groups['dbreplica'] }}"
 
 - name: Create replication slot if doesn't exist
-  become_user: postgres
   community.postgresql.postgresql_slot:
     slot_name: "{{ item.replace('.', '_') }}"
     db: "{{ db_name }}"
   with_items: "{{ groups['dbreplica'] }}"
+  become_user: postgres
+  become: true

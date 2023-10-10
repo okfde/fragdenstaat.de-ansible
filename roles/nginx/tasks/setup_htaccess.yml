@@ -15,22 +15,23 @@
   tags: packages
 
 - name: Create htpassword files
-  ansible.builtin.htpasswd:
+  community.general.htpasswd:
     path: "{{ virtualenv_path }}/conf/htpasswd_{{ item.realm }}"
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     owner: www-data
     group: www-data
-    mode: 0550
+    mode: "0550"
   with_items: "{{ htpasswd }}"
   notify: reload nginx
   tags:
     - nginx
 
 - name: Ensure that the file permissions for static are correct
-  file: path={{ django_static_root }}
-        recurse=yes
-        owner={{ gunicorn_user }}
-        group=www-data
-        mode=u=rwx,g=rx,o=r
-        state=directory
+  ansible.builtin.file:
+    path: "{{ django_static_root }}"
+    recurse: true
+    owner: "{{ gunicorn_user }}"
+    group: www-data
+    mode: u=rwx,g=rx,o=r
+    state: directory

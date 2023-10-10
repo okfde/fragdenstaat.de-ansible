@@ -1,6 +1,9 @@
 ---
 
 - name: Setup release notification script
-  template: src=notify-release.sh.j2 dest={{ virtualenv_path }}/notify-release.sh mode=0755
+  ansible.builtin.template:
+    src: notify-release.sh.j2
+    dest: "{{ virtualenv_path }}/notify-release.sh"
+    mode: "0755"
   tags:
     - release

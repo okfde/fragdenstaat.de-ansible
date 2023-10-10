@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure gunicorn is installed
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ virtualenv_path }}"
     # extra_args: --user
     name: "gunicorn"
@@ -9,21 +9,23 @@
   become_user: "{{ gunicorn_user }}"
 
 - name: Create the application log folder
-  file: path={{ application_log_dir }}
-        owner={{ gunicorn_user }}
-        group={{ gunicorn_group }}
-        mode=0774
-        state=directory
+  ansible.builtin.file:
+    path: "{{ application_log_dir }}"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    mode: "0774"
+    state: directory
 
 - name: Create the application log file
-  file: path={{ application_log_file }}
-        owner={{ gunicorn_user }}
-        group={{ gunicorn_group }}
-        mode=0664
-        state=touch
+  ansible.builtin.file:
+    path: "{{ application_log_file }}"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    mode: "0664"
+    state: touch
 
 - name: Create the gunicorn/uvicorn script file
-  template:
+  ansible.builtin.template:
     src: "{{ item }}_start.j2"
     dest: "{{ virtualenv_path }}/bin/{{ item }}_start"
     owner: "{{ gunicorn_user }}"

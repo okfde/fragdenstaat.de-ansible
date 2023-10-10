@@ -56,7 +56,7 @@
     - imaps
 
 - name: Ensure dovecot is started and enabled at boot.
-  service:
+  ansible.builtin.service:
     name: dovecot
     state: started
     enabled: true

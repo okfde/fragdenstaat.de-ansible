@@ -1,7 +1,9 @@
 skip_list:
   - package-latest
   - git-latest
-  - line-length
+  - yaml[line-length]
+  - var-naming[no-role-prefix]
+  - name[casing]
 
 warn_list:
   - yaml
@@ -9,3 +11,4 @@ warn_list:
 
 exclude_paths:
   - .pre-commit-config.yaml
+  - ./playbooks/local_config.yml

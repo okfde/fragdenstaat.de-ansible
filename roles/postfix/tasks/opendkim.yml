@@ -56,7 +56,7 @@
 
 - name: ensure signing key is present
   ansible.builtin.stat:
-    path: /etc/opendkim/keys/{{ dkim_selector }}.private
+    path: "/etc/opendkim/keys/{{ dkim_selector }}.private"
     get_md5: false
   register: dkim_key
 
@@ -66,9 +66,17 @@
   when: not dkim_key.stat.exists
   notify:
     - restart opendkim
+  changed_when: false
 
 - name: ensure signing key owner
-  ansible.builtin.file: path=/etc/opendkim/keys/{{ dkim_selector }}.private owner=opendkim group=opendkim mode=700
+  ansible.builtin.file:
+    path: "/etc/opendkim/keys/{{ dkim_selector }}.private"
+    owner: opendkim
+    group: opendkim
+    mode: "0700"
 
 - name: opendkim is started
-  ansible.builtin.service: name=opendkim state=started enabled=yes
+  ansible.builtin.service:
+    name: opendkim
+    state: started
+    enabled: true

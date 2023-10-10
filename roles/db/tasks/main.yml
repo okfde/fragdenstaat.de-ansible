@@ -1,16 +1,21 @@
 ---
 
-- import_tasks: install.yml
+- name: Import install.yml
+  ansible.builtin.import_tasks: install.yml
 
-- import_tasks: setup_db.yml
+- name: Import setup_db.yml
+  ansible.builtin.import_tasks: setup_db.yml
   when: inventory_hostname in groups['db']
 
 # TODO: Fix for fresh db before migrations happen?
-- import_tasks: setup_reporting.yml
+- name: Import setup_reporting.yml
+  ansible.builtin.import_tasks: setup_reporting.yml
   when: inventory_hostname in groups['db']
 
-- import_tasks: setup_replication.yml
+- name: Import setup_replication.yml
+  ansible.builtin.import_tasks: setup_replication.yml
   when: groups.get('dbreplica') and inventory_hostname in groups['db']
 
-- import_tasks: setup_replicas.yml
+- name: Import setup_replicas.yml
+  ansible.builtin.import_tasks: setup_replicas.yml
   when: inventory_hostname in groups.get('dbreplica', [])

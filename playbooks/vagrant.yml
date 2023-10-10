@@ -1,6 +1,6 @@
 ---
 
-- name: Create a {{ application_name }} virtual machine via vagrant
+- name: Create virtual machine via vagrant for {{ application_name }}
   hosts: all
   become: true
   remote_user: root

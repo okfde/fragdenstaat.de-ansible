@@ -4,7 +4,8 @@
   ansible.builtin.hostname:
     name: "{{ hostname }}"
 
-- import_tasks: create_swap_file.yml
+- name: Import create_swap_file.yml
+  ansible.builtin.import_tasks: create_swap_file.yml
   when: create_swap_file
   tags: swap
 
@@ -73,7 +74,8 @@
   tags: packages
   when: ansible_distribution_version == "22.04"
 
-- import_tasks: add_users.yml
+- name: Import add_users.yml
+  ansible.builtin.import_tasks: add_users.yml
 
 - name: Configure sshd
   ansible.builtin.lineinfile:
@@ -98,11 +100,14 @@
   notify:
     - reload ufw
 
-- import_tasks: setup_unattended_upgrades.yml
+- name: Import setup_unattended_upgrades.yml
+  ansible.builtin.import_tasks: setup_unattended_upgrades.yml
   when: enable_unattended_upgrades is defined and enable_unattended_upgrades
 
-- import_tasks: setup_uncomplicated_firewall.yml
+- name: Import setup_uncomplicated_firewall.yml
+  ansible.builtin.import_tasks: setup_uncomplicated_firewall.yml
   when: enable_ufw is defined and enable_ufw
 
-- import_tasks: setup_fail2ban.yml
+- name: Import setup_fail2ban.yml
+  ansible.builtin.import_tasks: setup_fail2ban.yml
   when: enable_fail2ban is defined and enable_fail2ban

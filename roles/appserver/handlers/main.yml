@@ -1,7 +1,7 @@
 ---
 
 - name: restart app server
-  supervisorctl:
+  community.general.supervisorctl:
     name: "{{ application_name }}_{{ item }}"
     state: restarted
   with_items:
@@ -11,7 +11,7 @@
     - restart memcached
 
 - name: restart onion app server
-  supervisorctl:
+  community.general.supervisorctl:
     name: "{{ application_name }}_{{ item }}_onion"
     state: restarted
   when: onion_service_enabled
@@ -22,17 +22,17 @@
     - restart memcached
 
 - name: restart memcached
-  service:
+  ansible.builtin.service:
     name: memcached
     state: restarted
     enabled: true
 
 - name: restart tor
-  service:
+  ansible.builtin.service:
     name: tor
     state: restarted
 
 - name: restart apparmor
-  service:
+  ansible.builtin.service:
     name: apparmor
     state: restarted

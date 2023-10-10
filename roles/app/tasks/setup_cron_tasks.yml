@@ -1,11 +1,11 @@
 - name: Add maintenance script
-  template:
+  ansible.builtin.template:
     src: maintenance.sh.j2
     dest: "{{ virtualenv_path }}/maintenance.sh"
     mode: "0755"
 
 - name: Add maintenance script cronjob
-  cron:
+  ansible.builtin.cron:
     name: "Run maintenance script"
     minute: "0"
     hour: "2"

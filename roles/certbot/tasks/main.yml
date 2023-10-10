@@ -1,7 +1,9 @@
 ---
 
 - name: Ensure software-properties-common installed
-  ansible.builtin.apt: name=software-properties-common state=latest
+  ansible.builtin.apt:
+    name: software-properties-common
+    state: latest
   register: certbot_repo_added
 
 - name: Install Certbot.
@@ -18,10 +20,13 @@
     mode: "0755"
 
 - name: Generate cert for HTTPS domains
-  ansible.builtin.command: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
+  ansible.builtin.command:
+    cmd: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
   args:
     creates: "{{ certbot_output_dir }}{{ item[0] }}"
   loop: "{{ https_domains }}"
+  tags:
+    - skip_ansible_lint
 
 - name: Add renew_hooks
   community.general.ini_file:

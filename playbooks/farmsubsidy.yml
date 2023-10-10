@@ -4,8 +4,6 @@
   hosts: farmsubsidyapi_backend
   become: true
   become_user: root
-  vars:
-    - update_apt_cache: true
   roles:
     - docker
     - nginx

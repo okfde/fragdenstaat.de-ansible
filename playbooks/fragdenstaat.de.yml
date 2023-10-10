@@ -8,7 +8,7 @@
   pre_tasks:
     - name: Send Slack notification message on start deployment
       become: false
-      slack:
+      community.general.slack:
         token: '{{ slack_token }}'
         msg: 'Deployment start on {{ inventory_hostname }}'
         username: fds-bot
@@ -30,7 +30,7 @@
   post_tasks:
     - name: Send Slack notification message on finished deployment
       become: false
-      slack:
+      community.general.slack:
         token: '{{ slack_token }}'
         msg: 'Deployment finished on {{ inventory_hostname }}'
         username: fds-bot

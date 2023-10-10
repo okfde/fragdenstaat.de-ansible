@@ -1,6 +1,7 @@
 ---
 
-- import_tasks: 'install.yml'
+- name: Import install.yml
+  ansible.builtin.import_tasks: 'install.yml'
 
 - name: Check if HTTPS certificates exist
   ansible.builtin.stat:
@@ -12,8 +13,8 @@
     - config_update
 
 - name: Set HTTPS certificate facts
-  set_fact:
-    active_https_domains: "{{ active_https_domains|default({}) | combine( {item.item: item.stat.exists} ) }}"
+  ansible.builtin.set_fact:
+    active_https_domains: "{{ active_https_domains | default({}) | combine({item.item: item.stat.exists}) }}"
   with_items: "{{ https_cert_check.results }}"
   tags:
     - nginx
@@ -21,7 +22,7 @@
 
 - name: "Active https domains"
   ansible.builtin.debug:
-    var=active_https_domains
+    var: active_https_domains
 
 - name: Create the Nginx web configuration file
   ansible.builtin.template:
@@ -129,5 +130,6 @@
   tags:
     - nginx
 
-- import_tasks: 'setup_htaccess.yml'
+- name: Import setup_htaccess.yml
+  ansible.builtin.import_tasks: 'setup_htaccess.yml'
   when: inventory_hostname in groups['web']

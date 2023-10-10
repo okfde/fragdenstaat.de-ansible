@@ -1,8 +1,10 @@
 ---
 
-- import_tasks: copy_scripts.yml
+- name: Import copy_scripts.yml
+  ansible.builtin.import_tasks: copy_scripts.yml
 
-- import_tasks: setup_supervisor.yml
+- name: Import setup_supervisor.yml
+  ansible.builtin.import_tasks: setup_supervisor.yml
 
 - name: Update celery workers
   community.general.supervisorctl:

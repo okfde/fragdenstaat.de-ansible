@@ -24,7 +24,7 @@
       changed_when: true
 
     - name: Include role vars
-      include_vars: "../roles/wireguard/defaults/main.yml"
+      ansible.builtin.include_vars: "../roles/wireguard/defaults/main.yml"
 
     - name: Load vpn client list
       ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
@@ -40,27 +40,27 @@
       ansible.builtin.set_fact:
         max_peer_id: "{{ vpn_clientgroups.0.peers | map(attribute='peer_id') | max }}"
 
-    - name: set new VPN peer id
+    - name: Set new VPN peer id
       ansible.builtin.set_fact:
         peer_id: "{{ max_peer_id | int | default(0) + 1 }}"
 
     - name: Fail when peer id too large
       ansible.builtin.fail:
         msg: "Peer id {{ peer_id }} too large! Please cleanup client list or set peer id manually!"
-      when: peer_id|int >= 200
+      when: peer_id | int >= 200
 
     - name: Make peer config
       ansible.builtin.template:
         src: "../roles/wireguard/templates/client.conf.j2"
         dest: "../FDS_VPN_{{ client_name }}.conf"
-        mode: 0640
+        mode: "0640"
       delegate_to: localhost
 
     - name: Store peer config
       ansible.builtin.template:
         src: "../roles/wireguard/templates/clientgroups.yml.j2"
         dest: "../env_vars/vpnclients.yml"
-        mode: 0640
+        mode: "0640"
       delegate_to: localhost
 
     - name: Encrypt vpn client list

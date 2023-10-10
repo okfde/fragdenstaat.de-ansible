@@ -9,19 +9,21 @@
     creates: "/etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}"
 
 - name: Add fdsbot user to database
-  ansible.builtin.postgresql_user:
+  community.postgresql.postgresql_user:
     port: "{{ fdsbot_db_light_port }}"
     name: "{{ fdsbot_user }}"
     role_attr_flags: CREATEDB,SUPERUSER,CREATEROLE
     state: "present"
   become_user: postgres
+  become: true
 
 - name: Add default user to database
-  ansible.builtin.postgresql_user:
+  community.postgresql.postgresql_user:
     port: "{{ fdsbot_db_light_port }}"
     name: "{{ db_user }}"
     state: "present"
   become_user: postgres
+  become: true
 
 - name: Grant fdsbot user peer access to cluster
   community.postgresql.postgresql_pg_hba:
@@ -41,7 +43,7 @@
   ansible.builtin.template:
     src: dump_light.sh.j2
     dest: "{{ fdsbot_backup_dir }}/dump_light.sh"
-    mode: 0744
+    mode: "0744"
 
 - name: Create backup light cronjob
   ansible.builtin.cron:
@@ -55,7 +57,7 @@
   ansible.builtin.template:
     src: fdsbot_backup_server.service.j2
     dest: /etc/systemd/system/fdsbot_backup_server.service
-    mode: 0444
+    mode: "0444"
 
 - name: Start fdsbot_backup_server service
   ansible.builtin.systemd:

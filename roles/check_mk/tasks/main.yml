@@ -2,6 +2,7 @@
   ansible.builtin.get_url:
     url: "{{ cmk_site_url }}/check_mk/agents/check-mk-agent_{{ cmk_version }}-1_all.deb"
     dest: "/tmp"
+    mode: "0644"
 
 - name: Ensure downloaded file exists
   ansible.builtin.stat:
@@ -22,7 +23,8 @@
     state: present
   when: check_mk_agent_download.stat.exists
 
-- include_tasks: install_plugin.yml
+- name: Import install_plugin.yml
+  ansible.builtin.include_tasks: install_plugin.yml
   loop:
     - "{{ cmk_host_plugins }}"
   loop_control:
@@ -34,7 +36,8 @@
     removes: /etc/apt/apt.conf.d/20apt-esm-hook.conf
     creates: /etc/apt/apt.conf.d/20apt-esm-hook.conf.disabled
 
-- include_tasks: install_plugin.yml
+- name: Include install_plugin.yml
+  ansible.builtin.include_tasks: install_plugin.yml
   loop: "{{ group_names | map('extract', cmk_group_plugins) | list | select('defined') }}"
   loop_control:
     loop_var: cmk_plugins

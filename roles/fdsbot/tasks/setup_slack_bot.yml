@@ -6,6 +6,7 @@
     dest: "{{ fdsbot_ansible_dir }}"
     force: true
   become_user: "{{ fdsbot_user }}"
+  become: true
 
 - name: Get Vault Key
   ansible.builtin.copy:
@@ -13,12 +14,14 @@
     dest: "{{ fdsbot_ansible_dir }}/vault.key"
     mode: "0640"
   become_user: "{{ fdsbot_user }}"
+  become: true
 
 - name: Create the virtualenv
   ansible.builtin.command:
     cmd: "python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env"
     creates: "{{ fdsbot_ansible_dir }}/ansible-env/bin/activate"
   become_user: "{{ fdsbot_user }}"
+  become: true
   changed_when: false
 
 - name: Install ansible dependencies
@@ -28,11 +31,13 @@
     requirements: "requirements.txt"
     state: latest
   become_user: "{{ fdsbot_user }}"
+  become: true
 
 - name: Upgrade ansible galaxy
   ansible.builtin.command:
     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
   become_user: "{{ fdsbot_user }}"
+  become: true
   changed_when: false
 
 - name: Setup local config file
@@ -42,6 +47,7 @@
     dest: "{{ fdsbot_ansible_dir }}/playbooks/local_config.yml"
     mode: "0664"
   become_user: "{{ fdsbot_user }}"
+  become: true
 
 - name: Set ansible user in local config
   ansible.builtin.lineinfile:
@@ -57,6 +63,7 @@
     update: true
     force: true
   become_user: "{{ fdsbot_user }}"
+  become: true
   notify: restart fdsbot
 
 - name: Set fdsbot systemd service

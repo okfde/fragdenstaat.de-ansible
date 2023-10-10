@@ -1,7 +1,10 @@
 ---
 
-- import_tasks: setup_user.yml
+- name: Import setup_user.yml
+  ansible.builtin.import_tasks: setup_user.yml
 
-- import_tasks: setup_slack_bot.yml
+- name: Import setup_slack_bot.yml
+  ansible.builtin.import_tasks: setup_slack_bot.yml
 
-- import_tasks: setup_light_backup.yml
+- name: Import setup_light_backup.yml
+  ansible.builtin.import_tasks: setup_light_backup.yml

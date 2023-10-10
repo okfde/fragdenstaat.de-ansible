@@ -1,7 +1,7 @@
 ---
 
 - name: Install duplicity dependencies
-  apt:
+  ansible.builtin.apt:
     name:
       - librsync-dev
       - lftp
@@ -10,40 +10,40 @@
   tags: packages
 
 - name: Install duplicity from pip
-  pip:
+  ansible.builtin.pip:
     name: duplicity
     state: latest
   become: true
 
 - name: Do not verify SSL certificate
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/lftp.conf
     line: "set ssl:verify-certificate no"
 
 - name: Create the folder for the backup files
-  file:
+  ansible.builtin.file:
     path: "{{ virtualenv_path }}/backup"
     owner: root
     state: directory
-    mode: 0755
+    mode: "0755"
   tags: backup
 
 - name: Place backup script
-  template:
+  ansible.builtin.template:
     src: backup.sh.j2
     dest: /usr/local/bin/backup.sh
-    mode: 0600
+    mode: "0600"
   tags: backup
 
 - name: Setup cron script
-  cron:
+  ansible.builtin.cron:
     name: "Run backup script"
     minute: "0"
     hour: "5"
     job: "sh /usr/local/bin/backup.sh"
 
 - name: set mailto env in cron
-  cron:
+  ansible.builtin.cron:
     user: root
     name: MAILTO
     env: true
@@ -53,8 +53,8 @@
     - cron
 
 - name: Create custom backup log rotation file
-  template:
+  ansible.builtin.template:
     src: fds_backup_logrotate.j2
     dest: "/etc/logrotate.d/{{ application_name }}_backup"
-    mode: 0600
+    mode: "0600"
     backup: true

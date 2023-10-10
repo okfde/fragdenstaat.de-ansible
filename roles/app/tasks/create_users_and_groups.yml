@@ -1,26 +1,26 @@
 ---
 
 - name: Create the application user
-  user:
+  ansible.builtin.user:
     name: "{{ gunicorn_user }}"
     uid: "{{ gunicorn_user_uid }}"
     state: present
 
 - name: Create the application group
-  group:
+  ansible.builtin.group:
     name: "{{ gunicorn_group }}"
     gid: "{{ gunicorn_group_gid }}"
     system: true
     state: present
 
 - name: Add the application user to the application group
-  user:
+  ansible.builtin.user:
     name: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
     state: present
 
 - name: Adding user www-data to {{ gunicorn_group }}
-  user:
+  ansible.builtin.user:
     name: "www-data"
     groups: "{{ gunicorn_group }}"
     append: true

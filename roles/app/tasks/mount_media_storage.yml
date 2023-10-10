@@ -1,7 +1,7 @@
 ---
 
 - name: Install NFS client
-  apt:
+  ansible.builtin.apt:
     name:
       - nfs-common
     update_cache: "{{ update_apt_cache }}"
@@ -9,10 +9,10 @@
     state: present
 
 - name: Write systemd mount for NFS media
-  template:
+  ansible.builtin.template:
     src: systemd_mount_media.j2
     dest: "/etc/systemd/system/{{ external_media_storage_unitname }}.mount"
-    mode: 0644
+    mode: "0644"
 
 - name: Start NFS media mount
   ansible.builtin.systemd:

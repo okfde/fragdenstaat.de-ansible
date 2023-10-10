@@ -1,19 +1,19 @@
 ---
 
 - name: Install Supervisor
-  apt:
+  ansible.builtin.apt:
     name: supervisor
     update_cache: "{{ update_apt_cache }}"
     state: present
 
 - name: Ensure supervisor service is started
-  service:
+  ansible.builtin.service:
     name: supervisor
     state: started
     enabled: true
 
 - name: Create the Supervisor config file
-  template:
+  ansible.builtin.template:
     src: "supervisor_{{ item }}.j2"
     dest: "/etc/supervisor/conf.d/{{ item }}.conf"
     backup: true

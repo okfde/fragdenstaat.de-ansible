@@ -1,12 +1,13 @@
 ---
 
 - name: restart postgresql
-  service:
+  ansible.builtin.service:
     name: postgresql
     state: restarted
     enabled: true
 
 - name: reload postgresql config
   become_user: postgres
+  become: true
   community.postgresql.postgresql_query:
     query: SELECT pg_reload_conf()

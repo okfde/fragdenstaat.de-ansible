@@ -129,4 +129,5 @@
     state: link
   notify: reload nginx
 
-- import_tasks: setup_backup.yml
+- name: Import setup_backup.yml
+  ansible.builtin.import_tasks: setup_backup.yml

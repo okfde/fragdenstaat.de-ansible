@@ -1,11 +1,12 @@
 ---
 
 - name: Ensure that the application file permissions are set properly
-  ansible.builtin.file: path={{ virtualenv_path }}/{{ item }}
-        recurse=yes
-        owner={{ gunicorn_user }}
-        group={{ gunicorn_group }}
-        state=directory
+  ansible.builtin.file:
+    path: "{{ virtualenv_path }}/{{ item }}"
+    recurse: true
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    state: directory
   with_items:
     - bin
     - include

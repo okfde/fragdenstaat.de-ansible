@@ -48,7 +48,7 @@
     state: started
     enabled: true
 
-- name: ensure language packages are installed
+- name: Ensure language packages are installed
   ansible.builtin.apt:
     name:
       - language-pack-en
@@ -58,7 +58,8 @@
   register: locale_exists
 
 - name: Ensure locale exists
-  locale_gen: name={{ item }}
+  community.general.locale_gen:
+    name: "{{ item }}"
   with_items:
     - en_US.UTF-8
 

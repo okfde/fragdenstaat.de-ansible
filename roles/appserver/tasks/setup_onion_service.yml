@@ -1,10 +1,10 @@
 - name: Disable tor socks port
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/tor/torrc
     line: "SocksPort 0"
 
 - name: Add torrc hidden services
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/tor/torrc
     block: |
       HiddenServiceDir /var/lib/tor/{{ service.key }}/
@@ -19,7 +19,7 @@
   notify: restart tor
 
 - name: Create hidden service directories
-  file:
+  ansible.builtin.file:
     path: "/var/lib/tor/{{ service.key }}"
     state: directory
     owner: debian-tor
@@ -31,7 +31,7 @@
   notify: restart tor
 
 - name: Write hostname
-  copy:
+  ansible.builtin.copy:
     content: "{{ service.value.hostname }}"
     dest: "/var/lib/tor/{{ service.key }}/hostname"
     owner: debian-tor
@@ -43,7 +43,7 @@
   notify: restart tor
 
 - name: Write local system_tor AppArmor profile.
-  template:
+  ansible.builtin.template:
     src: apparmor_system_tor.j2
     dest: "/etc/apparmor.d/local/system_tor"
     owner: root
@@ -52,14 +52,13 @@
   notify: restart apparmor
 
 - name: Start tor
-  service:
+  ansible.builtin.service:
     name: tor
     state: started
     enabled: true
-    masked: false
 
 - name: Create the onion application log file
-  file:
+  ansible.builtin.file:
     path: "{{ application_log_dir }}/gunicorn_onion_supervisor.log"
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
@@ -67,7 +66,7 @@
     state: touch
 
 - name: Create the onion gunicorn/uvicorn script file
-  template:
+  ansible.builtin.template:
     src: "{{ item }}_onion_start.j2"
     dest: "{{ virtualenv_path }}/bin/{{ item }}_onion_start"
     owner: "{{ gunicorn_user }}"
@@ -84,10 +83,10 @@
     - deploy-web
 
 - name: Create the Supervisor config file
-  template:
+  ansible.builtin.template:
     src: "supervisor_{{ item }}.j2"
     dest: "/etc/supervisor/conf.d/{{ item }}.conf"
-    mode: 0600
+    mode: "0600"
     backup: true
   with_items:
     - "app_gunicorn_onion"

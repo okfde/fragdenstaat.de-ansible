@@ -13,7 +13,7 @@
     mode: "0644"
 
 - name: Automatically remove unused dependencies
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
     regexp: "Unattended-Upgrade::Remove-Unused-Dependencies"
     line: "Unattended-Upgrade::Remove-Unused-Dependencies \"true\";"

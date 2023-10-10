@@ -8,7 +8,7 @@
     update_cache: true
 
 - name: Enable IPv4 traffic forwarding
-  ansible.builtin.sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
     sysctl_set: true
@@ -41,6 +41,7 @@
     chdir: /etc/wireguard/keys
   register: key_files
   when: wg0_conf is not defined or not wg0_conf.stat.exists
+  changed_when: false
 
 - name: cat privatekey => var_privatekey
   ansible.builtin.command:
@@ -59,7 +60,7 @@
   changed_when: false
 
 - name: Add vars vpn client
-  include_vars: ../env_vars/vpnclients.yml
+  ansible.builtin.include_vars: ../env_vars/vpnclients.yml
 
 - name: Generate server config
   ansible.builtin.template:

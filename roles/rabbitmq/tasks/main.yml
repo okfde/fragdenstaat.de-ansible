@@ -21,7 +21,7 @@
     - rabbitmq-server
 
 - name: Enable the RabbitMQ Management Console
-  ansible.builtin.rabbitmq_plugin:
+  community.rabbitmq.rabbitmq_plugin:
     names: rabbitmq_management
     state: enabled
   notify: restart rabbitmq-server
@@ -32,6 +32,8 @@
     state: started
     enabled: true
 
-- import_tasks: setup_vhosts.yml
+- name: Import setup_vhosts.yml
+  ansible.builtin.import_tasks: setup_vhosts.yml
 
-- import_tasks: setup_users.yml
+- name: Import setup_users.yml
+  ansible.builtin.import_tasks: setup_users.yml

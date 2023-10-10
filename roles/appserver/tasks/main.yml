@@ -1,20 +1,24 @@
 ---
 
-- import_tasks: setup_gunicorn.yml
+- name: Import setup_gunicorn.yml
+  ansible.builtin.import_tasks: setup_gunicorn.yml
 
-- import_tasks: setup_supervisor.yml
+- name: Import setup_supervisor.yml
+  ansible.builtin.import_tasks: setup_supervisor.yml
   tags: supervisor
 
-- import_tasks: setup_onion_service.yml
+- name: Import setup_onion_service.yml
+  ansible.builtin.import_tasks: setup_onion_service.yml
   when: onion_service_enabled
   tags:
     - onion
 
-- import_tasks: build_frontend.yml
+- name: Import build_frontend.yml
+  ansible.builtin.import_tasks: build_frontend.yml
 
 # Run collect static
 - name: Run collect static
-  include_role:
+  ansible.builtin.include_role:
     name: app
     tasks_from: collect_static
   tags:
@@ -29,7 +33,7 @@
     dest: "{{ onion_nginx_static_dir }}"
     owner: "{{ gunicorn_user }}"
     group: "www-data"
-    mode: 0755
+    mode: "0755"
   when: onion_service_enabled
   tags:
     - onion
@@ -38,10 +42,11 @@
     - deploy-frontend
 
 - name: Fix-up all static URLs in css files
-  command:
+  ansible.builtin.command:
     cmd: "find . -name '*.css' -exec sed -i -e 's@{{ static_asset_path }}@{{ onion_static_url }}@g' {} \\;"
     chdir: "{{ onion_nginx_static_dir }}"
   when: onion_service_enabled
+  changed_when: false
   tags:
     - onion
     - deploy

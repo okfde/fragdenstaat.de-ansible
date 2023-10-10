@@ -1,37 +1,37 @@
 ---
 
 - name: Install virtualenv
-  pip:
+  ansible.builtin.pip:
     name: virtualenv
   tags: packages
 
 - name: Create the virtualenv
-  command:
+  ansible.builtin.command:
     cmd: "virtualenv -p python3.8 {{ virtualenv_path }}"
     creates: "{{ virtualenv_path }}/bin/activate"
   when: ansible_distribution_version == "20.04"
 
 - name: Create the virtualenv
-  command:
+  ansible.builtin.command:
     cmd: virtualenv -p python3.10 {{ virtualenv_path }}
     creates: "{{ virtualenv_path }}/bin/activate"
   when: ansible_distribution_version == "22.04"
 
 - name: Set ownership of app directory
-  file:
+  ansible.builtin.file:
     path: "{{ virtualenv_path }}"
     state: directory
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_user }}"
-    mode: 0755
+    mode: "0755"
 
 - name: Create the virtualenv postactivate script to set environment variables
-  template:
+  ansible.builtin.template:
     src: virtualenv_postactivate.j2
     dest: "{{ virtualenv_path }}/bin/postactivate"
     owner: "{{ gunicorn_user }}"
     group: "{{ gunicorn_group }}"
-    mode: 0640
+    mode: "0640"
     backup: true
   tags:
     - deploy

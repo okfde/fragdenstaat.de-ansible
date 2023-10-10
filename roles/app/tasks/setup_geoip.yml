@@ -32,6 +32,7 @@
   ansible.builtin.command:
     cmd: "{{ django_geoip_path }}/update-maxmind.sh"
   become_user: "{{ gunicorn_user }}"
+  become: true
   changed_when: false
 
 - name: apt | ensure cron is installed

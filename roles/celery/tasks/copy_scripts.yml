@@ -1,11 +1,12 @@
 ---
 
 - name: Create the folder for the celery scripts
-  ansible.builtin.file: path={{ celery_scripts_dir }}
-        owner={{ celery_user }}
-        group={{ celery_group }}
-        mode=0774
-        state=directory
+  ansible.builtin.file:
+    path: "{{ celery_scripts_dir }}"
+    owner: "{{ celery_user }}"
+    group: "{{ celery_group }}"
+    mode: "0774"
+    state: directory
   tags:
     - celery
 

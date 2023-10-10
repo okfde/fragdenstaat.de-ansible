@@ -1,7 +1,7 @@
 ---
 
 - name: Create the Supervisor config file for celery workers
-  template:
+  ansible.builtin.template:
     src: supervisor_celery.conf.j2
     dest: "/etc/supervisor/conf.d/{{ item.name }}.conf"
     mode: "0600"
@@ -10,7 +10,7 @@
     - celery
 
 - name: Create the Supervisor config file for celerybeat
-  template:
+  ansible.builtin.template:
     src: supervisor_celerybeat.conf.j2
     dest: /etc/supervisor/conf.d/celerybeat.conf
     mode: "0600"
@@ -18,7 +18,7 @@
     - celery
 
 - name: Create the celery log directory
-  file:
+  ansible.builtin.file:
     path: "{{ celery_log_dir }}"
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
@@ -28,7 +28,7 @@
     - celery
 
 - name: Create the celery worker log files
-  file:
+  ansible.builtin.file:
     path: "{{ celery_log_dir }}/celery_{{ item.name }}.log"
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
@@ -39,7 +39,7 @@
     - celery
 
 - name: Create the celery beat application log file
-  file:
+  ansible.builtin.file:
     path: "{{ celerybeat_log_file }}"
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"

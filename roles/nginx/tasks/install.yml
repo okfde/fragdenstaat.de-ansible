@@ -9,7 +9,8 @@
 
 - name: Ensure that a strong Diffie-Hellman group is used
   ansible.builtin.command:
-    cmd: "openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096 creates=/etc/ssl/certs/dhparams.pem"
+    cmd: "openssl dhparam -dsaparam -out /etc/ssl/certs/dhparams.pem 4096"
+    creates: "/etc/ssl/certs/dhparams.pem"
   when: nginx_strong_dh_group is defined and nginx_strong_dh_group
 
 - name: Overwrite the nginx.conf file

@@ -1,7 +1,7 @@
 ---
 
 - name: Create a vhost for the application
-  ansible.builtin.rabbitmq_vhost:
+  community.rabbitmq.rabbitmq_vhost:
     name: "{{ rabbitmq_application_vhost }}"
     node: "{{ rabbitmq_node }}"
     state: present

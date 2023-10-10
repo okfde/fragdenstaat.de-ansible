@@ -1,6 +1,6 @@
 ---
 
 - name: restart farmsubsidy
-  service:
+  ansible.builtin.service:
     name: farmsubsidy
     state: restarted
