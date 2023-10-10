@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 ## Configure your SSH user
 
-Copy `playbooks/local_config.yml.example` to `playbooks/local_config.yml` and set your SSH username.
+Copy `local_vars/local_config.yml.example` to `local_vars/local_config.yml` and set your SSH username.
 
 ## Deploy FragDenStaat.de
 
