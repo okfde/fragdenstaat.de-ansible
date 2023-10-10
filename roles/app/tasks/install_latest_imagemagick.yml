@@ -14,3 +14,5 @@
   ansible.builtin.apt:
     pkg: imagemagick
     state: present
+  retries: 30
+  delay: 10

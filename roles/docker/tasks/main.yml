@@ -17,13 +17,23 @@
     state: present
   when: ansible_distribution_version == "22.04"
 
+# TODO: Ensure that latest version of docker-ce will work without problems
 - name: Update apt and install docker-ce
   ansible.builtin.apt:
     pkg:
       - "docker-ce=5:20.10.23~3-0~ubuntu-focal"
+    update_cache: true
+  retries: 30
+  delay: 10
+
+- name: Update apt and install docker-ce-cli
+  ansible.builtin.apt:
+    pkg:
       - "docker-ce-cli"
       - "containerd.io"
       - "docker-compose-plugin"
       - "apparmor-utils"
     state: latest
     update_cache: true
+  retries: 30
+  delay: 10

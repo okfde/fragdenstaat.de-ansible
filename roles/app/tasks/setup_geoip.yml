@@ -14,6 +14,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
+  retries: 30
+  delay: 10
 
 - name: Maxmind directory
   ansible.builtin.file:
@@ -39,6 +41,8 @@
   ansible.builtin.apt:
     name: cron
     state: present
+  retries: 30
+  delay: 10
 
 - name: cron task to update daily
   ansible.builtin.cron:

@@ -5,6 +5,8 @@
       - opendkim
       - opendkim-tools
     state: present
+  retries: 30
+  delay: 10
 
 - name: opendkim socket configured
   ansible.builtin.lineinfile:

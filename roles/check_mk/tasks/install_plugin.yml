@@ -25,3 +25,5 @@
     state: present
   when: item.pkg is defined
   loop: "{{ cmk_plugins }}"
+  retries: 30
+  delay: 10

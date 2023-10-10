@@ -25,6 +25,8 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
+  retries: 30
+  delay: 10
 
 - name: Install PostgreSQL (22.04)
   ansible.builtin.apt:
@@ -40,7 +42,8 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "22.04"
-
+  retries: 30
+  delay: 10
 
 - name: Ensure the PostgreSQL service is running
   ansible.builtin.service:
@@ -56,6 +59,8 @@
     state: latest
     update_cache: "{{ update_apt_cache }}"
   register: locale_exists
+  retries: 30
+  delay: 10
 
 - name: Ensure locale exists
   community.general.locale_gen:

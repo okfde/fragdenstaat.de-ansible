@@ -19,6 +19,8 @@
     state: present
   with_items:
     - rabbitmq-server
+  retries: 30
+  delay: 10
 
 - name: Enable the RabbitMQ Management Console
   community.rabbitmq.rabbitmq_plugin:

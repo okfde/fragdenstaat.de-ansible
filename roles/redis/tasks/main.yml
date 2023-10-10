@@ -8,6 +8,8 @@
   tags:
     - packages
     - redis
+  retries: 30
+  delay: 10
 
 - name: Ensure Redis is supervised by systemd
   ansible.builtin.lineinfile:

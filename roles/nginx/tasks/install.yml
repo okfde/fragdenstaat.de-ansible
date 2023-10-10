@@ -6,6 +6,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
+  retries: 30
+  delay: 10
 
 - name: Ensure that a strong Diffie-Hellman group is used
   ansible.builtin.command:

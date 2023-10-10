@@ -26,6 +26,8 @@
     update_cache: "{{ update_apt_cache }}"
     force: true
     state: present
+  retries: 30
+  delay: 10
 
 - name: Upgrade pip
   ansible.builtin.pip:
@@ -90,6 +92,8 @@
     name: libreoffice
     state: latest
     update_cache: true
+  retries: 30
+  delay: 10
 
 - name: Install Tor
   ansible.builtin.apt:
@@ -97,3 +101,5 @@
     state: latest
     update_cache: true
   when: onion_service_enabled
+  retries: 30
+  delay: 10

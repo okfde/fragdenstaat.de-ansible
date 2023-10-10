@@ -8,6 +8,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
+  retries: 30
+  delay: 10
 
 - name: Install duplicity from pip
   ansible.builtin.pip:

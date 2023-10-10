@@ -8,6 +8,8 @@
       - postfix-pcre
       - postfix-policyd-spf-python
     state: present
+  retries: 30
+  delay: 10
 
 - name: Ensure postfix is started and enabled at boot.
   ansible.builtin.service:

@@ -2,6 +2,8 @@
   ansible.builtin.apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     state: present
+  retries: 30
+  delay: 10
 
 - name: Add node to the sources list
   ansible.builtin.apt_repository:
@@ -35,6 +37,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
+  retries: 30
+  delay: 10
 
 - name: Install yarn
   ansible.builtin.apt:
@@ -42,6 +46,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
+  retries: 30
+  delay: 10
 
 - name: Creates public directory
   ansible.builtin.file:

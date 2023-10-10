@@ -5,6 +5,8 @@
     name: supervisor
     update_cache: "{{ update_apt_cache }}"
     state: present
+  retries: 30
+  delay: 10
 
 - name: Ensure supervisor service is started
   ansible.builtin.service:

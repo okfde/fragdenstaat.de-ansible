@@ -5,6 +5,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
     pkg: fail2ban
+  retries: 30
+  delay: 10
 
 - name: Set up fail2ban
   ansible.builtin.command:

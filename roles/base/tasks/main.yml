@@ -32,6 +32,8 @@
   changed_when: false
   tags:
     - skip_ansible_lint
+  retries: 30
+  delay: 10
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
   ansible.builtin.apt:
@@ -43,6 +45,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: latest
   tags: packages
+  retries: 30
+  delay: 10
 
 - name: Install base packages 20.04
   ansible.builtin.apt:
@@ -58,6 +62,8 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "20.04"
+  retries: 30
+  delay: 10
 
 - name: Install base packages 22.04
   ansible.builtin.apt:
@@ -73,6 +79,8 @@
     state: present
   tags: packages
   when: ansible_distribution_version == "22.04"
+  retries: 30
+  delay: 10
 
 - name: Import add_users.yml
   ansible.builtin.import_tasks: add_users.yml

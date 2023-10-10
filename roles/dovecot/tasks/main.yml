@@ -4,6 +4,8 @@
   ansible.builtin.apt:
     name: dovecot-imapd
     state: latest
+  retries: 30
+  delay: 10
 
 - name: Create group used in passwdfile
   ansible.builtin.group:

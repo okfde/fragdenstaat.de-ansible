@@ -4,6 +4,8 @@
     name:
       - opendmarc
     state: present
+  retries: 30
+  delay: 10
 
 - name: mkdir /etc/opendmarc
   ansible.builtin.file:

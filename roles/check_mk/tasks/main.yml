@@ -15,6 +15,8 @@
   ansible.builtin.apt:
     pkg: python3
     state: present
+  retries: 30
+  delay: 10
 
 - name: Install check_mk agent
   become: true
@@ -22,6 +24,8 @@
     deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
     state: present
   when: check_mk_agent_download.stat.exists
+  retries: 30
+  delay: 10
 
 - name: Import install_plugin.yml
   ansible.builtin.include_tasks: install_plugin.yml

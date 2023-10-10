@@ -14,6 +14,8 @@
     force: true
     state: present
   when: ansible_distribution_version == "20.04"
+  retries: 30
+  delay: 10
 
 - name: Install poppler on Jammy
   ansible.builtin.apt:
@@ -22,6 +24,8 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   when: ansible_distribution_version == "22.04"
+  retries: 30
+  delay: 10
 
 - name: Setup poppler build script
   ansible.builtin.template:
