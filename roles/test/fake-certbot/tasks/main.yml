@@ -1,0 +1,50 @@
+- name: Generate fake certs private key
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/fake-certificate.key
+
+- name: Create self-signed certificate
+  community.crypto.x509_certificate:
+    path: /etc/ssl/fake-certificate.pem
+    privatekey_path: /etc/ssl/fake-certificate.key
+    provider: selfsigned
+
+- name: Create letsencrypt directory
+  ansible.builtin.file:
+    state: directory
+    path: /etc/letsencrypt
+    mode: "0755"
+
+- name: Create certbot_output_dir
+  ansible.builtin.file:
+    state: directory
+    path: "{{ certbot_output_dir }}"
+    mode: "0755"
+
+- name: Create cert directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ certbot_output_dir }}/{{ item }}"
+    mode: "0755"
+  with_items: "{{ https_domains }}"
+
+- name: Copy fake certs
+  ansible.builtin.copy:
+    src: /etc/ssl/fake-certificate.pem
+    dest: "{{ certbot_output_dir }}/{{ item }}/fullchain.pem"
+    remote_src: true
+    mode: "0644"
+  with_items: "{{ https_domains }}"
+
+- name: Copy fake keys
+  ansible.builtin.copy:
+    src: /etc/ssl/fake-certificate.key
+    dest: "{{ certbot_output_dir }}/{{ item }}/privkey.pem"
+    remote_src: true
+    mode: "0640"
+  with_items: "{{ https_domains }}"
+
+- name: Create letsencrypt options-ssl-nginx.conf
+  ansible.builtin.copy:
+    src: options-ssl-nginx.conf
+    dest: /etc/letsencrypt/options-ssl-nginx.conf
+    mode: "0644"

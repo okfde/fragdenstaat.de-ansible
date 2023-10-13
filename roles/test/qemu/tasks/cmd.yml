@@ -1,0 +1,25 @@
+# mdadm --create /dev/md2 --level=1 --raid-devices=2 /dev/sda /dev/sdb
+# mkfs.ext4 -m0 /dev/md2
+# vgcreate vg1 /dev/md2
+# lvcreate -n images -L 900G vg1
+# mkfs.ext4 -m0 /dev/vg1/images
+# mount /dev/vg1/images /var/lib/libvirt/images/
+# mcedit /etc/fstab
+# virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
+# virsh pool-autostart default
+# virsh pool-start default
+# lvcreate -n isos -L 32G vg0
+# mkfs.ext4 -m0 /dev/vg0/isos
+# mkdir /opt/qemu/isos
+# mount /dev/vg0/isos /opt/qemu/isos
+# mcedit /etc/fstab
+# virsh pool-define-as --name isos --type dir --target /opt/qemu/isos
+# virsh pool-autostart isos
+# virsh pool-start isos
+# cd /opt/qemu/isos
+# wget https://releases.ubuntu.com/focal/ubuntu-20.04.6-live-server-amd64.iso
+# wget https://releases.ubuntu.com/jammy/ubuntu-22.04.3-live-server-amd64.iso
+# virt-install --name brooke --memory 24576 --vcpus 8 --location /opt/qemu/isos/ubuntu-20.04.6-live-server-amd64.iso --disk size=200 --graphics none --extra-args 'console=tty0 console=ttyS=,115200n8 --- console=tty0 console=ttyS0,115200n8'
+# virt-install --name schaar --memory 8192 --vcpus 4 --location /opt/qemu/isos/ubuntu-20.04.6-live-server-amd64.iso --disk size=100 --graphics none --extra-args 'console=tty0 console=ttyS=,115200n8 --- console=tty0 console=ttyS0,115200n8'
+# virt-install --name schoch --memory 4096 --vcpus 4 --location /opt/qemu/isos/ubuntu-20.04.6-live-server-amd64.iso --disk size=300 --graphics none --extra-args 'console=tty0 console=ttyS=,115200n8 --- console=tty0 console=ttyS0,115200n8'
+# virt-install --name es01 --memory 24576 --vcpus 4 --location /opt/qemu/isos/ubuntu-22.04.3-live-server-amd64.iso --disk size=100 --graphics none --extra-args 'console=tty0 console=ttyS=,115200n8 --- console=tty0 console=ttyS0,115200n8'

@@ -1,0 +1,14 @@
+- name: Install VM toolchain
+  ansible.builtin.apt:
+    pkg:
+      - qemu-kvm
+      - qemu-system
+      - qemu-system-x86
+      - qemu-utils
+      - libvirt0
+      - libvirt-clients
+      - libvirt-daemon
+      - libvirt-daemon-system
+      - guestfs-tools
+      - virtinst
+      - python3-libvirt

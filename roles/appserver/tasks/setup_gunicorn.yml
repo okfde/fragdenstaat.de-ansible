@@ -16,6 +16,11 @@
     mode: "0774"
     state: directory
 
+- name: Check if application log file exists
+  ansible.builtin.stat:
+    path: "{{ application_log_file }}"
+  register: app_log
+
 - name: Create the application log file
   ansible.builtin.file:
     path: "{{ application_log_file }}"
@@ -23,6 +28,7 @@
     group: "{{ gunicorn_group }}"
     mode: "0664"
     state: touch
+  when: "not app_log.stat.exists"
 
 - name: Create the gunicorn/uvicorn script file
   ansible.builtin.template:

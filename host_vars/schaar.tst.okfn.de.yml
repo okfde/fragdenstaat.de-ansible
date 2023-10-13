@@ -1,0 +1,23 @@
+---
+host_data:
+  region: unknown
+  datacenter: unknown
+  interface_name: enp1s0
+  mac: 52:54:00:f8:b7:5e
+  global_ipv4: 192.168.122.178
+  global_ipv6: none
+  site_ipv4: 192.168.122.178
+
+email_host: "127.0.0.1"
+foi_email_host: "127.0.0.1"
+bounce_email_host: "127.0.0.1"
+unsubscribe_email_host: "127.0.0.1"
+gunicorn_user_uid: "1111"
+onion_service_enabled: false
+external_media_storage: false
+
+sentry_domain: ""
+sentry_url: ""
+sentry_webhook_url: ""
+django_sentry_dsn: ""
+django_sentry_public_dsn: ""

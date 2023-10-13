@@ -27,16 +27,30 @@
   tags:
     - celery
 
+- name: Check if celery worker log files exists
+  ansible.builtin.stat:
+    path: "{{ celery_log_dir }}/celery_{{ item.name }}.log"
+  register: worker_logs
+  with_items: "{{ celery_workers }}"
+
 - name: Create the celery worker log files
   ansible.builtin.file:
-    path: "{{ celery_log_dir }}/celery_{{ item.name }}.log"
+    path: "{{ celery_log_dir }}/celery_{{ item.0.name }}.log"
     owner: "{{ celery_user }}"
     group: "{{ celery_group }}"
     state: "touch"
     mode: "0644"
-  with_items: "{{ celery_workers }}"
+  with_nested:
+    - "{{ celery_workers }}"
+    - "{{ worker_logs.results }}"
   tags:
     - celery
+  when: "not item.1.stat.exists"
+
+- name: Check if celery beat log files exists
+  ansible.builtin.stat:
+    path: "{{ celerybeat_log_file }}"
+  register: beat_log
 
 - name: Create the celery beat application log file
   ansible.builtin.file:
@@ -47,6 +61,7 @@
     mode: "0644"
   tags:
     - celery
+  when: "not beat_log.stat.exists"
 
 - name: Add celery workers
   community.general.supervisorctl:

@@ -52,6 +52,7 @@
     hour: "7"
     job: "bash {{ fdsbot_backup_dir }}/dump_light.sh"
     user: fdsbot
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Set fdsbot light backup server systemd service
   ansible.builtin.template:

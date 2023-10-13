@@ -9,6 +9,7 @@
   tags:
     - release_tag
     - skip_ansible_lint
+  changed_when: false
 
 - name: Install packages required by the Django app inside virtualenv
   ansible.builtin.pip:

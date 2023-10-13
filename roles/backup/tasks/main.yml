@@ -43,6 +43,7 @@
     minute: "0"
     hour: "5"
     job: "sh /usr/local/bin/backup.sh"
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: set mailto env in cron
   ansible.builtin.cron:

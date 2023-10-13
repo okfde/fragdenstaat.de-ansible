@@ -38,3 +38,4 @@
     minute: "0"
     hour: "20"
     job: "bash /usr/local/bin/backup_sentry.sh"
+  when: "not 'tst.okfn.de' in inventory_hostname"

@@ -53,6 +53,12 @@
         name: xinetd
         state: present
 
+    - name: Create xinetd config for check_mk
+      ansible.builtin.copy:
+        src: check_mk_xinetd
+        dest: /etc/xinetd.d/check_mk
+        mode: "0644"
+
     - name: Limit check_mk xinetd service
       ansible.builtin.lineinfile:
         path: /etc/xinetd.d/check_mk

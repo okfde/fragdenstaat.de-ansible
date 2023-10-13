@@ -1,0 +1,13 @@
+---
+
+- name: vmbase
+  hosts: vms
+  become: true
+  become_user: root
+  vars_files:
+    - ../../local_vars/local_config.yml
+
+  roles:
+    - role: test/fake-certbot
+      tags: certbot
+      when: "https_domains is defined"

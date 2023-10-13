@@ -38,3 +38,4 @@
     minute: "0"
     hour: "5"
     job: "bash /usr/local/bin/backup_weblate.sh"
+  when: "not 'tst.okfn.de' in inventory_hostname"

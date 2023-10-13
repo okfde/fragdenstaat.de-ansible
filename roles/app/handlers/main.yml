@@ -16,3 +16,9 @@
     state: restarted
   notify:
     - restart memcached
+
+- name: restart memcached
+  ansible.builtin.service:
+    name: memcached
+    state: restarted
+  changed_when: false

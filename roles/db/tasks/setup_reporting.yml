@@ -12,6 +12,7 @@
   with_items: "{{ db_reporting_views }}"
   become_user: postgres
   become: true
+  ignore_errors: true
 
 - name: Ensure reporting user has access to the database
   community.postgresql.postgresql_user:

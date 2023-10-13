@@ -84,6 +84,7 @@
 
 - name: Import add_users.yml
   ansible.builtin.import_tasks: add_users.yml
+  tags: add_users
 
 - name: Configure sshd
   ansible.builtin.lineinfile:

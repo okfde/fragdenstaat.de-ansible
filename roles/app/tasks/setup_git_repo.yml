@@ -31,6 +31,7 @@
   tags:
     - release
     - skip_ansible_lint
+  changed_when: false
 
 - name: Record deployment start timestamp
   ansible.builtin.shell: date -Iseconds > {{ virtualenv_path }}/meta/deployment_start

@@ -37,3 +37,4 @@
     group: www-data
     mode: u=rwx,g=rx,o=r
     state: directory
+  changed_when: false

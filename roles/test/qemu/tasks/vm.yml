@@ -1,0 +1,38 @@
+- name: Check if VM image exists
+  ansible.builtin.stat:
+    path: "/opt/qemu/disks/{{ item.name }}.qcow2"
+  register: stat_result
+  with_items: "{{ vms }}"
+
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ stat_result }}"
+
+- name: Copy VM base image
+  ansible.builtin.copy:
+    src: "/opt/qemu/isos/{{ item.0.os }}-server-cloudimg-amd64-disk-kvm.img"
+    dest: "/opt/qemu/disks/{{ item.0.name }}.qcow2"
+    mode: "0640"
+    owner: libvirt-qemu
+    group: kvm
+    remote_src: true
+  with_nested:
+    - "{{ vms }}"
+    - "{{ stat_result.results }}"
+  when: "not item.1.stat.exists"
+
+- name: Define vm from xml and set autostart
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
+    autostart: true
+  with_items: "{{ vms }}"
+
+- name: Get VM list
+  community.libvirt.virt:
+    command: list_vms
+  register: all_vms
+
+- name: Print VM list
+  ansible.builtin.debug:
+    msg: "{{ all_vms }}"

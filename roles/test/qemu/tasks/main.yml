@@ -1,0 +1,9 @@
+- name: Include qemu.yml
+  ansible.builtin.include_tasks: qemu.yml
+
+# TODO: This is not working, yet
+# To create a new VM use:
+# virt-install --name $VMNAME --memory 4096 --vcpus 2 --location /opt/qemu/isos/$ISOIMAGE --disk size=16 --graphics none --extra-args 'console=tty0 console=ttyS=,115200n8 --- console=tty0 console=ttyS0,115200n8'
+- name: Include vm.yml
+  ansible.builtin.include_tasks: vm.yml
+  when: false

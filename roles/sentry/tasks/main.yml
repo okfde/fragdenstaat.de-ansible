@@ -13,6 +13,7 @@
   when: sentry_updated.changed
   tags:
     - skip_ansible_lint
+  ignore_errors: true
 
 - name: "Install sentry"
   ansible.builtin.command:
@@ -22,12 +23,20 @@
   tags:
     - skip_ansible_lint
 
+- name: Create sentry www-directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ sentry_dir }}"
+    mode: "0755"
+
 - name: Set sentry config options
   ansible.builtin.lineinfile:
     path: "{{ sentry_dir }}/sentry/config.yml"
     regex: "^(#)?{{ item.key }}"
     line: "{{ item.key }}: {{ item.value | replace('\n', '\\n') }}"
     state: present
+    create: true
+    mode: "0644"
   loop:
     - key: "github-app.id"
       value: "{{ sentry_github_app_id }}"
@@ -66,6 +75,8 @@
     regex: "^(#)? ?{{ item.key }} ="
     line: "{{ item.key }} = {{ item.value }}"
     state: present
+    create: true
+    mode: "0644"
   loop:
     - key: "SENTRY_BEACON"
       value: "False"
@@ -92,6 +103,8 @@
   ansible.builtin.lineinfile:
     path: "{{ sentry_dir }}/.env.custom"
     line: "{{ item }}"
+    create: true
+    mode: "0644"
   loop:
     - "SENTRY_MAIL_HOST={{ sentry_domain }}"
     - "SENTRY_EVENT_RETENTION_DAYS=90"

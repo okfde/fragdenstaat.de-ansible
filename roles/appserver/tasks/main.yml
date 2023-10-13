@@ -69,6 +69,7 @@
     - deploy-backend
     - deploy-frontend
     - deploy-web
+  changed_when: false
 
 - name: Reload Onion application
   community.general.supervisorctl:

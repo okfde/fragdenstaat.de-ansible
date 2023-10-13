@@ -5,6 +5,7 @@ skip_list:
   - yaml[line-length]
   - var-naming[no-role-prefix]
   - name[casing]
+  - role-name[path]
 
 warn_list:
   - yaml

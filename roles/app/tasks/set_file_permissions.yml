@@ -29,7 +29,7 @@
     path: "{{ virtualenv_path }}/storage"
     state: directory
     owner: "{{ gunicorn_user }}"
-    mode: "0755"
+    mode: "02750"
   when: not external_media_storage
 
 - name: Creates storage sub-directory

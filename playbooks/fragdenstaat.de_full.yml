@@ -7,13 +7,14 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
-    - base
-    - network
-    - check_mk
-  tags:
-    - base
-    - network
-    - check_mk
+    - role: base
+      tags: base
+    - role: network
+      tags: network
+      when: "not 'tst.okfn.de' in inventory_hostname"
+    - role: check_mk
+      tags: check_mk
+      when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Create db server
   hosts: db
@@ -22,9 +23,8 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
-    - db
-  tags:
-    - db
+    - role: db
+      tags: db
 
 - name: Create mail server
   hosts: mail
@@ -33,10 +33,15 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
-    - postfix
-    - dovecot
-  tags:
-    - mail
+    - role: postfix
+      tags: postfix
+      when: "not 'tst.okfn.de' in inventory_hostname"
+    - role: test/postfix
+      tags: postfix
+      when: "'tst.okfn.de' in inventory_hostname"
+    - role: dovecot
+      tags: dovecot
+  tags: mail
 
 - name: Create search server
   hosts: search
@@ -89,12 +94,15 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
-    - certbot
-    - nginx
-  tags:
-    - nginx
-    - certbot
-    - mediaserver
+    - role: nginx
+      tags: nginx
+    - role: certbot
+      tags: certbot
+      when: "not 'tst.okfn.de' in inventory_hostname"
+    - role: test/fake-certbot
+      tags: certbot
+      when: "'tst.okfn.de' in inventory_hostname"
+  tags: mediaserver
 
 - name: Create app server
   hosts: app
@@ -116,12 +124,15 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
-    - certbot
-    - nginx
-  tags:
-    - nginx
-    - certbot
-    - webserver
+    - role: nginx
+      tags: nginx
+    - role: certbot
+      tags: certbot
+      when: "not 'tst.okfn.de' in inventory_hostname"
+    - role: test/fake-certbot
+      tags: certbot
+      when: "'tst.okfn.de' in inventory_hostname"
+  tags: webserver
 
 - name: Create worker server
   hosts: app
@@ -130,8 +141,10 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
-    - app
-    - celery
+    - role: app
+      tags: app
+    - role: celery
+      tags: celery
   tags:
     - app
     - celery

@@ -36,6 +36,11 @@
     state: directory
     mode: "2750"
 
+- name: Check that heapsize option file exists
+  ansible.builtin.stat:
+    path: "/etc/elasticsearch/jvm.options.d/heapsize.options"
+  register: heapsize_file
+
 - name: Create heapsize option file
   ansible.builtin.file:
     path: /etc/elasticsearch/jvm.options.d/heapsize.options
@@ -43,6 +48,7 @@
     group: elasticsearch
     mode: '0644'
     state: touch
+  when: "not heapsize_file.stat.exists"
 
 - name: Apply heapsize start tuning for systems with greater than 64G memory
   ansible.builtin.lineinfile:
