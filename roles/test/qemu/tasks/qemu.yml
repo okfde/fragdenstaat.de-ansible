@@ -12,3 +12,9 @@
       - guestfs-tools
       - virtinst
       - python3-libvirt
+
+- name: Create network config template
+  ansible.builtin.copy:
+    src: network.conf
+    dest: /opt/qemu/templates/50-cloud-init.yaml
+    mode: "0600"

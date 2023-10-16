@@ -1,11 +1,21 @@
 vms:
   - name: brooke
-    vcpus: 4
-    ram: 4096
-    hdd: 16G
+    vcpus: 8
+    ram: 24576
+    hdd: 200G
     os: focal
   - name: schaar
     vcpus: 4
-    ram: 4096
-    hdd: 16G
+    ram: 8192
+    hdd: 100G
     os: focal
+  - name: schoch
+    vcpus: 4
+    ram: 4096
+    hdd: 300G
+    os: focal
+  - name: es01
+    vcpus: 4
+    ram: 24576
+    hdd: 100G
+    os: jammy

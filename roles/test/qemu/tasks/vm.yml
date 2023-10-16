@@ -1,38 +1,54 @@
+- name: "Print VM info"
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+
 - name: Check if VM image exists
   ansible.builtin.stat:
-    path: "/opt/qemu/disks/{{ item.name }}.qcow2"
-  register: stat_result
-  with_items: "{{ vms }}"
+    path: "/var/lib/libvirt/images/{{ item.name }}.qcow2"
+    get_checksum: false
+  register: vmdisk
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ stat_result }}"
+- name: Create VM base image
+  ansible.builtin.command:
+    cmd: |
+      qemu-img create -f raw /var/lib/libvirt/images/{{ item.name }}.qcow2 {{ item.hdd }}
+  when: "not vmdisk.stat.exists"
+  changed_when: false
 
-- name: Copy VM base image
-  ansible.builtin.copy:
-    src: "/opt/qemu/isos/{{ item.0.os }}-server-cloudimg-amd64-disk-kvm.img"
-    dest: "/opt/qemu/disks/{{ item.0.name }}.qcow2"
-    mode: "0640"
-    owner: libvirt-qemu
-    group: kvm
-    remote_src: true
-  with_nested:
-    - "{{ vms }}"
-    - "{{ stat_result.results }}"
-  when: "not item.1.stat.exists"
+- name: Set file permissions
+  ansible.builtin.file:
+    path: "/var/lib/libvirt/images/{{ item.name }}.qcow2"
+    owner: "libvirt-qemu"
+    group: "kvm"
+    mode: "0600"
 
-- name: Define vm from xml and set autostart
-  community.libvirt.virt:
-    command: define
-    xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
-    autostart: true
-  with_items: "{{ vms }}"
+- name: Resize VM image
+  ansible.builtin.command:
+    cmd: |
+      virt-resize --expand /dev/sda1 /opt/qemu/isos/{{ item.os }}-server-cloudimg-amd64-disk-kvm.img /var/lib/libvirt/images/{{ item.name }}.qcow2
+  when: "not vmdisk.stat.exists"
+  changed_when: false
+
+- name: Configure VM
+  ansible.builtin.shell:
+    cmd: |
+      virt-customize -a "/var/lib/libvirt/images/{{ item.name }}.qcow2" \
+        --hostname "{{ item.name }}" \
+        --root-password "password:{{ vm_root_password }}" \
+        --selinux-relabel --network \
+        --copy-in "/opt/qemu/templates/50-cloud-init.yaml:/etc/netplan/" \
+        --firstboot-command "chmod 600 /etc/netplan/50-cloud-init.yaml;netplan apply"
+  when: "not vmdisk.stat.exists"
+  changed_when: false
 
 - name: Get VM list
   community.libvirt.virt:
     command: list_vms
   register: all_vms
 
-- name: Print VM list
-  ansible.builtin.debug:
-    msg: "{{ all_vms }}"
+- name: Define vm from xml and set autostart
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
+    autostart: true
+  when: "item.name not in all_vms.list_vms"
