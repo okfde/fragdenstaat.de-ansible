@@ -1,6 +1,6 @@
 ---
 
-- name: Base
+- name: Host Base
   hosts: qemu
   become: true
   become_user: root
@@ -14,3 +14,5 @@
       tags: checkmk
     - role: test/qemu
       tags: qemu
+    - role: test/nginx
+      tags: nginx

@@ -1,0 +1,55 @@
+- name: "Install nginx"
+  ansible.builtin.apt:
+    name: nginx
+  notify:
+    - "Restart nginx"
+
+- name: "Generate dh params"
+  ansible.builtin.command: /usr/bin/openssl dhparam -out /etc/ssl/dhparams.pem 4096
+  args:
+    creates: /etc/ssl/dhparams.pem
+
+- name: Generate fake certs private key
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/fake-certificate.key
+
+- name: Create self-signed certificate
+  community.crypto.x509_certificate:
+    path: /etc/ssl/fake-certificate.pem
+    privatekey_path: /etc/ssl/fake-certificate.key
+    provider: selfsigned
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Create default docroot
+  ansible.builtin.file:
+    path: /var/www/html/default
+    state: directory
+    mode: "0755"
+    owner: "www-data"
+    group: "www-data"
+
+- name: "Configure nginx"
+  ansible.builtin.template:
+    dest: /etc/nginx/nginx.conf
+    src: templates/nginx.conf.j2
+    mode: "0640"
+  notify:
+    - "Reload nginx"
+
+- name: "Configure sites"
+  ansible.builtin.template:
+    dest: "/etc/nginx/sites-enabled/{{ item }}"
+    src: "files/{{ item }}"
+    mode: "0640"
+  loop: "{{ nginx_sites if nginx_sites is iterable and nginx_sites is not string else [] }}"
+  notify:
+    - "Reload nginx"
+
+- name: Configure firewall
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - "80"
+    - "443"

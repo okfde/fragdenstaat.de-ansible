@@ -1,0 +1,25 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    server_name _;
+
+    root /var/www/html/default/;
+
+    index index.html index.htm;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/html/;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        if ($ssl_protocol = "") {
+            return 301 https://$host$request_uri;
+        }
+        try_files $uri $uri/ =404;
+    }
+}

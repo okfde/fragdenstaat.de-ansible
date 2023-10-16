@@ -1,0 +1,77 @@
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+	worker_connections 768;
+	# multi_accept on;
+}
+
+http {
+
+	map $http_upgrade $connection_upgrade {
+		default upgrade;
+		''      close;
+	}
+
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+
+	client_max_body_size {{ nginx_client_max_body_size }};
+	server_tokens {{ nginx_server_tokens }};
+	gzip {{ nginx_gzip }};
+
+	ssl_certificate {{ nginx_ssl_default_cert }};
+	ssl_certificate_key {{ nginx_ssl_default_cert_key }};
+	ssl_trusted_certificate {{ nginx_ssl_default_trusted_cert}};
+
+	ssl_session_timeout {{ nginx_ssl_session_timeout }};
+	ssl_session_cache {{ nginx_ssl_session_cache }};
+	ssl_session_tickets {{ nginx_ssl_session_tickets }};
+	ssl_dhparam {{ nginx_dhparam }};
+
+	ssl_protocols {{ nginx_tls_protocols }};
+	ssl_ciphers {{ nginx_ciphers }};
+	ssl_prefer_server_ciphers {{ nginx_prefer_server_ciphers }};
+
+	ssl_stapling {{ nginx_ocsp_stapling }};
+	ssl_stapling_verify {{ nginx_ocsp_stapling_verify }};
+	resolver {{ nginx_resolver }};
+
+{% for header in nginx_headers %}
+	add_header {{ header }};
+{% endfor %}
+
+	proxy_cache_path {{ nginx_proxy_path }};
+	proxy_redirect {{ nginx_proxy_redirect }};
+	proxy_intercept_errors {{ nginx_proxy_intercept_errors }};
+	proxy_read_timeout {{ nginx_proxy_read_timeout }};
+	proxy_ignore_client_abort {{ nginx_proxy_ignore_client_abort }};
+	proxy_connect_timeout {{ nginx_proxy_connect_timeout }};
+
+	proxy_buffer_size {{ nginx_proxy_buffer_size }};
+	proxy_buffers {{ nginx_proxy_buffers }};
+	proxy_busy_buffers_size {{ nginx_proxy_busy_buffers_size }};
+
+	proxy_headers_hash_max_size {{ nginx_proxy_headers_hash_max_size }};
+	proxy_buffering {{ nginx_proxy_buffering }};
+	proxy_cache_bypass {{ nginx_proxy_cache_bypass }};
+
+{% for header in nginx_proxy_headers %}
+	proxy_set_header {{ header }};
+{% endfor %}
+
+	set_real_ip_from {{ nginx_set_real_ip_from }};
+	real_ip_header {{ nginx_real_ip_header }};
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
+}

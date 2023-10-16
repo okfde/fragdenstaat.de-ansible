@@ -1,0 +1,52 @@
+nginx_sites:
+  - default
+
+nginx_ocsp_stapling: "off"
+nginx_ocsp_stapling_verify: "off"
+nginx_resolver: "127.0.0.1"
+nginx_tls_protocols: "TLSv1.2 TLSv1.3"
+nginx_ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:\
+  ECDHE-RSA-AES128-GCM-SHA256:\
+  ECDHE-ECDSA-AES256-GCM-SHA384:\
+  ECDHE-RSA-AES256-GCM-SHA384:\
+  ECDHE-ECDSA-CHACHA20-POLY1305:\
+  ECDHE-RSA-CHACHA20-POLY1305:\
+  DHE-RSA-AES128-GCM-SHA256:\
+  DHE-RSA-AES256-GCM-SHA384"
+nginx_prefer_server_ciphers: "off"
+nginx_ssl_session_timeout: "1d"
+nginx_ssl_session_cache: "shared:MozSSL:10m"
+nginx_ssl_session_tickets: "off"
+nginx_ssl_default_cert: " /etc/ssl/fake-certificate.pem"
+nginx_ssl_default_cert_key: " /etc/ssl/fake-certificate.key"
+nginx_ssl_default_trusted_cert: " /etc/ssl/fake-certificate.pem"
+nginx_dhparam: "/etc/ssl/dhparams.pem"
+
+nginx_proxy_redirect: "off"
+nginx_proxy_intercept_errors: "off"
+nginx_proxy_read_timeout: "86400s"
+nginx_proxy_ignore_client_abort: "on"
+nginx_proxy_connect_timeout: "120s"
+nginx_proxy_buffer_size: "128k"
+nginx_proxy_buffers: "4 256k"
+nginx_proxy_busy_buffers_size: "256k"
+nginx_proxy_headers_hash_max_size: 512
+nginx_proxy_buffering: "on"
+nginx_proxy_cache_bypass: "$http_pragma $http_authorization $cookie_nocache"
+nginx_proxy_path: "/tmp/nginx_cache levels=1:2 keys_zone=cache1:16m max_size=1g inactive=720m use_temp_path=off"
+
+nginx_proxy_headers:
+  - "Host $host"
+  - "X-Real-IP $remote_addr"
+  - "X-Forwarded-For $proxy_add_x_forwarded_for"
+  - "X-Forwarded-Proto $scheme"
+
+nginx_headers:
+  - 'Strict-Transport-Security "max-age=63072000" always'
+
+nginx_set_real_ip_from: "192.168.122.0/24"
+nginx_real_ip_header: "X-Forwarded-For"
+
+nginx_client_max_body_size: "8192M"
+nginx_gzip: "off"
+nginx_server_tokens: "off"
