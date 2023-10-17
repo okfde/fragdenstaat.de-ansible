@@ -98,10 +98,6 @@
       tags: nginx
     - role: certbot
       tags: certbot
-      when: "not 'tst.okfn.de' in inventory_hostname"
-    - role: test/fake-certbot
-      tags: certbot
-      when: "'tst.okfn.de' in inventory_hostname"
   tags: mediaserver
 
 - name: Create app server
@@ -128,10 +124,6 @@
       tags: nginx
     - role: certbot
       tags: certbot
-      when: "not 'tst.okfn.de' in inventory_hostname"
-    - role: test/fake-certbot
-      tags: certbot
-      when: "'tst.okfn.de' in inventory_hostname"
   tags: webserver
 
 - name: Create worker server

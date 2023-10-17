@@ -1,0 +1,30 @@
+project_name: fragdenstaat.de
+application_name: fragdenstaat_de
+mail_domain: mail.fragdenstaat.de
+domain_name: fragdenstaat.de
+web_server_name: fragdenstaat.de
+web_server_url: "https://{{ web_server_name }}"
+wsweb_server_url: "wss://{{ web_server_name }}"
+media_server_name: media.frag-den-staat.de
+media_server_url: "https://{{ media_server_name }}"
+static_server_name: static.frag-den-staat.de
+static_server_url: "https://{{ static_server_name }}"
+static_asset_path: "{{ static_server_url }}/static/"
+
+external_media_storage: false
+onion_service_enabled: false
+
+email_host: "127.0.0.1"
+foi_email_host: "127.0.0.1"
+bounce_email_host: "127.0.0.1"
+unsubscribe_email_host: "127.0.0.1"
+gunicorn_user_uid: "1111"
+
+sentry_domain: ""
+sentry_url: ""
+sentry_webhook_url: ""
+django_sentry_dsn: ""
+django_sentry_public_dsn: ""
+
+certbot_mode: "dns-01"
+certbot_script: /opt/certbot/bin/certbot

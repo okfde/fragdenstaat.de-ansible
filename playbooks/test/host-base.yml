@@ -16,3 +16,5 @@
       tags: qemu
     - role: test/nginx
       tags: nginx
+    - role: certbot
+      tags: certbot

@@ -8,16 +8,11 @@ host_data:
   global_ipv6: none
   site_ipv4: 192.168.122.123
 
-email_host: "127.0.0.1"
-foi_email_host: "127.0.0.1"
-bounce_email_host: "127.0.0.1"
-unsubscribe_email_host: "127.0.0.1"
-gunicorn_user_uid: "1111"
-onion_service_enabled: false
-external_media_storage: false
-
-sentry_domain: ""
-sentry_url: ""
-sentry_webhook_url: ""
-django_sentry_dsn: ""
-django_sentry_public_dsn: ""
+https_domains:
+  - ["test.zerschlagdenstaat.de"]
+  - ["static.test.zerschlagdenstaat.de"]
+  - ["mail.test.zerschlagdenstaat.de"]
+  - ["app.test.zerschlagdenstaat.de"]
+  - ["shop.test.zerschlagdenstaat.de"]
+  - ["blog.test.zerschlagdenstaat.de"]
+  - ["mta-sts.test.zerschlagdenstaat.de"]

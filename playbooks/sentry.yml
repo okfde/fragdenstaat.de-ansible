@@ -9,10 +9,6 @@
       tags: docker
     - role: certbot
       tags: certbot
-      when: "not 'tst.okfn.de' in inventory_hostname"
-    - role: test/fake-certbot
-      tags: certbot
-      when: "'tst.okfn.de' in inventory_hostname"
     - role: nginx
       tags: nginx
     - role: sentry

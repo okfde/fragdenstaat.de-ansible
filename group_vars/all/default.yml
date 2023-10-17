@@ -293,6 +293,8 @@ redirect_domains:
     domain: "fragdenstaat.de"
     https: true
 
+certbot_mode: "http-01"
+
 ## in secret.yml
 temp_redirect_paths: []
 valid_referrers: []

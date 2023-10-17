@@ -1,21 +1,59 @@
 ---
 
-- name: Ensure software-properties-common installed
-  ansible.builtin.apt:
-    name: software-properties-common
-    state: latest
-  register: certbot_repo_added
-  retries: 30
-  delay: 10
+- name: Install http-01 dependencies
+  when: "certbot_mode is defined and certbot_mode == 'http-01'"
+  block:
+  - name: Ensure software-properties-common installed
+    ansible.builtin.apt:
+      name: software-properties-common
+      state: latest
+    register: certbot_repo_added
+    retries: 30
+    delay: 10
 
-- name: Install Certbot.
-  ansible.builtin.apt:
-    pkg:
-      - certbot
-      - python3-certbot-nginx
-    state: latest
-  retries: 30
-  delay: 10
+  - name: Install Certbot.
+    ansible.builtin.apt:
+      pkg:
+        - certbot
+        - python3-certbot-nginx
+      state: latest
+    retries: 30
+    delay: 10
+
+- name: Install dns-01 dependencies
+  when: "certbot_mode is defined and certbot_mode == 'dns-01'"
+  block:
+    - name: Install pip
+      ansible.builtin.apt:
+        pkg:
+          - python3-pip
+          - python3-virtualenv
+      retries: 30
+      delay: 10
+
+    - name: Install certbot (pip-version)
+      ansible.builtin.pip:
+        name: certbot
+        virtualenv: /opt/certbot
+
+    - name: Install certbot-dns-hetzner
+      ansible.builtin.pip:
+        name: certbot-dns-hetzner
+        virtualenv: /opt/certbot
+
+    - name: Install certbot-nginx
+      ansible.builtin.pip:
+        name: certbot-nginx
+        virtualenv: /opt/certbot
+
+    - name: Set hetzner api token
+      ansible.builtin.copy:
+        dest: /etc/letsencrypt/hetzner.ini
+        content: |
+          dns_hetzner_api_token = {{ hetzner_dns_api_token }}
+        mode: "0600"
+        owner: root
+        group: root
 
 - name: Make letsencrypt tmp dir
   ansible.builtin.file:
@@ -25,7 +63,7 @@
 
 - name: Generate cert for HTTPS domains
   ansible.builtin.command:
-    cmd: "{{ certbot_script }} certonly --webroot -w {{ letsencrypt_tmp_dir }} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
+    cmd: "{{ certbot_script }} certonly {% if certbot_mode == 'dns-01' %}--authenticator dns-hetzner --dns-hetzner-credentials /etc/letsencrypt/hetzner.ini{% else %} --webroot -w {{ letsencrypt_tmp_dir }}{% endif %} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
   args:
     creates: "{{ certbot_output_dir }}{{ item[0] }}"
   loop: "{{ https_domains }}"

@@ -8,6 +8,6 @@
     - ../../local_vars/local_config.yml
 
   roles:
-    - role: test/fake-certbot
+    - role: certbot
       tags: certbot
       when: "https_domains is defined"
