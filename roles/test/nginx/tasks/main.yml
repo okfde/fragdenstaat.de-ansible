@@ -9,17 +9,6 @@
   args:
     creates: /etc/ssl/dhparams.pem
 
-- name: Generate fake certs private key
-  community.crypto.openssl_privatekey:
-    path: /etc/ssl/fake-certificate.key
-
-- name: Create self-signed certificate
-  community.crypto.x509_certificate:
-    path: /etc/ssl/fake-certificate.pem
-    privatekey_path: /etc/ssl/fake-certificate.key
-    provider: selfsigned
-  ignore_errors: "{{ ansible_check_mode }}"
-
 - name: Create default docroot
   ansible.builtin.file:
     path: /var/www/html/default
@@ -38,10 +27,11 @@
 
 - name: "Configure sites"
   ansible.builtin.template:
-    dest: "/etc/nginx/sites-enabled/{{ item }}"
-    src: "files/{{ item }}"
+    dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
+    src: "proxy.conf.j2"
     mode: "0640"
-  loop: "{{ nginx_sites if nginx_sites is iterable and nginx_sites is not string else [] }}"
+  with_items: "{{ groups['vms'] }}"
+  when: "'https_domains' in  hostvars[item]"
   notify:
     - "Reload nginx"
 

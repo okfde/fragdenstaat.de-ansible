@@ -1,8 +1,8 @@
-project_name: fragdenstaat.de
+project_name: test.zerschlagdenstaat.de
 application_name: fragdenstaat_de
-mail_domain: mail.fragdenstaat.de
-domain_name: fragdenstaat.de
-web_server_name: fragdenstaat.de
+mail_domain: mail.test.zerschlagdenstaat.de
+domain_name: test.zerschlagdenstaat.de
+web_server_name: test.zerschlagdenstaat.de
 web_server_url: "https://{{ web_server_name }}"
 wsweb_server_url: "wss://{{ web_server_name }}"
 media_server_name: media.frag-den-staat.de
@@ -28,3 +28,23 @@ django_sentry_public_dsn: ""
 
 certbot_mode: "dns-01"
 certbot_script: /opt/certbot/bin/certbot
+
+redirect_domains:
+  - from: "blog.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de/blog"
+    https: true
+  - from: "shop.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de/shop"
+    https: true
+  - from: "app.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de/app"
+    https: true
+  - from: "mail.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de"
+    https: true
+  - from: "media.frag-den-staat.de"
+    domain: "media.frag-den-staat.de"
+    https: false
+  - from: "static.frag-den-staat.de"
+    domain: "static.frag-den-staat.de"
+    https: false
