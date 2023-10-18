@@ -13,6 +13,6 @@ server {
     proxy_ssl_server_name on;
 
     location / {
-        proxy_pass http://{{ hostvars[item].host_data.site_ipv4 }};
+        proxy_pass https://{{ hostvars[item].host_data.site_ipv4 }};
     }
 }
