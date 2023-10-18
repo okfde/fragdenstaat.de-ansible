@@ -51,3 +51,6 @@ redirect_domains:
   - from: "mail.test.zerschlagdenstaat.de"
     domain: "test.zerschlagdenstaat.de"
     https: true
+
+minio_release: 20231016041343.0.0_amd64
+mcli_release: 20231014015703.0.0_amd64
