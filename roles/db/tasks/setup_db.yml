@@ -10,6 +10,7 @@
     lc_ctype: 'en_US.UTF-8'
     template: 'template0'
     state: present
+  ignore_errors: true
 
 - name: create postgis extension in db
   become_user: postgres
