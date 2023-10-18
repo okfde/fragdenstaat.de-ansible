@@ -63,7 +63,7 @@
 
 - name: Generate cert for HTTPS domains
   ansible.builtin.command:
-    cmd: "{{ certbot_script }} certonly {% if certbot_mode == 'dns-01' %}--authenticator dns-hetzner --dns-hetzner-credentials /etc/letsencrypt/hetzner.ini{% else %} --webroot -w {{ letsencrypt_tmp_dir }}{% endif %} --agree-tos --email {{ letsencrypt_registration_email }} -d {% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}"
+    cmd: "{{ certbot_script }} certonly -n {% if certbot_mode == 'dns-01' %}--authenticator dns-hetzner --dns-hetzner-credentials /etc/letsencrypt/hetzner.ini{% else %} --webroot -w {{ letsencrypt_tmp_dir }}{% endif %} --agree-tos --email {{ letsencrypt_registration_email }} -d '{% for x in item %}{{ x }}{% if not loop.last %},{% endif %}{% endfor %}'"
   args:
     creates: "{{ certbot_output_dir }}{{ item[0] }}"
   loop: "{{ https_domains }}"
