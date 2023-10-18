@@ -1,3 +1,5 @@
+maintenance: true
+
 project_name: test.zerschlagdenstaat.de
 application_name: fragdenstaat_de
 mail_domain: mail.test.zerschlagdenstaat.de
@@ -14,8 +16,8 @@ static_asset_path: "{{ static_server_url }}/static/"
 foi_mail_server_host: "mail.test.zerschlagdenstaat.de"
 foi_mail_domain: "test.zerschlagdenstaat.de"
 site_url: "https://test.zerschlagdenstaat.de"
-media_url: "https://media.test.zerschlagdenstaat.de/"
-static_url: "https://static.test.zerschlagdenstaat.de/"
+media_url: "https://media.test.zerschlagdenstaat.de/files/"
+static_url: "https://static.test.zerschlagdenstaat.de/static/"
 allowed_hosts: 'test.zerschlagdenstaat.de'
 
 external_media_storage: false
