@@ -9,6 +9,7 @@
     - deploy-web
     - deploy-backend
     - skip_ansible_lint
+  ignore_errors: true
 
 - name: restart application
   community.general.supervisorctl:
