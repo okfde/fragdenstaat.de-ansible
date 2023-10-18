@@ -66,3 +66,8 @@ django_environment:
   FRONTEX_CAPTCHA_MODEL_PATH: "{{ frontex_captcha_model_path }}"
   DONATION_BACKUP_URL: "{{ donation_backup_url }}"
   DONATION_BACKUP_CREDENTIALS: "{{ donation_backup_credentials }}"
+  FOI_MAIL_SERVER_HOST: "mail.test.zerschlagdenstaat.de"
+  FOI_MAIL_DOMAIN: "test.zerschlagdenstaat.de"
+  SITE_URL: "https://test.zerschlagdenstaat.de"
+  MEDIA_URL: "https://media.test.zerschlagdenstaat.de/"
+  STATIC_URL: "https://static.test.zerschlagdenstaat.de/"
