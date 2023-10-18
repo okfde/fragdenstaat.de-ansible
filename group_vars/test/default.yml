@@ -42,9 +42,3 @@ redirect_domains:
   - from: "mail.test.zerschlagdenstaat.de"
     domain: "test.zerschlagdenstaat.de"
     https: true
-  - from: "media.frag-den-staat.de"
-    domain: "media.frag-den-staat.de"
-    https: false
-  - from: "static.frag-den-staat.de"
-    domain: "static.frag-den-staat.de"
-    https: false
