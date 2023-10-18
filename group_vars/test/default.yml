@@ -5,9 +5,9 @@ domain_name: test.zerschlagdenstaat.de
 web_server_name: test.zerschlagdenstaat.de
 web_server_url: "https://{{ web_server_name }}"
 wsweb_server_url: "wss://{{ web_server_name }}"
-media_server_name: media.frag-den-staat.de
+media_server_name: media.test.zerschlagdenstaat.de
 media_server_url: "https://{{ media_server_name }}"
-static_server_name: static.frag-den-staat.de
+static_server_name: static.test.zerschlagdenstaat.de
 static_server_url: "https://{{ static_server_name }}"
 static_asset_path: "{{ static_server_url }}/static/"
 
