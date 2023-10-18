@@ -1,5 +1,21 @@
 ---
 
+- name: Save django db user name
+  ansible.builtin.set_fact:
+    django_environment_db_user: "{{ django_environment['DATABASE_USER'] }}"
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
+- name: Save django db user password
+  ansible.builtin.set_fact:
+    django_environment_db_password: "{{ django_environment['DATABASE_PASSWORD'] }}"
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
 - name: Overwrite django db user
   ansible.builtin.set_fact:
     django_environment: "{{ django_environment | combine({'DATABASE_USER': 'django_migrations'}) }}"
@@ -88,3 +104,19 @@
     - deploy-web
     - deploy-backend
   ignore_errors: true
+
+- name: Restore django environment db user
+  ansible.builtin.set_fact:
+    django_environment: "{{ django_environment | combine({'DATABASE_USER': '{{ django_environment_db_user }}'}) }}"
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
+- name: Restore django environment db user password
+  ansible.builtin.set_fact:
+    django_environment: "{{ django_environment | combine({'DATABASE_PASSWORD': '{{ django_environment_db_password }}'}) }}"
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
