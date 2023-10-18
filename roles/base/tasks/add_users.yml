@@ -1,4 +1,17 @@
 ---
+- name: Set testsystem indicator in .bashrc (skel)
+  ansible.builtin.replace:
+    path: "/etc/skel/.bashrc"
+    regexp: "PS1='\\${"
+    replace: "PS1='TESTSYSTEM: ${"
+  when: "'tst.okfn.de' in inventory_hostname"
+
+- name: Set livesystem indicator in .bashrc (skel)
+  ansible.builtin.replace:
+    path: "/etc/skel/.bashrc"
+    regexp: "PS1='\\${"
+    replace: "PS1='LIVESYSTEM: ${"
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Allow passwordless sudo
   ansible.builtin.lineinfile:
