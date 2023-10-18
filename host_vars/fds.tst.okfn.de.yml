@@ -9,4 +9,4 @@ host_data:
   site_ipv4: 192.168.122.1
 
 https_domains:
-  - ['*.test.zerschlagdenstaat.de']
+  - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']
