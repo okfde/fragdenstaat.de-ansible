@@ -16,7 +16,7 @@ foi_mail_domain: "test.zerschlagdenstaat.de"
 site_url: "https://test.zerschlagdenstaat.de"
 media_url: "https://media.test.zerschlagdenstaat.de/"
 static_url: "https://static.test.zerschlagdenstaat.de/"
-allowed_hosts: ['test.zerschlagdenstaat.de']
+allowed_hosts: 'test.zerschlagdenstaat.de'
 
 external_media_storage: false
 onion_service_enabled: false

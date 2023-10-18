@@ -40,11 +40,11 @@ static_server_url: "https://{{ static_server_name }}"
 static_asset_path: "{{ static_server_url }}/static/"
 
 foi_mail_server_host: "mail.fragdenstaat.de"
-foi_mail_domain: ["fragdenstaat.de", "echtemail.de"]
+foi_mail_domain: '"fragdenstaat.de", "echtemail.de"'
 site_url: "https://fragdenstaat.de"
 media_url: "https://media.frag-den-staat.de/files/"
 static_url: "https://static.frag-den-staat.de/static/"
-allowed_hosts: ["fragdenstaat.de", "media.frag-den-staat.de", "testserver"]
+allowed_hosts: '"fragdenstaat.de", "media.frag-den-staat.de", "testserver"'
 
 external_media_storage: true
 external_media_storage_src: "/home/storage-box/home"
