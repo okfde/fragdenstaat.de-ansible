@@ -1,0 +1,9 @@
+# Module documentation can be found at  https://rspamd.com/doc/modules/dkim.html
+
+dkim {
+  dkim_cache_size = 2k;
+  dkim_cache_expire = 1d;
+  time_jitter = 6h;
+  trusted_only = false;
+  skip_multi = false;
+}

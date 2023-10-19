@@ -25,6 +25,14 @@
   notify:
     - "Reload nginx"
 
+- name: "Configure default site"
+  ansible.builtin.copy:
+    src: default
+    dest: /etc/nginx/sites-enabled/default
+    mode: "0640"
+  notify:
+    - "Reload nginx"
+
 - name: "Configure sites"
   ansible.builtin.template:
     dest: "/etc/nginx/sites-enabled/{{ item }}.conf"
@@ -43,3 +51,6 @@
   with_items:
     - "80"
     - "443"
+    - "25"
+    # - "465"
+    # - "587"

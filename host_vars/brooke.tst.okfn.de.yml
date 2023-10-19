@@ -16,3 +16,4 @@ https_domains:
   - ["shop.test.zerschlagdenstaat.de"]
   - ["blog.test.zerschlagdenstaat.de"]
   - ["mta-sts.test.zerschlagdenstaat.de"]
+  - ["rspamd.test.zerschlagdenstaat.de"]

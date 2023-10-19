@@ -1,0 +1,31 @@
+- name: restart postfix
+  ansible.builtin.service:
+    name: postfix
+    state: restarted
+    enabled: true
+
+- name: update postmap
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/{{ item }}"
+  notify: restart postfix
+  changed_when: false
+  with_items:
+    - "vmail_domains"
+    - "vmail_mailbox"
+
+- name: update transport postmap
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/transport"
+  notify: restart postfix
+  changed_when: false
+
+- name: Restart rspamd
+  ansible.builtin.service:
+    name: rspamd
+    state: restarted
+    enabled: true
+
+- name: Reload nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded

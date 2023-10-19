@@ -1,0 +1,7 @@
+{% if "stdout" in controller_passwd %}
+password = "{{ controller_passwd.stdout }}";
+{% elif not worker_controller_config.stat.exists %}
+File will be generated when not in --check mode
+{% else %}
+{{ slurpfile['content'] | b64decode | trim }}
+{% endif %}

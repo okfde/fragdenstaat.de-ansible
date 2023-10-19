@@ -75,3 +75,18 @@ http {
 	include /etc/nginx/conf.d/*.conf;
 	include /etc/nginx/sites-enabled/*;
 }
+
+stream {
+    server {
+        listen     25;
+        proxy_pass 192.168.122.123:25;
+    }
+    # server {
+    #     listen     465;
+    #     proxy_pass 192.168.122.123:465;
+    # }
+    # server {
+    #     listen     587;
+    #     proxy_pass 192.168.122.123:587;
+    # }
+}

@@ -1,0 +1,10 @@
+server {
+        listen 443 ssl;
+        listen [::]:443;
+
+        server_name {{ rspamd_url }};
+
+        location / {
+                proxy_pass http://127.0.0.1:11334/;
+        }
+}

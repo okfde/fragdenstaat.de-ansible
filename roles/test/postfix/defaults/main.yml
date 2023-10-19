@@ -1,0 +1,25 @@
+---
+
+postfix_hostname: "{{ mail_domain }}"
+postfix_reject_helo_list: []
+
+dkim_domains:
+  - name: zerschlagdenstaat.de
+    selector: mail
+    keysize: 4096
+dkim_admin_mail: postmaster@test.zerschlagdenstaat.de
+
+dmarc_admin_mail: "{{ dkim_admin_mail }}"
+dmarc_org: FragDenStaat.de
+
+rspamd: true
+rspamd_modules:
+  - arc
+  - dkim_signing
+  - dkim
+  - dmarc
+  - spf
+rspamd_worker:
+  - proxy
+  - controller
+rspamd_url: rspamd.test.zerschlagdenstaat.de

@@ -15,7 +15,7 @@
     - role: test/qemu
       tags: qemu
     - role: test/nginx
-      tags: nginx
+      tags: nginxtest
     - role: certbot
       tags: certbot
     - role: test/minio
