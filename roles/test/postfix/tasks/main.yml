@@ -57,7 +57,7 @@
     dest: /etc/postfix/transport
     mode: "0600"
   notify: update transport postmap
-  when: "'.tst.okfn.de' in inventory_hostname"
+  when: "'-tst.okfn.de' in inventory_hostname"
 
 - name: Add reject domains file
   ansible.builtin.copy:

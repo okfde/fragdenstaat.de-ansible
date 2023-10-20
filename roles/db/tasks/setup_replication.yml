@@ -51,7 +51,7 @@
 
 - name: Create replication slot if doesn't exist
   community.postgresql.postgresql_slot:
-    slot_name: "{{ item.replace('.', '_') }}"
+    slot_name: "{{ item.replace('.', '_').replace('-', '_') }}"
     db: "{{ db_name }}"
   with_items: "{{ groups['dbreplica'] }}"
   become_user: postgres

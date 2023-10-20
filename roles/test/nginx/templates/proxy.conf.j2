@@ -5,7 +5,7 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
 
-    server_name {{ item | replace('.tst.okfn.de', '') }}.test.zerschlagdenstaat.de
+    server_name {{ item | replace('-tst.okfn.de', '') }}.test.zerschlagdenstaat.de
     {% for domain in hostvars[item].https_domains %}
                 {{ domain[0] }}
     {% endfor %}

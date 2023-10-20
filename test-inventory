@@ -3,60 +3,60 @@ ansible_connection=ssh
 ansible_python_interpreter=/usr/bin/python3
 
 [web]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [app]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [db]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [dbreplica]
-schaar.tst.okfn.de
+schaar-tst.okfn.de
 
 [mail]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [queue]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [worker]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [search]
-fds-es01.tst.okfn.de
+fds-es01-tst.okfn.de
 
 [broker]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [cache]
-brooke.tst.okfn.de
+brooke-tst.okfn.de
 
 [media]
-schoch.tst.okfn.de
+schoch-tst.okfn.de
 
 [vpn]
-brooke.tst.okfn.de
-schaar.tst.okfn.de
+brooke-tst.okfn.de
+schaar-tst.okfn.de
 
 [auxiliary]
-schaar.tst.okfn.de
+schaar-tst.okfn.de
 
 [fdsbot]
-schaar.tst.okfn.de
+schaar-tst.okfn.de
 
 [qemu]
-fds.tst.okfn.de
+fds-tst.okfn.de
 
 [vms]
-brooke.tst.okfn.de
-schaar.tst.okfn.de
-schoch.tst.okfn.de
-fds-es01.tst.okfn.de
+brooke-tst.okfn.de
+schaar-tst.okfn.de
+schoch-tst.okfn.de
+fds-es01-tst.okfn.de
 
 [test]
-brooke.tst.okfn.de
-schaar.tst.okfn.de
-schoch.tst.okfn.de
-fds-es01.tst.okfn.de
-fds.tst.okfn.de
+brooke-tst.okfn.de
+schaar-tst.okfn.de
+schoch-tst.okfn.de
+fds-es01-tst.okfn.de
+fds-tst.okfn.de
