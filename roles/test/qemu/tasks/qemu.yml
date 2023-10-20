@@ -13,8 +13,20 @@
       - virtinst
       - python3-libvirt
 
-- name: Create network config template
+- name: Create network config (VM)
   ansible.builtin.copy:
     src: network.conf
     dest: /opt/qemu/templates/50-cloud-init.yaml
     mode: "0600"
+
+- name: Create network config (Host)
+  ansible.builtin.template:
+    src: network.xml.j2
+    dest: /opt/qemu/templates/network_default.xml
+    mode: "0600"
+
+- name: Apply network configuration (Host)
+  community.libvirt.virt_net:
+    command: define
+    name: default
+    xml: '{{ lookup("template", "network.xml.j2") }}'

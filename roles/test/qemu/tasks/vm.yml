@@ -51,4 +51,4 @@
     command: define
     xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
     autostart: true
-  when: "item.name not in all_vms.list_vms"
+  when: "('list_vms' in all_vms) and (item.name not in all_vms.list_vms)"
