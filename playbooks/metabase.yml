@@ -1,5 +1,4 @@
 ---
-
 - name: Deploy a metabase instance
   hosts: auxiliary
   become: true
