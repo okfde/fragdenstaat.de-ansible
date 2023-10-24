@@ -8,7 +8,9 @@
 - name: Setup reporting views
   community.postgresql.postgresql_query:
     db: "{{ db_name }}"
-    query: CREATE OR REPLACE VIEW {{ db_reporting_schema }}.{{ item.name }} AS {{ item.query }}
+    query:
+      - DROP VIEW IF EXISTS {{ db_reporting_schema }}.{{ item.name }}
+      - CREATE OR REPLACE VIEW {{ db_reporting_schema }}.{{ item.name }} AS {{ item.query }}
   with_items: "{{ db_reporting_views }}"
   become_user: postgres
   become: true
