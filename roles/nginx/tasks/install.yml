@@ -60,6 +60,7 @@
     enabled: true
   tags:
     - nginx
+  ignore_errors: true
 
 - name: configure http, https ports in firewall
   community.general.ufw:

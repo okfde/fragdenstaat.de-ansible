@@ -11,7 +11,7 @@
 - name: Create VM base image
   ansible.builtin.command:
     cmd: |
-      qemu-img create -f raw /var/lib/libvirt/images/{{ item.name }}.qcow2 {{ item.hdd }}
+      qemu-img create -f qcow2 /var/lib/libvirt/images/{{ item.name }}.qcow2 {{ item.hdd }}
   when: "not vmdisk.stat.exists"
   changed_when: false
 
@@ -21,6 +21,7 @@
     owner: "libvirt-qemu"
     group: "kvm"
     mode: "0600"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Resize VM image
   ansible.builtin.command:
@@ -28,6 +29,7 @@
       virt-resize --expand /dev/sda1 /opt/qemu/isos/{{ item.os }}-server-cloudimg-amd64-disk-kvm.img /var/lib/libvirt/images/{{ item.name }}.qcow2
   when: "not vmdisk.stat.exists"
   changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Configure VM
   ansible.builtin.shell:
@@ -37,9 +39,11 @@
         --root-password "password:{{ vm_root_password }}" \
         --selinux-relabel --network \
         --copy-in "/opt/qemu/templates/50-cloud-init.yaml:/etc/netplan/" \
+        --ssh-inject root:file:/opt/qemu/templates/id_fds.pub \
         --firstboot-command "chmod 600 /etc/netplan/50-cloud-init.yaml;netplan apply"
   when: "not vmdisk.stat.exists"
   changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Get VM list
   community.libvirt.virt:

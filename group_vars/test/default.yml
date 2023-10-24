@@ -1,7 +1,5 @@
 maintenance: true
 
-project_name: test.zerschlagdenstaat.de
-application_name: fragdenstaat_de
 mail_domain: mail.test.zerschlagdenstaat.de
 domain_name: test.zerschlagdenstaat.de
 web_server_name: test.zerschlagdenstaat.de
@@ -51,6 +49,12 @@ redirect_domains:
   - from: "mail.test.zerschlagdenstaat.de"
     domain: "test.zerschlagdenstaat.de"
     https: true
+
+nginx_extra_domains:
+  - domain: mta-sts.test.zerschlagdenstaat.de
+    files:
+      - path: "/.well-known/mta-sts.txt"
+        filename: mta-sts.txt
 
 minio_release: 20231016041343.0.0_amd64
 mcli_release: 20231014015703.0.0_amd64

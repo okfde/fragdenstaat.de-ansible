@@ -11,7 +11,17 @@
     <dhcp>
       <range start='192.168.122.2' end='192.168.122.254'/>
 {% for host in groups['vms'] %}
+{% if host in hostvars %}
+{% if 'host_data' in hostvars[host] %}
+{% if 'mac' in hostvars[host].host_data %}
+{% if 'hostname' in hostvars[host].host_data %}
+{% if 'site_ipv4' in hostvars[host].host_data %}
       <host mac='{{ hostvars[host].host_data.mac }}' name='{{ hostvars[host].hostname }}' ip='{{ hostvars[host].host_data.site_ipv4 }}'/>
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
 {% endfor %}
     </dhcp>
   </ip>

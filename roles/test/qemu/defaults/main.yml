@@ -14,7 +14,7 @@ vms:
     ram: 4096
     hdd: 300G
     os: focal
-  - name: es01
+  - name: fds-es01
     vcpus: 4
     ram: 24576
     hdd: 100G

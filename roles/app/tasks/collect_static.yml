@@ -15,3 +15,4 @@
     - deploy-web
     - deploy-backend
     - deploy-frontend
+  ignore_errors: true

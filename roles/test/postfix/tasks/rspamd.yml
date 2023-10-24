@@ -83,13 +83,18 @@
   with_items: "{{ rspamd_worker }}"
   notify: Restart rspamd
 
+- name: Check if nginx directory exists
+  ansible.builtin.stat:
+    path: /etc/nginx/sites-enabled/
+  register: nginx_config_dir
+
 - name: Configure nginx
   ansible.builtin.template:
     src: rspamd/nginx.conf.j2
     dest: /etc/nginx/sites-enabled/rspamd.conf
     mode: "0640"
   notify: Reload nginx
-  when: "rspamd_url is defined and rspamd_url is not false"
+  when: "rspamd_url is defined and rspamd_url is not false and nginx_config_dir.stat.exists"
 
 - name: Print password for worker-controller
   ansible.builtin.debug:

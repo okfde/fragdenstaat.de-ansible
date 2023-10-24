@@ -97,8 +97,9 @@
 - name: Make sure log permission is present
   ansible.builtin.command:
     cmd: "/usr/bin/setfacl -m u:{{ gunicorn_user }}:r /var/log/mail.log"
-  when: not mail_log_rotated.stat.exists
+  when: not mail_log_rotated.stat.exists and gunicorn_user is defined
   changed_when: false
+  ignore_errors: true
 
 - name: configure smtp ports in firewall
   community.general.ufw:

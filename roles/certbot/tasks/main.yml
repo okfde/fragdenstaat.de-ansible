@@ -46,6 +46,14 @@
         name: certbot-nginx
         virtualenv: /opt/certbot
 
+    - name: Create letsencrypt directory
+      ansible.builtin.file:
+        state: directory
+        path: /etc/letsencrypt/
+        owner: root
+        group: root
+        mode: "0755"
+
     - name: Set hetzner api token
       ansible.builtin.copy:
         dest: /etc/letsencrypt/hetzner.ini

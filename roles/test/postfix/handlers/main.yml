@@ -25,7 +25,9 @@
     state: restarted
     enabled: true
 
+# todo: This will fail on fresh installs
 - name: Reload nginx
   ansible.builtin.service:
     name: nginx
     state: reloaded
+  ignore_errors: true

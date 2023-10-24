@@ -9,11 +9,18 @@
   <devices>
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' discard='unmap'/>
+      <driver name='qemu' type='raw' discard='unmap'/>
       <source file='/var/lib/libvirt/images/{{ item.name }}.qcow2'/>
       <target dev='vda' bus='virtio'/>
     </disk>
     <interface type='network'>
+{% if item.name+'-tst.okfn.de' in hostvars %}
+{% if 'host_data' in hostvars[item.name+'-tst.okfn.de'] %}
+{% if 'mac' in hostvars[item.name+'-tst.okfn.de'].host_data %}
+      <mac address='{{ hostvars[item.name+'-tst.okfn.de'].host_data.mac }}'/>
+{% endif %}
+{% endif %}
+{% endif %}
       <source network='default' bridge='virbr0'/>
       <model type='virtio'/>
       <alias name='net0'/>
