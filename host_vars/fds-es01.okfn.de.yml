@@ -2,8 +2,8 @@
 host_data:
   region: falkenstein1
   datacenter: fsn1-dc16
-  interface_name: enp35s0
-  mac: a8:a1:59:55:3e:96
+  interface_name: enp41s0
+  mac: d0:50:99:f8:ec:47
   global_ipv4: 157.90.130.85
   global_ipv6: 2a01:4f8:252:43e8::2
   site_ipv4: 192.168.100.3
