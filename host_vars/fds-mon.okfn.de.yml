@@ -1,0 +1,13 @@
+---
+host_data:
+  region: falkenstein1
+  datacenter: fsn1-dc14
+  interface_name: enp0s31f6
+  mac: 90:1b:0e:ab:a5:66
+  global_ipv4: 144.76.157.203
+  global_ipv6: 2a01:4f8:231:1ec6::2
+  site_ipv4: 192.168.100.5
+  disk_type: ssd
+
+# https_domains:
+#  - ['mon.fragdenstaat.de', 'log.fragdenstaat.de']
