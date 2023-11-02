@@ -13,6 +13,9 @@ server {
     proxy_ssl_server_name on;
 
     location / {
+        allow 10.9.0.0/25;
+        allow fc00::1/121;
+        deny all;
         proxy_pass https://{{ hostvars[item].host_data.site_ipv4 }};
     }
 }

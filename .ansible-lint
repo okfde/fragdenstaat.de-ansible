@@ -10,6 +10,7 @@ skip_list:
 warn_list:
   - yaml
   - ignore-errors
+  - risky-shell-pipe
 
 exclude_paths:
   - .pre-commit-config.yaml

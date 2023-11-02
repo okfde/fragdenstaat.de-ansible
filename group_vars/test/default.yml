@@ -1,4 +1,4 @@
-maintenance: true
+maintenance: false
 
 mail_domain: mail.test.zerschlagdenstaat.de
 domain_name: test.zerschlagdenstaat.de

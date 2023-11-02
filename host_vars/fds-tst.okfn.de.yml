@@ -7,6 +7,7 @@ host_data:
   global_ipv4: 144.76.157.203
   global_ipv6: none
   site_ipv4: 192.168.122.1
+  vpn_peer_id: 210
 
 https_domains:
   - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']
