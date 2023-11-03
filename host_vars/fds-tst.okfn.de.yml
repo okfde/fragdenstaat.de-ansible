@@ -9,5 +9,12 @@ host_data:
   site_ipv4: 192.168.122.1
   vpn_peer_id: 210
 
+monitor_server: fds-tst.okfn.de
+prometheus: true
+grafana: true
+graylog: true
+prometheus_exporter:
+  - node_exporter
+
 https_domains:
   - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']

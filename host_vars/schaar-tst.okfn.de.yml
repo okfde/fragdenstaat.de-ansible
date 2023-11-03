@@ -13,3 +13,7 @@ https_domains:
   - ["ogimage.test.zerschlagdenstaat.de"]
   - ["weblate.test.zerschlagdenstaat.de"]
   - ["metabase.test.zerschlagdenstaat.de"]
+
+monitor_server: fds-tst.okfn.de
+prometheus_exporter:
+  - node_exporter

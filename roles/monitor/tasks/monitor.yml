@@ -1,0 +1,105 @@
+- name: Install docker
+  ansible.builtin.include_role:
+    name: docker
+
+- name: Create monitor directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ monitor_dir }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create grafana directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ monitor_dir }}/grafana"
+    owner: "472"
+    group: "root"
+    mode: "0755"
+  when: grafana is true
+
+- name: Create graylog directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ monitor_dir }}/graylog"
+    owner: "999"
+    group: "root"
+    mode: "0755"
+  when: graylog is true
+
+- name: Configure firewall for graylog
+  community.general.ufw:
+    port: "5140"
+    proto: udp
+    from_ip: 192.168.100.0/24
+    rule: allow
+
+- name: Configure firewall for filebeat
+  community.general.ufw:
+    port: "5044"
+    proto: tcp
+    from_ip: 192.168.100.0/24
+    to_ip: 192.168.100.5
+    rule: allow
+
+- name: Configure firewall for sidecar
+  community.general.ufw:
+    port: "9010"
+    proto: tcp
+    from_ip: 192.168.100.0/24
+    to_ip: 192.168.100.5
+    rule: allow
+
+- name: Create prometheus directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ monitor_dir }}/prometheus"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: prometheus is true
+
+- name: Create prometheus data directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ monitor_dir }}/prometheus/data"
+    owner: "65534"
+    group: "65534"
+    mode: "0755"
+  when: prometheus is true
+
+- name: Create prometheus etc directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ monitor_dir }}/prometheus/etc"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: prometheus is true
+
+- name: Create prometheus.yml
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: "{{ monitor_dir }}/prometheus/etc/prometheus.yml"
+    mode: "0644"
+  when: prometheus is true
+  notify: Restart prometheus
+
+- name: Create docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ monitor_dir }}/docker-compose.yml"
+    mode: "0640"
+    owner: "root"
+    group: "root"
+  notify: docker compose up monitor
+
+- name: Create graylog.env
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ monitor_dir }}/.env"
+    mode: "0640"
+    owner: "root"
+    group: "root"
+  notify: docker compose up monitor

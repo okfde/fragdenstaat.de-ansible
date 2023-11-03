@@ -1,0 +1,54 @@
+- name: Restart rsyslog
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted
+    enabled: true
+
+- name: Restart sidecar
+  ansible.builtin.service:
+    name: graylog-sidecar
+    state: restarted
+    enabled: true
+
+- name: Restart node exporter
+  ansible.builtin.service:
+    name: prometheus-node-exporter
+    state: restarted
+    enabled: true
+
+- name: Restart nginx exporter
+  ansible.builtin.service:
+    name: prometheus-nginx-exporter
+    state: restarted
+    enabled: true
+
+- name: Restart postgres exporter
+  ansible.builtin.service:
+    name: prometheus-postgres-exporter
+    state: restarted
+    enabled: true
+
+- name: Restart postfix exporter
+  ansible.builtin.service:
+    name: prometheus-postfix-exporter
+    state: restarted
+    enabled: true
+
+- name: docker compose up monitor
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ monitor_dir }}"
+  changed_when: false
+
+- name: Restart prometheus
+  ansible.builtin.command:
+    cmd: docker compose stop prometheus
+    chdir: "{{ monitor_dir }}"
+  notify: Start prometheus
+  changed_when: false
+
+- name: Start prometheus
+  ansible.builtin.command:
+    cmd: docker compose up prometheus -d
+    chdir: "{{ monitor_dir }}"
+  changed_when: false

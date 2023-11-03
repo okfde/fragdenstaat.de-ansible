@@ -1,0 +1,20 @@
+- name: Include monitor.yml
+  ansible.builtin.include_tasks: monitor.yml
+  when: graylog is true or grafana is true or prometheus is true
+  tags: graylog
+
+- name: Include rsyslog.yml
+  ansible.builtin.include_tasks: rsyslog.yml
+  when: rsyslog is true
+  tags: rsyslog
+
+- name: Include prometheus exporter
+  ansible.builtin.include_tasks: "{{ item }}.yml"
+  with_items: "{{ prometheus_exporter }}"
+  when: prometheus_exporter is defined
+  tags: exporter
+
+- name: Include sidecar.yml
+  ansible.builtin.include_tasks: sidecar.yml
+  when: sidecar is defined
+  tags: sidecar

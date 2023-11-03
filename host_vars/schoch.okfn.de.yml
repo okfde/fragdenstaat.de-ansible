@@ -14,3 +14,7 @@ host_data:
 nginx_media_dir: "/home/storage-box/home"
 nginx_private_media_path: "/home/storage-box/home/"
 nginx_static_html_dir: "/var/www/static"
+
+prometheus_exporter:
+  - node_exporter
+  - nginx_exporter

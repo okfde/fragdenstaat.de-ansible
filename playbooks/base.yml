@@ -8,4 +8,7 @@
     - ../local_vars/local_config.yml
 
   roles:
-    - base
+    - role: base
+      tags: base
+    - role: monitor
+      tags: monitor

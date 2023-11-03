@@ -8,6 +8,13 @@ host_data:
   global_ipv6: none
   site_ipv4: 192.168.122.123
 
+monitor_server: fds-tst.okfn.de
+prometheus_exporter:
+  - node_exporter
+  - nginx_exporter
+  - postgres_exporter
+  - postfix_exporter
+
 https_domains:
   - ["test.zerschlagdenstaat.de"]
   - ["static.test.zerschlagdenstaat.de"]

@@ -100,6 +100,20 @@
       tags: certbot
   tags: mediaserver
 
+- name: Create monitor server
+  hosts: monitor
+  become: true
+  become_user: root
+  vars_files:
+    - ../local_vars/local_config.yml
+  roles:
+    - role: nginx
+      tags: nginx
+      when: "inventory_hostname != 'fds-tst.okfn.de'"
+    - role: certbot
+      tags: certbot
+  tags: monitorserver
+
 - name: Create app server
   hosts: app
   become: true

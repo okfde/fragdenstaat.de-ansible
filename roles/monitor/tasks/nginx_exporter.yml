@@ -1,0 +1,20 @@
+- name: Install nginx exporter
+  ansible.builtin.apt:
+    pkg: prometheus-nginx-exporter
+  notify: Restart nginx exporter
+  tags: exporter
+
+- name: Configure nginx exporter
+  ansible.builtin.template:
+    src: exporter/prometheus-nginx-exporter.j2
+    dest: /etc/default/prometheus-nginx-exporter
+    mode: "0644"
+  notify: Restart nginx exporter
+  tags: exporter
+
+- name: Configure firewall
+  community.general.ufw:
+    port: "9113"
+    proto: tcp
+    from_ip: 192.168.100.5
+    rule: allow

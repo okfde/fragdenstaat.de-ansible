@@ -1,0 +1,21 @@
+- name: Install postfix exporter
+  ansible.builtin.apt:
+    pkg: prometheus-postfix-exporter
+  notify: Restart postfix exporter
+  tags: exporter
+
+- name: Configure postfix exporter
+  ansible.builtin.template:
+    src: exporter/prometheus-postfix-exporter.j2
+    dest: /etc/default/prometheus-postfix-exporter
+    mode: "0644"
+  notify: Restart postfix exporter
+  tags: exporter
+
+- name: Configure firewall
+  community.general.ufw:
+    port: "9154"
+    proto: tcp
+    from_ip: 192.168.100.5
+    rule: allow
+  tags: exporter

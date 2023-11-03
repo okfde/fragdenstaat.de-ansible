@@ -47,6 +47,17 @@
   tags:
     - nginx
 
+- name: Create the Nginx monitor proxy configuration file
+  ansible.builtin.template:
+    src: nginx_monitor_proxy_config.j2
+    dest: "/etc/nginx/sites-available/monitor.conf"
+    mode: "0644"
+    backup: true
+  notify: reload nginx
+  when: "'monitor' in groups and inventory_hostname in groups['monitor']"
+  tags:
+    - nginx
+
 - name: Set nginx logrotate settings
   ansible.builtin.lineinfile:
     path: "/etc/logrotate.d/nginx"
@@ -127,6 +138,16 @@
     state: link
   notify: reload nginx
   when: inventory_hostname in groups['web'] or inventory_hostname in groups['media']
+  tags:
+    - nginx
+
+- name: Ensure that the application site is enabled
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/monitor.conf"
+    dest: "/etc/nginx/sites-enabled/monitor.conf"
+    state: link
+  notify: reload nginx
+  when: "'monitor' in groups and inventory_hostname in groups['monitor']"
   tags:
     - nginx
 

@@ -1,0 +1,51 @@
+- name: Install sidecar repo
+  ansible.builtin.apt:
+    deb: https://packages.graylog2.org/repo/packages/graylog-sidecar-repository_1-5_all.deb
+  tags: sidecar
+
+- name: Create keyring directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/
+    state: directory
+    mode: "0755"
+  tags: sidecar
+
+- name: Install filebeat repo gpg key
+  ansible.builtin.get_url:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    dest: /etc/apt/keyrings/elasticsearch.asc
+    mode: "0644"
+  tags: sidecar
+
+- name: Install filebeat repo
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/elasticsearch.asc] https://artifacts.elastic.co/packages/8.x/apt stable main"
+    state: present
+    update_cache: true
+  tags: sidecar
+
+- name: Install sidecar
+  ansible.builtin.apt:
+    pkg: graylog-sidecar
+  tags: sidecar
+  notify: Restart sidecar
+
+- name: Install filebeat
+  ansible.builtin.apt:
+    pkg: filebeat
+  tags: sidecar
+
+- name: Install sidecar service
+  ansible.builtin.command:
+    cmd: graylog-sidecar -service install
+    creates: /etc/systemd/system/graylog-sidecar.service
+  tags: sidecar
+  notify: Restart sidecar
+
+- name: Create sidecar config
+  ansible.builtin.template:
+    src: sidecar.yml.j2
+    dest: /etc/graylog/sidecar/sidecar.yml
+    mode: "0640"
+  tags: sidecar
+  notify: Restart sidecar

@@ -10,3 +10,7 @@ host_data:
 
 https_domains:
   - ["media.test.zerschlagdenstaat.de"]
+
+monitor_server: fds-tst.okfn.de
+prometheus_exporter:
+  - node_exporter

@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+
+  external_labels:
+    monitor: "fds"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["localhost:9093"]
+
+scrape_configs:
+  - job_name: "node_exporter"
+    static_configs:
+      - targets: [{% for host in groups['all'] %}{% if 'node_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9100"{% endif %}{% if not loop.last %}{% if 'node_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+
+  - job_name: "postgres_exporter"
+    static_configs:
+      - targets: [{% for host in groups['all'] %}{% if 'postgres_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9187"{% endif %}{% if not loop.last %}{% if 'postgres_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+
+  - job_name: "postfix_exporter"
+    static_configs:
+      - targets: [{% for host in groups['all'] %}{% if 'postfix_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9154"{% endif %}{% if not loop.last %}{% if 'nginx_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+
+  - job_name: "nginx_exporter"
+    static_configs:
+      - targets: [{% for host in groups['all'] %}{% if 'nginx_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9113"{% endif %}{% if not loop.last %}{% if 'nginx_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]

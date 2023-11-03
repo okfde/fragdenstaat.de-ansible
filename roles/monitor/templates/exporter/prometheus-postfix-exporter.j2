@@ -1,0 +1,15 @@
+# Private log file from Postfix to read and truncate. Configured in
+# /etc/rsyslog.d/prometheus-postfix-exporter.conf
+POSTFIXLOGFILE=/var/lib/prometheus/postfix-exporter/mail.log
+
+# Extra arguments for the daemon.
+ARGS="--web.listen-address {{ host_data.site_ipv4 }}:9154"
+
+# Prometheus-postfix-exporter supports the following options:
+#  --postfix.showq_path string
+#        Path at which Postfix places its showq socket.
+#        (default "/var/spool/postfix/public/showq")
+#  --web.listen-address string
+#        Address to listen on for web interface and telemetry. (default ":9154")
+#  --web.telemetry-path string
+#        Path under which to expose metrics. (default "/metrics")

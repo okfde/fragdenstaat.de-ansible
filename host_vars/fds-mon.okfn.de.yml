@@ -8,6 +8,18 @@ host_data:
   global_ipv6: 2a01:4f8:231:1ec6::2
   site_ipv4: 192.168.100.5
   disk_type: ssd
+  vpn_peer_id: 230
 
-# https_domains:
-#  - ['mon.fragdenstaat.de', 'log.fragdenstaat.de']
+prometheus: true
+graylog: true
+grafana: true
+
+prometheus_exporter:
+  - node_exporter
+
+https_domains:
+  - ['mon.zerschlagdenstaat.de']
+  - ['log.zerschlagdenstaat.de']
+
+monitor_server_name: 'mon.zerschlagdenstaat.de'
+logserver_server_name: 'log.zerschlagdenstaat.de'

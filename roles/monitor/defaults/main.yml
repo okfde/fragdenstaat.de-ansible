@@ -1,0 +1,19 @@
+grafana: false
+prometheus: false
+prometheus_exporter:
+  - node_exporter
+prometheus_postgres_datasource: "user=prometheus host=/run/postgresql dbname=postgres"
+graylog: false
+sidecar: true
+rsyslog: true
+
+monitor_server: fds-mon.okfn.de
+monitor_dir: /var/www/monitor
+monitor_domain: mon.fragdenstaat.de
+log_domain: log.fragdenstaat.de
+graylog_api_url: http://192.168.100.5:9010/api/
+
+# in secrets.yml
+# graylog_password_secret: pwgen -N 1 -s 96
+# graylog_root_password_sha256: echo -n yourpassword | shasum -a 256
+# graylog_server_api_token: ""

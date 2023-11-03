@@ -1,0 +1,20 @@
+- name: Install node exporter
+  ansible.builtin.apt:
+    pkg: prometheus-node-exporter
+  notify: Restart node exporter
+  tags: exporter
+
+- name: Configure node exporter
+  ansible.builtin.template:
+    src: exporter/prometheus-node-exporter.j2
+    dest: /etc/default/prometheus-node-exporter
+    mode: "0644"
+  notify: Restart node exporter
+  tags: exporter
+
+- name: Configure firewall
+  community.general.ufw:
+    port: "9100"
+    proto: tcp
+    from_ip: 192.168.100.5
+    rule: allow
