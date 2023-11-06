@@ -12,8 +12,30 @@ monitor_dir: /var/www/monitor
 monitor_domain: mon.fragdenstaat.de
 log_domain: log.fragdenstaat.de
 graylog_api_url: http://192.168.100.5:9010/api/
+grafana_api_url: http://192.168.100.5:3000
+grafana_datasources:
+  - name: "Prometheus"
+    type: "prometheus"
+    url: "http://127.0.0.1:9090"
+    isDefault: true
+  - name: "Elasticsearch nginx"
+    type: "elasticsearch"
+    url: "http://localhost:9200"
+    database: "nginx_*"
+    time_field: "filebeat_@timestamp"
+  - name: "Elasticsearch postfix"
+    type: "elasticsearch"
+    url: "http://localhost:9200"
+    database: "postfix_*"
+    time_field: "timestamp"
+  - name: "Elasticsearch Graylog"
+    type: "elasticsearch"
+    url: "http://localhost:9200"
+    database: "graylog_*"
+    time_field: "@timestamp"
 
 # in secrets.yml
 # graylog_password_secret: pwgen -N 1 -s 96
 # graylog_root_password_sha256: echo -n yourpassword | shasum -a 256
 # graylog_server_api_token: ""
+# grafana_admin_password: ""

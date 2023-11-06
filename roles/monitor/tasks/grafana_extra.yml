@@ -1,0 +1,49 @@
+- name: Ensure datasources exists
+  community.grafana.grafana_datasource:
+    grafana_url: "{{ grafana_api_url }}/"
+    grafana_user: "{{ grafana_admin_user }}"
+    grafana_password: "{{ grafana_admin_password }}"
+    name: "{{ item.name }}"
+    ds_url: "{{ item.url }}"
+    ds_type: "{{ item.type }}"
+    access: "{{ item.access | default(omit) }}"
+    is_default: "{{ item.isDefault | default(omit) }}"
+    basic_auth_user: "{{ item.basicAuthUser | default(omit) }}"
+    basic_auth_password: "{{ item.basicAuthPassword | default(omit) }}"
+    database: "{{ item.database | default(omit) }}"
+    user: "{{ item.user | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+    time_field: "{{ item.time_field | default(omit) }}"
+  with_items: "{{ grafana_datasources }}"
+  tags: grafana
+  changed_when: false
+
+- name: Copy dashboards
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item | basename }}"
+    mode: "0644"
+  changed_when: false
+  with_fileglob: "files/grafana_dashboards/*.json"
+  tags: grafana
+
+- name: Import dashboards
+  community.grafana.grafana_dashboard:
+    grafana_url: "{{ grafana_api_url }}"
+    grafana_user: "{{ grafana_admin_user }}"
+    grafana_password: "{{ grafana_admin_password }}"
+    state: present
+    overwrite: false
+    commit_message: Updated by ansible
+    path: "/tmp/{{ item | basename }}"
+    folder: "{{ item.split('_')[0] | default(omit) }}"
+  with_fileglob: "files/grafana_dashboards/*.json"
+  tags: grafana
+
+- name: Remove dashboards tempfiles
+  ansible.builtin.file:
+    path: "tmp/{{ item | basename }}"
+    state: absent
+  changed_when: false
+  with_fileglob: "files/grafana_dashboards/*.json"
+  tags: grafana
