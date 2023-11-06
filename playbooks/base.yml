@@ -12,3 +12,6 @@
       tags: base
     - role: monitor
       tags: monitor
+    - role: backup
+      tags: backup
+      when: inventory_hostname in groups["backup"]

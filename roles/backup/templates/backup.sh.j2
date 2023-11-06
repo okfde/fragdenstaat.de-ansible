@@ -17,8 +17,8 @@ fi
 
 if [ ! -f {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz ]; then
 	sudo -u postgres pg_dumpall | gzip -c > {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz
-	cp {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz /home/fdsbot/backups/sqlbackup.sql.gz
-	chown fdsbot /home/fdsbot/backups/sqlbackup.sql.gz
+	#cp {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz /home/fdsbot/backups/sqlbackup.sql.gz
+	#chown fdsbot /home/fdsbot/backups/sqlbackup.sql.gz
 fi
 
 find {{ virtualenv_path }}/backup/ -mtime +7 -exec rm -Rf -- {} \;
