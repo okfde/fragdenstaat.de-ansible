@@ -29,6 +29,12 @@
     mode: "0644"
   notify: restart dovecot
 
+- name: Configure dovecot logrotate
+  ansible.builtin.copy:
+    src: logrotate.conf
+    dest: /etc/logrotate.d/dovecot
+    mode: "0644"
+
 - name: Create dovecot passwd file
   ansible.builtin.copy:
     content: ""
