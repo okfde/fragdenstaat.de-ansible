@@ -21,8 +21,8 @@ docker compose run --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export > /var/backup
 popd
 
 # SQL Dump Backup
-/usr/bin/duplicity -v 9 --full-if-older-than 1W /var/backup/sentry {{ backup_ftp_url }}/sentry
-/usr/bin/duplicity -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/sentry
+/usr/bin/duplicity -v 2 --full-if-older-than 1W /var/backup/sentry {{ backup_ftp_url }}/sentry
+/usr/bin/duplicity -v 2 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/sentry
 
 unset FTP_PASSWORD
 unset PASSPHRASE

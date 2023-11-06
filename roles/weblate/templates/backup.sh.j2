@@ -19,8 +19,8 @@ docker compose run --rm -i weblate dumpdata --format json -a > /var/backup/webla
 popd
 
 # SQL Dump Backup
-/usr/bin/duplicity -v 9 --full-if-older-than 1W /var/backup/weblate {{ backup_ftp_url }}/weblate
-/usr/bin/duplicity -v 9 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/weblate
+/usr/bin/duplicity -v 2 --full-if-older-than 1W /var/backup/weblate {{ backup_ftp_url }}/weblate
+/usr/bin/duplicity -v 2 remove-all-but-n-full 1 --force {{ backup_ftp_url }}/weblate
 
 unset FTP_PASSWORD
 unset PASSPHRASE
