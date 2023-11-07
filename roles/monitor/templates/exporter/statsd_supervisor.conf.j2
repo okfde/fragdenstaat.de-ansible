@@ -1,0 +1,8 @@
+[program:statsd_exporter]
+directory=/opt/statsd_exporter
+command=/opt/statsd_exporter/statsd_exporter --web.listen-address="{{ host_data.site_ipv4 }}:9102" --statsd.listen-udp="127.0.0.1:9125" --statsd.listen-tcp="127.0.0.1:9125"
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/statsd_exporter.log
+redirect_stderr=true
+user=nobody

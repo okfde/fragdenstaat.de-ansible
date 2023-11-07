@@ -10,6 +10,7 @@ host_data:
 
 monitor_server: fds-tst.okfn.de
 prometheus_exporter:
+  - statsd_exporter
   - node_exporter
   - nginx_exporter
   - postgres_exporter

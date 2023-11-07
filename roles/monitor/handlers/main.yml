@@ -34,6 +34,11 @@
     state: restarted
     enabled: true
 
+- name: Restart statsd exporter
+  community.general.supervisorctl:
+    name: statsd_exporter
+    state: restarted
+
 - name: docker compose up monitor
   ansible.builtin.command:
     cmd: docker compose up -d
