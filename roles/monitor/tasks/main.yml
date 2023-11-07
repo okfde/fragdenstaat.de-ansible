@@ -1,7 +1,15 @@
 - name: Include monitor.yml
   ansible.builtin.include_tasks: monitor.yml
   when: graylog is true or grafana is true or prometheus is true
-  tags: graylog
+  tags:
+    - grafana
+    - graylog
+    - prometheus
+
+- name: Include grafana_extra.yml
+  ansible.builtin.include_tasks: grafana_extra.yml
+  when: grafana is true
+  tags: grafana
 
 - name: Include rsyslog.yml
   ansible.builtin.include_tasks: rsyslog.yml
