@@ -24,7 +24,7 @@
     dest: "/tmp/{{ item | basename }}"
     mode: "0644"
   changed_when: false
-  with_fileglob: "files/grafana_dashboards/*.json"
+  with_fileglob: "files/dashboards/*.json"
   tags: grafana
 
 - name: Import dashboards
@@ -36,14 +36,15 @@
     overwrite: false
     commit_message: Updated by ansible
     path: "/tmp/{{ item | basename }}"
-    folder: "{{ item.split('_')[0] | default(omit) }}"
-  with_fileglob: "files/grafana_dashboards/*.json"
+    folder: "{{ item.split('_')[0] | basename | default(omit) }}"
+  with_fileglob: "files/dashboards/*.json"
   tags: grafana
+  ignore_errors: true
 
 - name: Remove dashboards tempfiles
   ansible.builtin.file:
     path: "tmp/{{ item | basename }}"
     state: absent
   changed_when: false
-  with_fileglob: "files/grafana_dashboards/*.json"
+  with_fileglob: "files/dashboards/*.json"
   tags: grafana
