@@ -43,5 +43,6 @@ exec gunicorn \
     --log-level info \
     --bind unix:$SOCKFILE \
     --statsd-host 127.0.0.1:9125 \
+    --statsd-prefix=$NAME \
     {% block extra_bind %}{% if host_data.site_ipv4 %}--bind {{ host_data.site_ipv4 }}:8000{% endif %}{% endblock %}
     {% block command_end %}{{ application_name }}.wsgi{% endblock %}

@@ -39,7 +39,7 @@
     folder: "{{ item.split('_')[0] | basename | default(omit) }}"
   with_fileglob: "files/dashboards/*.json"
   tags: grafana
-  ignore_errors: true
+  failed_when: false
 
 - name: Remove dashboards tempfiles
   ansible.builtin.file:
