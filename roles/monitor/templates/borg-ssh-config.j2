@@ -1,0 +1,5 @@
+Host {{ borg_repo[inventory_hostname].host }}
+    HostName {{ borg_repo[inventory_hostname].host }}
+    User {{ borg_repo[inventory_hostname].user }}
+    IdentityFile /root/.ssh/id_borg
+    Port {{ borg_repo[inventory_hostname].port }}

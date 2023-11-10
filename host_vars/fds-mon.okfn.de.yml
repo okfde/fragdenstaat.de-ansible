@@ -23,3 +23,10 @@ https_domains:
 
 monitor_server_name: 'mon.zerschlagdenstaat.de'
 logserver_server_name: 'log.zerschlagdenstaat.de'
+
+borg:
+  snapshots:
+    - name: monitor
+      dev: /dev/vg1/monitor
+      mnt: /mnt/monitor-snapshot
+  locations: /mnt/monitor-snapshot/graylog/mongodb_data/
