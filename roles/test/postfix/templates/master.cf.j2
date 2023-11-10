@@ -9,6 +9,10 @@
 #               (yes)   (yes)   (yes)   (never) (100)
 # ==========================================================================
 smtp      inet  n       -       y       -       -       smtpd
+127.0.0.1:smtp  inet n       -       y       -       -       smtpd
+  -o smtpd_sasl_auth_enable=no
+  -o smtpd_tls_security_level=none
+  -o smtpd_sender_restrictions=permit_mynetworks,reject
 submission inet n       -       y       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_sasl_auth_enable=yes
