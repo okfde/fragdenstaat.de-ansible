@@ -21,11 +21,17 @@
     dest: /root/.ssh/config
     mode: "0640"
 
+- name: Create logs directory
+  ansible.builtin.file:
+    path: /var/www/monitor/logs
+    mode: "0750"
+    state: directory
+
 - name: Create backup cronjob
   ansible.builtin.cron:
     name: Backup
     user: root
-    job: /root/backup.sh 2>&1 > /var/log/backup.log
+    job: /root/backup.sh &> /var/www/monitor/logs/backup.log
     minute: "0"
     hour: "1"
     dom: "*"
