@@ -46,14 +46,7 @@
   changed_when: false
 
 - name: Restart prometheus
-  ansible.builtin.command:
-    cmd: docker compose stop prometheus
-    chdir: "{{ monitor_dir }}"
-  notify: Start prometheus
-  changed_when: false
-
-- name: Start prometheus
-  ansible.builtin.command:
-    cmd: docker compose up prometheus -d
+  ansible.builtin.shell:
+    cmd: docker compose stop prometheus && docker compose up prometheus -d
     chdir: "{{ monitor_dir }}"
   changed_when: false
