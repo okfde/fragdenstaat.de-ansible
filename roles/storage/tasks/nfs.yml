@@ -16,3 +16,9 @@
     dest: /etc/exports
     mode: "0644"
   notify: Reload exports
+
+- name: Configure ufw for nfs
+  community.general.ufw:
+    port: "2049"
+    from_ip: "{{ nfs_allow_from }}"
+    rule: allow
