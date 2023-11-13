@@ -17,3 +17,5 @@ https_domains:
 monitor_server: fds-tst.okfn.de
 prometheus_exporter:
   - node_exporter
+
+ogimage_domain: ogimage.test.zerschlagdenstaat.de

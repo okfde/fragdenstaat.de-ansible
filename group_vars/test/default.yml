@@ -18,7 +18,6 @@ media_url: "https://media.test.zerschlagdenstaat.de/files/"
 static_url: "https://static.test.zerschlagdenstaat.de/static/"
 allowed_hosts: 'test.zerschlagdenstaat.de'
 
-external_media_storage: false
 onion_service_enabled: false
 
 email_host: "127.0.0.1"
@@ -27,9 +26,9 @@ bounce_email_host: "127.0.0.1"
 unsubscribe_email_host: "127.0.0.1"
 gunicorn_user_uid: "1111"
 
-sentry_domain: ""
-sentry_url: ""
-sentry_webhook_url: ""
+sentry_domain: "sentry.test.zerschlagdenstaat.de"
+sentry_url: "https://sentry.test.zerschlagdenstaat.de"
+sentry_webhook_url: "https://sentry.test.zerschlagdenstaat.de"
 django_sentry_dsn: ""
 django_sentry_public_dsn: ""
 
