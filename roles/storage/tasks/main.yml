@@ -1,0 +1,3 @@
+- name: Import nfs.yml
+  ansible.builtin.include_tasks: nfs.yml
+  when: nfs is true

@@ -1,0 +1,18 @@
+- name: Create external media storage directory
+  ansible.builtin.file:
+    path: "{{ external_media_storage_src }}"
+    mode: "02750"
+    state: directory
+  notify: Reload exports
+
+- name: Install nfs-kernel-server
+  ansible.builtin.apt:
+    pkg: nfs-kernel-server
+  notify: Reload exports
+
+- name: Configure nfs exports
+  ansible.builtin.template:
+    src: exports.j2
+    dest: /etc/exports
+    mode: "0644"
+  notify: Reload exports

@@ -15,3 +15,6 @@
     - role: backup
       tags: backup
       when: inventory_hostname in groups["backup"]
+    - role: storage
+      tags: storage
+      when: inventory_hostname in groups["media"]

@@ -1,0 +1,4 @@
+- name: Reload exports
+  ansible.builtin.command:
+    cmd: /usr/sbin/exportfs -ra
+  changed_when: false

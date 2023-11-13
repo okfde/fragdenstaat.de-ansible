@@ -14,3 +14,6 @@ https_domains:
 monitor_server: fds-tst.okfn.de
 prometheus_exporter:
   - node_exporter
+
+nfs_exports:
+  - "{{ external_media_storage_src }} 192.168.122.123(rw,sync,no_subtree_check,all_squash,anonuid=1001,anongid=33)"
