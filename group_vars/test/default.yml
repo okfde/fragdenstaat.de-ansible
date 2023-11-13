@@ -55,5 +55,5 @@ nginx_extra_domains:
       - path: "/.well-known/mta-sts.txt"
         filename: mta-sts.txt
 
-minio_release: 20231016041343.0.0_amd64
-mcli_release: 20231014015703.0.0_amd64
+minio_release: 20231111081441.0.0_amd64
+mcli_release: 20231110213717.0.0_amd64
