@@ -38,6 +38,7 @@
     state: "directory"
     owner: "{{ gunicorn_user }}"
     mode: "02750"
+  when: not external_media_storage
 
 - name: Symlink storage directory
   ansible.builtin.file:
