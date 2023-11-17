@@ -16,7 +16,7 @@ foi_mail_domain: "test.zerschlagdenstaat.de"
 site_url: "https://test.zerschlagdenstaat.de"
 media_url: "https://media.test.zerschlagdenstaat.de/files/"
 static_url: "https://static.test.zerschlagdenstaat.de/static/"
-allowed_hosts: 'test.zerschlagdenstaat.de'
+allowed_hosts: '"test.zerschlagdenstaat.de", "media.test.zerschlagdenstaat.de"'
 
 onion_service_enabled: false
 
@@ -55,5 +55,5 @@ nginx_extra_domains:
       - path: "/.well-known/mta-sts.txt"
         filename: mta-sts.txt
 
-minio_release: 20231111081441.0.0_amd64
-mcli_release: 20231110213717.0.0_amd64
+minio_release: 20231115204325.0.0_amd64
+mcli_release: 20231115224558.0.0_amd64
