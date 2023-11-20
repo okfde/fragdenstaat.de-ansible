@@ -4,14 +4,17 @@
     state: restarted
     enabled: true
 
-- name: update postmap
+- name: update postmap vmail_mailbox
   ansible.builtin.command:
-    cmd: "postmap /etc/postfix/{{ item }}"
+    cmd: "postmap /etc/postfix/vmail_mailbox"
   notify: restart postfix
   changed_when: false
-  with_items:
-    - "vmail_domains"
-    - "vmail_mailbox"
+
+- name: update postmap vmail_domains
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/vmail_domains"
+  notify: restart postfix
+  changed_when: false
 
 - name: restart opendkim
   ansible.builtin.service:

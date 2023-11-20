@@ -42,21 +42,23 @@
     src: vmail_domains.j2
     dest: /etc/postfix/vmail_domains
     mode: "0600"
-  notify: update postmap
+  notify: update postmap vmail_domains
 
 - name: Install vmail_mailbox
   ansible.builtin.template:
     src: vmail_mailbox.j2
     dest: /etc/postfix/vmail_mailbox
     mode: "0600"
-  notify: update postmap
+  notify: update postmap vmail_mailbox
 
 - name: Install virtual alias map configuration
   ansible.builtin.template:
     src: postgres-virtual-alias-maps.cf.j2
     dest: /etc/postfix/postgres-virtual-alias-maps.cf
     mode: "0600"
-  notify: update postmap
+  notify:
+    - update postmap vmail_domains
+    - update postmap vmail_mailbox
 
 - name: Add reject domains file
   ansible.builtin.copy:
