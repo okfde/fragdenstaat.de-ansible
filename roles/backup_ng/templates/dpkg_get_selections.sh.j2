@@ -1,0 +1,11 @@
+set -ex
+
+PATH=/usr/bin:/bin
+DATE=`date +%F`
+DAYOFMONTH=`date +%d`
+
+umask 177
+
+if [ ! -f {{ virtualenv_path }}/backup/dpkg-${DATE}.txt ]; then
+	dpkg --get-selections > {{ virtualenv_path }}/backup/dpkg-${DATE}.txt
+fi

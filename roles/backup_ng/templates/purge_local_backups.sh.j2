@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -ex
+
+find {{ virtualenv_path }}/backup/ -mtime +7 -exec rm -Rf -- {} \;

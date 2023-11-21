@@ -26,8 +26,3 @@
   ansible.builtin.include_tasks: sidecar.yml
   when: sidecar is defined
   tags: sidecar
-
-- name: Include backup.yml
-  ansible.builtin.include_tasks: backup.yml
-  when: inventory_hostname == "fds-mon.okfn.de"
-  tags: monitorbackup

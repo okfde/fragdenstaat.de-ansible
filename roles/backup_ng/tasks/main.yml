@@ -1,0 +1,146 @@
+- name: Install sshpass
+  ansible.builtin.apt:
+    pkg: sshpass
+
+- name: Install borg
+  ansible.builtin.apt:
+    pkg: borgbackup
+  when: "borg is defined"
+
+- name: Install restic
+  ansible.builtin.apt:
+    pkg: restic
+  when: "restic is defined"
+
+- name: Generate ssh-key
+  community.crypto.openssh_keypair:
+    path: /root/.ssh/id_storagebox
+    type: ed25519
+  become: true
+
+- name: Create ssh config
+  ansible.builtin.blockinfile:
+    path: /root/.ssh/config
+    block: |
+      Host {{ backup_repo[inventory_hostname]['host'] }}
+      HostName {{ backup_repo[inventory_hostname]['host'] }}
+      User {{ backup_repo[inventory_hostname]['user'] }}
+      IdentityFile /root/.ssh/id_storagebox
+      Port {{ backup_repo[inventory_hostname]['port'] }}
+    mode: "0640"
+    create: true
+  become: true
+
+- name: Copy ssh-key
+  ansible.builtin.command:
+    cmd: sshpass -p {{ backup_repo[inventory_hostname]['password'] }} ssh-copy-id -o StrictHostKeyChecking=no -p {{ backup_repo[inventory_hostname]['port'] }} -s {{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}
+  changed_when: false
+  become: true
+  when: ansible_distribution_version >= "22.04"
+
+- name: Add ssh-key to authorized_keys
+  ansible.builtin.shell:
+    cmd: cat /root/.ssh/id_storagebox.pub | sshpass -p {{ backup_repo[inventory_hostname]['password'] }} ssh -p{{ backup_repo[inventory_hostname]['port'] }} {{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }} -o StrictHostKeyChecking=no install-ssh-key
+  changed_when: false
+  become: true
+  when: ansible_distribution_version == "20.04"
+
+- name: Initialize borg repo
+  ansible.builtin.shell:
+    cmd: "BORG_PASSPHRASE={{ backup_repo[inventory_hostname].repokey }} /usr/bin/borg init ssh://{{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}:{{ backup_repo[inventory_hostname]['port'] }}/./{{ backup_repo[inventory_hostname]['path'] }}/ -e repokey"
+    creates: /root/borg.sh
+  become: true
+  when: "borg is defined"
+  tags:
+    - skip_ansible_lint
+
+- name: Create prescripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/root/{{ item }}"
+    mode: "0750"
+  with_items: "{{ borg.prescript }}"
+  when: "(borg is defined) and ('prescript' in borg)"
+
+- name: Create postscripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/root/{{ item }}"
+    mode: "0750"
+  with_items: "{{ borg.postscript }}"
+  when: "(borg is defined) and ('postscript' in borg)"
+
+- name: Create borg backup script
+  ansible.builtin.template:
+    src: borg.sh.j2
+    dest: /root/borg.sh
+    mode: "0750"
+  when: "borg is defined"
+
+- name: Create backup cronjob
+  ansible.builtin.cron:
+    name: borg
+    user: root
+    job: /root/borg.sh &> /var/logs/borg.log
+    minute: "0"
+    hour: "1"
+    dom: "*"
+    month: "*"
+    dow: "*"
+  when: "borg is defined"
+
+- name: Create restic.passwd config
+  ansible.builtin.template:
+    src: restic.passwd.j2
+    dest: /root/restic.passwd
+    mode: "0600"
+  when: "restic is defined"
+
+- name: Create restic.exclude config
+  ansible.builtin.template:
+    src: restic.exclude.j2
+    dest: /root/restic.exclude
+    mode: "0640"
+  when: "restic is defined"
+
+- name: Initialize restic repo
+  ansible.builtin.command:
+    cmd: "/usr/bin/restic init -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd"
+    creates: /root/restic.sh
+  become: true
+  when: "restic is defined"
+
+- name: Create prescripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/root/{{ item }}"
+    mode: "0750"
+  with_items: "{{ restic.prescript }}"
+  when: "(restic is defined) and ('prescript' in restic)"
+
+- name: Create postscripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/root/{{ item }}"
+    mode: "0750"
+  with_items: "{{ restic.postscript }}"
+  when: "(restic is defined) and ('postscript' in restic)"
+
+- name: Create restic backup script
+  ansible.builtin.template:
+    src: restic.sh.j2
+    dest: /root/restic.sh
+    mode: "0750"
+  when: "restic is defined"
+
+- name: Create backup cronjob
+  ansible.builtin.cron:
+    name: restic
+    user: root
+    job: /root/restic.sh &> /var/logs/restic.log
+    minute: "0"
+    hour: "1"
+    dom: "*"
+    month: "*"
+    dow: "*"
+  when: "restic is defined"

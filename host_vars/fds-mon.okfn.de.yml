@@ -30,3 +30,4 @@ borg:
       dev: /dev/vg1/monitor
       mnt: /mnt/monitor-snapshot
   locations: /mnt/monitor-snapshot/graylog/mongodb_data/
+  keepdaily: 14

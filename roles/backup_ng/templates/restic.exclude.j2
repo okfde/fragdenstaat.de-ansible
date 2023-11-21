@@ -1,0 +1,9 @@
+/dev
+/sys
+/proc
+/tmp
+/run
+/var/run
+{% if 'excludes' in restic %}
+{{ restic.excludes }}
+{% endif %}

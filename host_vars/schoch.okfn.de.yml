@@ -18,3 +18,7 @@ nginx_static_html_dir: "/var/www/static"
 prometheus_exporter:
   - node_exporter
   - nginx_exporter
+
+restic:
+  locations: /home/storage-box/home
+  keepdaily: 7

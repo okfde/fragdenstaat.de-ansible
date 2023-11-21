@@ -1,19 +1,15 @@
 #!/bin/bash
 
 BOOTUP=mono
+LOGFILE="/tmp/restic.log"
 RES_COL=70
 MOVE_TO_COL="echo -en \\033[${RES_COL}G"
-MOVE_TO_TAB="echo -en \t\t\t\t\t"
 SETCOLOR_SUCCESS="echo -en \\033[1;32m"
 SETCOLOR_FAILURE="echo -en \\033[1;31m"
 SETCOLOR_NORMAL="echo -en \\033[0;39m"
 
-export BORG_REPO="ssh://{{ borg_repo[inventory_hostname].user }}@{{ borg_repo[inventory_hostname].host }}:{{ borg_repo[inventory_hostname].port }}/./{{ borg_repo[inventory_hostname].path }}"
-export BORG_PASSPHRASE="{{ backup_gpg_password }}"
-
 echo_success() {
     [ "$BOOTUP" = "color" ] && $MOVE_TO_COL
-    [ "$BOOTUP" = "color" ] || $MOVE_TO_TAB
     echo -n "  ["
     [ "$BOOTUP" = "color" ] && $SETCOLOR_SUCCESS
     echo -n $"  OK  "
@@ -25,7 +21,6 @@ echo_success() {
 
 echo_failure() {
     [ "$BOOTUP" = "color" ] && $MOVE_TO_COL
-    [ "$BOOTUP" = "color" ] || $MOVE_TO_TAB
     echo -n "  ["
     [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
     echo -n $"FAILED"
@@ -36,18 +31,17 @@ echo_failure() {
 }
 
 step() {
-    echo -n "$@"
-
-    echo "" >> /tmp/backup.log
-    echo "$(date)" >> /tmp/backup.log
-    echo "$*" >> /tmp/backup.log
+    echo -n "$@" | awk '{printf "%-'${RES_COL}'s", $0}'
+    echo "" >> "${LOGFILE}"
+    echo "$(date)" >> "${LOGFILE}"
+    echo "$*" >> "${LOGFILE}"
 
     STEP_OK=0
     [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
 }
 
 try() {
-    "$@" &>> /tmp/backup.log
+    "$@" &>> "${LOGFILE}"
 
     # Check if command failed and update $STEP_OK if so.
     local EXIT_CODE=$?
@@ -60,7 +54,7 @@ try() {
             local FILE=$(readlink -m "${BASH_SOURCE[1]}")
             local LINE=${BASH_LINENO[0]}
 
-            echo "$FILE: line $LINE: Command \`$*' failed with exit code $EXIT_CODE." >> /tmp/backup.log
+            echo "$FILE: line $LINE: Command \`$*' failed with exit code $EXIT_CODE." >> "${LOGFILE}"
         fi
     fi
 
@@ -95,17 +89,19 @@ exlock_now || exerror "ERROR: Lockfile exists, is there another instance already
 do_cleanup () {
     echo "ERROR, exiting..."
     echo "Unmounting and removing snapshots"
-{% for u in borg.snapshots %}
+{% if 'snapshots' in restic %}
+{% for u in restic.snapshots %}
     /bin/umount {{ u.mnt }}
 {% endfor %}
-{% for l in borg.snapshots %}
+{% for l in restic.snapshots %}
     /sbin/lvremove {{ l.dev }}-snapshot -f
 {% endfor %}
+{% endif %}
 
     echo ""
     echo "Logfile:"
-    cat /tmp/backup.log
-    rm /tmp/backup.log
+    cat "${LOGFILE}"
+    rm "${LOGFILE}"
 
     exit 2
 }
@@ -113,75 +109,88 @@ do_cleanup () {
 #trap 'echo "ERROR: Backup interrupted"; do_cleanup error; exit 2' INT TERM # Gracefully quit on (any) error
 trap 'echo "received signal to stop"; do_cleanup interrupted; exit 1' SIGQUIT SIGTERM SIGINT # Gracefully quit on break
 
-echo "" > /tmp/backup.log
+echo "" > "${LOGFILE}"
 
-echo "Starting Backup $(date)"
+echo "Start Backup $(date)"
 echo "-------------------------------------------------------------------------------"
 echo ""
-step "Create mountpoints           "
-{% for mk in borg.snapshots %}
+{% if 'snapshots' in restic %}
+step "Create mountpoints"
+{% for mk in restic.snapshots %}
   mkdir {{ mk.mnt }} -p || /bin/true
 {% endfor %}
 next
 
-step "Create snapshots             "
-{% for s in borg.snapshots %}
+step "Create snapshots"
+{% for s in restic.snapshots %}
   try /sbin/lvcreate -l100%FREE -s -n {{ s.name }}-snapshot {{ s.dev }}
 {% endfor %}
 next
 
-step "Mount snapshots              "
-{% for m in borg.snapshots %}
+step "Mount snapshots"
+{% for m in restic.snapshots %}
   try /bin/mount {{ m.dev }}-snapshot {{ m.mnt }}
 {% endfor %}
 next
+{% endif %}
 
-step "Create backup                "
-  try /usr/bin/borg create ::{now} {{ borg.locations }} --show-rc
+step "Remove stale locks"
+  try /usr/bin/restic unlock -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
 next
 
-step "Umount and remove snapshots  "
-{% for u in borg.snapshots %}
+{% if 'prescripts' in restic %}
+{% for prescript in restic.prescripts %}
+step "Prescript {{ prescript }}"
+  try /root/{{ prescript }}
+next
+{% endfor %}
+{% endif %}
+
+step "Create backup"
+  try /usr/bin/restic backup {{ restic.locations }} --limit-upload 62500 -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd --exclude-file /root/restic.exclude
+next
+
+{% if 'snapshots' in restic %}
+step "Umount and remove snapshots"
+{% for u in restic.snapshots %}
   try /bin/umount {{ u.mnt }}
 {% endfor %}
-{% for l in borg.snapshots %}
+{% for l in restic.snapshots %}
   try /sbin/lvremove {{ l.dev }}-snapshot -f
 {% endfor %}
 next
+{% endif %}
 
-step "Prune backup generations     "
-  try /usr/bin/borg prune --keep-daily=14 --show-rc
+{% if 'postscripts' in restic %}
+{% for postscript in restic.postscripts %}
+step "Postscript {{ postscript }}"
+  try /root/{{ postscript }}
+next
+{% endfor %}
+{% endif %}
+
+step "Prune backup generations"
+  try /usr/bin/restic forget --keep-daily --prune {{ restic.keepdaily }} -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
 next
 
 if (( $(date +"%u") == 1)); then
-  step "Backup Check (verify)        "
-    try /usr/bin/borg check --verify-data --show-rc
+  step "Backup Check (verify)"
+    export TMPDIR="/var/tmp/restic"
+    try /usr/bin/restic check --read-data -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
   next
 else
-  step "Backup Check (quick)         "
-    try /usr/bin/borg check --show-rc
+  step "Backup Check (quick)"
+    try /usr/bin/restic check -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
   next
 fi
 
-step "Removing lock                "
-  try /usr/bin/borg break-lock
-next
-
-step "Exporting Repokey            "
-  try /usr/bin/borg key export :: --paper
-next
-
-step "Backup List                  "
-  try /usr/bin/borg list
-next
-
-step "Backup Info                  "
-  try /usr/bin/borg info
+step "Backup stats"
+  try /usr/bin/restic stats -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
 next
 
 echo ""
 echo "-------------------------------------------------------------------------------"
 echo "Logfile:"
-cat /tmp/backup.log
-rm /tmp/backup.log
+cat "${LOGFILE}"
+rm "${LOGFILE}"
 echo "-------------------------------------------------------------------------------"

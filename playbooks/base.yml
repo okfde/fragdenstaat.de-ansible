@@ -18,3 +18,6 @@
     - role: storage
       tags: storage
       when: inventory_hostname in groups["media"]
+    - role: backup_ng
+      tags: backup_ng
+      when: inventory_hostname in groups["backup_ng"]

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -ex
+
+PATH=/usr/bin:/bin
+DATE=`date +%F`
+DAYOFMONTH=`date +%d`
+
+umask 177
+
+if [ ! -f {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz ]; then
+	sudo -u postgres pg_dumpall | gzip -c > {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz
+fi

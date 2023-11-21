@@ -16,3 +16,12 @@ prometheus_exporter:
   - postgres_exporter
   - nginx_exporter
   - postfix_exporter
+
+borg:
+  locations: /var/vmail/ /var/www/fragdenstaat.de/backup/
+  keepdaily: 7
+#  prescripts:
+#    - dpkg_get_selections.sh
+#    - create_postgres_backup.sh
+#  postscripts:
+#    - purge_local_backups.sh

@@ -1,0 +1,206 @@
+#!/bin/bash
+
+BOOTUP=mono
+LOGFILE="/tmp/borg.log"
+RES_COL=70
+MOVE_TO_COL="echo -en \\033[${RES_COL}G"
+SETCOLOR_SUCCESS="echo -en \\033[1;32m"
+SETCOLOR_FAILURE="echo -en \\033[1;31m"
+SETCOLOR_NORMAL="echo -en \\033[0;39m"
+
+export BORG_REPO="ssh://{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:{{ backup_repo[inventory_hostname].port }}/./{{ backup_repo[inventory_hostname].path }}"
+export BORG_PASSPHRASE="{{ backup_repo[inventory_hostname].repokey }}"
+
+echo_success() {
+    [ "$BOOTUP" = "color" ] && $MOVE_TO_COL
+    echo -n "  ["
+    [ "$BOOTUP" = "color" ] && $SETCOLOR_SUCCESS
+    echo -n $"  OK  "
+    [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
+    echo -n "]"
+    echo -ne "\r"
+    return 0
+}
+
+echo_failure() {
+    [ "$BOOTUP" = "color" ] && $MOVE_TO_COL
+    echo -n "  ["
+    [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
+    echo -n $"FAILED"
+    [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
+    echo -n "]"
+    echo -ne "\r"
+    return 1
+}
+
+step() {
+    echo -n "$@" | awk '{printf "%-'${RES_COL}'s", $0}'
+    echo "" >> "${LOGFILE}"
+    echo "$(date)" >> "${LOGFILE}"
+    echo "$*" >> "${LOGFILE}"
+
+    STEP_OK=0
+    [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
+}
+
+try() {
+    "$@" &>> "${LOGFILE}"
+
+    # Check if command failed and update $STEP_OK if so.
+    local EXIT_CODE=$?
+
+    if [[ $EXIT_CODE -ne 0 ]]; then
+        STEP_OK=$EXIT_CODE
+        [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
+
+        if [[ -n $LOG_STEPS ]]; then
+            local FILE=$(readlink -m "${BASH_SOURCE[1]}")
+            local LINE=${BASH_LINENO[0]}
+
+            echo "$FILE: line $LINE: Command \`$*' failed with exit code $EXIT_CODE." >> "${LOGFILE}"
+        fi
+    fi
+
+    return $EXIT_CODE
+}
+
+next() {
+    [[ -f /tmp/step.$$ ]] && { STEP_OK=$(< /tmp/step.$$); rm -f /tmp/step.$$; }
+    [[ $STEP_OK -eq 0 ]]  && echo_success || echo_failure
+    echo
+
+    return $STEP_OK
+}
+
+LOCKFILE="/var/lock/$(basename $0)"
+LOCKFD=99
+
+_lock()             { flock -$1 $LOCKFD; }
+_no_more_locking()  { _lock u; _lock xn && rm -f $LOCKFILE; }
+_prepare_locking()  { eval "exec $LOCKFD>\"$LOCKFILE\""; trap _no_more_locking EXIT; }
+
+_prepare_locking
+
+exlock_now()        { _lock xn; }  # obtain an exclusive lock immediately or fail
+exlock()            { _lock x; }   # obtain an exclusive lock
+shlock()            { _lock s; }   # obtain a shared lock
+unlock()            { _lock u; }   # drop a lock
+exerror()           { echo "$1";exit "${2:-1}"; }
+
+exlock_now || exerror "ERROR: Lockfile exists, is there another instance already running? Exiting..."
+
+do_cleanup () {
+    echo "ERROR, exiting..."
+    echo "Unmounting and removing snapshots"
+{% if 'snapshots' in borg %}
+{% for u in borg.snapshots %}
+    /bin/umount {{ u.mnt }}
+{% endfor %}
+{% for l in borg.snapshots %}
+    /sbin/lvremove {{ l.dev }}-snapshot -f
+{% endfor %}
+{% endif %}
+
+    echo ""
+    echo "Logfile:"
+    cat "${LOGFILE}"
+    rm "${LOGFILE}"
+
+    exit 2
+}
+
+#trap 'echo "ERROR: Backup interrupted"; do_cleanup error; exit 2' INT TERM # Gracefully quit on (any) error
+trap 'echo "received signal to stop"; do_cleanup interrupted; exit 1' SIGQUIT SIGTERM SIGINT # Gracefully quit on break
+
+echo "" > "${LOGFILE}"
+
+echo "Start Backup $(date)"
+echo "-------------------------------------------------------------------------------"
+echo ""
+{% if 'snapshots' in borg %}
+step "Create mountpoints"
+{% for mk in borg.snapshots %}
+  mkdir {{ mk.mnt }} -p || /bin/true
+{% endfor %}
+next
+
+step "Create snapshots"
+{% for s in borg.snapshots %}
+  try /sbin/lvcreate -l100%FREE -s -n {{ s.name }}-snapshot {{ s.dev }}
+{% endfor %}
+next
+
+step "Mount snapshots"
+{% for m in borg.snapshots %}
+  try /bin/mount {{ m.dev }}-snapshot {{ m.mnt }}
+{% endfor %}
+next
+{% endif %}
+
+{% if 'prescripts' in borg %}
+{% for prescript in borg.prescripts %}
+step "Prescript {{ prescript }}"
+  try /root/{{ prescript }}
+next
+{% endfor %}
+{% endif %}
+
+step "Create backup"
+  try /usr/bin/borg create ::{now} {{ borg.locations }} --show-rc
+next
+
+{% if 'snapshots' in borg %}
+step "Umount and remove snapshots"
+{% for u in borg.snapshots %}
+  try /bin/umount {{ u.mnt }}
+{% endfor %}
+{% for l in borg.snapshots %}
+  try /sbin/lvremove {{ l.dev }}-snapshot -f
+{% endfor %}
+next
+{% endif %}
+
+{% if 'postscripts' in borg %}
+{% for postscript in borg.postscripts %}
+step "Postscript {{ postscript }}"
+  try /root/{{ postscript }}
+next
+{% endfor %}
+{% endif %}
+
+step "Prune backup generations"
+  try /usr/bin/borg prune --keep-daily={{ borg.keepdaily }} --show-rc
+next
+
+if (( $(date +"%u") == 1)); then
+  step "Backup Check (verify)"
+    try /usr/bin/borg check --verify-data --show-rc
+  next
+else
+  step "Backup Check (quick)"
+    try /usr/bin/borg check --show-rc
+  next
+fi
+
+step "Remove lock"
+  try /usr/bin/borg break-lock
+next
+
+step "Export Repokey"
+  try /usr/bin/borg key export :: --paper
+next
+
+step "Backup List"
+  try /usr/bin/borg list
+next
+
+step "Backup Info"
+  try /usr/bin/borg info
+next
+
+echo ""
+echo "-------------------------------------------------------------------------------"
+echo "Logfile:"
+cat "${LOGFILE}"
+rm "${LOGFILE}"
+echo "-------------------------------------------------------------------------------"
