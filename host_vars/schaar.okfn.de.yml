@@ -13,3 +13,7 @@ host_data:
 
 prometheus_exporter:
   - node_exporter
+
+borg:
+  locations: /var/www/
+  keepdaily: 7
