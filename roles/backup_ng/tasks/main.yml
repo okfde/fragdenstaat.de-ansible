@@ -47,7 +47,7 @@
 
 - name: Initialize borg repo
   ansible.builtin.shell:
-    cmd: "BORG_PASSPHRASE={{ backup_repo[inventory_hostname].repokey }} /usr/bin/borg init ssh://{{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}:{{ backup_repo[inventory_hostname]['port'] }}/./{{ backup_repo[inventory_hostname]['path'] }}/ -e repokey"
+    cmd: "BORG_PASSPHRASE={{ backup_repo[inventory_hostname].repokey }} /usr/bin/borg init ssh://{{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}:{{ backup_repo[inventory_hostname]['port'] }}/./{{ backup_repo[inventory_hostname]['path'] }}/ -e repokey --make-parent-dirs"
     creates: /root/borg.sh
   become: true
   when: "borg is defined"
@@ -81,7 +81,7 @@
   ansible.builtin.cron:
     name: borg
     user: root
-    job: /root/borg.sh &> /var/logs/borg.log
+    job: "/root/borg.sh &> /var/logs/borg.log"
     minute: "0"
     hour: "1"
     dom: "*"
@@ -137,10 +137,29 @@
   ansible.builtin.cron:
     name: restic
     user: root
-    job: /root/restic.sh &> /var/logs/restic.log
+    job: "/bin/true #/root/restic.sh &> /var/logs/restic.log"
     minute: "0"
     hour: "1"
     dom: "*"
     month: "*"
     dow: "*"
   when: "restic is defined"
+
+- name: Create storagebox prometheus exporter
+  ansible.builtin.template:
+    src: storagebox_exporter.sh.j2
+    dest: /root/storagebox_exporter.sh
+    mode: "0750"
+  when: "(prometheus_exporter is defined) and ('node_exporter' in prometheus_exporter)"
+
+- name: Create exporter cronjob
+  ansible.builtin.cron:
+    name: storagebox_exporter
+    user: root
+    job: "/root/storagebox_exporter.sh"
+    minute: "0"
+    hour: "*"
+    dom: "*"
+    month: "*"
+    dow: "*"
+  when: "(prometheus_exporter is defined) and ('node_exporter' in prometheus_exporter)"
