@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export BORG_REPO="ssh://{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:{{ backup_repo[inventory_hostname].port }}/./{{ backup_repo[inventory_hostname].path }}"
+export BORG_PASSPHRASE="{{ backup_repo[inventory_hostname].repokey }}"
+
+mkdir -p /mnt/borg/
+
+echo "Mounting all backup generations into /mnt/borg/"
+/usr/bin/borg mount :: /mnt/borg/
+
+echo "Remember to unmount (\"umount /mnt/borg\") the repo, otherwise the next backup will fail."

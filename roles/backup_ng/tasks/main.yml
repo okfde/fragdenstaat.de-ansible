@@ -70,11 +70,16 @@
   with_items: "{{ borg.postscript }}"
   when: "(borg is defined) and ('postscript' in borg)"
 
-- name: Create borg backup script
+- name: Create borg backup scripts
   ansible.builtin.template:
-    src: borg.sh.j2
-    dest: /root/borg.sh
+    src: "{{ item }}.j2"
+    dest: "/root/{{ item }}"
     mode: "0750"
+  with_items:
+    - borg.sh
+    - borg_info.sh
+    - borg_mnt.sh
+    - borg_repair.sh
   when: "borg is defined"
 
 - name: Create backup cronjob
@@ -126,11 +131,15 @@
   with_items: "{{ restic.postscript }}"
   when: "(restic is defined) and ('postscript' in restic)"
 
-- name: Create restic backup script
+- name: Create restic backup scripts
   ansible.builtin.template:
-    src: restic.sh.j2
-    dest: /root/restic.sh
+    src: "{{ item }}.j2"
+    dest: "/root/{{ item }}"
     mode: "0750"
+  with_items:
+    - restic.sh
+    - restic_info.sh
+    - restic_mnt.sh
   when: "restic is defined"
 
 - name: Create backup cronjob
@@ -163,3 +172,39 @@
     month: "*"
     dow: "*"
   when: "(prometheus_exporter is defined) and ('node_exporter' in prometheus_exporter)"
+
+- name: Remove borg scripts
+  ansible.builtin.file:
+    path: "/root/{{ item }}"
+    state: absent
+  with_items:
+    - borg.sh
+    - borg_mnt.sh
+    - borg_info.sh
+    - borg_repair.sh
+  when: "borg is not defined"
+
+- name: Remove borg cronjob
+  ansible.builtin.cron:
+    name: borg
+    state: absent
+  when: "borg is not defined"
+
+- name: Remove restic scripts and config
+  ansible.builtin.file:
+    path: "/root/{{ item }}"
+    state: absent
+  with_items:
+    - restic.sh
+    - restic_mnt.sh
+    - restic_info.sh
+    - restic.repo
+    - restic.exclude
+    - restic.passwd
+  when: "restic is not defined"
+
+- name: Remove restic cronjob
+  ansible.builtin.cron:
+    name: restic
+    state: absent
+  when: "restic is not defined"

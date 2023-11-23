@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export TMPDIR="/var/tmp/restic"
+
+mkdir -p /mnt/restic/
+
+echo "Mounting into /mnt/restic/"
+/usr/bin/restic mount -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd /mnt/restic/

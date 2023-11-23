@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export BORG_REPO="ssh://{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:{{ backup_repo[inventory_hostname].port }}/./{{ backup_repo[inventory_hostname].path }}"
+export BORG_PASSPHRASE="{{ backup_repo[inventory_hostname].repokey }}"
+
+/usr/bin/borg key export :: --paper
+echo ""
+echo "-------------------------------------------------------------------------------"
+/usr/bin/borg list
+echo ""
+echo "-------------------------------------------------------------------------------"
+/usr/bin/borg info
