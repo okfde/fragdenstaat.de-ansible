@@ -170,7 +170,7 @@ next
 {% endif %}
 
 step "Prune backup generations"
-  try /usr/bin/restic forget --keep-daily {{ restic.keepdaily }} -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+  try /usr/bin/restic forget --keep-daily {{ restic.keepdaily }} --prune -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
 next
 
 if (( $(date +"%u") == 1)); then
