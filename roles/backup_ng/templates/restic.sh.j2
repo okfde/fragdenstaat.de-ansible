@@ -170,12 +170,13 @@ next
 {% endif %}
 
 step "Prune backup generations"
-  try /usr/bin/restic forget --keep-daily --prune {{ restic.keepdaily }} -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+  try /usr/bin/restic forget --keep-daily {{ restic.keepdaily }} -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
 next
 
 if (( $(date +"%u") == 1)); then
   step "Backup Check (verify)"
     export TMPDIR="/var/tmp/restic"
+    mkdir -p "/var/tmp/restic"
     try /usr/bin/restic check --read-data -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
   next
 else
