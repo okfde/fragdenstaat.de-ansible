@@ -51,6 +51,14 @@
     to_ip: 192.168.100.5
     rule: allow
 
+- name: Configure firewall for gelf http
+  community.general.ufw:
+    port: "12201"
+    proto: tcp
+    from_ip: 192.168.100.0/24
+    to_ip: 192.168.100.5
+    rule: allow
+
 - name: Create prometheus directory
   ansible.builtin.file:
     state: directory
