@@ -19,7 +19,7 @@ echo_success() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo -n "]"
     echo -ne "\r"
-    curl -v -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"'"${STEP_NAME}"'","status":"OK"}'
+    curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"'"${STEP_NAME}"'","status":"OK"}'
     return 0
 }
 
@@ -31,7 +31,7 @@ echo_failure() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo -n "]"
     echo -ne "\r"
-    curl -v -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"'"${STEP_NAME}"'","status":"ERR"}'
+    curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"'"${STEP_NAME}"'","status":"ERR"}'
     return 1
 }
 
