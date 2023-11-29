@@ -72,3 +72,6 @@ django_environment:
   MEDIA_URL: "{{ media_url }}"
   STATIC_URL: "{{ static_url }}"
   ALLOWED_HOSTS: "{{ allowed_hosts }}"
+  DEFAULT_FROM_EMAIL: "{{ fds_default_from_email }}"
+  SERVER_EMAIL: "{{ fds_server_email }}"
+  SITE_EMAIL: "{{ fds_site_email }}"
