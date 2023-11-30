@@ -31,3 +31,5 @@ borg:
       mnt: /mnt/monitor-snapshot
   locations: /mnt/monitor-snapshot/graylog/mongodb_data/
   keepdaily: 14
+
+postfix_myorigin: fds-mon.zerschlagdenstaat.de

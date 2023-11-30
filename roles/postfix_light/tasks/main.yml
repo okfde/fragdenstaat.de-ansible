@@ -1,0 +1,38 @@
+- name: Install postfix
+  ansible.builtin.apt:
+    name: postfix
+    state: present
+
+- name: Install ssl-cert
+  ansible.builtin.apt:
+    name: ssl-cert
+    state: present
+
+- name: Install mail command
+  ansible.builtin.apt:
+    name: bsd-mailx
+    state: present
+
+- name: Generate default snakeoil
+  ansible.builtin.command: "make-ssl-cert generate-default-snakeoil"
+  args:
+    creates: "{{ item }}"
+  with_items:
+    - /etc/ssl/private/ssl-cert-snakeoil.key
+    - /etc/ssl/certs/ssl-cert-snakeoil.pem
+
+- name: Create main.cf
+  ansible.builtin.template:
+    dest: /etc/postfix/main.cf
+    src: templates/main.cf.j2
+    mode: "0644"
+  notify:
+    - "Reload postfix"
+
+- name: Create master.cf
+  ansible.builtin.template:
+    dest: /etc/postfix/master.cf
+    src: templates/master.cf.j2
+    mode: "0644"
+  notify:
+    - "Reload postfix"

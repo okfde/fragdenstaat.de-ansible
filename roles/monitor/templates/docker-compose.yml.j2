@@ -76,6 +76,14 @@ services:
       GRAYLOG_HTTP_EXTERNAL_URI: "https://{{ log_domain }}/"
       GRAYLOG_ELASTICSEARCH_HOSTS: "http://127.0.0.1:9200"
       GRAYLOG_MONGODB_URI: "mongodb://127.0.0.1:27017/graylog"
+      GRAYLOG_TRANSPORT_EMAIL_ENABLED: "True"
+      GRAYLOG_TRANSPORT_EMAIL_HOSTNAME: "localhost"
+      GRAYLOG_TRANSPORT_EMAIL_PORT: "25"
+      GRAYLOG_TRANSPORT_EMAIL_USE_AUTH: "False"
+      GRAYLOG_TRANSPORT_EMAIL_SUBJECT_PREFIX: "[graylog]"
+      GRAYLOG_TRANSPORT_EMAIL_FROM_EMAIL: "graylog@zerschlagdenstaat.de"
+      GRAYLOG_TRANSPORT_EMAIL_USE_TLS: "false"
+
     volumes:
       - "{{ monitor_dir }}/graylog/graylog_data:/usr/share/graylog/data/data"
       - "{{ monitor_dir }}/graylog/graylog_journal:/usr/share/graylog/data/journal"

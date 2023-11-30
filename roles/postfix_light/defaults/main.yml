@@ -1,0 +1,4 @@
+postfix_mynetworks: 127.0.0.0/8 [::1]/128
+postfix_mydestination: $myhostname, localhost, localhost.localdomain
+postfix_myhostname: localhost
+#postfix_myorigin: fragdenstaat.de
