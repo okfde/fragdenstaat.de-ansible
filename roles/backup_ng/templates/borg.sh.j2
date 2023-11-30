@@ -93,6 +93,7 @@ exerror()           { echo "$1";exit "${2:-1}"; }
 exlock_now || exerror "ERROR: Lockfile exists, is there another instance already running? Exiting..."
 
 do_cleanup () {
+    curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup failed","status":"ERR"}'
     echo "ERROR, exiting..."
     echo "Unmounting and removing snapshots"
 {% if 'snapshots' in borg %}
@@ -117,6 +118,7 @@ trap 'echo "received signal to stop"; do_cleanup interrupted; exit 1' SIGQUIT SI
 
 echo "" > "${LOGFILE}"
 
+curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup start","status":"OK"}'
 echo "Start Backup $(date)"
 echo "-------------------------------------------------------------------------------"
 echo ""
@@ -201,6 +203,7 @@ step "Backup Info"
   try /usr/bin/borg info
 next
 
+curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup end","status":"OK"}'
 echo ""
 echo "-------------------------------------------------------------------------------"
 echo "Logfile:"
