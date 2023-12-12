@@ -19,6 +19,6 @@ prometheus_exporter:
   - node_exporter
   - nginx_exporter
 
-restic:
+borg:
   locations: /home/storage-box/home
   keepdaily: 7
