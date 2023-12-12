@@ -83,6 +83,8 @@ services:
       GRAYLOG_TRANSPORT_EMAIL_SUBJECT_PREFIX: "[graylog]"
       GRAYLOG_TRANSPORT_EMAIL_FROM_EMAIL: "graylog@zerschlagdenstaat.de"
       GRAYLOG_TRANSPORT_EMAIL_USE_TLS: "false"
+      GRAYLOG_TIMEZONE: "Europe/Berlin"
+      TZ: "Europe/Berlin"
 
     volumes:
       - "{{ monitor_dir }}/graylog/graylog_data:/usr/share/graylog/data/data"
