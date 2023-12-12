@@ -1,6 +1,13 @@
 ---
 
-- name: Ensure database is created
+- name: Collect postgresql db names
+  community.postgresql.postgresql_query:
+    query: "SELECT datname FROM pg_database;"
+  register: postgres_db_names
+  become: true
+  become_user: postgres
+
+- name: "Ensure database is created"
   become_user: postgres
   become: true
   community.postgresql.postgresql_db:
@@ -10,7 +17,7 @@
     lc_ctype: 'en_US.UTF-8'
     template: 'template0'
     state: present
-  ignore_errors: true
+  when: "db_name not in (postgres_db_names.query_result | map(attribute='datname'))"
 
 - name: create postgis extension in db
   become_user: postgres
@@ -33,16 +40,77 @@
     name: hstore
     db: "{{ db_name }}"
 
-- name: Ensure user has access to the database
+- name: "Create django_migrations_db_user user"
+  community.postgresql.postgresql_user:
+    name: "{{ django_migrations_db_user }}"
+    password: "{{ django_migrations_db_password }}"
+    state: "present"
+    encrypted: true
+  become: true
+  become_user: postgres
+
+- name: "Set django_migrations_db_user privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ django_migrations_db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: "Set django_migrations_db_user schema privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ django_migrations_db_user }}"
+    objs: public
+    privs: ALL
+    grant_option: true
+    type: schema
+  become: true
+  become_user: postgres
+
+- name: "Create db_user"
   become_user: postgres
   become: true
   community.postgresql.postgresql_user:
     db: "{{ db_name }}"
     name: "{{ db_user }}"
     password: "{{ db_password }}"
-    priv: "ALL"
     state: "present"
     encrypted: true
+
+- name: "Set db_user privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    grant_option: true
+  become: true
+  become_user: postgres
+
+- name: "Set db_user schema privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: public
+    privs: ALL
+    grant_option: true
+    type: schema
+  become: true
+  become_user: postgres
+
+- name: "Set db_user sequence privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: USAGE
+    grant_option: true
+    type: sequence
+  become: true
+  become_user: postgres
 
 - name: Ensure readonly user has access to the database
   become_user: postgres
@@ -54,19 +122,6 @@
     role_attr_flags: NOSUPERUSER,NOCREATEDB
     state: present
     encrypted: true
-
-- name: Ensure user has access to tables
-  become_user: postgres
-  become: true
-  community.postgresql.postgresql_privs:
-    database: "{{ db_name }}"
-    state: present
-    privs: ALL
-    type: table
-    objs: ALL_IN_SCHEMA
-    schema: public
-    roles: "{{ db_user }}"
-    grant_option: true
 
 - name: Ensure readonly user has no privileges
   become_user: postgres
@@ -123,19 +178,6 @@
     grant_option: true
   become: true
   become_user: postgres
-
-- name: Ensure user has access to all sequences
-  become_user: postgres
-  become: true
-  community.postgresql.postgresql_privs:
-    database: "{{ db_name }}"
-    state: present
-    privs: ALL
-    type: sequence
-    objs: ALL_IN_SCHEMA
-    schema: public
-    roles: "{{ db_user }}"
-    grant_option: true
 
 - name: Ensure user does not have unnecessary privileges
   become_user: postgres

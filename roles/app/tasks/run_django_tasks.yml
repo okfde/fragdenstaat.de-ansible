@@ -32,39 +32,11 @@
     - deploy-web
     - deploy-backend
 
-- name: Create postgres migrations user
-  community.postgresql.postgresql_user:
-    name: "django_migrations"
-    password: "{{ django_migrations_db_password }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-  become: true
-  become_user: postgres
-
-- name: Set migration user privs
-  community.postgresql.postgresql_privs:
+- name: "Reassign all object in database bar owned by db_user to django_migrations"
+  community.postgresql.postgresql_owner:
     db: "{{ db_name }}"
-    role: django_migrations
-    objs: ALL_IN_SCHEMA
-    privs: ALL
-    grant_option: true
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-  become: true
-  become_user: postgres
-
-- name: Set migration user privs (schema)
-  community.postgresql.postgresql_privs:
-    db: "{{ db_name }}"
-    role: django_migrations
-    objs: public
-    privs: ALL
-    grant_option: true
-    type: schema
+    new_owner: django_migrations
+    reassign_owned_by: "{{ django_environment_db_user }}"
   tags:
     - django.migrate
     - deploy-web
