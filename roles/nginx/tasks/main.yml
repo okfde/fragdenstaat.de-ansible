@@ -173,7 +173,7 @@
     src: update-sitemaps.sh.j2
     dest: "{{ virtualenv_path }}/scripts/update-sitemaps.sh"
     mode: "0750"
-    user: "{{ gunicorn_user }}"
+    owner: "{{ gunicorn_user }}"
     group: "www-data"
   when: inventory_hostname in groups['web']
   tags:
