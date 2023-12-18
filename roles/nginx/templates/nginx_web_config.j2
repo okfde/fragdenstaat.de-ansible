@@ -20,7 +20,7 @@ upstream {{ application_name }}_asgi_server {
 
 proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60m;
 
-
+### redirect_domains start
 {% if redirect_domains is defined %}
   {% for redirect_domain in redirect_domains %}
     server {
@@ -53,8 +53,9 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60
     {% endif %}
   {% endfor %}
 {% endif %}
+### redirect_domains end
 
-
+### nginx_web_config.j2 start
 server {
     listen      80;
     listen [::]:80;
@@ -72,7 +73,9 @@ server {
 
     rewrite     ^ https://{{ web_server_name }}$request_uri? permanent;
 }
+### nginx_web_config.j2 end
 
+### _web_server.j2 start
 server {
     listen              443 ssl http2;
     listen         [::]:443 ssl http2;
@@ -84,7 +87,9 @@ server {
 
     {% include '_web_server.j2' %}
 }
+### _web_server.j2 end
 
+### _media_server.j2 start
 {% if groups['media'][0] == inventory_hostname %}
     server {
         listen              443 ssl http2;
@@ -98,7 +103,9 @@ server {
         {% include '_media_server.j2' %}
     }
 {% endif %}
+### _media_server.j2 end
 
+### _static_server.j2 start
 server {
     listen              443 ssl http2;
     listen         [::]:443 ssl http2;
@@ -110,7 +117,9 @@ server {
 
     {% include '_static_server.j2' %}
 }
+### _static_server.j2 end
 
+### nginx_extra_domains start
 {% for site in nginx_extra_domains %}
 server {
     listen              443 ssl http2;
@@ -129,7 +138,9 @@ server {
 
 }
 {% endfor %}
+### nginx_extra_domains end
 
+### onion_service_enabled start
 {% if onion_service_enabled %}
 
 {% with onion_service = onion_services['onion_web'], csp_header_var="csp_header_onion" %}
@@ -195,6 +206,7 @@ server {
 {% endwith %}
 
 {% endif %}
+### onion_service_enabled end
 
 server {
     listen 80 default_server;

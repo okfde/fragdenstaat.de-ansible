@@ -12,4 +12,4 @@ https_domains:
 
 nginx_cache_urls:
   - "/"
-  - "/sitemap.xml"
+  #- "/sitemap.xml"
