@@ -1,0 +1,11 @@
+#! /bin/bash
+
+set +x
+set +e
+
+cd "{{ virtualenv_path }}"
+source {{ virtualenv_path }}/bin/activate
+source {{ virtualenv_path }}/bin/postactivate
+cd {{ virtualenv_path }}/fragdenstaat.de
+{{ virtualenv_path }}/bin/python3 manage.py render_sitemap generate --outdir=/tmp/fds_sitemaps/
+mv /tmp/fds_sitemaps/sitemap*.xml {{ nginx_static_html_dir }}/simple_files

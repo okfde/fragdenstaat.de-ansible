@@ -104,11 +104,13 @@
 - name: Create the simple files folder
   ansible.builtin.file:
     path: "{{ nginx_static_html_dir }}/simple_files"
-    mode: "0550"
-    owner: www-data
+    mode: "0750"
+    owner: "{{ gunicorn_user }}"
     group: www-data
     state: directory
   when: inventory_hostname in groups['web']
+  tags:
+    - nginx
 
 - name: Copy simple files
   ansible.builtin.copy:
@@ -154,3 +156,36 @@
 - name: Import setup_htaccess.yml
   ansible.builtin.import_tasks: 'setup_htaccess.yml'
   when: inventory_hostname in groups['web']
+
+- name: Create sitemap tempdir
+  ansible.builtin.file:
+    path: "/tmp/fds_sitemaps/"
+    state: directory
+    mode: "0750"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_user }}"
+  when: inventory_hostname in groups['web']
+  tags:
+    - nginx
+
+- name: Create update-sitemaps script
+  ansible.builtin.template:
+    src: update-sitemaps.sh.j2
+    dest: "{{ virtualenv_path }}/scripts/update-sitemaps.sh"
+    mode: "0750"
+    user: "{{ gunicorn_user }}"
+    group: "www-data"
+  when: inventory_hostname in groups['web']
+  tags:
+    - nginx
+
+- name: cron task to update sitemaps
+  ansible.builtin.cron:
+    name: "sitemaps autoupdate"
+    minute: "11"
+    hour: "*"
+    user: "{{ gunicorn_user }}"
+    job: "{{ virtualenv_path }}/scripts/update-sitemaps.sh > /tmp/update_sitemaps.log 2>&1"
+  when: inventory_hostname in groups['web']
+  tags:
+    - nginx
