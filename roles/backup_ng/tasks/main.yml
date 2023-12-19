@@ -86,7 +86,7 @@
   ansible.builtin.cron:
     name: borg
     user: root
-    job: "/root/borg.sh > /var/log/borg.log 2>&1"
+    job: "/root/borg.sh 2>&1 | /usr/bin/tee /var/log/borg.log"
     minute: "0"
     hour: "1"
     dom: "*"
@@ -146,7 +146,7 @@
   ansible.builtin.cron:
     name: restic
     user: root
-    job: "/root/restic.sh > /var/log/restic.log 2>&1"
+    job: "/root/restic.sh 2>&1 | /usr/bin/tee /var/log/restic.log"
     minute: "0"
     hour: "1"
     dom: "*"
