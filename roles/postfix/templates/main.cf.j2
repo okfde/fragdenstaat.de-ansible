@@ -89,6 +89,9 @@ smtpd_helo_restrictions =
     check_helo_access pcre:/etc/postfix/reject_helo,
     permit
 
+# mitigation for https://www.postfix.org/smtp-smuggling.html
+smtpd_data_restrictions = reject_unauth_pipelining
+
 mydomain = {{ domain_name }}
 myhostname = {{ postfix_hostname }}
 alias_maps = hash:/etc/aliases
