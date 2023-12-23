@@ -20,6 +20,11 @@ brooke.okfn.de
 [mail_light]
 fds-mon.okfn.de
 
+[msmtp]
+schoch.okfn.de
+schaar.okfn.de
+fds-es01.okfn.de
+
 [queue]
 brooke.okfn.de
 
