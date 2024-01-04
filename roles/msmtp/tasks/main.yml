@@ -20,5 +20,5 @@
 - name: Set crontabs MAILTO var
   community.general.cronvar:
     name: MAILTO
-    value: '"root@fragdenstaat.de"'
+    value: "{{ cron_mailto_from }}"
     user: root
