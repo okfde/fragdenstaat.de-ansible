@@ -296,6 +296,9 @@ redirect_domains:
   - from: "static.frag-den-staat.de"
     domain: "static.frag-den-staat.de"
     https: false
+  - from: "verklagdenstaat.de"
+    domain: "fragdenstaat.de/klagen"
+    https: true
   - from: "zerschlagdenstaat.de"
     domain: "fragdenstaat.de"
     https: true
