@@ -131,7 +131,7 @@ next
 
 step "Create snapshots"
 {% for s in borg.snapshots %}
-  try /sbin/lvcreate -l100%FREE -s -n {{ s.name }}-snapshot {{ s.dev }}
+  try /sbin/lvcreate -l{{ s.lvm_free|default('100%') }}FREE -s -n {{ s.name }}-snapshot {{ s.dev }}
 {% endfor %}
 next
 

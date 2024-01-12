@@ -20,6 +20,7 @@ prometheus_exporter:
 https_domains:
   - ['mon.zerschlagdenstaat.de']
   - ['log.zerschlagdenstaat.de']
+  - ['sentry.okfn.de']
 
 monitor_server_name: 'mon.zerschlagdenstaat.de'
 logserver_server_name: 'log.zerschlagdenstaat.de'
@@ -29,7 +30,12 @@ borg:
     - name: monitor
       dev: /dev/vg1/monitor
       mnt: /mnt/monitor-snapshot
-  locations: /mnt/monitor-snapshot/graylog/mongodb_data/
+      lvm_free: 25%
+    - name: root
+      dev: /dev/vg0/root
+      mnt: /mnt/root-snapshot
+      lvm_free: 75%
+  locations: /mnt/monitor-snapshot/graylog/mongodb_data/ /mnt/root-snapshot/var/lib/docker/volumes/sentry*
   keepdaily: 14
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de
