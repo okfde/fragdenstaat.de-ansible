@@ -22,3 +22,15 @@
     name: MAILTO
     value: "{{ cron_mailto_from }}"
     user: root
+
+- name: Create msmtp wrapper
+  ansible.builtin.template:
+    src: msmtp-pseudo-mta.sh.j2
+    dest: /usr/local/bin/msmtp-pseudo-mta.sh
+    mode: "0755"
+
+- name: Link msmtp wrapper
+  ansible.builtin.file:
+    state: link
+    src: /usr/local/bin/msmtp-pseudo-mta.sh
+    dest: /usr/sbin/sendmail

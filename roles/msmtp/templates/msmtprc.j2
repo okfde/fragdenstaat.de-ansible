@@ -14,3 +14,4 @@ syslog LOG_MAIL
 
 # Construct envelope-from addresses of the form "user@oursite.example"
 from mail@{{ inventory_hostname.replace('.okfn.de','') }}
+maildomain {{ inventory_hostname.replace('.okfn.de','') }}
