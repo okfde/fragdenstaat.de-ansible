@@ -1,5 +1,4 @@
 https_domains:
-  - ["sentry.okfn.de"]
   - ["ogimage.frag-den-staat.de"]
   - ["weblate.frag-den-staat.de"]
   - ["metabase.frag-den-staat.de"]
