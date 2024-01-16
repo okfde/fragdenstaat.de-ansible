@@ -1,0 +1,38 @@
+discourse_domain: forum.okfn.de
+discourse_port: 8035
+
+discourse:
+  path: "/var/www/"
+  templates:
+    - "templates/postgres.template.yml"
+    - "templates/redis.template.yml"
+    - "templates/web.template.yml"
+    - "templates/web.ratelimited.template.yml"
+  expose:
+    - "8035:80"
+  params:
+    - 'db_default_text_search_config: "pg_catalog.english"'
+    - 'db_shared_buffers: "4096MB"'
+  env:
+    - 'LANG: en_US.UTF-8'
+    - 'DISCOURSE_DEFAULT_LOCALE: de'
+    - 'UNICORN_WORKERS: 8'
+  volumes:
+    - host: /opt/discourse_docker/shared/standalone
+      guest: /shared
+    - host: /opt/discourse_docker/shared/standalone/log/var-log
+      guest: /var/log
+  plugins:
+    - git clone https://github.com/discourse/docker_manager.git
+    - git clone https://github.com/discourse/discourse-oauth2-basic.git
+    - git clone https://github.com/discourse/discourse-solved.git
+    - git clone https://github.com/discourse/discourse-chat-integration.git
+    - git clone https://github.com/discourse/abbreviation-discourse-plugin.git
+
+# in secrets.yml
+discourse_mail:
+  developer_mail: 'discourse@example.org'
+  smtp_address: smtp.example.org
+  smtp_port: 587
+  smtp_user: noreply@example.org
+  smtp_pass: ""
