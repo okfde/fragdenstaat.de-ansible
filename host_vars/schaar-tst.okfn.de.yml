@@ -13,11 +13,11 @@ https_domains:
   - ["ogimage.test.zerschlagdenstaat.de"]
   - ["weblate.test.zerschlagdenstaat.de"]
   - ["metabase.test.zerschlagdenstaat.de"]
-  - ["forum.zerschlagdenstaat.de"]
+  - ["forum.test.zerschlagdenstaat.de"]
 
 monitor_server: fds-tst.okfn.de
 prometheus_exporter:
   - node_exporter
 
 ogimage_domain: ogimage.test.zerschlagdenstaat.de
-discourse_domain: forum.zerschlagdenstaat.de
+discourse_domain: forum.test.zerschlagdenstaat.de

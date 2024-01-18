@@ -15,5 +15,5 @@ prometheus_exporter:
   - node_exporter
 
 borg:
-  locations: /var/www/
+  locations: /var/www/ /opt/discourse_docker/shared/standalone/backups/default/
   keepdaily: 7
