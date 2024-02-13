@@ -1,0 +1,9 @@
+- name: copy fonts
+  ansible.builtin.copy:
+    src: "{{ item }}/"
+    dest: /usr/share/fonts/
+    mode: 0644
+  with_items:
+    - "{{ fonts }}"
+  notify: rebuild fontcache
+  when: fonts is defined

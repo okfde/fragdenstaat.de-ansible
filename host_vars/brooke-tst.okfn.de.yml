@@ -25,3 +25,6 @@ https_domains:
   - ["blog.test.zerschlagdenstaat.de"]
   - ["mta-sts.test.zerschlagdenstaat.de"]
   - ["rspamd.test.zerschlagdenstaat.de"]
+
+fonts:
+  - hk_grotesk

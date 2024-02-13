@@ -25,3 +25,6 @@ borg:
 #    - create_postgres_backup.sh
 #  postscripts:
 #    - purge_local_backups.sh
+
+fonts:
+  - hk_grotesk

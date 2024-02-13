@@ -27,3 +27,5 @@
     - role: msmtp
       tags: msmtp
       when: inventory_hostname in groups["msmtp"]
+    - role: fonts
+      tags: fonts
