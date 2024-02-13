@@ -59,7 +59,6 @@
 - name: ensure signing key is present
   ansible.builtin.stat:
     path: "/etc/opendkim/keys/{{ dkim_selector }}.private"
-    get_md5: false
   register: dkim_key
 
 - name: generate signing key
