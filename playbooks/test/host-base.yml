@@ -20,3 +20,5 @@
       tags: certbot
     - role: test/minio
       tags: minio
+    - role: test/light_sync
+      tags: lightsync
