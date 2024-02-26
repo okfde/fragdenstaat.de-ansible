@@ -18,3 +18,7 @@ prometheus_exporter:
 nfs_exports:
   - "{{ external_media_storage_src }} 192.168.122.123(rw,sync,no_subtree_check,all_squash,anonuid=1001,anongid=33)"
 nfs_allow_from: 192.168.122.123
+
+nginx_media_dir: "/home/storage-box/home"
+nginx_private_media_path: "/home/storage-box/home/"
+nginx_static_html_dir: "/var/www/static"
