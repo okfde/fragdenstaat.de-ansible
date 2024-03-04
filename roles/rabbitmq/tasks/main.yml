@@ -1,15 +1,75 @@
 ---
 
-# - name: Add the RabbitMQ public GPG key to the apt repo
-#   ansible.builtin.apt_key:
-#     url: https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
-#     state: present
+# - name: Gather the package facts
+#  ansible.builtin.package_facts:
+#    manager: auto
 
-# - name: Add RabbitMQ to the sources list
-#   ansible.builtin.apt_repository:
-#     repo: 'deb https://www.rabbitmq.com/debian/ testing main'
-#     update_cache: "{{ update_apt_cache }}"
-#     state: present
+# - name: Remove old rabbitmq versions
+#  block:
+#    - name: Uninstall rabbitmq-server
+#      ansible.builtin.apt:
+#        name: rabbitmq-server
+#        state: absent
+
+#    - name: Remove rabbitmq settings
+#      ansible.builtin.file:
+#        state: absent
+#        path: "{{ item }}"
+#      with_items:
+#        - "/etc/rabbitmq/"
+#        - "/var/lib/rabbitmq/"
+#  when: "('rabbitmq-server' in ansible_facts.packages) and (ansible_facts.packages['rabbitmq-server'][0]['origin'] != 'cloudsmith/rabbitmq/rabbitmq-server')"
+
+# - name: Add the RabbitMQ repo signing keys
+#  ansible.builtin.apt_key:
+#    url: "{{ item  }}"
+#    state: present
+#  with_items:
+#    - https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA
+#    - https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
+#    - https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
+
+# - name: Add RabbitMQ repos to the sources list
+#  ansible.builtin.apt_repository:
+#    repo: '{{ item  }}'
+#    update_cache: "{{ update_apt_cache }}"
+#    state: present
+#  with_items:
+#    - "deb https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa2.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu {{ ansible_distribution_release }} main"
+#    - "deb https://ppa2.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu {{ ansible_distribution_release }} main"
+
+- name: Install Erlang
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    update_cache: "{{ update_apt_cache }}"
+    force: true
+    state: present
+  with_items:
+    - erlang-base
+    - erlang-asn1
+    - erlang-crypto
+    - erlang-eldap
+    - erlang-ftp
+    - erlang-inets
+    - erlang-mnesia
+    - erlang-os-mon
+    - erlang-parsetools
+    - erlang-public-key
+    - erlang-runtime-tools
+    - erlang-snmp
+    - erlang-ssl
+    - erlang-syntax-tools
+    - erlang-tftp
+    - erlang-tools
+    - erlang-xmerl
+  retries: 30
+  delay: 10
 
 - name: Install RabbitMQ server
   ansible.builtin.apt:
@@ -33,6 +93,27 @@
     name: rabbitmq-server
     state: started
     enabled: true
+
+# - name: Check if /etc/apt/apt.conf.d/50unattended-upgrades exists
+#  stat:
+#    path: /etc/apt/apt.conf.d/50unattended-upgrades
+#  register: stat_result
+
+# - name: Enable unattended-upgrades for rabbitmq-server
+#  ansible.builtin.lineinfile:
+#    path: /etc/apt/apt.conf.d/50unattended-upgrades
+#    regexp: '"${distro_id}:${distro_codename}";'
+#    insertafter: '^Unattended-Upgrade::Allowed-Origins {'
+#    line: '        "cloudsmith/rabbitmq/rabbitmq-server:${distro_codename}";'
+#  when: stat_result.stat.exists
+
+# - name: Enable unattended-upgrades for erlang
+#  ansible.builtin.lineinfile:
+#    path: /etc/apt/apt.conf.d/50unattended-upgrades
+#    regexp: '"${distro_id}:${distro_codename}";'
+#    insertafter: '^Unattended-Upgrade::Allowed-Origins {'
+#    line: '        "cloudsmith/rabbitmq/rabbitmq-erlang:${distro_codename}";'
+#  when: stat_result.stat.exists
 
 - name: Import setup_vhosts.yml
   ansible.builtin.import_tasks: setup_vhosts.yml
