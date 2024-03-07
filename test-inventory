@@ -65,3 +65,9 @@ schaar-tst.okfn.de
 
 [sentry]
 schaar-tst.okfn.de
+
+[backup]
+[backup_ng]
+[mail_light]
+[msmtp]
+[monitor]

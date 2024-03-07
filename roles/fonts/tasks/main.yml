@@ -1,4 +1,8 @@
-- name: copy fonts
+- name: Install fontconfig
+  ansible.builtin.apt:
+    name: fontconfig
+
+- name: Copy fonts
   ansible.builtin.copy:
     src: "{{ item }}/"
     dest: /usr/share/fonts/

@@ -11,6 +11,16 @@
     - skip_ansible_lint
   changed_when: false
 
+- name: Install build dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+  with_items:
+    - cmake
+    - pkg-config
+    - libcairo2-dev
+  tags:
+    - djangoreq
+
 - name: Install packages required by the Django app inside virtualenv
   ansible.builtin.pip:
     virtualenv: "{{ virtualenv_path }}"
@@ -23,3 +33,5 @@
   become_user: "{{ gunicorn_user }}"
   notify:
     - Trigger release notification
+  tags:
+    - djangoreq

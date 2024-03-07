@@ -10,9 +10,9 @@ host_data:
   vpn_peer_id: 210
 
 monitor_server: fds-tst.okfn.de
-prometheus: true
-grafana: true
-graylog: true
+prometheus: false
+grafana: false
+graylog: false
 prometheus_exporter:
   - node_exporter
 

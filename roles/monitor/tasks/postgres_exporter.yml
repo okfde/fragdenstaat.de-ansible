@@ -1,91 +1,100 @@
-- name: Install postgres exporter
-  ansible.builtin.apt:
-    pkg: prometheus-postgres-exporter
-  notify: Restart postgres exporter
-  tags: exporter
+- name: Check if postgres user exist
+  ansible.builtin.user:
+    name: "postgres"
+  check_mode: true
+  register: postgres_user
 
-- name: Configure postgres exporter
-  ansible.builtin.template:
-    src: exporter/prometheus-postgres-exporter.j2
-    dest: /etc/default/prometheus-postgres-exporter
-    mode: "0644"
-  notify: Restart postgres exporter
-  tags: exporter
+- name: "Install and configure postgres exporter"
+  when: postgres_user.changed is false
+  block:
+    - name: Install postgres exporter
+      ansible.builtin.apt:
+        pkg: prometheus-postgres-exporter
+      notify: Restart postgres exporter
+      tags: exporter
 
-- name: postgres - Create prometheus user
-  community.postgresql.postgresql_user:
-    name: prometheus
-  become_user: postgres
-  become: true
-  tags: exporter
+    - name: Configure postgres exporter
+      ansible.builtin.template:
+        src: exporter/prometheus-postgres-exporter.j2
+        dest: /etc/default/prometheus-postgres-exporter
+        mode: "0644"
+      notify: Restart postgres exporter
+      tags: exporter
 
-- name: postgres - Set search_path
-  community.postgresql.postgresql_query:
-    query: ALTER USER prometheus SET SEARCH_PATH TO prometheus,pg_catalog;
-  become_user: postgres
-  become: true
-  tags: exporter
-  changed_when: false
+    - name: postgres - Create prometheus user
+      community.postgresql.postgresql_user:
+        name: prometheus
+      become_user: postgres
+      become: true
+      tags: exporter
 
-- name: postgres - Create schema
-  community.postgresql.postgresql_schema:
-    name: prometheus
-    owner: prometheus
-  become_user: postgres
-  become: true
-  tags: exporter
+    - name: postgres - Set search_path
+      community.postgresql.postgresql_query:
+        query: ALTER USER prometheus SET SEARCH_PATH TO prometheus,pg_catalog;
+      become_user: postgres
+      become: true
+      tags: exporter
+      changed_when: false
 
-- name: postgres - Create functions
-  community.postgresql.postgresql_query:
-    query: |
-      CREATE OR REPLACE FUNCTION prometheus.f_select_pg_stat_activity()
-      RETURNS setof pg_catalog.pg_stat_activity
-      LANGUAGE sql
-      SECURITY DEFINER
-      AS $$
-        SELECT * from pg_catalog.pg_stat_activity;
-      $$;
-      CREATE OR REPLACE FUNCTION prometheus.f_select_pg_stat_replication()
-      RETURNS setof pg_catalog.pg_stat_replication
-      LANGUAGE sql
-      SECURITY DEFINER
-      AS $$
-        SELECT * from pg_catalog.pg_stat_replication;
-      $$;
-  become_user: postgres
-  become: true
-  tags: exporter
-  changed_when: false
+    - name: postgres - Create schema
+      community.postgresql.postgresql_schema:
+        name: prometheus
+        owner: prometheus
+      become_user: postgres
+      become: true
+      tags: exporter
 
-- name: postgres - Create views
-  community.postgresql.postgresql_query:
-    query: |
-      CREATE OR REPLACE VIEW prometheus.pg_stat_replication
-      AS
-        SELECT * FROM prometheus.f_select_pg_stat_replication();
-      CREATE OR REPLACE VIEW prometheus.pg_stat_activity
-      AS
-        SELECT * FROM prometheus.f_select_pg_stat_activity();
-  become_user: postgres
-  become: true
-  tags: exporter
-  changed_when: false
+    - name: postgres - Create functions
+      community.postgresql.postgresql_query:
+        query: |
+          CREATE OR REPLACE FUNCTION prometheus.f_select_pg_stat_activity()
+          RETURNS setof pg_catalog.pg_stat_activity
+          LANGUAGE sql
+          SECURITY DEFINER
+          AS $$
+            SELECT * from pg_catalog.pg_stat_activity;
+          $$;
+          CREATE OR REPLACE FUNCTION prometheus.f_select_pg_stat_replication()
+          RETURNS setof pg_catalog.pg_stat_replication
+          LANGUAGE sql
+          SECURITY DEFINER
+          AS $$
+            SELECT * from pg_catalog.pg_stat_replication;
+          $$;
+      become_user: postgres
+      become: true
+      tags: exporter
+      changed_when: false
 
-- name: postgres - Grant accees rights to prometheus
-  community.postgresql.postgresql_privs:
-    database: postgres
-    privs: SELECT
-    objs: pg_stat_activity,pg_stat_replication
-    roles: prometheus
-    schema: prometheus
-    grant_option: true
-  become_user: postgres
-  become: true
-  tags: exporter
+    - name: postgres - Create views
+      community.postgresql.postgresql_query:
+        query: |
+          CREATE OR REPLACE VIEW prometheus.pg_stat_replication
+          AS
+            SELECT * FROM prometheus.f_select_pg_stat_replication();
+          CREATE OR REPLACE VIEW prometheus.pg_stat_activity
+          AS
+            SELECT * FROM prometheus.f_select_pg_stat_activity();
+      become_user: postgres
+      become: true
+      tags: exporter
+      changed_when: false
 
-- name: Configure firewall
-  community.general.ufw:
-    port: "9187"
-    proto: tcp
-    from_ip: 192.168.100.5
-    rule: allow
+    - name: postgres - Grant accees rights to prometheus
+      community.postgresql.postgresql_privs:
+        database: postgres
+        privs: SELECT
+        objs: pg_stat_activity,pg_stat_replication
+        roles: prometheus
+        schema: prometheus
+        grant_option: true
+      become_user: postgres
+      become: true
+      tags: exporter
+
+    - name: Configure firewall
+      community.general.ufw:
+        port: "9187"
+        proto: tcp
+        from_ip: 192.168.100.5
+        rule: allow

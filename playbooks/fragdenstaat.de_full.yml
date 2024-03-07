@@ -33,6 +33,8 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
+    - role: certbot
+      tags: certbot
     - role: postfix
       tags: postfix
       when: "not 'tst.okfn.de' in inventory_hostname"
@@ -71,6 +73,7 @@
   become_user: root
   vars_files:
     - ../local_vars/local_config.yml
+
   roles:
     - redis
   tags:

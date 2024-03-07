@@ -21,3 +21,4 @@ prometheus_exporter:
 
 ogimage_domain: ogimage.test.zerschlagdenstaat.de
 discourse_domain: forum.test.zerschlagdenstaat.de
+weblate_domain: weblate.test.zerschlagdenstaat.de
