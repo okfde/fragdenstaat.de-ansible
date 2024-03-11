@@ -92,3 +92,13 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+
+- name: Set site domain
+  community.general.postgresql_query:
+    db: "fragdenstaat_de"
+    query: "UPDATE django_site SET domain = '{{ domain_name }}' WHERE id = 1 AND name = 'FragDenStaat';"
+  become_user: postgres
+  become: true
+  changed_when: false
+  tags:
+    - setsitedomain
