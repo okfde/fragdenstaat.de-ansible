@@ -29,3 +29,5 @@
       when: inventory_hostname in groups["msmtp"]
     - role: fonts
       tags: fonts
+    - role: scripts
+      tags: scripts

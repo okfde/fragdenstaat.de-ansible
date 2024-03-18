@@ -28,3 +28,26 @@ https_domains:
 
 fonts:
   - hk_grotesk
+
+scripts:
+  - src: delivery_status.sh
+    dest: /root/
+    cron:
+      job: "/bin/true #/root/delivery_status.sh"
+    mode: "0755"
+    owner: root
+    group: root
+  - src: newsletter_info
+    dest: /usr/local/bin/
+    dirmode: "0775"
+    mode: "0755"
+    owner: root
+    group: postgres
+    venv: true
+    cron:
+      minute: "0"
+      hour: "*"
+      day: "*"
+      month: "*"
+      dow: "*"
+      job: "/bin/true #/usr/local/bin/newsletter_info/get_newsletter_info.sh"
