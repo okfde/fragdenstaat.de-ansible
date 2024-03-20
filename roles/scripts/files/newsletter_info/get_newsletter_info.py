@@ -74,7 +74,7 @@ def check_future_date(dtd):
 
 def validate_dburl(value):
     try:
-        DAL(value)
+        DAL(value,fake_migrate=True)
         return value
     except:
         raise argparse.ArgumentTypeError(f"{value} is not a valid database URL or the dabase could not be accessed")
@@ -94,14 +94,14 @@ parser.add_argument("-a", "--api", default=graylog_api_url, help=f"Graylog API U
 parser.add_argument("-d", "--db", type=validate_dburl, default=db_url, help=f"Database URL (default: { db_url })")
 parser.add_argument("-l", "--loglevel", default=loglevel, choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], help=f"Set the loglevel (default: { loglevel })")
 parser.add_argument("-v", "--verbose", default=verbose, action='store_true', help=f"Print graylog API result as JSON object and database results (default: { verbose })")
-parser.add_argument("-c", "--commit", default=db_commit, action=argparse.BooleanOptionalAction, help=f"Commit query results to database?")
+parser.add_argument("-c", "--commit", default=db_commit, action='store_true', help=f"Commit query results to database (default: {db_commit})")
 args = parser.parse_args()
 
 logging.basicConfig(level=getattr(logging, args.loglevel), format='%(asctime)s %(levelname)s: %(message)s', datefmt='%d.%m.%Y %H:%M:%S')
 
 db = DAL(uri=args.db,folder=basedir)
-newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'))
-newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'))
+newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'),fake_migrate=True)
+newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'),fake_migrate=True)
 
 if not args.start:
     lastrun_query = db(newsletter_meta.key == 'lastrun').select(orderby=newsletter_meta.id)
@@ -139,6 +139,7 @@ enddate = datetime(
 check_future_date(startdate)
 check_future_date(enddate)
 
+logging.debug("lastrun                : %s", lastrun_ISO)
 logging.debug("graylog_query_start    : %s", startdate)
 logging.debug("graylog_query_end      : %s", enddate)
 logging.debug("graylog_api_url        : %s", args.api)
@@ -161,7 +162,7 @@ if hours <= 0:
     logging.error('Lastrun/Startdate was less than one hour ago, please try again later or adjust "--start".')
     exit(250)
 
-logging.info("Lastrun/Startdate was %s ago, will make an graylog query for each hour", hours)
+logging.info("Lastrun/Startdate was %s hours ago, will make a graylog query for each hour", hours)
 for i in range(1,hours + 1):
     currentStart = datetime.isoformat(startdate + timedelta(hours=i - 1))
     currentEnd = datetime.isoformat(startdate + timedelta(hours=i))
@@ -238,25 +239,29 @@ for i in range(1,hours + 1):
         end = results['results']['?']['execution_stats']['effective_timerange']['to']
         md5sum = hashlib.md5(f"{start}{end}{key}{count[key]}".encode('utf-8')).hexdigest()
         logging.info(f"Found entry: start={start},end={end},newsletter_id={key},count={count[key]}")
-        try:
+
+        check_entry_query = (newsletter_logs.hash==md5sum)
+        check_entry_hash = db(check_entry_query).select(newsletter_logs.ALL)
+
+        if len(check_entry_hash) <= 0:
             newsletter_logs.insert(hash=md5sum,start=start,end=end,newsletter_id=key,count=count[key])
-        except:
-            logging.warning('Could not write entry to database. The entry might already exist, skipping...')
+        else:
+            logging.warning('The entry already exist, skipping...')
             continue
         i += 1
         ti += count[key]
 
-    currentEnd_epoch = iso8601_to_epoch(currentEnd)
+    end_epoch = iso8601_to_epoch(end.replace('.000Z',''))
     lastrun_db = db(newsletter_meta.key == 'lastrun').select()
     if not lastrun_db:
-        newsletter_meta.insert(key='lastrun',value=currentEnd_epoch)
+        newsletter_meta.insert(key='lastrun',value=end_epoch)
     else:
-        db(newsletter_meta.key == 'lastrun').update(key='lastrun', value=currentEnd_epoch)
+        db(newsletter_meta.key == 'lastrun').update(key='lastrun', value=end_epoch)
 
     if args.commit:
         db.commit()
         logging.info(f"A total of {i} unique newsletter entries (out of {ti} processed views) have been written to database")
-        logging.info(f"Lastrun date has been set to {currentEnd} ({currentEnd_epoch})")
+        logging.info(f"Lastrun date has been set to {end} ({end_epoch})")
     else:
         logging.info(f"As requested: None of the {i} unique newsletter entries (out of {ti} processed views) have been written")
         logging.warning('Use "-c/--commit" to actually write results to the database')
