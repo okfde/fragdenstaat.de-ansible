@@ -39,3 +39,9 @@ borg:
   keepdaily: 14
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de
+
+docker_updates:
+  - name: monitor
+    cmd: docker compose pull
+    dir: /var/www/monitor
+    restart: docker compose up -d

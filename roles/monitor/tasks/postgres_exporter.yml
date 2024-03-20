@@ -28,13 +28,13 @@
       become: true
       tags: exporter
 
-    - name: postgres - Set search_path
-      community.postgresql.postgresql_query:
-        query: ALTER USER prometheus SET SEARCH_PATH TO prometheus,pg_catalog;
-      become_user: postgres
-      become: true
-      tags: exporter
-      changed_when: false
+#    - name: postgres - Set search_path
+#      community.postgresql.postgresql_query:
+#        query: ALTER USER prometheus SET SEARCH_PATH TO prometheus,pg_catalog;
+#      become_user: postgres
+#      become: true
+#      tags: exporter
+#      changed_when: false
 
     - name: postgres - Create schema
       community.postgresql.postgresql_schema:

@@ -31,3 +31,5 @@
       tags: fonts
     - role: scripts
       tags: scripts
+    - role: updates
+      tags: updates
