@@ -100,8 +100,13 @@ args = parser.parse_args()
 logging.basicConfig(level=getattr(logging, args.loglevel), format='%(asctime)s %(levelname)s: %(message)s', datefmt='%d.%m.%Y %H:%M:%S')
 
 db = DAL(uri=args.db,folder=basedir)
-newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'),fake_migrate=True)
-newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'),fake_migrate=True)
+
+if args.db.startswith('sqlite://'):
+    newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'))
+    newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'))
+else:
+    newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'), fake_migrate=True)
+    newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'), fake_migrate=True)
 
 if not args.start:
     lastrun_query = db(newsletter_meta.key == 'lastrun').select(orderby=newsletter_meta.id)
@@ -163,9 +168,9 @@ if hours <= 0:
     exit(250)
 
 logging.info("Lastrun/Startdate was %s hours ago, will make a graylog query for each hour", hours)
-for i in range(1,hours + 1):
-    currentStart = datetime.isoformat(startdate + timedelta(hours=i - 1))
-    currentEnd = datetime.isoformat(startdate + timedelta(hours=i))
+for t in range(1,hours + 1):
+    currentStart = datetime.isoformat(startdate + timedelta(hours=t - 1))
+    currentEnd = datetime.isoformat(startdate + timedelta(hours=t))
 
     payload = {
     "queries": [
@@ -231,6 +236,10 @@ for i in range(1,hours + 1):
             count[newsletter_id] = 1
         else:
             count[newsletter_id] += 1
+
+    if len(count) == 0:
+        logging.warning("No results for timeframe, skipping...")
+        continue
 
     i = 0
     ti = 0
