@@ -1,5 +1,14 @@
 #! /usr/bin/python3
 
+# pylint: disable=import-error
+# pylint: disable=invalid-name
+# pylint: disable=broad-exception-caught
+# pylint: disable=raise-missing-from
+# pylint: disable=consider-using-dict-items
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+# pylint: disable=line-too-long
+
 import os
 import time
 import hashlib
@@ -39,7 +48,7 @@ def epoch_to_iso8601(epoch_timestamp):
     return iso8601_string
 
 def iso8601_to_epoch(iso8601_timestamp):
-    dt_object = datetime.fromisoformat(iso8601_timestamp)
+    dt_object = datetime.fromisoformat(iso8601_timestamp.replace('.000Z',''))
     epoch_time = dt_object.timestamp()
 
     return int(epoch_time)
@@ -74,7 +83,7 @@ def check_future_date(dtd):
 
 def validate_dburl(value):
     try:
-        DAL(value,fake_migrate=True)
+        DAL(value)
         return value
     except:
         raise argparse.ArgumentTypeError(f"{value} is not a valid database URL or the dabase could not be accessed")
@@ -100,13 +109,20 @@ args = parser.parse_args()
 logging.basicConfig(level=getattr(logging, args.loglevel), format='%(asctime)s %(levelname)s: %(message)s', datefmt='%d.%m.%Y %H:%M:%S')
 
 db = DAL(uri=args.db,folder=basedir)
-
-if args.db.startswith('sqlite://'):
-    newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'))
-    newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'))
-else:
-    newsletter_logs = db.define_table('newsletter_logs', Field('hash', type='string', unique=True), Field('start', type='string'), Field('end', type='string'), Field('newsletter_id', type='string'), Field('count', type='string'), fake_migrate=True)
-    newsletter_meta = db.define_table('newsletter_meta', Field('key', type='string'), Field('value', type='string'), fake_migrate=True)
+newsletter_logs = db.define_table(
+    'newsletter_logs',
+    Field('hash', type='string', unique=True),
+    Field('start', type='string'),
+    Field('end', type='string'),
+    Field('newsletter_id', type='string'),
+    Field('count', type='string')
+)
+newsletter_meta = db.define_table(
+    'newsletter_meta',
+    Field('key', type='string'),
+    Field('value', type='string')
+)
+db.commit()
 
 if not args.start:
     lastrun_query = db(newsletter_meta.key == 'lastrun').select(orderby=newsletter_meta.id)
@@ -203,29 +219,36 @@ for t in range(1,hours + 1):
 
     try:
         results = r.json()
-    except:
-        logging.error('Could not parse JSON response from graylog API')
+    except Exception as err:
+        logging.error("Could not parse JSON response from graylog API: %s", err)
         exit(3)
 
     if args.verbose:
         pprint(results)
 
-    if results['execution']['cancelled'] != False:
+    if results['execution']['cancelled'] is not False:
         logging.error('The graylog API query was cancelled')
         exit(3)
-    if results['execution']['completed_exceptionally'] != False:
+    if results['execution']['completed_exceptionally'] is not False:
         logging.warning('The graylog API query did not completed successfully')
     if len(results['results']['?']['errors']) > 0:
         logging.error('The graylog API query generated errors')
         logging.error(results['errors'][0]['description'])
         exit(4)
 
-    logging.info(f"The graylog API query took: {results['results']['?']['execution_stats']['duration']}ms")
-    logging.info(f"The effective query timerange was from: {results['results']['?']['execution_stats']['effective_timerange']['from']} to: {results['results']['?']['execution_stats']['effective_timerange']['to']}")
-    logging.info(f"The graylog API query has {results['results']['?']['search_types']['?']['total_results']} results (messages)")
+    logging.info("The graylog API query took: %sms",
+                 results['results']['?']['execution_stats']['duration'])
+    logging.info("The effective query timerange was from: %s to: %s",
+                 results['results']['?']['execution_stats']['effective_timerange']['from'],
+                 results['results']['?']['execution_stats']['effective_timerange']['to'])
+    logging.info("The graylog API query has %s results (messages)",
+                 results['results']['?']['search_types']['?']['total_results'])
 
     if results['results']['?']['search_types']['?']['total_results'] > int(args.limit):
-        logging.warning(f"The query has more results than the query limit, only {args.limit} entries will be evaluated")
+        logging.warning(
+            "The query has more results than the query limit, only %s entries will be evaluated",
+            args.limit
+        )
 
     count = {}
     for message in results['results']['?']['search_types']['?']['messages']:
@@ -247,9 +270,9 @@ for t in range(1,hours + 1):
         start = results['results']['?']['execution_stats']['effective_timerange']['from']
         end = results['results']['?']['execution_stats']['effective_timerange']['to']
         md5sum = hashlib.md5(f"{start}{end}{key}{count[key]}".encode('utf-8')).hexdigest()
-        logging.info(f"Found entry: start={start},end={end},newsletter_id={key},count={count[key]}")
+        logging.info("Found entry: start=%s,end=%s,newsletter_id=%s,count=%s", start, end, key, count[key])
 
-        check_entry_query = (newsletter_logs.hash==md5sum)
+        check_entry_query = newsletter_logs.hash==md5sum
         check_entry_hash = db(check_entry_query).select(newsletter_logs.ALL)
 
         if len(check_entry_hash) <= 0:
@@ -260,7 +283,7 @@ for t in range(1,hours + 1):
         i += 1
         ti += count[key]
 
-    end_epoch = iso8601_to_epoch(end.replace('.000Z',''))
+    end_epoch = iso8601_to_epoch(end)
     lastrun_db = db(newsletter_meta.key == 'lastrun').select()
     if not lastrun_db:
         newsletter_meta.insert(key='lastrun',value=end_epoch)
@@ -269,10 +292,10 @@ for t in range(1,hours + 1):
 
     if args.commit:
         db.commit()
-        logging.info(f"A total of {i} unique newsletter entries (out of {ti} processed views) have been written to database")
-        logging.info(f"Lastrun date has been set to {end} ({end_epoch})")
+        logging.info("A total of %s unique newsletter entries (out of %s processed views) have been written to database", i, ti)
+        logging.info("Lastrun date has been set to %s (%s)", end, end_epoch)
     else:
-        logging.info(f"As requested: None of the {i} unique newsletter entries (out of {ti} processed views) have been written")
+        logging.info("As requested: None of the %s unique newsletter entries (out of %s processed views) have been written", i, ti)
         logging.warning('Use "-c/--commit" to actually write results to the database')
 
 if args.verbose:
