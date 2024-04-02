@@ -214,8 +214,7 @@ for t in range(1,hours + 1):
     r = requests.post(args.api, auth=(args.token, 'token'), headers=header, timeout=10, json=payload)
 
     if r.status_code != 200:
-        logging.error('Error fetching data from graylog API')
-        logging.error("Timerange: %s - %s", currentStart, currentEnd)
+        logging.error('Error fetching data from graylog API for timerange: %s - %s', currentStart, currentEnd)
         pprint(r.text)
         continue
 
