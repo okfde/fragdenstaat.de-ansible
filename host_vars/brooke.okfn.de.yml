@@ -51,3 +51,11 @@ scripts:
       month: "*"
       dow: "*"
       job: "/usr/local/bin/newsletter_info/get_newsletter_info.sh"
+  - src: postgres_replication_check.sh
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: "0755"
+    target: brooke.okfn.de
+    cron:
+      job: "bash -c /usr/local/bin/postgres_replication_check.sh"
