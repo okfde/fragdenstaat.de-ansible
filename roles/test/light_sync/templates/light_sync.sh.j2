@@ -122,7 +122,7 @@ restore_files(){
     ssh ${schoch_ip} -p ${ssh_port} "mkdir -p /home/storage-box/home/files/"
     rsync -rav -e "ssh -p ${ssh_port}" "./media/" "${schoch_ip}:/home/storage-box/home/files/"
     echo "Set file owner/group"
-    ssh ${schoch_ip} -p ${ssh_port} "chown www-data:www-data -R /home/storage-box/home/files/"
+    ssh ${schoch_ip} -p ${ssh_port} "chown fragdenstaat_de:www-data -R /home/storage-box/home/files/"
 }
 
 cleanup(){
