@@ -137,6 +137,12 @@ location /ws/ {
     {{ proxy_asgi_upstream() }}
 }
 
+location ~ /dokumente/sammlung/.*/zip/$ {
+    {{ add_web_headers() }}
+
+    {{ proxy_asgi_upstream() }}
+}
+
 {% for path in nginx_cache_urls %}
 location = {{ path }} {
     proxy_cache fds_cache;
