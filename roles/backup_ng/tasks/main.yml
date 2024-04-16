@@ -59,16 +59,16 @@
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ borg.prescript }}"
-  when: "(borg is defined) and ('prescript' in borg)"
+  with_items: "{{ borg.prescripts }}"
+  when: "(borg is defined) and ('prescripts' in borg)"
 
 - name: Create postscripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ borg.postscript }}"
-  when: "(borg is defined) and ('postscript' in borg)"
+  with_items: "{{ borg.postscripts }}"
+  when: "(borg is defined) and ('postscripts' in borg)"
 
 - name: Create borg backup scripts
   ansible.builtin.template:
@@ -120,16 +120,16 @@
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ restic.prescript }}"
-  when: "(restic is defined) and ('prescript' in restic)"
+  with_items: "{{ restic.prescripts }}"
+  when: "(restic is defined) and ('prescripts' in restic)"
 
 - name: Create postscripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ restic.postscript }}"
-  when: "(restic is defined) and ('postscript' in restic)"
+  with_items: "{{ restic.postscripts }}"
+  when: "(restic is defined) and ('postscripts' in restic)"
 
 - name: Create restic backup scripts
   ansible.builtin.template:

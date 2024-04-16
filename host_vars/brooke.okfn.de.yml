@@ -20,11 +20,11 @@ prometheus_exporter:
 borg:
   locations: /var/vmail/ /var/www/fragdenstaat.de/backup/
   keepdaily: 7
-#  prescripts:
-#    - dpkg_get_selections.sh
-#    - create_postgres_backup.sh
-#  postscripts:
-#    - purge_local_backups.sh
+  prescripts:
+    - dpkg_get_selections.sh
+    - create_postgres_backup.sh
+  postscripts:
+    - purge_local_backups.sh
 
 fonts:
   - hk_grotesk
