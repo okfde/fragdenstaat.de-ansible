@@ -33,33 +33,36 @@
   become_user: "{{ fdsbot_user }}"
   become: true
 
-- name: Upgrade ansible galaxy community.general
-  ansible.builtin.command:
-    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
-  become_user: "{{ fdsbot_user }}"
-  become: true
-  changed_when: false
+# the ansible-core version currently used is unsupported by ansible-galaxy
+# TODO: upgrade ansible-core
 
-- name: Upgrade ansible galaxy community.postgresql
-  ansible.builtin.command:
-    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.postgresql"
-  become_user: "{{ fdsbot_user }}"
-  become: true
-  changed_when: false
+# - name: Upgrade ansible galaxy community.general
+#   ansible.builtin.command:
+#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
+#   become_user: "{{ fdsbot_user }}"
+#   become: true
+#   changed_when: false
 
-- name: Upgrade ansible galaxy ansible.posix
-  ansible.builtin.command:
-    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U ansible.posix"
-  become_user: "{{ fdsbot_user }}"
-  become: true
-  changed_when: false
+# - name: Upgrade ansible galaxy community.postgresql
+#   ansible.builtin.command:
+#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.postgresql"
+#   become_user: "{{ fdsbot_user }}"
+#   become: true
+#   changed_when: false
 
-- name: Upgrade ansible galaxy community.rabbitmq
-  ansible.builtin.command:
-    cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.rabbitmq"
-  become_user: "{{ fdsbot_user }}"
-  become: true
-  changed_when: false
+# - name: Upgrade ansible galaxy ansible.posix
+#   ansible.builtin.command:
+#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U ansible.posix"
+#   become_user: "{{ fdsbot_user }}"
+#   become: true
+#   changed_when: false
+
+# - name: Upgrade ansible galaxy community.rabbitmq
+#   ansible.builtin.command:
+#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.rabbitmq"
+#   become_user: "{{ fdsbot_user }}"
+#   become: true
+#   changed_when: false
 
 - name: Setup local config file
   ansible.builtin.copy:
