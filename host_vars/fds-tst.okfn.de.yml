@@ -5,8 +5,9 @@ host_data:
   interface_name: enp5s0
   mac: c8:7f:54:70:5b:13
   global_ipv4: 144.76.157.203
-  global_ipv6: none
+  global_ipv6: 2a01:4f8:200:30f0::2
   site_ipv4: 192.168.122.1
+  vlan_ipv4: 192.168.100.10
   vpn_peer_id: 210
 
 monitor_server: fds-tst.okfn.de

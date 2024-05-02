@@ -11,7 +11,7 @@
       tags: base
     - role: network
       tags: network
-      when: "not 'tst.okfn.de' in inventory_hostname"
+      when: "not 'tst.okfn.de' in inventory_hostname or inventory_hostname == 'fds-tst.okfn.de'"
     - role: check_mk
       tags: check_mk
       when: "not 'tst.okfn.de' in inventory_hostname"
