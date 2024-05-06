@@ -9,6 +9,7 @@ host_data:
   site_ipv4: 192.168.100.5
   disk_type: ssd
   vpn_peer_id: 230
+  wg_publickey: "+IWh/zC8u0SwU80/7+MdQQasNqyPVc1R3FAwLT4KwB4="
 
 prometheus: true
 graylog: true
