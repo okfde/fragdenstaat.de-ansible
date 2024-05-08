@@ -45,11 +45,11 @@ function usage()
 	echo -e "\n\t${RED}Set tag on host:${NC}"
 	echo -e "\t\$ ${ORANGE}$(basename $0) settag site user host etag tag_group tag_group_value${NC}"
 	echo -e "\t\tsite = checkmk site name"
-        echo -e "\t\tuser = username for connection"
-        echo -e "\t\thost = checkmk hostname"
+  echo -e "\t\tuser = username for connection"
+  echo -e "\t\thost = checkmk hostname"
 	echo -e "\t\tetag = etag value of hostname (use get to acquire this value)"
-        echo -e "\t\ttag_group = name of tag group"
-        echo -e "\t\ttag_group_value = new value from tag_group that is set for hostname"
+  echo -e "\t\ttag_group = name of tag group"
+  echo -e "\t\ttag_group_value = new value from tag_group that is set for hostname"
 
 	echo -e "\n\t${RED}Create checkmk host in folder:${NC}"
 	echo -e "\t\$ ${ORANGE}$(basename $0) create site user host folder [ip]${NC}"
@@ -104,7 +104,7 @@ function usage()
 	echo -e "\t\$ ${ORANGE}$(basename $0) lsd site user path ${NC}"
 	echo -e "\t\tsite = checkmk site name"
 	echo -e "\t\tuser = username for connection"
-        echo -e "\t\tpath = path in checkmk to list"
+  echo -e "\t\tpath = path in checkmk to list"
 	echo -e "\n\t\tExample (list checkmk folders in /):"
 	echo -e "\t\t\$ ${GREEN}$(basename $0) lsd test automation / ${NC}"
 
@@ -112,12 +112,117 @@ function usage()
 	echo -e "\t\$ ${ORANGE}$(basename $0) lsf site user path ${NC}"
 	echo -e "\t\tsite = checkmk site name"
 	echo -e "\t\tuser = username for connection"
-        echo -e "\t\tpath = path in checkmk to list"
+  echo -e "\t\tpath = path in checkmk to list"
 	echo -e "\n\t\tExample (lisf checkmk hosts in /):"
 	echo -e "\t\t\$ ${GREEN}$(basename $0) lsf test automation / ${NC}"
 	echo -e ""
 	echo -e "For better view, pipe the output of this command to ${RED}jq${NC} (command line JSON processor)."
 	echo -e "Don't end paths with extra /. For example \"/folder1\" is ok, while \"/folder1/\" is not."
+
+	echo -e "\n\t${RED}Acknowledge host problem:${NC}"
+	echo -e "\t\$ ${ORANGE}$(basename $0) ack_host site user host${NC}"
+	echo -e "\t\tsite = checkmk site name"
+	echo -e "\t\tuser = username for connection"
+	echo -e "\t\thost = checkmk hostname"
+	echo -e "\t\tNote: path is not required as hosts have unique IDs"
+	echo -e "\n\t\tExample (services host myhost1 from checkmk test site):"
+	echo -e "\t\t\$ ${GREEN}$(basename $0) ack_host test automation myhost1${NC}"
+
+	echo -e "\n\t${RED}Acknowledge service problem:${NC}"
+	echo -e "\t\$ ${ORANGE}$(basename $0) ack_service site user host servicedescription${NC}"
+	echo -e "\t\tsite = checkmk site name"
+	echo -e "\t\tuser = username for connection"
+	echo -e "\t\thost = checkmk hostname"
+	echo -e "\t\tservicedescription = checkmk service description"
+	echo -e "\t\tNote: path is not required as hosts have unique IDs"
+	echo -e "\n\t\tExample (service_problems host myhost1 from checkmk test site):"
+	echo -e "\t\t\$ ${GREEN}$(basename $0) ack_service test automation myhost1 \"CPU load\"${NC}"
+}
+
+function ack_host()
+{
+	HEADER=$(echo "Authorization: Bearer ${USER} ${SECRET}")
+  DATA=$(echo "{ \"acknowledge_type\": \"host\", \"sticky\": \"true\", \"persistent\": \"false\", \"notify\": \"false\", \"comment\": \"This was expected.\", \"host_name\": \"${HOST}\" }")
+
+	RES=$(echo "$HEADER" | curl -w "\n%{http_code}" -X 'POST' \
+	  "${URL}/domain-types/acknowledge/collections/host" \
+	  -H 'accept: application/json' \
+	  -H @- \
+	  -H 'Content-Type: application/json' \
+	  -d "${DATA}" \
+	  2>/dev/null )
+
+	#Get return code from last line
+	RC=$(echo "$RES" | tail -n1)
+
+	#Get result from last-1 line
+	CONT=$(echo "$RES" | tail -n2 | head -n1)
+
+	#Get header (every line except last two)
+	HEADER_RCV=$(echo "$RES" | head -n -2 | dos2unix)
+
+	#Get etag from header
+	ETAG=$(echo "$HEADER_RCV" | grep -i "etag" | cut -d' ' -f2 | tr -d '"')
+
+	#echo "etag: ${ETAG}"
+
+	#OK
+	if (( "$RC" == 200 )); then
+		#echo -e "{\"ok\" : ${CONT} }"
+		echo -e "{ \"rc\" : \"${RC}\", \"etag\" : \"${ETAG}\", \"ok\" : ${CONT} }"
+
+	#Wrong secret
+        elif (( "$RC" == 401 )); then
+                echo "{\"failure\" : \"wrong username or secret!\"}"
+                exit 1
+
+	#Host not found
+        else
+		echo "${CONT}"
+        fi
+}
+
+function ack_service()
+{
+	HEADER=$(echo "Authorization: Bearer ${USER} ${SECRET}")
+  DATA=$(echo "{ \"acknowledge_type\": \"service\", \"sticky\": \"true\", \"persistent\": \"false\", \"notify\": \"false\", \"comment\": \"This was expected.\", \"host_name\": \"${HOST}\", \"service_description\": \"${SERVICE}\" }")
+
+	RES=$(echo "$HEADER" | curl -w "\n%{http_code}" -X 'POST' \
+	  "${URL}/domain-types/acknowledge/collections/service" \
+	  -H 'accept: application/json' \
+	  -H @- \
+	  -H 'Content-Type: application/json' \
+	  -d "${DATA}" \
+	  2>/dev/null )
+
+	#Get return code from last line
+	RC=$(echo "$RES" | tail -n1)
+
+	#Get result from last-1 line
+	CONT=$(echo "$RES" | tail -n2 | head -n1)
+
+	#Get header (every line except last two)
+	HEADER_RCV=$(echo "$RES" | head -n -2 | dos2unix)
+
+	#Get etag from header
+	ETAG=$(echo "$HEADER_RCV" | grep -i "etag" | cut -d' ' -f2 | tr -d '"')
+
+	#echo "etag: ${ETAG}"
+
+	#OK
+	if (( "$RC" == 200 )); then
+		#echo -e "{\"ok\" : ${CONT} }"
+		echo -e "{ \"rc\" : \"${RC}\", \"etag\" : \"${ETAG}\", \"ok\" : ${CONT} }"
+
+	#Wrong secret
+        elif (( "$RC" == 401 )); then
+                echo "{\"failure\" : \"wrong username or secret!\"}"
+                exit 1
+
+	#Host not found
+        else
+		echo "${CONT}"
+        fi
 }
 
 function service_problems()
@@ -667,6 +772,37 @@ OP=$(echo "$1" | tr '[:upper:]' '[:lower:]')
 
 #Switch by operation:
 case "$OP" in
+  "ack_host")
+	if (( "$#" != 4 )); then
+			usage
+			exit 1
+		fi
+
+		URL_SITE=$2
+		USER=$3
+		HOST=$4
+
+		setValidateURL "${URL_SITE}"
+		getSecret
+
+		ack_host
+		;;
+  "ack_service")
+	if (( "$#" != 5 )); then
+			usage
+			exit 1
+		fi
+
+		URL_SITE=$2
+		USER=$3
+		HOST=$4
+    SERVICE=$5
+
+		setValidateURL "${URL_SITE}"
+		getSecret
+
+		ack_service
+		;;
   "service_problems")
 	if (( "$#" != 4 )); then
 			usage

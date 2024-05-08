@@ -48,6 +48,13 @@ docker_updates:
     restart: docker compose up -d
 
 scripts:
+  - src: cmk_ack.sh
+    dest: /usr/local/bin/
+    dirmode: "0775"
+    owner: root
+    group: root
+    mode: "0755"
+    target: fds-mon.okfn.de
   - src: cmk.sh
     dest: /usr/local/bin/
     dirmode: "0775"
