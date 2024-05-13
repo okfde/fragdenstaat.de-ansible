@@ -80,12 +80,16 @@ http {
   gzip_min_length 256;
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript application/x-font-ttf font/opentype image/svg+xml image/x-icon;
 
-	map $http_user_agent $limit_bot {
+	map $http_user_agent $badagent {
 		default "";
-		~*(ClaudeBot|Googlebot|slurp|Bing) $http_user_agent;
+		~*(CCBot|ChatGPT-User|GPTBot|Google-Extended|anthropic-ai|Omgilibot|Omgili|FacebookBot|Diffbot|ImagesiftBot|cohere-ai|ClaudeBot|GPTBot|Amazonbot|AhrefsBot|BLEXBot|YandexBot|serpstatbot|DataForSeoBot|Lucifer\sSearch\sBot|AcademicBotRTU|Bytespider) $http_user_agent;
+	}
+	map $http_user_agent $limit_bots {
+		default "";
+		~*(Googlebot|bingbot) $http_user_agent;
 	}
 
-	limit_req_zone $limit_bot zone=bots:10m rate=10r/m;
+  limit_req_zone $limit_bots zone=bots:10m rate=1r/s;
   limit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;
 	limit_req_status 429;
 

@@ -35,6 +35,9 @@ client_max_body_size 50M;
 access_log {{ nginx_access_log_file }};
 error_log {{ nginx_error_log_file }};
 
+if ($badagent) {
+    return 403;
+}
 
 {% if temp_redirect_paths is defined %}
     {% for redirect_path in temp_redirect_paths %}
