@@ -1,4 +1,5 @@
 discourse_domain: forum.okfn.de
+discourse_domain_alternatives: forum.fragdenstaat.de
 discourse_port: 8035
 
 discourse:

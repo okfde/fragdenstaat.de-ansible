@@ -18,11 +18,8 @@ server {
 }
 
 server {
-	server_name {{ discourse_domain }};
+	server_name {{ discourse_domain }} {{ discourse_domain_alternatives }};
 	listen 80;
 
-	if ($host = {{ discourse_domain }}) {
-			return 301 https://$host$request_uri;
-	}
-  return 404;
+	return 301 https://{{ discourse_domain }}$request_uri;
 }
