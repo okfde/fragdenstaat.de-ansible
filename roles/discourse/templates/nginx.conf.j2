@@ -1,11 +1,17 @@
 server {
-	server_name {{ discourse_domain }};
+	server_name {{ discourse_domain }} {{ discourse_domain_alternatives }};
   listen 443 ssl;
 
 	ssl_certificate /etc/letsencrypt/live/{{ discourse_domain }}/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/{{ discourse_domain }}/privkey.pem;
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  {% for domain in discourse_domain_alternatives.split(' ') %}
+	if ($host = {{ domain }}) {
+			return 301 https://{{ discourse_domain }}$request_uri;
+	}
+	{% endfor %}
 
 	location / {
 		proxy_pass http://localhost:{{ discourse_port }};
