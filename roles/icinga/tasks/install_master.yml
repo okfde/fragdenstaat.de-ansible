@@ -1,0 +1,40 @@
+- name: Install icinga2
+  ansible.builtin.apt:
+    name: icinga2
+    state: present
+
+- name: Install mariadb
+  ansible.builtin.apt:
+    name: mariadb-server
+
+- name: Install icinga2-ido-mysql
+  ansible.builtin.apt:
+    name: icinga2-ido-mysql
+
+- name: Create features-enabled directory
+  ansible.builtin.file:
+    name: /etc/icinga2/features-enabled/
+    state: directory
+    owner: "root"
+    group: "nagios"
+    mode: "0775"
+
+- name: Enable api
+  ansible.builtin.command:
+    cmd: icinga2 api setup
+    creates: /etc/icinga2/features-enabled/api.conf
+  notify: reload icinga2
+
+- name: Enable ido-mysql
+  ansible.builtin.command:
+    cmd: icinga2 feature enable ido-mysql
+    creates: /etc/icinga2/features-enabled/ido-mysql.conf
+  notify: reload icinga2
+  become: true
+  become_user: "root"
+
+- name: Enable ido-mysql
+  ansible.builtin.command:
+    cmd: icinga2 feature enable command
+    creates: /etc/icinga2/features-enabled/command.conf
+  notify: reload icinga2

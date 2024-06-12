@@ -1,0 +1,34 @@
+- name: Install Icinga Master
+  ansible.builtin.import_tasks: install_master.yml
+  when: icinga.master is defined and icinga.master
+  tags: icingamaster
+
+- name: Configure Icinga Master
+  ansible.builtin.import_tasks: config_master.yml
+  when: icinga.master is defined and icinga.master
+  tags:
+    - icingamaster
+    - icingaconfig
+
+- name: Install and configure Icingaweb
+  ansible.builtin.import_tasks: icingaweb2.yml
+  when: icinga.master is defined and icinga.master
+  tags: icingaweb
+
+- name: Install Icinga2 Agent
+  ansible.builtin.import_tasks: install_agent.yml
+  when: icinga.master is not defined or not icinga.master
+  tags: icingaagent
+
+- name: Configure Icinga2 Agent
+  ansible.builtin.import_tasks: config_agent.yml
+  when: icinga.master is not defined or not icinga.master
+  tags:
+    - icingaagent
+    - icingaconfig
+
+- name: Install and Configure Icinga2 plugins
+  ansible.builtin.import_tasks: plugins.yml
+  tags:
+    - icingaplugins
+    - icingaconfig

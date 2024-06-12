@@ -71,3 +71,7 @@ schaar.okfn.de
 
 [sentry]
 fds-mon.okfn.de
+
+[icinga]
+fds-mon.okfn.de
+fds-tst.okfn.de

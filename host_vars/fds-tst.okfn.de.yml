@@ -19,3 +19,19 @@ prometheus_exporter:
 
 https_domains:
   - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']
+
+icinga:
+  ip_override: 192.168.100.10
+  vars:
+    - ssh_port = 2228
+    - procs_warning = 500
+    - procs_critical = 750
+    - swap_wfree = "10%"
+    - swap_cfree = "5%"
+    - disks["vg0-isos"] = { disk_partitions = "/dev/mapper/vg0-isos" }
+    - disks["vg0-s3"] = { disk_partitions = "/dev/mapper/vg0-minio_s3" }
+    - disks["vg1-images"] = { disk_partitions = "/dev/mapper/vg1-images" }
+    - disks["vg0-volumes"] = { disk_partitions = "/dev/mapper/vg0-volumes" }
+    - disks["vg0-opt-docker"] = { disk_partitions = "/dev/mapper/vg0-lvol0" }
+    - disks["vg1-docker"] = { disk_partitions = "/dev/mapper/vg1-docker" }
+    - libvirt = 1

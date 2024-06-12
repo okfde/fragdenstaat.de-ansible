@@ -1,0 +1,14 @@
+- name: reload nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: reload icinga2
+  ansible.builtin.service:
+    name: icinga2
+    state: reloaded
+
+- name: reload php-fpm
+  ansible.builtin.service:
+    name: php{{ icingaweb2_php_version }}-fpm
+    state: reloaded

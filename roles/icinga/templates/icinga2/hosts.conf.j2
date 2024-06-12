@@ -1,0 +1,19 @@
+{% for host in groups['icinga'] %}
+{%if 'icinga' in hostvars[host] %}
+object Host "{{ host }}" {
+  import "generic-host"
+
+{% if 'vars' in hostvars[host].icinga %}
+{% for var in hostvars[host].icinga.vars %}
+  vars.{{ var }}
+{% endfor %}
+{% endif %}
+
+  vars.disks["disk /"] = { disk_partitions = "/" }
+  vars.os = "{{ hostvars[host].icinga.os | default('Linux') }}"
+  vars.agent_endpoint = name
+
+  address = "{{ hostvars[host].icinga.ip_override | default(hostvars[host].host_data.site_ipv4) }}"
+}
+{% endif %}
+{% endfor %}

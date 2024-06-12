@@ -1,0 +1,43 @@
+- name: Configure icinga2
+  ansible.builtin.template:
+    src: icinga2/icinga2.conf.j2
+    dest: /etc/icinga2/icinga2.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Create features-enabled directory
+  ansible.builtin.file:
+    name: /etc/icinga2/features-enabled/
+    state: directory
+    owner: "root"
+    group: "nagios"
+    mode: "0755"
+
+- name: Configure api
+  ansible.builtin.template:
+    src: icinga2/api_agent.conf.j2
+    dest: /etc/icinga2/features-enabled/api.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure custom commands
+  ansible.builtin.copy:
+    src: icinga2/custom_commands.conf
+    dest: /etc/icinga2/conf.d/custom_commands.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure zones
+  ansible.builtin.template:
+    src: icinga2/zones_agent.conf.j2
+    dest: /etc/icinga2/zones.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2

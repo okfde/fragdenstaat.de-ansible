@@ -76,3 +76,50 @@ scripts:
       month: "*"
       dow: "*"
       job: "/usr/local/bin/cmk_status.sh -q > /dev/null 2>&1"
+
+icinga:
+  master: true
+  vars:
+    - ssh_port = 2228
+    - procs_warning = 750
+    - procs_critical = 1000
+    - swap_wfree = "10%"
+    - swap_cfree = "5%"
+
+    - http_vhosts["fragdenstaat.de"] = { http_uri = "https://fragdenstaat.de" }
+    - ssl_cert["fragdenstaat.de Certificate"] = { ssl_cert_address = "fragdenstaat.de" }
+    - ssl_cert["blog.fragdenstaat.de Certificate"] = { ssl_cert_address = "blog.fragdenstaat.de" }
+    - ssl_cert["shop.fragdenstaat.de Certificate"] = { ssl_cert_address = "shop.fragdenstaat.de" }
+    - ssl_cert["app.fragdenstaat.de Certificate"] = { ssl_cert_address = "app.fragdenstaat.de" }
+    - ssl_cert["mail.fragdenstaat.de Certificate"] = { ssl_cert_address = "mail.fragdenstaat.de" }
+    - ssl_cert["mta-sts.fragdenstaat.de Certificate"] = { ssl_cert_address = "mta-sts.fragdenstaat.de" }
+    - ssl_cert["media.frag-den-staat.de Certificate"] = { ssl_cert_address = "media.frag-den-staat.de" }
+    - ssl_cert["static.frag-den-staat.de Certificate"] = { ssl_cert_address = "static.frag-den-staat.de" }
+    - ssl_cert["verklagdenstaat.de Certificate"] = { ssl_cert_address = "verklagdenstaat.de" }
+    - ssl_cert["zerschlagdenstaat.de Certificate"] = { ssl_cert_address = "zerschlagdenstaat.de" }
+    - ssl_cert["mon.zerschlagdenstaat.de Certificate"] = { ssl_cert_address = "mon.zerschlagdenstaat.de" }
+    - ssl_cert["log.zerschlagdenstaat.de Certificate"] = { ssl_cert_address = "log.zerschlagdenstaat.de" }
+    - ssl_cert["api.farmsubsidy.org Certificate"] = { ssl_cert_address = "api.farmsubsidy.org" }
+
+    - http_vhosts["forum.okfn.de"] = { http_uri = "https://forum.okfn.de" }
+    - ssl_cert["forum.okfn.de Certificate"] = { ssl_cert_address = "forum.okfn.de" }
+
+    - http_vhosts["metabase.frag-den-staat.de"] = { http_uri = "https://metabase.frag-den-staat.de" }
+    - ssl_cert["metabase.frag-den-staat.de Certificate"] = { ssl_cert_address = "metabase.frag-den-staat.de" }
+
+    - http_vhosts["ogimage.frag-den-staat.de"] = { http_uri = "https://ogimage.frag-den-staat.de" }
+    - ssl_cert["ogimage.frag-den-staat.de Certificate"] = { ssl_cert_address = "ogimage.frag-den-staat.de" }
+    - http_vhosts["ogimage-next.frag-den-staat.de"] = { http_uri = "https://ogimage-next.frag-den-staat.de" }
+    - ssl_cert["ogimage-next.frag-den-staat.de Certificate"] = { ssl_cert_address = "ogimage-next.frag-den-staat.de" }
+
+    - http_vhosts["sentry.okfn.de"] = { http_uri = "https://sentry.okfn.de" }
+    - ssl_cert["sentry.okfn.de Certificate"] = { ssl_cert_address = "sentry.okfn.de" }
+
+    - http_vhosts["weblate.frag-den-staat.de"] = { http_uri = "https://weblate.frag-den-staat.de" }
+    - ssl_cert["weblate.frag-den-staat.de Certificate"] = { ssl_cert_address = "weblate.frag-den-staat.de" }
+
+    - disks["vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
+    - node_exporter = 1
+    - mailq_warning = 100
+    - mailq_critical = 200
+    - docker = 1

@@ -1,0 +1,17 @@
+# in secrets.yml
+
+# icinga2_ca_host: fqdn.example.com
+# icinga2_delegate_host: fqdn.example.com
+# icinga2_role_user: username
+
+# icingaweb2_host: fqdn.example.com
+# icingaweb2_db: dbname
+# icingaweb2_db_user: dbuser
+# icingaweb2_db_pass: dbpass
+# icingaweb2_php_version: x.x
+# icingaweb2_user: username
+# icingaweb2_pass: password
+
+# icinga2_ticket_salt: salt
+
+# apiuser_password: password

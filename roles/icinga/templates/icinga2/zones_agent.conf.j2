@@ -1,0 +1,26 @@
+object Endpoint "fds-mon.okfn.de" {
+  // Do not actively connect to the master by leaving out the 'host' attribute
+}
+
+object Endpoint "{{ inventory_hostname }}" {
+  // That's us
+}
+
+object Zone "master" {
+  endpoints = [ "fds-mon.okfn.de" ]
+}
+
+object Zone "{{ inventory_hostname }}" {
+  endpoints = [ "{{ inventory_hostname }}" ]
+
+  parent = "master"
+}
+
+/* sync global commands */
+object Zone "global-templates" {
+  global = true
+}
+
+object Zone "director-global" {
+  global = true
+}

@@ -1,0 +1,190 @@
+apply Service "ping4" {
+  import "generic-service"
+
+  check_command = "ping4"
+
+  assign where host.address
+}
+
+apply Service "ping6" {
+  import "generic-service"
+
+  check_command = "ping6"
+
+  assign where host.address6
+}
+
+apply Service "apt" {
+  import "generic-service"
+
+  check_command = "apt"
+  check_interval = 24h
+
+  vars.apt_only_critical = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "raid" {
+  import "generic-service"
+
+  check_command = "raid"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "ssh" {
+  import "generic-service"
+
+  check_command = "ssh"
+
+  assign where (host.address || host.address6) && host.vars.os == "Linux"
+}
+
+apply Service for (http_vhost => config in host.vars.http_vhosts) {
+  import "generic-service"
+
+  check_command = "http"
+
+  vars += config
+}
+
+apply Service for (ssl_cert => config in host.vars.ssl_cert) {
+  import "generic-service"
+
+  check_command = "ssl_cert"
+
+  vars += config
+}
+
+apply Service for (disk => config in host.vars.disks) {
+  import "generic-service"
+
+  check_command = "disk"
+
+  vars += config
+}
+
+apply Service "load" {
+  import "generic-service"
+
+  check_command = "load"
+
+  vars.load_wload1 = "{{ ansible_processor_vcpus  }}"
+  vars.load_wload5 =  "{{ ansible_processor_vcpus }}"
+  vars.load_wload15 = "{{ ansible_processor_vcpus }}"
+  vars.load_cload1 = "{{ ansible_processor_vcpus + (ansible_processor_vcpus * 0.5) }}"
+  vars.load_cload5 =  "{{ ansible_processor_vcpus + (ansible_processor_vcpus * 0.5) }}"
+  vars.load_cload15 = "{{ ansible_processor_vcpus + (ansible_processor_vcpus * 0.5) }}"
+
+  /* Used by the ScheduledDowntime apply rule in `downtimes.conf`. */
+  // vars.backup_downtime = "02:00-03:00"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "memory" {
+  import "generic-service"
+
+  check_command = "memory"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "procs" {
+  import "generic-service"
+
+  check_command = "procs"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "swap" {
+  import "generic-service"
+
+  check_command = "swap"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "users" {
+  import "generic-service"
+
+  check_command = "users"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "node_exporter" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "9100"
+
+  assign where host.vars.node_exporter == "1"
+}
+
+apply Service "icinga_agent" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "5665"
+  vars.tcp_host = "127.0.0.1"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "mailqueue" {
+  import "generic-service"
+
+  check_command = "mailq"
+
+  assign where (host.vars.mailq_warning || host.vars.mailq_critical)
+}
+
+apply Service "iowait" {
+  import "generic-service"
+
+  check_command = "iowait"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "ntp time" {
+  import "generic-service"
+
+  check_command = "ntp"
+  vars.ntp_host = "localhost"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "libvirt list" {
+  import "generic-service"
+
+  check_command = "libvirtlist"
+
+  assign where host.vars.libvirt
+}
+apply Service "libvirt volume" {
+  import "generic-service"
+
+  check_command = "libvirtvolume"
+
+  assign where host.vars.libvirt
+}
+apply Service "libvirt pool" {
+  import "generic-service"
+
+  check_command = "libvirtpool"
+
+  assign where host.vars.libvirt
+}
+
+apply Service "docker" {
+  import "generic-service"
+
+  check_command = "docker"
+
+  assign where host.vars.docker
+}

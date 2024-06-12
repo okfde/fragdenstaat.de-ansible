@@ -1,0 +1,33 @@
+{% for host in groups['icinga'] %}
+{%if 'icinga' in hostvars[host] %}
+object Endpoint "{{ host }}" {
+  host = "{{ hostvars[host].icinga.ip_override | default(hostvars[host].host_data.site_ipv4) }}"
+{% if host != 'fds-mon.okfn.de' %}
+  log_duration = 0 // Disable the replay log for command endpoint agents
+{% endif %}
+}
+
+{% if host == 'fds-mon.okfn.de' %}
+object Zone "master" {
+  endpoints = [ "fds-mon.okfn.de" ]
+}
+
+{% else %}
+object Zone "fds-tst.okfn.de" {
+  endpoints = [ "fds-tst.okfn.de" ]
+
+  parent = "master"
+}
+
+{% endif %}
+{% endif %}
+{% endfor %}
+
+/* sync global commands */
+object Zone "global-templates" {
+  global = true
+}
+
+object Zone "director-global" {
+  global = true
+}

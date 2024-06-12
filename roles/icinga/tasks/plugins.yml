@@ -1,0 +1,21 @@
+- name: Copy scripts
+  ansible.builtin.copy:
+    src: plugins/
+    dest: /usr/lib/nagios/plugins/
+    owner: root
+    group: nagios
+    mode: "0750"
+
+- name: Add options for raid check to sudoers
+  community.general.sudoers:
+    name: allow-dmsetup
+    state: present
+    user: nagios
+    commands: "/sbin/dmsetup status --noflush"
+
+- name: Add options for docker check to sudoers
+  community.general.sudoers:
+    name: allow-dockercheck
+    state: present
+    user: nagios
+    commands: "/usr/lib/nagios/plugins/check_docker --status running"
