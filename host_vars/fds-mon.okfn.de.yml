@@ -123,3 +123,11 @@ icinga:
     - mailq_warning = 100
     - mailq_critical = 200
     - docker = 1
+    - mysql_socket = "/var/run/mysqld/mysqld.sock"
+    - smtp_host = "localhost"
+    - grafana = 1
+    - graylog = 1
+    - prometheus = 1
+    - graylog_filebeat_bind = "192.168.100.5"
+    - graylog_gelf_http_bind = "192.168.100.5"
+    - backup = "borg"

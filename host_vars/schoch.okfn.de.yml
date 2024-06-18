@@ -22,3 +22,7 @@ prometheus_exporter:
 borg:
   locations: /home/storage-box/home
   keepdaily: 7
+
+icinga:
+  vars:
+    - ssh_port = "2228"

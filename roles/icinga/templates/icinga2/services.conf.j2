@@ -33,6 +33,22 @@ apply Service "raid" {
   assign where host.vars.os == "Linux"
 }
 
+apply Service "temperature" {
+  import "generic-service"
+
+  check_command = "temperature"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "nfs" {
+  import "generic-service"
+
+  check_command = "nfs"
+
+  assign where host.vars.os == "Linux"
+}
+
 apply Service "ssh" {
   import "generic-service"
 
@@ -134,6 +150,66 @@ apply Service "icinga_agent" {
   assign where host.vars.os == "Linux"
 }
 
+apply Service "prometheus" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "9090"
+  vars.tcp_host = "127.0.0.1"
+
+  assign where host.vars.prometheus
+}
+
+apply Service "graylog" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "9010"
+  vars.tcp_host = "127.0.0.1"
+
+  assign where host.vars.graylog
+}
+
+apply Service "grafana" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "3000"
+  vars.tcp_host = "127.0.0.1"
+
+  assign where host.vars.grafana
+}
+
+apply Service "graylog filebeat" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "5044"
+  vars.tcp_host = "$graylog_filebeat_bind$"
+
+  assign where host.vars.graylog_filebeat_bind
+}
+
+apply Service "graylog gelf" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "12201"
+  vars.tcp_host = "$graylog_gelf_bind$"
+
+  assign where host.vars.graylog_gelf_bind
+}
+
+apply Service "graylog gelf http" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "12201"
+  vars.tcp_host = "$graylog_gelf_http_bind$"
+
+  assign where host.vars.graylog_gelf_http_bind
+}
+
 apply Service "mailqueue" {
   import "generic-service"
 
@@ -148,6 +224,22 @@ apply Service "iowait" {
   check_command = "iowait"
 
   assign where host.vars.os == "Linux"
+}
+
+apply Service "cpu" {
+  import "generic-service"
+
+  check_command = "cpu"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "borg" {
+  import "generic-service"
+
+  check_command = "borg"
+
+  assign where host.vars.backup == "borg"
 }
 
 apply Service "ntp time" {
@@ -187,4 +279,49 @@ apply Service "docker" {
   check_command = "docker"
 
   assign where host.vars.docker
+}
+
+apply Service "mysql" {
+  import "generic-service"
+
+  check_command = "mysqlroot"
+
+  assign where (host.vars.mysql_socket || host.vars.mysql_hostname)
+}
+
+apply Service "postgres_size" {
+  import "generic-service"
+
+  check_command = "postgres_size"
+
+  assign where host.vars.postgres
+}
+apply Service "postgres_repl_slots" {
+  import "generic-service"
+
+  check_command = "postgres_repl_slots"
+
+  assign where host.vars.postgres
+}
+apply Service "postgres_query_time" {
+  import "generic-service"
+
+  check_command = "postgres_query_time"
+
+  assign where host.vars.postgres
+}
+apply Service "postgres_connection" {
+  import "generic-service"
+
+  check_command = "postgres_connection"
+
+  assign where host.vars.postgres
+}
+
+apply Service "smtp" {
+  import "generic-service"
+
+  check_command = "smtp"
+
+  assign where host.vars.smtp_host
 }

@@ -13,8 +13,8 @@ object Zone "master" {
 }
 
 {% else %}
-object Zone "fds-tst.okfn.de" {
-  endpoints = [ "fds-tst.okfn.de" ]
+object Zone "{{ host }}" {
+  endpoints = [ "{{ host }}" ]
 
   parent = "master"
 }

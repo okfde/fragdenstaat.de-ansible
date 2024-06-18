@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -u fragdenstaat_de /usr/lib/nagios/plugins/check_postgres --action=database_size -db=fragdenstaat_de -dbuser=fragdenstaat_de -w 274877906944 -c 549755813888

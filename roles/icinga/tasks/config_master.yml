@@ -22,8 +22,10 @@
     mode: "0644"
     owner: "root"
     group: "nagios"
-  tags: icinga_hosts
   notify: reload icinga2
+  tags:
+    - icingahosts
+    - icingaservices
 
 - name: Configure api users
   ansible.builtin.template:
@@ -50,8 +52,8 @@
     mode: "0644"
     owner: "root"
     group: "nagios"
-  tags: icinga_services
   notify: reload icinga2
+  tags: icingaservices
 
 - name: Configure timeperiods
   ansible.builtin.copy:
@@ -97,10 +99,11 @@
     owner: "root"
     group: "nagios"
   notify: reload icinga2
+  tags: icingagroups
 
 - name: Configure users
-  ansible.builtin.copy:
-    src: icinga2/users.conf
+  ansible.builtin.template:
+    src: icinga2/users.conf.j2
     dest: /etc/icinga2/conf.d/users.conf
     mode: "0644"
     owner: "root"
@@ -124,6 +127,7 @@
     owner: "root"
     group: "nagios"
   notify: reload icinga2
+  tags: icingaservices
 
 - name: Configure zones
   ansible.builtin.template:

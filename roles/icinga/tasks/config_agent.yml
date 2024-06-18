@@ -32,6 +32,7 @@
     owner: "root"
     group: "nagios"
   notify: reload icinga2
+  tags: icingaservices
 
 - name: Configure zones
   ansible.builtin.template:
@@ -41,3 +42,10 @@
     owner: "root"
     group: "nagios"
   notify: reload icinga2
+
+- name: Allow agent connections
+  community.general.ufw:
+    rule: allow
+    port: "5665"
+    proto: tcp
+    from_ip: 192.168.100.5

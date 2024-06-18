@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -u fragdenstaat_de /usr/lib/nagios/plugins/check_postgres --action=connection -db=fragdenstaat_de -dbuser=fragdenstaat_de

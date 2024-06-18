@@ -66,3 +66,15 @@ scripts:
     mode: "0755"
     cron:
       job: "/usr/local/bin/es_status.sh {{ hostvars['fds-es01.okfn.de'].host_data.site_ipv4 }} > /dev/null 2>&1"
+
+icinga:
+  vars:
+    - ssh_port = 2228
+    - backup = "borg"
+    - procs_warning = 500
+    - procs_critical = 750
+    - node_exporter = 1
+    - mailq_warning = 100
+    - mailq_critical = 200
+    - smtp_host = "localhost"
+    - postgres = "1"

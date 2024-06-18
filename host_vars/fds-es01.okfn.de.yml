@@ -17,3 +17,7 @@ https_domains:
 
 prometheus_exporter:
   - node_exporter
+
+icinga:
+  vars:
+    - ssh_port = 2228

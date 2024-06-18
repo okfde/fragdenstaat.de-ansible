@@ -17,3 +17,12 @@ prometheus_exporter:
 borg:
   locations: /var/www/ /opt/discourse_docker/shared/standalone/backups/default/
   keepdaily: 7
+
+icinga:
+  vars:
+    - ssh_port = 2228
+    - backup = "borg"
+    - procs_warning = 400
+    - procs_critical = 500
+    - node_exporter = 1
+    - docker = 1
