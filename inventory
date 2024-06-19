@@ -24,6 +24,7 @@ fds-mon.okfn.de
 schaar.okfn.de
 schoch.okfn.de
 fds-es01.okfn.de
+fds-es1.okfn.de
 
 [queue]
 brooke.okfn.de
@@ -33,6 +34,7 @@ brooke.okfn.de
 
 [search]
 fds-es01.okfn.de
+fds-es1.okfn.de
 
 [broker]
 brooke.okfn.de
@@ -75,7 +77,7 @@ fds-mon.okfn.de
 [icinga]
 fds-mon.okfn.de
 fds-tst.okfn.de
-fds-es01.okfn.de
 schoch.okfn.de
 schaar.okfn.de
 brooke.okfn.de
+fds-es1.okfn.de

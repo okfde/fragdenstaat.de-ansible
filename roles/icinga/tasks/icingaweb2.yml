@@ -18,6 +18,8 @@
   community.mysql.mysql_db:
     name: icingaweb2
     state: present
+  tags:
+    - skip_ansible_lint
 
 - name: Create database user
   community.mysql.mysql_user:
@@ -25,6 +27,8 @@
     password: "{{ icingaweb2_db_pass }}"
     priv: 'icingaweb2.*:ALL,GRANT'
     state: present
+  tags:
+    - skip_ansible_lint
 
 - name: Check for icingaweb mysql db schema
   ansible.builtin.command:

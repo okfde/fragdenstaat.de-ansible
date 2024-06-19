@@ -10,5 +10,6 @@
   roles:
     - role: certbot
       tags: certbot
+      when: https_domains is defined
     - role: icinga
       tags: icinga
