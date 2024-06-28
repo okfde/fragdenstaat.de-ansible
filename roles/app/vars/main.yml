@@ -75,3 +75,5 @@ django_environment:
   DEFAULT_FROM_EMAIL: "{{ fds_default_from_email }}"
   SERVER_EMAIL: "{{ fds_server_email }}"
   SITE_EMAIL: "{{ fds_site_email }}"
+  PAPERLESS_API_URL: "{{ paperless_api_url }}"
+  PAPERLESS_API_TOKEN: "{{ paperless_api_token }}"
