@@ -23,7 +23,6 @@ fds-mon.okfn.de
 [msmtp]
 schaar.okfn.de
 schoch.okfn.de
-fds-es01.okfn.de
 fds-es1.okfn.de
 
 [queue]
@@ -33,7 +32,6 @@ brooke.okfn.de
 brooke.okfn.de
 
 [search]
-fds-es01.okfn.de
 fds-es1.okfn.de
 
 [broker]

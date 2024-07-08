@@ -153,12 +153,12 @@ flowchart TB
         metabase-- reporting schema views -->db
     end
 
-    subgraph fds-es01
+    subgraph fds-es1
         fdses01ssh[[SSH access]]
         elasticsearch[Elasticsearch server]<-->appworker
         elasticsearch-->fdses01ssd[(SSD storage)]
-        fds-es01-graylog-sidecar[[graylog sidecar]]
-        fds-es01-prometheus-exporter[[prometheus exporter]]
+        fds-es1-graylog-sidecar[[graylog sidecar]]
+        fds-es1-prometheus-exporter[[prometheus exporter]]
     end
 
     subgraph internet
