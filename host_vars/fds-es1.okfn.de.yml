@@ -12,9 +12,6 @@ host_data:
 create_swap_file: false
 elasticsearch_heapsize: 22g
 
-#https_domains:
-#  - ["api.farmsubsidy.org"]
-
 prometheus_exporter:
   - node_exporter
 

@@ -99,7 +99,6 @@ icinga:
     - ssl_cert["zerschlagdenstaat.de Certificate"] = { ssl_cert_address = "zerschlagdenstaat.de" }
     - ssl_cert["mon.zerschlagdenstaat.de Certificate"] = { ssl_cert_address = "mon.zerschlagdenstaat.de" }
     - ssl_cert["log.zerschlagdenstaat.de Certificate"] = { ssl_cert_address = "log.zerschlagdenstaat.de" }
-    - ssl_cert["api.farmsubsidy.org Certificate"] = { ssl_cert_address = "api.farmsubsidy.org" }
 
     - http_vhosts["forum.okfn.de"] = { http_uri = "https://forum.okfn.de" }
     - ssl_cert["forum.okfn.de Certificate"] = { ssl_cert_address = "forum.okfn.de" }
