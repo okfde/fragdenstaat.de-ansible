@@ -1,11 +1,21 @@
 {% for host in groups['icinga'] %}
-{%if 'icinga' in hostvars[host] %}
+{% if 'icinga' in hostvars[host] %}
 object Host "{{ host }}" {
   import "generic-host"
 
 {% if 'vars' in hostvars[host].icinga %}
 {% for var in hostvars[host].icinga.vars %}
   vars.{{ var }}
+{% endfor %}
+{% endif %}
+
+{% if 'https_domains' in hostvars[host] %}
+{% for items in hostvars[host].https_domains %}
+{% for domain in items %}
+{% if not domain.startswith('*') %}
+  vars.ssl_cert["{{ domain }}"] = { http_uri = "https://{{ domain }}" }
+{% endif %}
+{% endfor %}
 {% endfor %}
 {% endif %}
 
