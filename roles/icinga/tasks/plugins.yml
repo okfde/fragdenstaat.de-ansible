@@ -1,3 +1,11 @@
+- name: Install script dependencies
+  ansible.builtin.apt:
+    name:
+      - file
+    state: present
+  retries: 30
+  delay: 10
+
 - name: Copy scripts
   ansible.builtin.copy:
     src: plugins/

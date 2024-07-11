@@ -68,7 +68,7 @@ apply Service for (http_vhost => config in host.vars.http_vhosts) {
 apply Service for (ssl_cert => config in host.vars.ssl_cert) {
   import "generic-service"
 
-  check_command = "ssl_cert"
+  check_command = "ssl_cert_cn"
 
   vars += config
 }

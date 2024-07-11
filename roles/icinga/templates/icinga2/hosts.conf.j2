@@ -13,7 +13,9 @@ object Host "{{ host }}" {
 {% for items in hostvars[host].https_domains %}
 {% for domain in items %}
 {% if not domain.startswith('*') %}
-  vars.ssl_cert["{{ domain }}"] = { http_uri = "https://{{ domain }}" }
+  vars.ssl_cert["ssl_cert {{ domain }}"] = {
+    address = "{{ domain }}"
+  }
 {% endif %}
 {% endfor %}
 {% endfor %}
