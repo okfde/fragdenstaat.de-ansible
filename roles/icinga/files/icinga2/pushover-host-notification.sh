@@ -95,18 +95,18 @@ notificationMessage="***** Host Monitoring on $(hostname) *****\n\n${notificatio
 [ -z "$notificationHostAddress6" ] || notificationMessage="${notificationMessage}\nIPv6:    ${notificationHostAddress6}"
 [ -z "$notificationComment" ] || notificationMessage="${notificationMessage}\n\nComment by ${notificationAuthor}:\n  ${notificationComment}"
 [ -z "$notificationIcingaweb2URL" ] || notificationMessage="${notificationMessage}\n\n${notificationIcingaweb2URL}/monitoring/host/show?host=$(urlEncode "${notificationHostName}")"
-notificationMessage=$(echo -e "$notificationMessage")
+notificationMessage=$(echo "$notificationMessage")
 
 # Send the push notification
-result=$(curl -w "\n%{http_code}" -s -F user="$pushoverUserKey" -F token="$pushoverApiToken" -F title="$notificationTitle" -F message="$notificationMessage" https://api.pushover.net/1/messages)
+result=$(curl -w "\n%{http_code}" -s -F user="${pushoverUserKey}" -F token="${pushoverApiToken}" -F title="${notificationTitle}" -F message="${notificationMessage}" https://api.pushover.net/1/messages)
 pushoverHttpCode=$(tail -n1 <<< "$result")
 pushoverResponse=$(sed '$ d' <<< "$result")
 
 # If verbose output was requested
 [ -z "$verboseOutput" ] || {
 	# Throw a warning for any surpassed character limits
-	[ ${#notificationTitle} -gt 250 ] && echo -e "WARNING: Notification title exceeds 250 characters\n"
-	[ ${#notificationMessage} -gt 1024 ] && echo -e "WARNING: Notification message exceeds 1024 characters\n"
+	[ ${#notificationTitle} -gt 250 ] && echo "WARNING: Notification title exceeds 250 characters\n"
+	[ ${#notificationMessage} -gt 1024 ] && echo "WARNING: Notification message exceeds 1024 characters\n"
 
 	# Evaluate notification success
 	if [ $pushoverHttpCode -eq 200 ]; then
@@ -116,7 +116,7 @@ pushoverResponse=$(sed '$ d' <<< "$result")
 	fi
 
 	# Provide detailed information
-	echo -e "Title (${#notificationTitle} characters):\n$notificationTitle\n\nMessage (${#notificationMessage} characters):\n$notificationMessage\n\nPush notification $pluginResult"
+	echo "Title (${#notificationTitle} characters):\n$notificationTitle\n\nMessage (${#notificationMessage} characters):\n$notificationMessage\n\nPush notification $pluginResult"
 }
 
 # Exit
