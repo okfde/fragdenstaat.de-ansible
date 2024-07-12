@@ -49,3 +49,14 @@
   with_items:
     - pushover-host-notification.sh
     - pushover-service-notification.sh
+
+- name: Copy slack notification scripts
+  ansible.builtin.template:
+    src: "icinga2/{{ item }}.j2"
+    dest: "/etc/icinga2/scripts/{{ item }}"
+    mode: "0750"
+    owner: root
+    group: nagios
+  with_items:
+    - slack-host-notification.sh
+    - slack-service-notification.sh
