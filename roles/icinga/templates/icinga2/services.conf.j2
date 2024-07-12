@@ -2,6 +2,7 @@ apply Service "ping4" {
   import "generic-service"
 
   check_command = "ping4"
+  vars.notification.pushover = 1
 
   assign where host.address
 }
@@ -10,6 +11,7 @@ apply Service "ping6" {
   import "generic-service"
 
   check_command = "ping6"
+  vars.notification.pushover = 1
 
   assign where host.address6
 }
@@ -29,6 +31,7 @@ apply Service "raid" {
   import "generic-service"
 
   check_command = "raid"
+  vars.notification.pushover = 1
 
   assign where host.vars.os == "Linux"
 }
@@ -45,6 +48,7 @@ apply Service "nfs" {
   import "generic-service"
 
   check_command = "nfs"
+  vars.notification.pushover = 1
 
   assign where host.vars.os == "Linux"
 }
@@ -61,6 +65,7 @@ apply Service for (http_vhost => config in host.vars.http_vhosts) {
   import "generic-service"
 
   check_command = "http"
+  vars.notification.pushover = 1
 
   vars += config
 }
@@ -69,6 +74,7 @@ apply Service for (ssl_cert => config in host.vars.ssl_cert) {
   import "generic-service"
 
   check_command = "ssl_cert_cn"
+  vars.notification.pushover = 1
 
   vars += config
 }
@@ -77,6 +83,7 @@ apply Service for (disk => config in host.vars.disks) {
   import "generic-service"
 
   check_command = "disk"
+  vars.notification.pushover = 1
 
   vars += config
 }
@@ -103,6 +110,7 @@ apply Service "memory" {
   import "generic-service"
 
   check_command = "memory"
+  vars.notification.pushover = 1
 
   assign where host.vars.os == "Linux"
 }
@@ -136,6 +144,7 @@ apply Service "node_exporter" {
 
   check_command = "tcp"
   vars.tcp_port = "9100"
+  vars.notification.pushover = 1
 
   assign where host.vars.node_exporter == "1"
 }
@@ -146,6 +155,7 @@ apply Service "icinga_agent" {
   check_command = "tcp"
   vars.tcp_port = "5665"
   vars.tcp_host = "127.0.0.1"
+  vars.notification.pushover = 1
 
   assign where host.vars.os == "Linux"
 }
@@ -156,6 +166,7 @@ apply Service "prometheus" {
   check_command = "tcp"
   vars.tcp_port = "9090"
   vars.tcp_host = "127.0.0.1"
+  vars.notification.pushover = 1
 
   assign where host.vars.prometheus
 }
@@ -166,6 +177,7 @@ apply Service "graylog" {
   check_command = "tcp"
   vars.tcp_port = "9010"
   vars.tcp_host = "127.0.0.1"
+  vars.notification.pushover = 1
 
   assign where host.vars.graylog
 }
@@ -176,6 +188,7 @@ apply Service "grafana" {
   check_command = "tcp"
   vars.tcp_port = "3000"
   vars.tcp_host = "127.0.0.1"
+  vars.notification.pushover = 1
 
   assign where host.vars.grafana
 }
@@ -214,6 +227,7 @@ apply Service "mailqueue" {
   import "generic-service"
 
   check_command = "mailq"
+  vars.notification.pushover = 1
 
   assign where (host.vars.mailq_warning || host.vars.mailq_critical)
 }
@@ -238,6 +252,7 @@ apply Service "borg" {
   import "generic-service"
 
   check_command = "borg"
+  vars.notification.pushover = 1
 
   assign where host.vars.backup == "borg"
 }
@@ -314,6 +329,7 @@ apply Service "postgres_connection" {
   import "generic-service"
 
   check_command = "postgres_connection"
+  vars.notification.pushover = 1
 
   assign where host.vars.postgres
 }
@@ -322,6 +338,7 @@ apply Service "smtp" {
   import "generic-service"
 
   check_command = "smtp"
+  vars.notification.pushover = 1
 
   assign where host.vars.smtp_host
 }

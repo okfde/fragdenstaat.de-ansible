@@ -38,3 +38,14 @@
     cmd: icinga2 feature enable command
     creates: /etc/icinga2/features-enabled/command.conf
   notify: reload icinga2
+
+- name: Copy pushover notification scripts
+  ansible.builtin.copy:
+    src: "icinga2/{{ item }}"
+    dest: "/etc/icinga2/scripts/{{ item }}"
+    mode: "0750"
+    owner: root
+    group: nagios
+  with_items:
+    - pushover-host-notification.sh
+    - pushover-service-notification.sh

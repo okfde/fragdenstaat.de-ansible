@@ -3,6 +3,9 @@
 object Host "{{ host }}" {
   import "generic-host"
 
+  vars.notification.mail.groups = [ "icingaadmins" ]
+  vars.notification.pushover.groups = [ "icingaadmins" ]
+
 {% if 'vars' in hostvars[host].icinga %}
 {% for var in hostvars[host].icinga.vars %}
   vars.{{ var }}
