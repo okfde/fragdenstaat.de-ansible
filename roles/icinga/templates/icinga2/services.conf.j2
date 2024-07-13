@@ -3,6 +3,7 @@ apply Service "ping4" {
 
   check_command = "ping4"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.address
 }
@@ -12,6 +13,7 @@ apply Service "ping6" {
 
   check_command = "ping6"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.address6
 }
@@ -32,6 +34,7 @@ apply Service "raid" {
 
   check_command = "raid"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.vars.os == "Linux"
 }
@@ -49,6 +52,7 @@ apply Service "nfs" {
 
   check_command = "nfs"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.vars.os == "Linux"
 }
@@ -84,6 +88,7 @@ apply Service for (disk => config in host.vars.disks) {
 
   check_command = "disk"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   vars += config
 }
@@ -199,6 +204,7 @@ apply Service "graylog filebeat" {
   check_command = "tcp"
   vars.tcp_port = "5044"
   vars.tcp_host = "$graylog_filebeat_bind$"
+  vars.notification.pushover = 1
 
   assign where host.vars.graylog_filebeat_bind
 }
@@ -209,6 +215,7 @@ apply Service "graylog gelf" {
   check_command = "tcp"
   vars.tcp_port = "12201"
   vars.tcp_host = "$graylog_gelf_bind$"
+  vars.notification.pushover = 1
 
   assign where host.vars.graylog_gelf_bind
 }
@@ -219,6 +226,7 @@ apply Service "graylog gelf http" {
   check_command = "tcp"
   vars.tcp_port = "12201"
   vars.tcp_host = "$graylog_gelf_http_bind$"
+  vars.notification.pushover = 1
 
   assign where host.vars.graylog_gelf_http_bind
 }
@@ -228,6 +236,7 @@ apply Service "mailqueue" {
 
   check_command = "mailq"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where (host.vars.mailq_warning || host.vars.mailq_critical)
 }
@@ -253,6 +262,8 @@ apply Service "borg" {
 
   check_command = "borg"
   vars.notification.pushover = 1
+  vars.backup_downtime_monday = "21:00-10:00"
+  vars.backup_downtime = "21:00-06:00"
 
   assign where host.vars.backup == "borg"
 }
@@ -315,6 +326,7 @@ apply Service "postgres_repl_slots" {
   import "generic-service"
 
   check_command = "postgres_repl_slots"
+  vars.notification.slack = 1
 
   assign where host.vars.postgres
 }
@@ -322,6 +334,7 @@ apply Service "postgres_query_time" {
   import "generic-service"
 
   check_command = "postgres_query_time"
+  vars.notification.slack = 1
 
   assign where host.vars.postgres
 }
@@ -330,6 +343,7 @@ apply Service "postgres_connection" {
 
   check_command = "postgres_connection"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.vars.postgres
 }
@@ -339,6 +353,7 @@ apply Service "smtp" {
 
   check_command = "smtp"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.vars.smtp_host
 }
