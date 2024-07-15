@@ -262,7 +262,7 @@ apply Service "borg" {
 
   check_command = "borg"
   vars.notification.pushover = 1
-  vars.backup_downtime_monday = "21:00-10:00"
+  vars.backup_downtime_monday = "21:00-14:00"
   vars.backup_downtime = "21:00-06:00"
 
   assign where host.vars.backup == "borg"
