@@ -451,9 +451,8 @@ geoip_account_id: 0
 geoip_license_key: ""
 suspicious_asn_list: ""
 
-# use base64 encoded JSON
 fds_legal_backup_credentials: ""
-fds_legal_backup_folder_id: ""
+fds_legal_backup_url: ""
 
 donation_backup_url: ""
 donation_backup_credentials: ""
