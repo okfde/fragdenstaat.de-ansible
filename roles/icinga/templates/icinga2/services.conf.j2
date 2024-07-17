@@ -159,7 +159,6 @@ apply Service "icinga_agent" {
 
   check_command = "tcp"
   vars.tcp_port = "5665"
-  vars.tcp_host = "127.0.0.1"
   vars.notification.pushover = 1
 
   assign where host.vars.os == "Linux"
@@ -170,7 +169,7 @@ apply Service "prometheus" {
 
   check_command = "tcp"
   vars.tcp_port = "9090"
-  vars.tcp_host = "127.0.0.1"
+  vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
 
   assign where host.vars.prometheus
@@ -181,7 +180,7 @@ apply Service "graylog" {
 
   check_command = "tcp"
   vars.tcp_port = "9010"
-  vars.tcp_host = "127.0.0.1"
+  vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
 
   assign where host.vars.graylog
@@ -192,7 +191,7 @@ apply Service "grafana" {
 
   check_command = "tcp"
   vars.tcp_port = "3000"
-  vars.tcp_host = "127.0.0.1"
+  vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
 
   assign where host.vars.grafana
@@ -203,7 +202,7 @@ apply Service "graylog filebeat" {
 
   check_command = "tcp"
   vars.tcp_port = "5044"
-  vars.tcp_host = "$graylog_filebeat_bind$"
+  vars.tcp_address = "$graylog_filebeat_bind$"
   vars.notification.pushover = 1
 
   assign where host.vars.graylog_filebeat_bind
@@ -214,7 +213,7 @@ apply Service "graylog gelf" {
 
   check_command = "tcp"
   vars.tcp_port = "12201"
-  vars.tcp_host = "$graylog_gelf_bind$"
+  vars.tcp_address = "$graylog_gelf_bind$"
   vars.notification.pushover = 1
 
   assign where host.vars.graylog_gelf_bind
@@ -225,7 +224,7 @@ apply Service "graylog gelf http" {
 
   check_command = "tcp"
   vars.tcp_port = "12201"
-  vars.tcp_host = "$graylog_gelf_http_bind$"
+  vars.tcp_address = "$graylog_gelf_http_bind$"
   vars.notification.pushover = 1
 
   assign where host.vars.graylog_gelf_http_bind
@@ -303,9 +302,22 @@ apply Service "docker" {
   import "generic-service"
 
   check_command = "docker"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.vars.docker
 }
+
+apply Service "supervisor" {
+  import "generic-service"
+
+  check_command = "supervisor"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.supervisor)
+}
+
 
 apply Service "mysql" {
   import "generic-service"
@@ -356,4 +368,36 @@ apply Service "smtp" {
   vars.notification.slack = 1
 
   assign where host.vars.smtp_host
+}
+
+apply Service "metabase" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.metabase_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.metabase_port
+}
+
+apply Service "ogimage" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.ogimage_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.ogimage_port
+}
+
+apply Service "weblate" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.weblate_port$"
+  vars.tcp_address = "127.0.0.1"
+
+  assign where host.vars.weblate_port
 }

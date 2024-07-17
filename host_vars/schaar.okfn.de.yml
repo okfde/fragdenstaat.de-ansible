@@ -26,3 +26,6 @@ icinga:
     - procs_critical = 500
     - node_exporter = 1
     - docker = 1
+    - ogimage_port = 3000
+    - metabase_port = 8042
+    - weblate_port = 8020

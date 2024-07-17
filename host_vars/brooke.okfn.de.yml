@@ -77,4 +77,5 @@ icinga:
     - mailq_warning = 100
     - mailq_critical = 200
     - smtp_host = "localhost"
-    - postgres = "1"
+    - postgres = 1
+    - supervisor = 1

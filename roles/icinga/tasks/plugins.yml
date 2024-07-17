@@ -20,6 +20,7 @@
     state: present
     user: nagios
     commands: "/sbin/dmsetup status --noflush"
+  tags: sudo
 
 - name: Add options for docker check to sudoers
   community.general.sudoers:
@@ -27,6 +28,8 @@
     state: present
     user: nagios
     commands: "/usr/lib/nagios/plugins/check_docker --status running"
+  when: "'docker = 1' in icinga.vars"
+  tags: sudo
 
 - name: Add options for mysql check to sudoers
   community.general.sudoers:
@@ -34,6 +37,8 @@
     state: present
     user: nagios
     commands: "/usr/lib/nagios/plugins/check_mysql"
+  when: "'mysql = 1' in icinga.vars"
+  tags: sudo
 
 - name: Grant check_postgres access as fragdenstaat user
   community.general.sudoers:
@@ -42,4 +47,14 @@
     user: nagios
     runas: fragdenstaat_de
     commands: /usr/lib/nagios/plugins/check_postgres
-  when: icinga.vars.postgres is defined and icinga.vars.postgres == "1"
+  when: "'postgres = 1' in icinga.vars"
+  tags: sudo
+
+- name: Add options for supervisor check to sudoers
+  community.general.sudoers:
+    name: allow-supervisorcheck
+    state: present
+    user: nagios
+    commands: /usr/bin/supervisorctl status
+  when: "'supervisor = 1' in icinga.vars"
+  tags: sudo
