@@ -57,6 +57,15 @@ apply Service "nfs" {
   assign where host.vars.os == "Linux"
 }
 
+apply Service "systemd_failed" {
+  import "generic-service"
+
+  check_command = "systemd_failed"
+  vars.notification.pushover = 1
+
+  assign where host.vars.os == "Linux"
+}
+
 apply Service "ssh" {
   import "generic-service"
 
@@ -142,6 +151,16 @@ apply Service "users" {
   check_command = "users"
 
   assign where host.vars.os == "Linux"
+}
+
+apply Service "discourse" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.discourse_port$"
+  vars.notification.pushover = 1
+
+  assign where host.vars.discourse_port
 }
 
 apply Service "node_exporter" {
