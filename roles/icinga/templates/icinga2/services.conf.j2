@@ -318,6 +318,15 @@ apply Service "supervisor" {
   assign where (host.vars.supervisor)
 }
 
+apply Service "ES Status" {
+  import "generic-service"
+
+  check_command = "es_status"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.elasticsearch)
+}
 
 apply Service "mysql" {
   import "generic-service"

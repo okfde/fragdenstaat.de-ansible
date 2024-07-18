@@ -2,6 +2,7 @@
   ansible.builtin.apt:
     name:
       - file
+      - jq
     state: present
   retries: 30
   delay: 10
