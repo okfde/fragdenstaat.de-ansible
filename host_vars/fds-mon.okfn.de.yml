@@ -108,3 +108,4 @@ icinga:
     - graylog_gelf_http_bind = "192.168.100.5"
     - backup = "borg"
     - elasticsearch = 1
+    - smartmon = "sd"

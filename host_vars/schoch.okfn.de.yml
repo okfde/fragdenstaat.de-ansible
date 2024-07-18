@@ -30,3 +30,4 @@ icinga:
     - procs_warning = 400
     - procs_critical = 500
     - node_exporter = 1
+    - smartmon = "sd"
