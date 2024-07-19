@@ -25,6 +25,7 @@ object Host "{{ host }}" {
 {% endif %}
 
   vars.disks["disk /"] = { disk_partitions = "/" }
+  vars.disks["disk /boot"] = { disk_partitions = "/boot" }
   vars.os = "{{ hostvars[host].icinga.os | default('Linux') }}"
   vars.agent_endpoint = name
 

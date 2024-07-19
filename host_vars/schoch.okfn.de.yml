@@ -31,3 +31,4 @@ icinga:
     - procs_critical = 500
     - node_exporter = 1
     - smartmon = "sd"
+    - disks["disk /home"] = { disk_partitions = "/home" }

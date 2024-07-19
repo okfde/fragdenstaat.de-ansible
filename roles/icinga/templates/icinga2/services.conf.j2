@@ -332,6 +332,7 @@ apply Service "smart_sd" {
 
   check_command = "smart_sd"
   vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where (host.vars.smartmon == "sd" || host.vars.smartmon == "mixed")
 }
