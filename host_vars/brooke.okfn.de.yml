@@ -65,7 +65,7 @@ scripts:
     group: root
     mode: "0755"
     cron:
-      job: "/usr/local/bin/es_status.sh {{ hostvars['fds-es01.okfn.de'].host_data.site_ipv4 }} > /dev/null 2>&1"
+      job: "/usr/local/bin/es_status.sh {{ hostvars['fds-es1.okfn.de'].host_data.site_ipv4 }} > /dev/null 2>&1"
 
 icinga:
   vars:

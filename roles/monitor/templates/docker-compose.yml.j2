@@ -40,7 +40,7 @@ services:
 {% if graylog is true %}
   mongodb:
     container_name: graylog_mongodb
-    image: "mongo:5.0"
+    image: "mongo:6.0"
     volumes:
       - "{{ monitor_dir }}/graylog/mongodb_data:/data/db"
     restart: unless-stopped
@@ -53,7 +53,7 @@ services:
 
   opensearch:
     container_name: graylog_opensearch
-    image: "opensearchproject/opensearch:2.11.0"
+    image: "opensearchproject/opensearch:2.12.0"
     environment:
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       - "bootstrap.memory_lock=true"
@@ -81,7 +81,7 @@ services:
   graylog:
     container_name: graylog
     hostname: "server"
-    image: "${GRAYLOG_IMAGE:-graylog/graylog:5.2}"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.0}"
     depends_on:
       opensearch:
         condition: "service_started"

@@ -18,14 +18,14 @@
   retries: 30
   delay: 10
 
-- name: Install check_mk agent
-  become: true
-  ansible.builtin.apt:
-    deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
-    state: present
-  when: check_mk_agent_download.stat.exists
-  retries: 30
-  delay: 10
+# - name: Install check_mk agent
+#  become: true
+#  ansible.builtin.apt:
+#    deb: "/tmp/check-mk-agent_{{ cmk_version }}-1_all.deb"
+#    state: present
+#  when: check_mk_agent_download.stat.exists
+#  retries: 30
+#  delay: 10
 
 - name: Import install_plugin.yml
   ansible.builtin.include_tasks: install_plugin.yml
