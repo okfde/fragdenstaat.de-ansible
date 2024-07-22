@@ -55,6 +55,7 @@ services:
     container_name: graylog_opensearch
     image: "opensearchproject/opensearch:2.12.0"
     environment:
+      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD={{ opensearch_init_password }}"
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       - "bootstrap.memory_lock=true"
       - "discovery.type=single-node"
@@ -81,7 +82,7 @@ services:
   graylog:
     container_name: graylog
     hostname: "server"
-    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.0}"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.0.3}"
     depends_on:
       opensearch:
         condition: "service_started"
