@@ -13,7 +13,7 @@
   ansible.builtin.apt_repository:
     repo: "deb http://archive.ubuntu.com/ubuntu focal universe"
     update_cache: false
-    mode: "0600"
+    mode: "0644"
   register: universe_installed
   when: ansible_distribution_version == "20.04"
 
@@ -21,7 +21,7 @@
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy universe"
     update_cache: false
-    mode: "0600"
+    mode: "0644"
   register: universe_installed
   when: ansible_distribution_version == "22.04"
 
