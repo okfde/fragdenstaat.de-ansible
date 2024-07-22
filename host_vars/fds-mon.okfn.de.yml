@@ -94,7 +94,7 @@ icinga:
     - http_vhosts["sentry.okfn.de"] = { http_uri = "https://sentry.okfn.de" }
     - http_vhosts["weblate.frag-den-staat.de"] = { http_uri = "https://weblate.frag-den-staat.de" }
 
-    - disks["vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
+    - disks["disk vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
     - node_exporter = 1
     - mailq_warning = 100
     - mailq_critical = 200
