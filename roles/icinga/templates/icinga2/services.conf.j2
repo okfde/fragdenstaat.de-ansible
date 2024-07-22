@@ -44,7 +44,7 @@ apply Service "temperature" {
 
   check_command = "temperature"
 
-  assign where host.vars.os == "Linux"
+  assign where (host.vars.os == "Linux" && host.vars.temp != 0)
 }
 
 apply Service "nfs" {

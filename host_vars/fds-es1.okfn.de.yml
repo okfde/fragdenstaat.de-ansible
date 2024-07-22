@@ -24,3 +24,4 @@ icinga:
     - swap_cfree = "5%"
     - elasticsearch = 1
     - smartmon = "nvme"
+    - temp = 0

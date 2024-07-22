@@ -32,3 +32,4 @@ icinga:
     - node_exporter = 1
     - smartmon = "sd"
     - disks["disk /home"] = { disk_partitions = "/home" }
+    - temp = 0
