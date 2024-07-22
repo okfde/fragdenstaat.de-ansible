@@ -327,6 +327,25 @@ apply Service "docker" {
   assign where host.vars.docker
 }
 
+apply Service "smart_sd" {
+  import "generic-service"
+
+  check_command = "smart_sd"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.smartmon == "sd" || host.vars.smartmon == "mixed")
+}
+
+apply Service "smart_nvme" {
+  import "generic-service"
+
+  check_command = "smart_nvme"
+  vars.notification.pushover = 1
+
+  assign where (host.vars.smartmon == "nvme" || host.vars.smartmon == "mixed")
+}
+
 apply Service "supervisor" {
   import "generic-service"
 

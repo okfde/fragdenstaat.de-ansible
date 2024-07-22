@@ -79,3 +79,5 @@ icinga:
     - smtp_host = "localhost"
     - postgres = 1
     - supervisor = 1
+    - smartmon = "nvme"
+    - smtp = 1

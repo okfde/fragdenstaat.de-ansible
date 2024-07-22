@@ -35,3 +35,4 @@ icinga:
     - disks["vg0-opt-docker"] = { disk_partitions = "/dev/mapper/vg0-lvol0" }
     - disks["vg1-docker"] = { disk_partitions = "/dev/mapper/vg1-docker" }
     - libvirt = 1
+    - smartmon = "mixed"

@@ -3,6 +3,7 @@
     name:
       - file
       - jq
+      - smartmontools
     state: present
   retries: 30
   delay: 10
@@ -30,6 +31,14 @@
     user: nagios
     commands: "/usr/lib/nagios/plugins/check_docker --status running"
   when: "'docker = 1' in icinga.vars"
+  tags: sudo
+
+- name: Add options for smart check to sudoers
+  community.general.sudoers:
+    name: allow-smartcheck
+    state: present
+    user: nagios
+    commands: "/usr/lib/nagios/plugins/check_smart"
   tags: sudo
 
 - name: Add options for mysql check to sudoers
