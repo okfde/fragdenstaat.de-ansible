@@ -1,42 +1,8 @@
-- name: Install poppler build dependencies on Focal
-  ansible.builtin.apt:
-    name:
-      - cmake
-      - checkinstall
-      - libfreetype6-dev
-      - libfontconfig-dev
-      - libnss3-dev
-      - libjpeg-dev
-      - libtiff-dev
-      - libcairo2-dev
-      - libopenjp2-7-dev
-    update_cache: "{{ update_apt_cache }}"
-    force: true
-    state: present
-  when: ansible_distribution_version == "20.04"
-  retries: 30
-  delay: 10
-
-- name: Install poppler on Jammy
+- name: Install poppler
   ansible.builtin.apt:
     name:
       - poppler-utils
     update_cache: "{{ update_apt_cache }}"
     state: present
-  when: ansible_distribution_version == "22.04"
   retries: 30
   delay: 10
-
-- name: Setup poppler build script
-  ansible.builtin.template:
-    src: install_poppler.sh.j2
-    dest: "{{ virtualenv_path }}/install_poppler.sh"
-    mode: "0755"
-  when: ansible_distribution_version == "20.04"
-
-- name: Build and install poppler-utils
-  ansible.builtin.command: "{{ virtualenv_path }}/install_poppler.sh"
-  args:
-    creates: "/usr/local/lib/libpoppler.so"
-  become: true
-  when: ansible_distribution_version == "20.04"

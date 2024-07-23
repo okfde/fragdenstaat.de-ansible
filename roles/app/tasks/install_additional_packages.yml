@@ -77,15 +77,8 @@
 
 - name: Add LibreOffice repository
   ansible.builtin.apt_repository:
-    repo: "ppa:libreoffice/libreoffice-6-4"
-    state: present
-  when: ansible_distribution_version == "20.04"
-
-- name: Add LibreOffice repository
-  ansible.builtin.apt_repository:
     repo: "ppa:libreoffice/ppa"
     state: present
-  when: ansible_distribution_version == "22.04"
 
 - name: Install LibreOffice
   ansible.builtin.apt:

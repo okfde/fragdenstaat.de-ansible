@@ -38,13 +38,6 @@
   become: true
   when: ansible_distribution_version >= "22.04"
 
-- name: Add ssh-key to authorized_keys
-  ansible.builtin.shell:
-    cmd: cat /root/.ssh/id_storagebox.pub | sshpass -p {{ backup_repo[inventory_hostname]['password'] }} ssh -p{{ backup_repo[inventory_hostname]['port'] }} {{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }} -o StrictHostKeyChecking=no install-ssh-key
-  changed_when: false
-  become: true
-  when: ansible_distribution_version == "20.04"
-
 - name: Initialize borg repo
   ansible.builtin.shell:
     cmd: "BORG_PASSPHRASE={{ backup_repo[inventory_hostname].repokey }} /usr/bin/borg init ssh://{{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}:{{ backup_repo[inventory_hostname]['port'] }}/./{{ backup_repo[inventory_hostname]['path'] }}/ -e repokey --make-parent-dirs"

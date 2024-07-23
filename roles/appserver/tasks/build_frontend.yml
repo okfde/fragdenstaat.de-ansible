@@ -7,17 +7,9 @@
 
 - name: Add node to the sources list
   ansible.builtin.apt_repository:
-    repo: "deb https://deb.nodesource.com/node_16.x focal main"
+    repo: "deb https://deb.nodesource.com/node_20.x {{ ansible_distribution_release }} main"
     update_cache: "{{ update_apt_cache }}"
     state: present
-  when: ansible_distribution_version == "20.04"
-
-- name: Add node to the sources list
-  ansible.builtin.apt_repository:
-    repo: "deb https://deb.nodesource.com/node_20.x jammy main"
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  when: ansible_distribution_version == "22.04"
 
 - name: Add yarn key
   ansible.builtin.apt_key:

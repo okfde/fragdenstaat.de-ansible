@@ -7,15 +7,8 @@
 
 - name: Create the virtualenv
   ansible.builtin.command:
-    cmd: "virtualenv -p python3.8 {{ virtualenv_path }}"
-    creates: "{{ virtualenv_path }}/bin/activate"
-  when: ansible_distribution_version == "20.04"
-
-- name: Create the virtualenv
-  ansible.builtin.command:
     cmd: virtualenv -p python3.10 {{ virtualenv_path }}
     creates: "{{ virtualenv_path }}/bin/activate"
-  when: ansible_distribution_version == "22.04"
 
 - name: Set ownership of app directory
   ansible.builtin.file:

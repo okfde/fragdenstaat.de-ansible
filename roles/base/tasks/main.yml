@@ -11,19 +11,10 @@
 
 - name: Add apt universe
   ansible.builtin.apt_repository:
-    repo: "deb http://archive.ubuntu.com/ubuntu focal universe"
+    repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
     update_cache: false
     mode: "0644"
   register: universe_installed
-  when: ansible_distribution_version == "20.04"
-
-- name: Add apt universe
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy universe"
-    update_cache: false
-    mode: "0644"
-  register: universe_installed
-  when: ansible_distribution_version == "22.04"
 
 - name: Update apt cache
   ansible.builtin.apt:
@@ -48,7 +39,7 @@
   retries: 30
   delay: 10
 
-- name: Install base packages 20.04
+- name: Install base packages
   ansible.builtin.apt:
     name:
       - build-essential
@@ -61,24 +52,6 @@
     force: true
     state: present
   tags: packages
-  when: ansible_distribution_version == "20.04"
-  retries: 30
-  delay: 10
-
-- name: Install base packages 22.04
-  ansible.builtin.apt:
-    name:
-      - build-essential
-      - acl
-      - ntp
-      - ntpdate
-      - gpg
-      - gpg-agent
-    update_cache: "{{ update_apt_cache }}"
-    force: true
-    state: present
-  tags: packages
-  when: ansible_distribution_version == "22.04"
   retries: 30
   delay: 10
 
