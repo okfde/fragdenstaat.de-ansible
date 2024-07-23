@@ -24,6 +24,13 @@
   become: true
   changed_when: false
 
+- name: Install build dependencies
+  ansible.builtin.apt:
+    pkg:
+      - build-essential
+      - python3-dev
+      - libffi-dev
+
 - name: Install ansible dependencies
   ansible.builtin.pip:
     virtualenv: "{{ fdsbot_ansible_dir }}/ansible-env"
