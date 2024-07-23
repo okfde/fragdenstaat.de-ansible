@@ -47,36 +47,6 @@ docker_updates:
     dir: /var/www/monitor
     restart: docker compose up -d
 
-scripts:
-  - src: cmk_ack.sh
-    dest: /usr/local/bin/
-    dirmode: "0775"
-    owner: root
-    group: root
-    mode: "0755"
-    target: fds-mon.okfn.de
-  - src: cmk.sh
-    dest: /usr/local/bin/
-    dirmode: "0775"
-    owner: root
-    group: root
-    mode: "0755"
-    target: fds-mon.okfn.de
-  - src: cmk_status.sh
-    dest: /usr/local/bin/
-    dirmode: "0775"
-    owner: root
-    group: root
-    mode: "0755"
-    target: fds-mon.okfn.de
-    cron:
-      minute: "*"
-      hour: "*"
-      day: "*"
-      month: "*"
-      dow: "*"
-      job: "/usr/local/bin/cmk_status.sh -q > /dev/null 2>&1"
-
 icinga:
   master: true
   vars:

@@ -10,8 +10,6 @@
   roles:
     - role: base
       tags: base
-    - role: check_mk
-      tags: checkmk
     - role: test/qemu
       tags: qemu
     - role: test/nginx
