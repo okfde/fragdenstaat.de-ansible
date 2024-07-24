@@ -21,7 +21,7 @@
   ansible.builtin.template:
     src: exporter/celery_supervisor.conf.j2
     dest: /etc/supervisor/conf.d/celery_exporter.conf
-    mode: "0644"
+    mode: "0640"
   notify: Restart celery exporter
   tags: exporter
 
