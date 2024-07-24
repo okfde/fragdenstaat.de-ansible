@@ -39,6 +39,11 @@
     name: statsd_exporter
     state: restarted
 
+- name: Restart celery exporter
+  community.general.supervisorctl:
+    name: celery_exporter
+    state: restarted
+
 - name: docker compose up monitor
   ansible.builtin.command:
     cmd: docker compose up -d

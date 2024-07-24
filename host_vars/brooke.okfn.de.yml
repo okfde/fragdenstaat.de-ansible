@@ -16,6 +16,7 @@ prometheus_exporter:
   - postgres_exporter
   - nginx_exporter
   - postfix_exporter
+  - celery_exporter
 
 borg:
   locations: /var/vmail/ /var/www/fragdenstaat.de/backup/

@@ -31,3 +31,7 @@ scrape_configs:
   - job_name: "statsd_exporter"
     static_configs:
       - targets: [{% for host in groups['all'] %}{% if 'statsd_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9102"{% endif %}{% if not loop.last %}{% if 'statsd_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+
+  - job_name: "celery_exporter"
+    static_configs:
+      - targets: [{% for host in groups['all'] %}{% if 'celery_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9808"{% endif %}{% if not loop.last %}{% if 'celery_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
