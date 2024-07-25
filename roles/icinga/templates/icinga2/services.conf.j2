@@ -116,6 +116,8 @@ apply Service "load" {
 
   /* Used by the ScheduledDowntime apply rule in `downtimes.conf`. */
   // vars.backup_downtime = "02:00-03:00"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
 
   assign where host.vars.os == "Linux"
 }
