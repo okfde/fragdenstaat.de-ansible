@@ -19,6 +19,8 @@ django_environment:
   DJANGO_MEMCACHED_LOCATION: "{{ hostvars[groups['cache'][0]].host_data.site_ipv4 }}"
   DJANGO_ELASTICSEARCH_HOSTS: "{% for host in groups['search'] %}http://{{ hostvars[host].host_data.site_ipv4 }}:9200{%if not loop.last %},{% endif %}{% endfor %}"
   DJANGO_CELERY_BROKER_URL: "{{ celery_broker_url }}"
+  DJANGO_CELERY_WORKER_SEND_TASK_EVENTS: "True"
+  DJANGO_CELERY_TASK_SEND_SENT_EVENT: "True"
   DJANGO_EMAIL_HOST: "{{ email_host }}"
   DJANGO_EMAIL_HOST_USER: "{{ email_host_user }}"
   DJANGO_EMAIL_HOST_PASSWORD: "{{ email_host_password }}"
