@@ -1,0 +1,9 @@
+services:
+  server:
+    build: .
+    container_name: grav_gegenrechtsschutz
+    restart: always
+    volumes:
+      - {{ grs_dir }}/data/:/var/www/html
+    ports:
+      - "127.0.0.1:{{ grs_port }}:80"

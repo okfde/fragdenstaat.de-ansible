@@ -3,3 +3,4 @@ https_domains:
   - ["weblate.frag-den-staat.de"]
   - ["metabase.frag-den-staat.de"]
   - ["forum.okfn.de", "forum.fragdenstaat.de"]
+  - ["gegenrechtsschutz.de", "www.gegenrechtsschutz.de"]

@@ -1,0 +1,42 @@
+- name: Create grs directory
+  ansible.builtin.file:
+    name: "{{ grs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create grs data directory
+  ansible.builtin.file:
+    name: "{{ grs_dir }}/data/"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+
+- name: Create Dockerfile
+  ansible.builtin.copy:
+    src: ./Dockerfile
+    dest: "{{ grs_dir }}/Dockerfile"
+    owner: root
+    group: root
+    mode: "0640"
+  notify: Rebuild grs image
+
+- name: Create docker-compose.yml
+  ansible.builtin.template:
+    src: ./docker-compose.yml.j2
+    dest: "{{ grs_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0640"
+  notify: Restart grs container
+
+- name: Create nginx config
+  ansible.builtin.template:
+    src: ./nginx.conf.j2
+    dest: "/etc/nginx/sites-enabled/gegenrechtsschutz.de.conf"
+    owner: root
+    group: root
+    mode: "0640"
+  notify: Reload nginx

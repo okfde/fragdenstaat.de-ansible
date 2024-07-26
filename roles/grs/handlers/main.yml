@@ -1,0 +1,16 @@
+- name: Restart grs container
+  ansible.builtin.shell:
+    cmd: docker compose stop grav_gegenrechtsschutz && docker compose up grav_gegenrechtsschutz -d
+    chdir: "{{ grs_dir }}"
+  changed_when: false
+
+- name: Rebuild grs image
+  ansible.builtin.command:
+    cmd: docker build .
+    chdir: "{{ grs_dir }}"
+  changed_when: false
+
+- name: Reload nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
