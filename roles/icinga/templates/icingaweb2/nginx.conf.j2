@@ -50,4 +50,12 @@ server {
 	    proxy_pass https://localhost:5665/v1/objects/downtimes;
 	    limit_except GET POST { deny all; }
     }
+    location /api/v1/actions/acknowledge-problem {
+	    proxy_pass https://localhost:5665/v1/actions/acknowledge-problem;
+	    limit_except GET POST { deny all; }
+    }
+    location /api/v1/actions/reschedule-check {
+	    proxy_pass https://localhost:5665/v1/actions/reschedule-check;
+	    limit_except GET POST { deny all; }
+    }
 }
