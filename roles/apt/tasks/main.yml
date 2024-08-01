@@ -1,0 +1,24 @@
+- name: Run update cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install needrestart
+  ansible.builtin.apt:
+    name: needrestart
+
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: Remove useless packages from the cache
+  ansible.builtin.apt:
+    autoclean: true
+
+- name: Remove dependencies that are no longer required
+  ansible.builtin.apt:
+    autoremove: true
+
+- name: Run autoclean
+  ansible.builtin.apt:
+    autoclean: true
