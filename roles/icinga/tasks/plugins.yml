@@ -29,7 +29,7 @@
     name: allow-dockercheck
     state: present
     user: nagios
-    commands: "/usr/lib/nagios/plugins/check_docker --status running"
+    commands: "/usr/lib/nagios/plugins/check_docker"
   when: "'docker = 1' in icinga.vars"
   tags: sudo
 

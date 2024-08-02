@@ -737,7 +737,7 @@ def socketfile_permissions_failure(parsed_args):
 
 
 def print_results():
-    messages_concat = '; '.join(messages)
+    messages_concat = '\n'.join(messages)
     perfdata_concat = ' '.join(performance_data)
     if len(performance_data) > 0:
         print(messages_concat + '|' + perfdata_concat)
