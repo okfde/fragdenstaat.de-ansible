@@ -168,6 +168,13 @@ location / {
     {{ proxy_wsgi_upstream() }}
 }
 
+location ~^/aktionen/gegenrechtsschutz/grs-crowdfunding/ {
+    proxy_hide_header X-Frame-Options;
+    proxy_hide_header Content-Security-Policy;
+    add_header Content-Security-Policy "frame-ancestors *;";
+    {{ proxy_wsgi_upstream() }}
+}
+
 # Error pages
 error_page 500 /500.html;
 location = /500.html {
