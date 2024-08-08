@@ -48,7 +48,7 @@ RUN { \
 #    && docker-php-ext-enable yaml apcu
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      openssh-server
+      openssh-client
 
 RUN mkdir -p ~/.ssh/
 COPY ./fdsbot_github /var/www/.ssh/fdsbot_github
