@@ -40,15 +40,24 @@ RUN { \
     echo 'upload_max_filesize=128M'; \
     echo 'post_max_size=128M'; \
     echo 'expose_php=off'; \
+    echo 'error_reporting=E_ALL & ~E_DEPRECATED'; \
     } > /usr/local/etc/php/conf.d/php-recommended.ini
 
 #RUN pecl install apcu \
 #RUN pecl install yaml-2.0.4 \
 #    && docker-php-ext-enable yaml apcu
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      openssh-server
+
+RUN mkdir -p ~/.ssh/
+COPY ./fdsbot_github /var/www/.ssh/fdsbot_github
+RUN chown www-data:www-data /var/www/.ssh -R
+
 # Set user to www-data
 RUN chown www-data:www-data /var/www
 USER www-data
+RUN ssh-keyscan github.com > ~/.ssh/known_hosts
 
 # Define Grav specific version of Grav or use latest stable
 ARG GRAV_VERSION=latest

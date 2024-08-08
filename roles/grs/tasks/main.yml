@@ -40,3 +40,11 @@
     group: root
     mode: "0640"
   notify: Reload nginx
+
+- name: Create ssh private key for fdsbot@github
+  ansible.builtin.template:
+    src: ./ssh_key.j2
+    dest: "{{ grs_dir }}/fdsbot_github"
+    owner: "root"
+    group: "root"
+    mode: "0600"
