@@ -25,8 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install zip \
-    && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-install zip
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -47,8 +46,9 @@ RUN { \
 #RUN pecl install yaml-2.0.4 \
 #    && docker-php-ext-enable yaml apcu
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      openssh-client
+RUN apt-get install -y --no-install-recommends \
+      openssh-client \
+      && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p ~/.ssh/
 COPY ./fdsbot_github /var/www/.ssh/fdsbot_github
