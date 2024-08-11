@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     cron \
     vim \
+    && docker-php-ext-install exif \
     && docker-php-ext-install opcache \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
