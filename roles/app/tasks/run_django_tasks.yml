@@ -57,7 +57,6 @@
     - deploy-backend
   become: true
   become_user: "{{ gunicorn_user }}"
-  ignore_errors: true
 
 - name: Run Django compilemessages
   ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
