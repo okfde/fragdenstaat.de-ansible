@@ -11,17 +11,6 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
 
-- name: Add yarn key
-  ansible.builtin.apt_key:
-    url: https://dl.yarnpkg.com/debian/pubkey.gpg
-    state: present
-
-- name: Add yarn to the sources list
-  ansible.builtin.apt_repository:
-    repo: "deb https://dl.yarnpkg.com/debian/ stable main"
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-
 - name: Install node
   ansible.builtin.apt:
     name:
@@ -32,14 +21,10 @@
   retries: 30
   delay: 10
 
-- name: Install yarn
-  ansible.builtin.apt:
-    name: yarn
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  tags: packages
-  retries: 30
-  delay: 10
+- name: Setup pnpm
+  command: corepack install --global pnpm@9
+  become: true
+  become_user: root
 
 - name: Creates public directory
   ansible.builtin.file:
@@ -48,14 +33,14 @@
     owner: "{{ gunicorn_user }}"
     mode: "0755"
 
-- name: Setup yarn build script
+- name: Setup pnpm build script
   ansible.builtin.template:
-    src: yarn-build.sh.j2
-    dest: "{{ virtualenv_path }}/yarn-build.sh"
+    src: pnpm-build.sh.j2
+    dest: "{{ virtualenv_path }}/pnpm-build.sh"
     mode: "0755"
 
-- name: Run yarn setup script
-  ansible.builtin.command: "{{ virtualenv_path }}/yarn-build.sh"
+- name: Run pnpm setup script
+  ansible.builtin.command: "{{ virtualenv_path }}/pnpm-build.sh"
   become: true
   become_user: "{{ gunicorn_user }}"
   changed_when: false
