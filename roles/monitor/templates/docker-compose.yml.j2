@@ -82,7 +82,7 @@ services:
   graylog:
     container_name: graylog
     hostname: "server"
-    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.0.5}"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.0.6}"
     depends_on:
       opensearch:
         condition: "service_started"
