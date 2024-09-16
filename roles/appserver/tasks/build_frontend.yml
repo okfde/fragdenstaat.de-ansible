@@ -22,7 +22,7 @@
   delay: 10
 
 - name: Setup pnpm
-  command: corepack install --global pnpm@9
+  command: corepack enable pnpm
   become: true
   become_user: root
 
