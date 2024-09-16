@@ -22,13 +22,9 @@
     - djangoreq
 
 - name: Install packages required by the Django app inside virtualenv
-  ansible.builtin.pip:
-    virtualenv: "{{ virtualenv_path }}"
-    chdir: "{{ project_path }}"
-    requirements: "{{ requirements_file }}"
-    extra_args: "-U -e . --exists-action=w"
-    editable: true
-    state: latest
+  command: "uv pip sync {{ requirements_file }}"
+  environment:
+    VIRTUAL_ENV: "{{ virtualenv_path }}"
   become: true
   become_user: "{{ gunicorn_user }}"
   notify:
