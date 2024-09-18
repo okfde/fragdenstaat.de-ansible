@@ -35,6 +35,11 @@
     state: latest
   tags: packages
 
+- name: Install uv
+  ansible.builtin.pip:
+    name: uv
+  tags: packages
+
 - name: Comment out ImageMagick policy entries for PDF none
   ansible.builtin.replace:
     path: /etc/ImageMagick-6/policy.xml

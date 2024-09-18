@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -ex
+
+pushd {{ project_path }}
+
+pnpm install
+ASSET_PATH={{ static_asset_path }} pnpm run build
+
+popd
