@@ -59,7 +59,7 @@
   become_user: "{{ gunicorn_user }}"
 
 - name: Run Django compilemessages
-  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
+  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
   args:
     chdir: "{{ virtualenv_path }}"
   environment: "{{ django_environment }}"
