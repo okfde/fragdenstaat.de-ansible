@@ -135,27 +135,6 @@ frontex_captcha_model_path: "/var/www/fragdenstaat.de/data/model.pth"
 #     auth: false
 
 release_repo: okfde/fragdenstaat_de
-release_notifications:
-  - name: django-filingcabinet
-    repo: okfde/django-filingcabinet
-  - name: froide
-    repo: okfde/froide
-  - name: froide-campaign
-    repo: okfde/froide-campaign
-  - name: froide-crowdfunding
-    repo: okfde/froide-crowdfunding
-  - name: froide-govplan
-    repo: okfde/froide-govplan
-  - name: froide-exam
-    repo: okfde/froide-exam
-  - name: froide-fax
-    repo: okfde/froide-fax
-  - name: froide-food
-    repo: okfde/froide-food
-  - name: froide-legalaction
-    repo: okfde/froide-legalaction
-  - name: froide-payment
-    repo: okfde/froide-payment
 
 celery_workers:
   - name: celery

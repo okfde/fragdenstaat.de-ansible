@@ -59,12 +59,9 @@
   become_user: "{{ gunicorn_user }}"
 
 - name: Run Django compilemessages
-  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
+  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
   args:
-    chdir: "{{ item }}"
-  with_items:
-    - "{{ virtualenv_path }}/src"
-    - "{{ project_path }}"
+    chdir: "{{ virtualenv_path }}"
   environment: "{{ django_environment }}"
   register: compile_result
   changed_when: "'processing file' in compile_result.stdout"
@@ -74,7 +71,6 @@
     - django.compilemessages
     - deploy-web
     - deploy-backend
-  ignore_errors: true
 
 - name: Restore django environment db user
   ansible.builtin.set_fact:
