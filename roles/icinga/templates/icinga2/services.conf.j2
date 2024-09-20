@@ -25,7 +25,7 @@ apply Service "apt" {
   check_interval = 24h
 
   vars.apt_only_critical = 1
-
+  vars.apt_critical = 50
   assign where host.vars.os == "Linux"
 }
 
