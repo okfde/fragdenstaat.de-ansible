@@ -33,14 +33,26 @@
     owner: "{{ gunicorn_user }}"
     mode: "0755"
 
-- name: Setup pnpm build script
-  ansible.builtin.template:
-    src: pnpm-build.sh.j2
-    dest: "{{ virtualenv_path }}/pnpm-build.sh"
-    mode: "0755"
+- name: Install frontend dependencies
+  ansible.builtin.command: pnpm install
+  args:
+    chdir: "{{ project_path }}"
+  become: true
+  become_user: "{{ gunicorn_user }}"
+  tags:
+    - deploy
+    - deploy-frontend
 
-- name: Run pnpm setup script
-  ansible.builtin.command: "{{ virtualenv_path }}/pnpm-build.sh"
+- name: Build frontend bundle
+  ansible.builtin.command: pnpm run build
+  args:
+    chdir: "{{ project_path }}"
+  environment:
+    ASSET_PATH: "{{ static_asset_path }}"
+    SENTRY_URL: "{{ sentry_url }}"
+    SENTRY_ORG: "{{ sentry_org }}"
+    SENTRY_AUTH_TOKEN: "{{ sentry_auth_token }}"
+    SENTRY_PROJECT: "{{ sentry_project }}"
   become: true
   become_user: "{{ gunicorn_user }}"
   changed_when: false
