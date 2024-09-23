@@ -20,4 +20,3 @@
   ansible.builtin.systemd:
     name: "{{ external_media_storage_unitname }}.mount"
     state: started
-  ignore_errors: true
