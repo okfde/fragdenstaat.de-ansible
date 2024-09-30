@@ -12,7 +12,7 @@
         token: '{{ slack_token }}'
         msg: 'Deployment start on {{ inventory_hostname }}'
         username: fds-bot
-        channel: '#fragdenstaat-alerts'
+        channel: '{{ slack_channel }}'
       when: slack_token is defined and slack_token is not false
       changed_when: false
       tags:
@@ -34,7 +34,7 @@
         token: '{{ slack_token }}'
         msg: 'Deployment finished on {{ inventory_hostname }}'
         username: fds-bot
-        channel: '#fragdenstaat-alerts'
+        channel: '{{ slack_channel }}'
       when: slack_token is defined and slack_token is not false
       changed_when: false
       tags:
