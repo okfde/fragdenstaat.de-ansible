@@ -23,3 +23,5 @@ db_reporting_views:
     query: "SELECT id, name, other_names, slug, description, parent_id, root_id, depth, classification_id, email, fax, contact, address, request_note, source_reference, alternative_emails, extra_data, change_history, file_index, org_chart, created_at, updated_at, confirmed, wikidata_item, jurisdiction_id, geo FROM public.publicbody_publicbody"
   - name: newsletter_feedback
     query: "SELECT id, created, reason, comment, newsletter_id FROM public.fds_newsletter_unsubscribefeedback"
+  - name: problemreports
+    query: "SELECT id, kind, timestamp, auto_submitted, resolved, message_id, user_id, resolution_timestamp, moderator_id, escalated FROM public.problem_problemreport"
