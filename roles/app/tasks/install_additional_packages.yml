@@ -13,6 +13,7 @@
       - libpoppler-cpp-dev
       - ocrmypdf
       - optipng
+      - osmctools
       - jpegoptim
       - dirmngr
       - git
