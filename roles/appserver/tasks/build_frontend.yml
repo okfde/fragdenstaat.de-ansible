@@ -22,9 +22,10 @@
   delay: 10
 
 - name: Setup pnpm
-  command: corepack enable pnpm
+  ansible.builtin.command: corepack enable pnpm
   become: true
   become_user: root
+  changed_when: false
 
 - name: Creates public directory
   ansible.builtin.file:
@@ -42,6 +43,7 @@
   tags:
     - deploy
     - deploy-frontend
+  changed_when: false
 
 - name: Build frontend bundle
   ansible.builtin.command: pnpm run build

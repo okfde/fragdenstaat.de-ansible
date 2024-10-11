@@ -42,7 +42,7 @@
 
 # clean node_modules for pnpm migration
 - name: Check if yarn.lock exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ project_path }}/yarn.lock"
   register: yarn_lock
 
