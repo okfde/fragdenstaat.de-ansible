@@ -116,3 +116,9 @@
   when: inventory_hostname in groups['db']
   notify:
     - restart postgresql
+
+- name: Start postgres after network is online
+  ansible.builtin.lineinfile:
+    path: /lib/systemd/system/postgresql@.service
+    regex: "^After=network.target$"
+    line: "After=network-online.target"
