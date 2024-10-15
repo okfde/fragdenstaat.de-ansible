@@ -95,7 +95,7 @@ services:
       GRAYLOG_ROOT_PASSWORD_SHA2: "${GRAYLOG_ROOT_PASSWORD_SHA2:?Please configure GRAYLOG_ROOT_PASSWORD_SHA2 in the .env file}"
       GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9010"
       GRAYLOG_HTTP_EXTERNAL_URI: "https://{{ log_domain }}/"
-      GRAYLOG_HTTP_PUBLISH_URI: "https://{{ log_domain }}/"
+      GRAYLOG_HTTP_PUBLISH_URI: "http://127.0.0.1:9010/"
       GRAYLOG_ELASTICSEARCH_HOSTS: "http://127.0.0.1:9200"
       GRAYLOG_MONGODB_URI: "mongodb://127.0.0.1:27017/graylog"
       GRAYLOG_TRANSPORT_EMAIL_ENABLED: "True"
