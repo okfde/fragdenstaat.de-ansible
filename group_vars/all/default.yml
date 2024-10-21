@@ -438,3 +438,5 @@ donation_backup_credentials: ""
 
 paperless_api_url: ""
 paperless_api_token: ""
+
+froide_evidencecollection_gsheet_import_config: ""
