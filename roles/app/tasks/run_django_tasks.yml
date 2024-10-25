@@ -57,6 +57,8 @@
     - deploy-backend
   become: true
   become_user: "{{ gunicorn_user }}"
+  notify:
+    - restart celery workers
 
 - name: Run Django compilemessages
   ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
