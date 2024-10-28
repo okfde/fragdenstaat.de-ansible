@@ -29,3 +29,7 @@
     name: "celery_{{ item.name }}"
     state: restarted
   with_items: "{{ celery_workers }}"
+
+- name: set db access rights
+  ansible.builtin.include_tasks:
+    file: ../roles/db/tasks/setup_db.yml
