@@ -30,4 +30,5 @@ icinga:
     - metabase_port = 8042
     - weblate_port = 8020
     - discourse_port = 8035
+    - roundcube_port = 9800
     - smartmon = "sd"
