@@ -440,6 +440,17 @@ apply Service "ogimage" {
   assign where host.vars.ogimage_port
 }
 
+apply Service "roundcube" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.roundcube_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.roundcube_port
+}
+
 apply Service "weblate" {
   import "generic-service"
 

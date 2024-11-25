@@ -172,6 +172,20 @@ location / {
     {{ proxy_wsgi_upstream() }}
 }
 
+# temporary workaround for huge .zip download issue
+location ~* /dokumente/sammlung/[^/]*/zip/ {
+    {% set default_headers = add_web_headers() %}
+    {{ default_headers }}
+    {{ cors(static_server_url, repeat_headers=default_headers) }}
+    {{ proxy_asgi_upstream() }}
+}
+location ~* /en/documents/collection/[^/]*/zip/ {
+    {% set default_headers = add_web_headers() %}
+    {{ default_headers }}
+    {{ cors(static_server_url, repeat_headers=default_headers) }}
+    {{ proxy_asgi_upstream() }}
+}
+
 # Error pages
 error_page 500 /500.html;
 location = /500.html {
