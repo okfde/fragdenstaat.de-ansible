@@ -3,11 +3,14 @@
 - name: Install virtualenv
   ansible.builtin.pip:
     name: virtualenv
-  tags: packages
+    break_system_packages: true
+  tags:
+    - packages
+    - skip_ansible_lint
 
 - name: Create the virtualenv
   ansible.builtin.command:
-    cmd: virtualenv -p python3.10 {{ virtualenv_path }}
+    cmd: virtualenv -p python{{ ansible_python_version }} {{ virtualenv_path }}
     creates: "{{ virtualenv_path }}/bin/activate"
 
 - name: Set ownership of app directory
