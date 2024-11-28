@@ -35,11 +35,15 @@
     name: pip
     state: latest
   tags: packages
+  when: ansible_distribution_major_version|int <= 22
 
 - name: Install uv
   ansible.builtin.pip:
     name: uv
-  tags: packages
+    break_system_packages: true
+  tags:
+    - packages
+    - skip_ansible_lint
 
 - name: Comment out ImageMagick policy entries for PDF none
   ansible.builtin.replace:

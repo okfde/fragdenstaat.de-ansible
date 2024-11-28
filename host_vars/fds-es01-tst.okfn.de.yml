@@ -7,6 +7,7 @@ host_data:
   global_ipv4: 192.168.122.150
   global_ipv6: none
   site_ipv4: 192.168.122.150
+  ubuntu: noble
 
 monitor_server: fds-tst.okfn.de
 prometheus_exporter:
