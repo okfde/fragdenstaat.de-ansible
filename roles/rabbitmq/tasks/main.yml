@@ -94,6 +94,11 @@
     state: started
     enabled: true
 
+- name: Enable rabbitmq feature_flag all
+  ansible.builtin.command:
+    cmd: rabbitmqctl enable_feature_flag all
+  changed_when: false
+
 # - name: Check if /etc/apt/apt.conf.d/50unattended-upgrades exists
 #  stat:
 #    path: /etc/apt/apt.conf.d/50unattended-upgrades
