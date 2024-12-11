@@ -38,7 +38,7 @@ borg:
       mnt: /mnt/root-snapshot
       lvm_free: 75%
   locations: /mnt/monitor-snapshot/graylog/mongodb_data/ /mnt/root-snapshot/var/lib/docker/volumes/sentry*
-  keepdaily: 14
+  keepdaily: 7
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de
 
