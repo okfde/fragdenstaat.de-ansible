@@ -43,7 +43,6 @@
   community.general.supervisorctl:
     name: celery_exporter
     state: restarted
-  ignore_errors: true
 
 - name: docker compose up monitor
   ansible.builtin.command:
