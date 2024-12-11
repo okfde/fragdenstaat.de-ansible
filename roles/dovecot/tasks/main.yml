@@ -22,6 +22,14 @@
     shell: "/usr/sbin/nologin"
     system: true
 
+- name: Create vmail directory
+  ansible.builtin.file:
+    state: directory
+    name: /var/vmail/
+    owner: vmail
+    group: vmail
+    mode: "0775"
+
 - name: Create the dovecot config
   ansible.builtin.template:
     src: dovecot.conf.j2

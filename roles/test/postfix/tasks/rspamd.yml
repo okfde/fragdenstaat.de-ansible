@@ -56,7 +56,7 @@
 
 - name: Convert password for worker-controller
   ansible.builtin.command:
-    cmd: "rspamadm pw -p {{ rspamd_controller_password }}"
+    cmd: "rspamadm pw -p \"{{ rspamd_controller_password }}\" 2>/dev/null"
   register: controller_passwd
   when: "'controller' in rspamd_worker and not worker_controller_config.stat.exists"
   changed_when: false
