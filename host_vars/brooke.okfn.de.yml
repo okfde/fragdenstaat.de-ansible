@@ -9,6 +9,7 @@ host_data:
   site_ipv4: 192.168.100.1
   wg_publickey: "l3eERIhs8c4yJI54VIrLY8w/BiRFuB4o7HQVGqZMvnY="
   vpn_peer_id: 200
+  ubuntu: noble
 
 prometheus_exporter:
   - statsd_exporter

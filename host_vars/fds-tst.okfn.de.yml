@@ -9,6 +9,7 @@ host_data:
   site_ipv4: 192.168.122.1
   vlan_ipv4: 192.168.100.10
   vpn_peer_id: 210
+  ubuntu: noble
 
 monitor_server: fds-tst.okfn.de
 prometheus: false
