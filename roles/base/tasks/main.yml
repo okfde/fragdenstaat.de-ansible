@@ -23,7 +23,7 @@
   changed_when: false
   tags:
     - skip_ansible_lint
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
@@ -36,7 +36,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: latest
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install base packages
@@ -48,11 +48,13 @@
       - ntpdate
       - gpg
       - gpg-agent
+      - bind9-host
+      - bc
     update_cache: "{{ update_apt_cache }}"
     force: true
     state: present
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Import add_users.yml

@@ -68,7 +68,7 @@
     - erlang-tftp
     - erlang-tools
     - erlang-xmerl
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install RabbitMQ server
@@ -79,7 +79,7 @@
     state: present
   with_items:
     - rabbitmq-server
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Enable the RabbitMQ Management Console

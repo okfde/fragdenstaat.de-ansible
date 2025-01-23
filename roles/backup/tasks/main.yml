@@ -10,7 +10,7 @@
   tags:
     - packages
     - backup
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install duplicity from pip

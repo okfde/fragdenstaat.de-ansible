@@ -2,7 +2,7 @@
   ansible.builtin.apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     state: present
-  retries: 30
+  retries: 3
   delay: 10
   when: ansible_distribution_major_version|int <= 22
 
@@ -10,7 +10,7 @@
   ansible.builtin.apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
     state: present
-  retries: 30
+  retries: 3
   delay: 10
   when: ansible_distribution_major_version|int >= 24
 
@@ -35,7 +35,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Setup pnpm

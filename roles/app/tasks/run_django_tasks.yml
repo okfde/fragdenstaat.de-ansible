@@ -62,6 +62,7 @@
     - set db access rights
   changed_when: true
   when: true
+  ignore_errors: true
 
 - name: Run Django compilemessages
   ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
@@ -76,6 +77,7 @@
     - django.compilemessages
     - deploy-web
     - deploy-backend
+  ignore_errors: true
 
 - name: Restore django environment db user
   ansible.builtin.set_fact:

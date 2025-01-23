@@ -15,7 +15,7 @@
     pkg:
       - "docker-ce"
     update_cache: true
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Update apt and install docker-ce-cli
@@ -27,5 +27,5 @@
       - "apparmor-utils"
     state: latest
     update_cache: true
-  retries: 30
+  retries: 3
   delay: 10

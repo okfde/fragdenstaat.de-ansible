@@ -4,5 +4,5 @@
       - poppler-utils
     update_cache: "{{ update_apt_cache }}"
     state: present
-  retries: 30
+  retries: 3
   delay: 10
