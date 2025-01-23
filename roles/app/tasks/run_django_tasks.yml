@@ -64,6 +64,50 @@
   when: true
   ignore_errors: true
 
+- name: "Set db_user privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    grant_option: true
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
+- name: "Set db_user schema privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: public
+    privs: ALL
+    grant_option: true
+    type: schema
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
+- name: "Set db_user sequence privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: USAGE
+    grant_option: true
+    type: sequence
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
 - name: Run Django compilemessages
   ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
   args:
