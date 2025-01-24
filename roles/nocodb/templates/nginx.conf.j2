@@ -1,0 +1,35 @@
+upstream nocodb {
+    server  localhost:{{ nc_local_port }};
+}
+
+server {
+	server_name nocodb.zerschlagdenstaat.de;
+	listen 80;
+	listen [::]:80;
+    # Redirect to ssl
+	return 301 https://$host$request_uri;
+}
+
+server {
+	server_name nocodb.zerschlagdenstaat.de;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+    ssl_certificate /etc/letsencrypt/live/nocodb.zerschlagdenstaat.de/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/nocodb.zerschlagdenstaat.de/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://nocodb;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection 'upgrade';
+		proxy_set_header Host $host;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Real-IP $remote_addr;
+        add_header Content-Security-Policy "frame-ancestors *;";
+    }
+}
