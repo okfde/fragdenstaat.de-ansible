@@ -3,7 +3,7 @@ upstream nocodb {
 }
 
 server {
-	server_name nocodb.zerschlagdenstaat.de;
+	server_name nocodb.frag-den-staat.de;
 	listen 80;
 	listen [::]:80;
     # Redirect to ssl
@@ -11,12 +11,12 @@ server {
 }
 
 server {
-	server_name nocodb.zerschlagdenstaat.de;
+	server_name nocodb.frag-den-staat.de;
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-    ssl_certificate /etc/letsencrypt/live/nocodb.zerschlagdenstaat.de/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/nocodb.zerschlagdenstaat.de/privkey.pem; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/nocodb.frag-den-staat.de/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/nocodb.frag-den-staat.de/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
