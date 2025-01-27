@@ -54,8 +54,8 @@ icinga:
     - ssh_port = 2228
     - procs_warning = 750
     - procs_critical = 1000
-    - swap_wfree = "10%"
-    - swap_cfree = "5%"
+    - swap_wfree = "5%"
+    - swap_cfree = "0%"
 
     - http_vhosts["fragdenstaat.de"] = { http_uri = "https://fragdenstaat.de" }
     - http_vhosts["forum.okfn.de"] = { http_uri = "https://forum.okfn.de" }
