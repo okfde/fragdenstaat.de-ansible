@@ -16,7 +16,7 @@
       tags: nginxtest
     - role: certbot
       tags: certbot
-    - role: test/minio
+    - role: minio
       tags: minio
     - role: test/light_sync
       tags: lightsync

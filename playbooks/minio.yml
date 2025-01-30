@@ -1,0 +1,12 @@
+---
+- name: Deploy minio s3 storage
+  hosts: media
+  become: true
+  become_user: root
+  roles:
+    - role: nginx
+      tags: nginx
+    - role: certbot
+      tags: certbot
+    - role: minio
+      tags: minio
