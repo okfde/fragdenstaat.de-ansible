@@ -316,7 +316,7 @@ simple_files:
     filename: security.txt
   - path: "/.well-known/apple-app-site-association"
     filename: apple-app-site-association
-    mimetype: 'application/pkcs7-mime'
+    mimetype: 'application/json'
   - path: "/.well-known/apple-developer-merchantid-domain-association"
     filename: apple-developer-merchantid-domain-association.dms
   - path: "/BingSiteAuth.xml"
