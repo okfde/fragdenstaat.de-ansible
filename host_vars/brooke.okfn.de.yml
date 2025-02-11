@@ -83,3 +83,6 @@ icinga:
     - supervisor = 1
     - smartmon = "nvme"
     - smtp = 1
+
+unattended_calendar: "*-*-* 5:00"
+unattended_delay: "15m"

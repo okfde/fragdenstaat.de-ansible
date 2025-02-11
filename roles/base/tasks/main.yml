@@ -87,6 +87,7 @@
 - name: Import setup_unattended_upgrades.yml
   ansible.builtin.import_tasks: setup_unattended_upgrades.yml
   when: enable_unattended_upgrades is defined and enable_unattended_upgrades
+  tags: unattended-upgrades
 
 - name: Import setup_uncomplicated_firewall.yml
   ansible.builtin.import_tasks: setup_uncomplicated_firewall.yml
