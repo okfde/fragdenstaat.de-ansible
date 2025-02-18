@@ -39,6 +39,16 @@ apply Service "raid" {
   assign where host.vars.os == "Linux"
 }
 
+apply Service "needrestart" {
+  import "generic-service"
+
+  check_command = "needrestart"
+  vars.notification.pushover = 0
+  vars.notification.slack = 0
+
+  assign where host.vars.os == "Linux"
+}
+
 apply Service "temperature" {
   import "generic-service"
 
