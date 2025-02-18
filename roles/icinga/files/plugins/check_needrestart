@@ -2,7 +2,7 @@
 
 type -P needrestart &>/dev/null || { echo "ERROR: needrestart is required but seems not to be installed. Aborting." >&2; exit 1; }
 
-OUTPUT=$(sudo /usr/sbin/needrestart -b 2>&1 | grep "^NEEDRESTART-SVC")
+OUTPUT=$(sudo /usr/sbin/needrestart -b 2>&1 | grep "^NEEDRESTART-SVC" | grep -v cron | grep -v libvirtd)
 LINECOUNT=$(echo "${OUTPUT}" | wc -l)
 RETURNCODE=$?
 
