@@ -11,7 +11,7 @@
     - djangoreq
 
 - name: Install packages required by the Django app inside virtualenv
-  command: "uv pip sync {{ requirements_file }}"
+  ansible.builtin.command: "uv pip sync {{ requirements_file }}"
   environment:
     VIRTUAL_ENV: "{{ virtualenv_path }}"
   become: true
@@ -20,3 +20,4 @@
     - Trigger release notification
   tags:
     - djangoreq
+  changed_when: false

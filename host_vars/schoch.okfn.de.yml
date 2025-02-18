@@ -10,10 +10,15 @@ host_data:
   disk_type: hdd
   # 26 TB available, 60 GB per volume, some wiggle room
   seaweed_max_volumes: 400
+  ubuntu: noble
+  vpn_peer_id: 202
+  wg_publickey: "JcI3Tr0SFM/bvZ4bPrRjckSeUnCkp8a/PfJ/goUB1jQ="
 
 nginx_media_dir: "/home/storage-box/home"
 nginx_private_media_path: "/home/storage-box/home/"
 nginx_static_html_dir: "/var/www/static"
+
+minio_path: "/home/storage-box/home/s3/"
 
 prometheus_exporter:
   - node_exporter

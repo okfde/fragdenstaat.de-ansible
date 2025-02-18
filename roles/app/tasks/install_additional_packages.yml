@@ -27,7 +27,7 @@
     update_cache: "{{ update_apt_cache }}"
     force: true
     state: present
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Upgrade pip
@@ -35,11 +35,15 @@
     name: pip
     state: latest
   tags: packages
+  when: ansible_distribution_major_version|int <= 22
 
 - name: Install uv
   ansible.builtin.pip:
     name: uv
-  tags: packages
+    break_system_packages: true
+  tags:
+    - packages
+    - skip_ansible_lint
 
 - name: Comment out ImageMagick policy entries for PDF none
   ansible.builtin.replace:
@@ -91,7 +95,7 @@
     name: libreoffice
     state: latest
     update_cache: true
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install Tor
@@ -100,5 +104,5 @@
     state: latest
     update_cache: true
   when: onion_service_enabled
-  retries: 30
+  retries: 3
   delay: 10

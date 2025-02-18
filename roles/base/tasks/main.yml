@@ -23,7 +23,7 @@
   changed_when: false
   tags:
     - skip_ansible_lint
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
@@ -36,7 +36,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: latest
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install base packages
@@ -48,11 +48,13 @@
       - ntpdate
       - gpg
       - gpg-agent
+      - bind9-host
+      - bc
     update_cache: "{{ update_apt_cache }}"
     force: true
     state: present
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Import add_users.yml
@@ -85,6 +87,7 @@
 - name: Import setup_unattended_upgrades.yml
   ansible.builtin.import_tasks: setup_unattended_upgrades.yml
   when: enable_unattended_upgrades is defined and enable_unattended_upgrades
+  tags: unattended-upgrades
 
 - name: Import setup_uncomplicated_firewall.yml
   ansible.builtin.import_tasks: setup_uncomplicated_firewall.yml

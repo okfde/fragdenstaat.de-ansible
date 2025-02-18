@@ -37,12 +37,13 @@ http {
 	# server_tokens off;
 
     server_names_hash_bucket_size 128;
+	map_hash_bucket_size 128;
 
 	# server_name_in_redirect off;
 
 	include /etc/nginx/mime.types;
   types {
-		application/javascript 								js mjs;
+		application/javascript 			  mjs;
     application/font-woff2                woff2;
     application/x-font-ttf                ttc ttf;
     font/opentype                         otf;

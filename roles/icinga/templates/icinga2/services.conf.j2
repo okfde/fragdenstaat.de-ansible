@@ -39,6 +39,16 @@ apply Service "raid" {
   assign where host.vars.os == "Linux"
 }
 
+apply Service "needrestart" {
+  import "generic-service"
+
+  check_command = "needrestart"
+  vars.notification.pushover = 0
+  vars.notification.slack = 0
+
+  assign where host.vars.os == "Linux"
+}
+
 apply Service "temperature" {
   import "generic-service"
 
@@ -107,12 +117,12 @@ apply Service "load" {
 
   check_command = "load"
 
-  vars.load_wload1 = "{{ ansible_processor_vcpus + ansible_processor_vcpus }}"
-  vars.load_wload5 =  "{{ ansible_processor_vcpus + (ansible_processor_vcpus * 0.5) }}"
-  vars.load_wload15 = "{{ ansible_processor_vcpus }}"
-  vars.load_cload1 = "{{ ansible_processor_vcpus + (ansible_processor_vcpus * 2) }}"
-  vars.load_cload5 =  "{{ ansible_processor_vcpus + ansible_processor_vcpus }}"
-  vars.load_cload15 = "{{ ansible_processor_vcpus + (ansible_processor_vcpus * 0.5) }}"
+  vars.load_wload1 = "{{ ansible_processor_vcpus * 3 }}"
+  vars.load_wload5 =  "{{ ansible_processor_vcpus * 2 }}"
+  vars.load_wload15 = "{{ ansible_processor_vcpus * 1.5 }}"
+  vars.load_cload1 = "{{ ansible_processor_vcpus * 4 }}"
+  vars.load_cload5 =  "{{ ansible_processor_vcpus * 3 }}"
+  vars.load_cload15 = "{{ ansible_processor_vcpus * 2 }}"
 
   /* Used by the ScheduledDowntime apply rule in `downtimes.conf`. */
   // vars.backup_downtime = "02:00-03:00"
@@ -438,6 +448,17 @@ apply Service "ogimage" {
   vars.notification.pushover = 1
 
   assign where host.vars.ogimage_port
+}
+
+apply Service "roundcube" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.roundcube_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.roundcube_port
 }
 
 apply Service "weblate" {

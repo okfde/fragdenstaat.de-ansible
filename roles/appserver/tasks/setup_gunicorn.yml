@@ -1,11 +1,12 @@
 ---
 
 - name: Ensure gunicorn is installed
-  command: uv pip show gunicorn # this would fail if gunicorn is not installed
-  environment: 
+  ansible.builtin.command: uv pip show gunicorn # this would fail if gunicorn is not installed
+  environment:
     VIRTUAL_ENV: "{{ virtualenv_path }}"
   become: true
   become_user: "{{ gunicorn_user }}"
+  changed_when: false
 
 - name: Create the application log folder
   ansible.builtin.file:

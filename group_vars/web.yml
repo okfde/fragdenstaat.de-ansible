@@ -13,4 +13,4 @@ https_domains:
 
 nginx_cache_urls:
   - "/"
-  #- "/sitemap.xml"
+  - "/artikel/exklusiv/2024/10/sachsenwald/"

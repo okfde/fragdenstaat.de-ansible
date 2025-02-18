@@ -10,6 +10,7 @@ host_data:
   disk_type: ssd
   vpn_peer_id: 230
   wg_publickey: "+IWh/zC8u0SwU80/7+MdQQasNqyPVc1R3FAwLT4KwB4="
+  ubuntu: noble
 
 prometheus: true
 graylog: true
@@ -37,7 +38,7 @@ borg:
       mnt: /mnt/root-snapshot
       lvm_free: 75%
   locations: /mnt/monitor-snapshot/graylog/mongodb_data/ /mnt/root-snapshot/var/lib/docker/volumes/sentry*
-  keepdaily: 14
+  keepdaily: 7
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de
 
@@ -53,8 +54,8 @@ icinga:
     - ssh_port = 2228
     - procs_warning = 750
     - procs_critical = 1000
-    - swap_wfree = "10%"
-    - swap_cfree = "5%"
+    - swap_wfree = "5%"
+    - swap_cfree = "0%"
 
     - http_vhosts["fragdenstaat.de"] = { http_uri = "https://fragdenstaat.de" }
     - http_vhosts["forum.okfn.de"] = { http_uri = "https://forum.okfn.de" }

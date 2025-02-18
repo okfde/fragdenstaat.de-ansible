@@ -10,6 +10,7 @@ host_data:
   disk_type: hdd
   wg_publickey: "n77Y3S6AkvoTUztuSlr8H9UzkkDs2RzhrhQaHJUPLVY="
   vpn_peer_id: 201
+  ubuntu: noble
 
 prometheus_exporter:
   - node_exporter
@@ -30,4 +31,5 @@ icinga:
     - metabase_port = 8042
     - weblate_port = 8020
     - discourse_port = 8035
+    - roundcube_port = 9800
     - smartmon = "sd"

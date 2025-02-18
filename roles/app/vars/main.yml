@@ -79,3 +79,4 @@ django_environment:
   SITE_EMAIL: "{{ fds_site_email }}"
   PAPERLESS_API_URL: "{{ paperless_api_url }}"
   PAPERLESS_API_TOKEN: "{{ paperless_api_token }}"
+  DJANGO_FROIDE_EVIDENCECOLLECTION_GSHEET_IMPORT_CONFIG: "{{ froide_evidencecollection_gsheet_import_config }}"

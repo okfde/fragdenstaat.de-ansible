@@ -53,7 +53,7 @@ services:
 
   opensearch:
     container_name: graylog_opensearch
-    image: "opensearchproject/opensearch:2.12.0"
+    image: "opensearchproject/opensearch:2"
     environment:
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD={{ opensearch_init_password }}"
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
@@ -82,7 +82,7 @@ services:
   graylog:
     container_name: graylog
     hostname: "server"
-    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.0.6}"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.1.6}"
     depends_on:
       opensearch:
         condition: "service_started"
@@ -95,7 +95,7 @@ services:
       GRAYLOG_ROOT_PASSWORD_SHA2: "${GRAYLOG_ROOT_PASSWORD_SHA2:?Please configure GRAYLOG_ROOT_PASSWORD_SHA2 in the .env file}"
       GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9010"
       GRAYLOG_HTTP_EXTERNAL_URI: "https://{{ log_domain }}/"
-      GRAYLOG_HTTP_PUBLISH_URI: "https://{{ log_domain }}/"
+      GRAYLOG_HTTP_PUBLISH_URI: "http://127.0.0.1:9010/"
       GRAYLOG_ELASTICSEARCH_HOSTS: "http://127.0.0.1:9200"
       GRAYLOG_MONGODB_URI: "mongodb://127.0.0.1:27017/graylog"
       GRAYLOG_TRANSPORT_EMAIL_ENABLED: "True"
