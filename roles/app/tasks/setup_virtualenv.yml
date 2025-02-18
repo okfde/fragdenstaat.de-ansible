@@ -10,7 +10,7 @@
 
 - name: Create the virtualenv
   ansible.builtin.command:
-    cmd: virtualenv -p python{{ ansible_python_version }} {{ virtualenv_path }}
+    cmd: virtualenv -p {{ virtualenv_python_version }} {{ virtualenv_path }}
     creates: "{{ virtualenv_path }}/bin/activate"
 
 - name: Set ownership of app directory
