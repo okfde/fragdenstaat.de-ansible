@@ -1,5 +1,0 @@
-[program:minio]
-environment = MINIO_ROOT_USER="admin",MINIO_ROOT_PASSWORD="{{ minio_admin_password }}"
-stdout_logfile = /var/log/supervisor/minio.log
-stderr_logfile = /var/log/supervisor/minio.log
-command = /usr/local/bin/minio server /mnt/minio/data --console-address "127.0.0.1:9001"

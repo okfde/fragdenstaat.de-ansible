@@ -1,0 +1,29 @@
+#!/bin/bash
+
+abort()
+{
+    echo "An error occurred. Exiting..." >&2
+    exit 3
+}
+
+trap 'abort' 0
+
+set -e
+
+check_command=$(sudo /usr/bin/supervisorctl status | egrep '(STOPPED)|(STARTING)|(BACKOFF)|(STOPPING)|(EXITED)|(FATAL)|(UNKNOWN)' | wc -l)
+
+if (( $check_command != 0 )); then
+  echo "${check_command} supervisor processes are not running!"
+  trap : 0
+  exit 2
+fi
+
+check_command=$(sudo /usr/bin/supervisorctl status | grep 'RUNNING' | wc -l)
+
+if (( ${check_command} != 0 )); then
+  echo "OK: ${check_command} supervisor processes are running!"
+  trap : 0
+  exit 0
+else
+  /bin/false
+fi

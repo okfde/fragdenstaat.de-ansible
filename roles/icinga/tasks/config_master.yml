@@ -1,0 +1,144 @@
+- name: Configure icinga2
+  ansible.builtin.template:
+    src: icinga2/icinga2.conf.j2
+    dest: /etc/icinga2/icinga2.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Create zone.d directory for master
+  ansible.builtin.file:
+    state: directory
+    owner: root
+    group: nagios
+    mode: "0755"
+    name: /etc/icinga2/zones.d/master/
+
+- name: Configure hosts
+  ansible.builtin.template:
+    src: icinga2/hosts.conf.j2
+    dest: /etc/icinga2/zones.d/master/hosts.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+  tags:
+    - icingahosts
+    - icingaservices
+
+- name: Configure api users
+  ansible.builtin.template:
+    src: icinga2/api-users.conf.j2
+    dest: /etc/icinga2/conf.d/api-users.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure api
+  ansible.builtin.template:
+    src: icinga2/api_master.conf.j2
+    dest: /etc/icinga2/features-enabled/api.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure services
+  ansible.builtin.template:
+    src: icinga2/services.conf.j2
+    dest: /etc/icinga2/zones.d/master/services.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+  tags: icingaservices
+
+- name: Configure timeperiods
+  ansible.builtin.copy:
+    src: icinga2/timeperiods.conf
+    dest: /etc/icinga2/conf.d/timeperiods.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure downtimes
+  ansible.builtin.copy:
+    src: icinga2/downtimes.conf
+    dest: /etc/icinga2/conf.d/downtimes.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure templates
+  ansible.builtin.copy:
+    src: icinga2/templates.conf
+    dest: /etc/icinga2/conf.d/templates.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure notifications
+  ansible.builtin.copy:
+    src: icinga2/notifications.conf
+    dest: /etc/icinga2/conf.d/notifications.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure groups
+  ansible.builtin.copy:
+    src: icinga2/groups.conf
+    dest: /etc/icinga2/conf.d/groups.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+  tags: icingagroups
+
+- name: Configure users
+  ansible.builtin.template:
+    src: icinga2/users.conf.j2
+    dest: /etc/icinga2/conf.d/users.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure notification commands
+  ansible.builtin.copy:
+    src: icinga2/notification_commands.conf
+    dest: /etc/icinga2/conf.d/notification_commands.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Configure custom commands
+  ansible.builtin.copy:
+    src: icinga2/custom_commands.conf
+    dest: /etc/icinga2/conf.d/custom_commands.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+  tags: icingaservices
+
+- name: Configure zones
+  ansible.builtin.template:
+    src: icinga2/zones_master.conf.j2
+    dest: /etc/icinga2/zones.conf
+    mode: "0644"
+    owner: "root"
+    group: "nagios"
+  notify: reload icinga2
+
+- name: Reload icinga2 config
+  ansible.builtin.systemd:
+    name: icinga2
+    state: reloaded

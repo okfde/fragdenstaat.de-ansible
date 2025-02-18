@@ -11,19 +11,10 @@
 
 - name: Add apt universe
   ansible.builtin.apt_repository:
-    repo: "deb http://archive.ubuntu.com/ubuntu focal universe"
+    repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
     update_cache: false
-    mode: "0600"
+    mode: "0644"
   register: universe_installed
-  when: ansible_distribution_version == "20.04"
-
-- name: Add apt universe
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu jammy universe"
-    update_cache: false
-    mode: "0600"
-  register: universe_installed
-  when: ansible_distribution_version == "22.04"
 
 - name: Update apt cache
   ansible.builtin.apt:
@@ -32,7 +23,7 @@
   changed_when: false
   tags:
     - skip_ansible_lint
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Ensure bash, OpenSSL, and libssl are the latest versions
@@ -45,10 +36,10 @@
     update_cache: "{{ update_apt_cache }}"
     state: latest
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
-- name: Install base packages 20.04
+- name: Install base packages
   ansible.builtin.apt:
     name:
       - build-essential
@@ -57,29 +48,13 @@
       - ntpdate
       - gpg
       - gpg-agent
+      - bind9-host
+      - bc
     update_cache: "{{ update_apt_cache }}"
     force: true
     state: present
   tags: packages
-  when: ansible_distribution_version == "20.04"
-  retries: 30
-  delay: 10
-
-- name: Install base packages 22.04
-  ansible.builtin.apt:
-    name:
-      - build-essential
-      - acl
-      - ntp
-      - ntpdate
-      - gpg
-      - gpg-agent
-    update_cache: "{{ update_apt_cache }}"
-    force: true
-    state: present
-  tags: packages
-  when: ansible_distribution_version == "22.04"
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Import add_users.yml
@@ -112,6 +87,7 @@
 - name: Import setup_unattended_upgrades.yml
   ansible.builtin.import_tasks: setup_unattended_upgrades.yml
   when: enable_unattended_upgrades is defined and enable_unattended_upgrades
+  tags: unattended-upgrades
 
 - name: Import setup_uncomplicated_firewall.yml
   ansible.builtin.import_tasks: setup_uncomplicated_firewall.yml

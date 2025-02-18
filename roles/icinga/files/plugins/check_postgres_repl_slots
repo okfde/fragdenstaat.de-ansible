@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -u fragdenstaat_de /usr/lib/nagios/plugins/check_postgres --action=replication_slots -db=fragdenstaat_de -dbuser=fragdenstaat_de -w 1048576 -c 16777216

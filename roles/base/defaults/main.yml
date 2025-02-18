@@ -7,3 +7,6 @@ enable_unattended_upgrades: true
 enable_ufw: true
 
 enable_fail2ban: true
+
+unattended_calendar: "*-*-* 6:00"
+unattended_delay: "60m"

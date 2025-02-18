@@ -17,6 +17,15 @@
   become_user: postgres
   become: true
 
+- name: Add django_migrations user to database
+  community.postgresql.postgresql_user:
+    port: "{{ fdsbot_db_light_port }}"
+    name: "django_migrations"
+    role_attr_flags: CREATEDB,SUPERUSER,CREATEROLE
+    state: "present"
+  become_user: postgres
+  become: true
+
 - name: Add default user to database
   community.postgresql.postgresql_user:
     port: "{{ fdsbot_db_light_port }}"
@@ -28,9 +37,8 @@
 - name: Grant fdsbot user peer access to cluster
   community.postgresql.postgresql_pg_hba:
     dest: /etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}/pg_hba.conf
-    contype: host
+    contype: local
     users: "{{ fdsbot_user }}"
-    source: "127.0.0.1/32"
     databases: "{{ item }}"
     method: peer
     state: present

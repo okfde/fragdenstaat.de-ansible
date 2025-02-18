@@ -6,7 +6,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Ensure that a strong Diffie-Hellman group is used
@@ -60,7 +60,6 @@
     enabled: true
   tags:
     - nginx
-  ignore_errors: true
 
 - name: configure http, https ports in firewall
   community.general.ufw:

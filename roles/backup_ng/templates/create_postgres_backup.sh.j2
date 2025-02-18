@@ -8,6 +8,8 @@ DAYOFMONTH=`date +%d`
 
 umask 177
 
+cd {{ virtualenv_path }}/backup
+
 if [ ! -f {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz ]; then
 	sudo -u postgres pg_dumpall | gzip -c > {{ virtualenv_path }}/backup/sqlbackup-$DATE.sql.gz
 fi

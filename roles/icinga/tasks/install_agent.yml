@@ -1,0 +1,71 @@
+- name: set cn fact
+  ansible.builtin.set_fact: icinga_cn="{{ ansible_host }}"
+  tags:
+    - skip_ansible_lint
+
+- name: Install icinga2
+  ansible.builtin.apt:
+    name: icinga2
+    state: present
+
+- name: Install monitoring plugins basic
+  ansible.builtin.apt:
+    name: monitoring-plugins-basic
+    state: present
+
+- name: Install monitoring plugins standard
+  ansible.builtin.apt:
+    name: monitoring-plugins-standard
+    state: present
+
+- name: Install monitoring plugins contrib
+  ansible.builtin.apt:
+    name: monitoring-plugins-contrib
+    state: present
+  when: ansible_distribution_version == "22.04"
+
+- name: Check cert key
+  ansible.builtin.stat:
+    path: "/var/lib/icinga2/certs/{{ inventory_hostname }}.key"
+  register: icinga2_ssl_key_path
+
+- name: Check cert
+  ansible.builtin.stat:
+    path: "/var/lib/icinga2/certs/{{ inventory_hostname }}.crt"
+  register: icinga2_ssl_cert_path
+
+- name: certificate request
+  when: (not icinga2_ssl_cert_path.stat.exists or not icinga2_ssl_key_path.stat.exists) and not inventory_hostname == 'fds-es1.okfn.de'
+  block:
+    - name: create cert path
+      ansible.builtin.file:
+        path: "/var/lib/icinga2/certs"
+        state: directory
+        owner: nagios
+        group: nagios
+        mode: "0750"
+
+    - name: save trusted-master.crt
+      ansible.builtin.command:
+        cmd: icinga2 pki save-cert --host "{{ icinga2_ca_host }}" --port "{{ icinga2_ca_host_port | default('5665') }}" --trustedcert "/var/lib/icinga2/certs/trusted-master.crt"
+      register: _trusted_master_cert
+      changed_when: false
+
+    - name: generate private and public key
+      ansible.builtin.command:
+        cmd: icinga2 pki new-cert --cn "{{ ansible_host }}" --key "/var/lib/icinga2/certs/{{ ansible_host }}.key" --cert "/var/lib/icinga2/certs/{{ ansible_host }}.crt"
+      changed_when: false
+
+    - name: delegate ticket request to master
+      ansible.builtin.command:
+        cmd: icinga2 pki ticket --cn '{{ icinga_cn }}' --salt {{ icinga2_ticket_salt }}
+      delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
+      register: icinga2_ticket
+      changed_when: false
+
+    - name: get certificate
+      ansible.builtin.command:
+        cmd: icinga2 pki request --ticket "{{ icinga2_ticket.stdout }}" --host "{{ icinga2_ca_host }}" --port "{{ icinga2_ca_host_port | default('5665') }}" --ca "/var/lib/icinga2/certs/ca.crt" --key "/var/lib/icinga2/certs/{{ ansible_host }}.key" --trustedcert "/var/lib/icinga2/certs/trusted-master.crt" --cert "/var/lib/icinga2/certs/{{ ansible_host }}.crt"
+      when: '"stdout" in icinga2_ticket'
+      notify: reload icinga2 service
+      changed_when: false

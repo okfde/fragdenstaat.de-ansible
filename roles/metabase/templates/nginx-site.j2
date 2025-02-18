@@ -13,7 +13,7 @@ server {
     proxy_buffering off;
     proxy_next_upstream error timeout invalid_header http_502 http_503 non_idempotent;
     proxy_next_upstream_tries 2;
-    proxy_read_timeout 30s;
+    proxy_read_timeout 1h;
     proxy_send_timeout 5s;
     proxy_set_header Connection '';
     proxy_set_header Host $host;

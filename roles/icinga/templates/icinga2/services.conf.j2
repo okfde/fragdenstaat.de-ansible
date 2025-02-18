@@ -1,0 +1,472 @@
+apply Service "ping4" {
+  import "generic-service"
+
+  check_command = "ping4"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.address
+}
+
+apply Service "ping6" {
+  import "generic-service"
+
+  check_command = "ping6"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.address6
+}
+
+apply Service "apt" {
+  import "generic-service"
+
+  check_command = "apt"
+  check_interval = 24h
+
+  vars.apt_only_critical = 1
+  vars.apt_critical = 50
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "raid" {
+  import "generic-service"
+
+  check_command = "raid"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "needrestart" {
+  import "generic-service"
+
+  check_command = "needrestart"
+  vars.notification.pushover = 0
+  vars.notification.slack = 0
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "temperature" {
+  import "generic-service"
+
+  check_command = "temperature"
+
+  assign where (host.vars.os == "Linux" && host.vars.temp != 0)
+}
+
+apply Service "nfs" {
+  import "generic-service"
+
+  check_command = "nfs"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "systemd_failed" {
+  import "generic-service"
+
+  check_command = "systemd_failed"
+  vars.notification.pushover = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "ssh" {
+  import "generic-service"
+
+  check_command = "ssh"
+
+  assign where (host.address || host.address6) && host.vars.os == "Linux"
+}
+
+apply Service for (http_vhost => config in host.vars.http_vhosts) {
+  import "generic-service"
+
+  check_command = "http"
+  vars.notification.pushover = 1
+
+  vars += config
+}
+
+apply Service for (ssl_cert => config in host.vars.ssl_cert) {
+  import "generic-service"
+
+  check_command = "ssl_cert_cn"
+  vars.notification.pushover = 1
+
+  vars += config
+}
+
+apply Service for (disk => config in host.vars.disks) {
+  import "generic-service"
+
+  check_command = "disk"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  vars += config
+}
+
+apply Service "load" {
+  import "generic-service"
+
+  check_command = "load"
+
+  vars.load_wload1 = "{{ ansible_processor_vcpus * 3 }}"
+  vars.load_wload5 =  "{{ ansible_processor_vcpus * 2 }}"
+  vars.load_wload15 = "{{ ansible_processor_vcpus * 1.5 }}"
+  vars.load_cload1 = "{{ ansible_processor_vcpus * 4 }}"
+  vars.load_cload5 =  "{{ ansible_processor_vcpus * 3 }}"
+  vars.load_cload15 = "{{ ansible_processor_vcpus * 2 }}"
+
+  /* Used by the ScheduledDowntime apply rule in `downtimes.conf`. */
+  // vars.backup_downtime = "02:00-03:00"
+  vars.notification.pushover = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "memory" {
+  import "generic-service"
+
+  check_command = "memory"
+  vars.notification.pushover = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "procs" {
+  import "generic-service"
+
+  check_command = "procs"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "swap" {
+  import "generic-service"
+
+  check_command = "swap"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "users" {
+  import "generic-service"
+
+  check_command = "users"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "discourse" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.discourse_port$"
+  vars.notification.pushover = 1
+
+  assign where host.vars.discourse_port
+}
+
+apply Service "node_exporter" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "9100"
+  vars.notification.pushover = 1
+
+  assign where host.vars.node_exporter == "1"
+}
+
+apply Service "icinga_agent" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "5665"
+  vars.notification.pushover = 1
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "prometheus" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "9090"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.prometheus
+}
+
+apply Service "graylog" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "9010"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.graylog
+}
+
+apply Service "grafana" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "3000"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.grafana
+}
+
+apply Service "graylog filebeat" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "5044"
+  vars.tcp_address = "$graylog_filebeat_bind$"
+  vars.notification.pushover = 1
+
+  assign where host.vars.graylog_filebeat_bind
+}
+
+apply Service "graylog gelf" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "12201"
+  vars.tcp_address = "$graylog_gelf_bind$"
+  vars.notification.pushover = 1
+
+  assign where host.vars.graylog_gelf_bind
+}
+
+apply Service "graylog gelf http" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "12201"
+  vars.tcp_address = "$graylog_gelf_http_bind$"
+  vars.notification.pushover = 1
+
+  assign where host.vars.graylog_gelf_http_bind
+}
+
+apply Service "mailqueue" {
+  import "generic-service"
+
+  check_command = "mailq"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.mailq_warning || host.vars.mailq_critical)
+}
+
+apply Service "iowait" {
+  import "generic-service"
+
+  check_command = "iowait"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "cpu" {
+  import "generic-service"
+
+  check_command = "cpu"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "borg" {
+  import "generic-service"
+
+  check_command = "borg"
+  vars.notification.pushover = 1
+  vars.backup_downtime_monday = "21:00-14:00"
+  vars.backup_downtime = "21:00-06:00"
+
+  assign where host.vars.backup == "borg"
+}
+
+apply Service "ntp time" {
+  import "generic-service"
+
+  check_command = "ntp"
+  vars.ntp_host = "localhost"
+
+  assign where host.vars.os == "Linux"
+}
+
+apply Service "libvirt list" {
+  import "generic-service"
+
+  check_command = "libvirtlist"
+
+  assign where host.vars.libvirt
+}
+apply Service "libvirt volume" {
+  import "generic-service"
+
+  check_command = "libvirtvolume"
+
+  assign where host.vars.libvirt
+}
+apply Service "libvirt pool" {
+  import "generic-service"
+
+  check_command = "libvirtpool"
+
+  assign where host.vars.libvirt
+}
+
+apply Service "docker" {
+  import "generic-service"
+
+  check_command = "docker"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.docker
+}
+
+apply Service "smart_sd" {
+  import "generic-service"
+
+  check_command = "smart_sd"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.smartmon == "sd" || host.vars.smartmon == "mixed")
+}
+
+apply Service "smart_nvme" {
+  import "generic-service"
+
+  check_command = "smart_nvme"
+  vars.notification.pushover = 1
+
+  assign where (host.vars.smartmon == "nvme" || host.vars.smartmon == "mixed")
+}
+
+apply Service "supervisor" {
+  import "generic-service"
+
+  check_command = "supervisor"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.supervisor)
+}
+
+apply Service "ES Status" {
+  import "generic-service"
+
+  check_command = "es_status"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where (host.vars.elasticsearch)
+}
+
+apply Service "mysql" {
+  import "generic-service"
+
+  check_command = "mysqlroot"
+
+  assign where (host.vars.mysql_socket || host.vars.mysql_hostname)
+}
+
+apply Service "postgres_size" {
+  import "generic-service"
+
+  check_command = "postgres_size"
+
+  assign where host.vars.postgres
+}
+apply Service "postgres_repl_slots" {
+  import "generic-service"
+
+  check_command = "postgres_repl_slots"
+  vars.notification.slack = 1
+
+  assign where host.vars.postgres
+}
+apply Service "postgres_query_time" {
+  import "generic-service"
+
+  check_command = "postgres_query_time"
+  vars.notification.slack = 1
+
+  assign where host.vars.postgres
+}
+apply Service "postgres_connection" {
+  import "generic-service"
+
+  check_command = "postgres_connection"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.postgres
+}
+
+apply Service "smtp" {
+  import "generic-service"
+
+  check_command = "smtp"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.smtp_host
+}
+
+apply Service "metabase" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.metabase_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.metabase_port
+}
+
+apply Service "ogimage" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.ogimage_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.ogimage_port
+}
+
+apply Service "roundcube" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.roundcube_port$"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.roundcube_port
+}
+
+apply Service "weblate" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.weblate_port$"
+  vars.tcp_address = "127.0.0.1"
+
+  assign where host.vars.weblate_port
+}

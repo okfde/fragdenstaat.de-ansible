@@ -9,6 +9,7 @@ host_data:
   site_ipv4: 192.168.100.1
   wg_publickey: "l3eERIhs8c4yJI54VIrLY8w/BiRFuB4o7HQVGqZMvnY="
   vpn_peer_id: 200
+  ubuntu: noble
 
 prometheus_exporter:
   - statsd_exporter
@@ -16,12 +17,72 @@ prometheus_exporter:
   - postgres_exporter
   - nginx_exporter
   - postfix_exporter
+  - celery_exporter
 
 borg:
   locations: /var/vmail/ /var/www/fragdenstaat.de/backup/
   keepdaily: 7
-#  prescripts:
-#    - dpkg_get_selections.sh
-#    - create_postgres_backup.sh
-#  postscripts:
-#    - purge_local_backups.sh
+  prescripts:
+    - dpkg_get_selections.sh
+    - create_postgres_backup.sh
+  postscripts:
+    - purge_local_backups.sh
+
+fonts:
+  - hk_grotesk
+
+scripts:
+  - src: delivery_status.sh
+    dest: /root/
+    cron:
+      job: "/root/delivery_status.sh"
+    mode: "0755"
+    owner: root
+    group: root
+  - src: newsletter_info
+    dest: /usr/local/bin/
+    dirmode: "0775"
+    mode: "0755"
+    owner: root
+    group: postgres
+    venv: true
+    cron:
+      minute: "0"
+      hour: "*"
+      day: "*"
+      month: "*"
+      dow: "*"
+      job: "/usr/local/bin/newsletter_info/get_newsletter_info.sh"
+  - src: postgres_replication_check.sh
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: "0755"
+    target: brooke.okfn.de
+    cron:
+      job: "bash -c /usr/local/bin/postgres_replication_check.sh"
+  - src: es_status.sh
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: "0755"
+    cron:
+      job: "/usr/local/bin/es_status.sh {{ hostvars['fds-es1.okfn.de'].host_data.site_ipv4 }} > /dev/null 2>&1"
+
+icinga:
+  vars:
+    - ssh_port = 2228
+    - backup = "borg"
+    - procs_warning = 500
+    - procs_critical = 750
+    - node_exporter = 1
+    - mailq_warning = 100
+    - mailq_critical = 200
+    - smtp_host = "localhost"
+    - postgres = 1
+    - supervisor = 1
+    - smartmon = "nvme"
+    - smtp = 1
+
+unattended_calendar: "*-*-* 5:00"
+unattended_delay: "15m"

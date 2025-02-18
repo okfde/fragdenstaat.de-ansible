@@ -1,0 +1,13 @@
+- name: Install fontconfig
+  ansible.builtin.apt:
+    name: fontconfig
+
+- name: Copy fonts
+  ansible.builtin.copy:
+    src: "{{ item }}/"
+    dest: /usr/share/fonts/
+    mode: 0644
+  with_items:
+    - "{{ fonts }}"
+  notify: rebuild fontcache
+  when: fonts is defined

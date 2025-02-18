@@ -1,0 +1,38 @@
+- name: Create volume directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item['host'] }}"
+    owner: www-data
+    group: www-data
+    mode: "0755"
+  with_items:
+    - "{{ discourse.volumes }}"
+
+- name: Clone discourse docker repo
+  ansible.builtin.git:
+    repo: https://github.com/discourse/discourse_docker.git
+    dest: "{{ discourse.path }}/{{ discourse_domain }}"
+  notify:
+    - Rebuild discourse
+
+- name: Create app.yml
+  ansible.builtin.template:
+    src: app.yml.j2
+    dest: "{{ discourse.path }}/{{ discourse_domain }}/containers/app.yml"
+    owner: root
+    group: root
+    mode: "0640"
+  notify:
+    - Rebuild discourse
+
+- name: Create nginx config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/sites-enabled/{{ discourse_domain }}.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload nginx
+  tags:
+    - nginx

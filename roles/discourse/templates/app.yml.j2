@@ -1,0 +1,58 @@
+## this is the all-in-one, standalone Discourse Docker container template
+##
+## After making changes to this file, you MUST rebuild
+## /var/discourse/launcher rebuild app
+
+templates:
+{% for template in discourse.templates %}
+  - "{{ template }}"
+{% endfor %}
+
+## which TCP/IP ports should this container expose?
+## If you want Discourse to share a port with another webserver like Apache or nginx,
+## see https://meta.discourse.org/t/17247 for details
+expose:
+{% for port in discourse.expose %}
+  - "{{ port }}"
+{% endfor %}
+
+params:
+{% for param in discourse.params %}
+  {{ param }}
+{% endfor %}
+
+env:
+{% for setting in discourse.env %}
+  {{ setting }}
+{% endfor %}
+
+  DISCOURSE_HOSTNAME: {{ discourse_domain }}
+  DISCOURSE_DEVELOPER_EMAILS: '{{ discourse_mail.developer_mail }}'
+  DISCOURSE_SMTP_ADDRESS: {{ discourse_mail.smtp_address }}
+  DISCOURSE_SMTP_PORT: {{ discourse_mail.smtp_port }}
+  DISCOURSE_SMTP_USER_NAME: {{ discourse_mail.smtp_user }}
+  DISCOURSE_SMTP_PASSWORD: "{{ discourse_mail.smtp_pass }}"
+
+## The Docker container is stateless; all data is stored in /shared
+volumes:
+{% for volume in discourse.volumes %}
+  - volume:
+      host: {{ volume.host }}
+      guest: {{ volume.guest }}
+{% endfor %}
+
+## Plugins go here
+## see https://meta.discourse.org/t/19157 for details
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+{% for cmd in discourse.plugins %}
+          - {{ cmd }}
+{% endfor %}
+
+## Any custom commands to run after building
+run:
+  - exec: echo "Beginning of custom commands"
+  - exec: echo "End of custom commands"

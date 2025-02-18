@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "de.fragdenstaat.scanner",
+            "sha256_cert_fingerprints": [
+                "71:5F:83:E6:FE:44:5F:57:42:83:0F:4C:ED:F1:E8:BC:16:48:B2:FD:1C:F2:22:F1:6A:26:56:8A:48:8A:9C:32"
+            ]
+        }
+    }
+]

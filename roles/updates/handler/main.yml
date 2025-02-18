@@ -1,0 +1,4 @@
+- name: restart-docker-service
+  ansible.builtin.command:
+    cmd: "{{ item.restart }}"
+    chdir: "{{ item.dir }}"

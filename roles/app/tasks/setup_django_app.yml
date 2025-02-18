@@ -1,25 +1,23 @@
 ---
 
-- name: Record previous git info
-  ansible.builtin.shell: "git -C {{ virtualenv_path }}/src/{{ item.name }} rev-parse HEAD || true > {{ virtualenv_path }}/meta/{{ item.name }}.gitsha"
-  with_items: "{{ release_notifications }}"
-  when: collect_release_info
-  become: true
-  become_user: "{{ gunicorn_user }}"
+- name: Install build dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+  with_items:
+    - cmake
+    - pkg-config
+    - libcairo2-dev
   tags:
-    - release_tag
-    - skip_ansible_lint
-  changed_when: false
+    - djangoreq
 
 - name: Install packages required by the Django app inside virtualenv
-  ansible.builtin.pip:
-    virtualenv: "{{ virtualenv_path }}"
-    chdir: "{{ project_path }}"
-    requirements: "{{ requirements_file }}"
-    extra_args: "-U -e . --exists-action=w"
-    editable: true
-    state: latest
+  ansible.builtin.command: "uv pip sync {{ requirements_file }}"
+  environment:
+    VIRTUAL_ENV: "{{ virtualenv_path }}"
   become: true
   become_user: "{{ gunicorn_user }}"
   notify:
     - Trigger release notification
+  tags:
+    - djangoreq
+  changed_when: false

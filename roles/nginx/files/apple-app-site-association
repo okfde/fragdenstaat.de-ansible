@@ -1,1 +1,22 @@
-{"applinks":{"apps":[],"details":[{"appID":"93C29USLP6.de.okfn.fragdenstaat","paths":[]}]}}
+{
+    "applinks": {
+        "details": [
+            {
+                "appIDs": [
+                    "93C29USLP6.de.fragdenstaat.scanner"
+                ],
+                "components": [
+                    {
+                        "/": "/app/scanner/deep/*",
+                        "comment": "Matches any URL with a path that starts with /app/scanner/deep/."
+                    }
+                ]
+            }
+        ]
+    },
+    "webcredentials": {
+        "apps": [
+            "93C29USLP6.de.fragdenstaat.scanner"
+        ]
+    }
+}

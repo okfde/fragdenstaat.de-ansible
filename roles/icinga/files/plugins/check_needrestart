@@ -1,0 +1,20 @@
+#!/bin/bash
+
+type -P needrestart &>/dev/null || { echo "ERROR: needrestart is required but seems not to be installed. Aborting." >&2; exit 1; }
+
+OUTPUT=$(sudo /usr/sbin/needrestart -b 2>&1 | grep "^NEEDRESTART-SVC" | grep -v cron | grep -v libvirtd)
+LINECOUNT=$(echo "${OUTPUT}" | wc -l)
+RETURNCODE=$?
+
+if [ "${RETURNCODE}" != "0" ]; then
+	echo "CRITICAL: needrestart exited with ${RETURNCODE} \n ${OUTPUT} | processes=${LINECOUNT}";
+	exit 2
+fi
+
+if [ "${OUTPUT}" != "" ]; then
+	echo "WARNING: ${LINECOUNT} processes need to be restarted \n ${OUTPUT} | processes=${LINECOUNT}";
+	exit 1
+fi
+
+echo "OK: No processes need to be restarted | processes=${LINECOUNT}";
+exit 0

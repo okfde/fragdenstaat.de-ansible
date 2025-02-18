@@ -5,16 +5,35 @@ host_data:
   interface_name: enp5s0
   mac: c8:7f:54:70:5b:13
   global_ipv4: 144.76.157.203
-  global_ipv6: none
+  global_ipv6: 2a01:4f8:200:30f0::2
   site_ipv4: 192.168.122.1
+  vlan_ipv4: 192.168.100.10
   vpn_peer_id: 210
+  ubuntu: noble
 
 monitor_server: fds-tst.okfn.de
-prometheus: true
-grafana: true
-graylog: true
+prometheus: false
+grafana: false
+graylog: false
 prometheus_exporter:
   - node_exporter
 
 https_domains:
   - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']
+
+icinga:
+  ip_override: 192.168.100.10
+  vars:
+    - ssh_port = 2228
+    - procs_warning = 500
+    - procs_critical = 750
+    - swap_wfree = "10%"
+    - swap_cfree = "5%"
+    - disks["disk vg0-isos"] = { disk_partitions = "/dev/mapper/vg0-isos" }
+    - disks["disk vg0-s3"] = { disk_partitions = "/dev/mapper/vg0-minio_s3" }
+    - disks["disk vg1-images"] = { disk_partitions = "/dev/mapper/vg1-images" }
+    - disks["disk vg0-volumes"] = { disk_partitions = "/dev/mapper/vg0-volumes" }
+    - disks["disk vg0-opt-docker"] = { disk_partitions = "/dev/mapper/vg0-lvol0" }
+    - disks["disk vg1-docker"] = { disk_partitions = "/dev/mapper/vg1-docker" }
+    - libvirt = 1
+    - smartmon = "mixed"

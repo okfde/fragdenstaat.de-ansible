@@ -1,5 +1,9 @@
 ---
 
+- name: import db vars
+  ansible.builtin.include_vars:
+    file: ../roles/db/defaults/main.yml
+
 - name: Collect postgresql db names
   community.postgresql.postgresql_query:
     query: "SELECT datname FROM pg_database;"

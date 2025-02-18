@@ -1,0 +1,19 @@
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update-cache: true
+    cache_valid_time: 3600
+  become: true
+  retries: 3
+  delay: 10
+  when: "'updates' in ansible_run_tags"
+
+- name: Update docker container
+  ansible.builtin.command:
+    cmd: "{{ item.cmd }}"
+    chdir: "{{ item.dir }}"
+  with_items: "{{ docker_updates }}"
+  when: docker_updates is defined and 'updates' in ansible_run_tags
+  changed_when: false
+  notify: restart-docker-service

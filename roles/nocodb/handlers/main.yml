@@ -1,0 +1,11 @@
+- name: docker compose up nocodb
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ nc_dir }}"
+  changed_when: false
+
+- name: restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: true

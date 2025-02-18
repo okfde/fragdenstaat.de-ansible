@@ -89,6 +89,9 @@ smtpd_helo_restrictions =
     check_helo_access pcre:/etc/postfix/reject_helo,
     permit
 
+# mitigation for https://www.postfix.org/smtp-smuggling.html
+smtpd_data_restrictions = reject_unauth_pipelining
+
 mydomain = {{ domain_name }}
 myhostname = {{ postfix_hostname }}
 alias_maps = hash:/etc/aliases
@@ -101,10 +104,12 @@ alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
 mydestination = {{ ansible_hostname }}, localhost, localhost.localdomain
 relayhost =
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 192.168.100.0/24
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
+
+always_add_missing_headers = yes
 
 # Size limit 50 MB
 message_size_limit = 52428800
@@ -135,7 +140,7 @@ smtpd_sasl_path = private/auth
 
 # receive_override_options=no_address_mappings
 smtpd_sasl_local_domain = $myhostname
-smtpd_sender_restrictions = permit_sasl_authenticated, reject_unknown_sender_domain, check_sender_access pcre:/etc/postfix/reject_domains
+smtpd_sender_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unknown_sender_domain, check_sender_access pcre:/etc/postfix/reject_domains
 # mailbox_command = /usr/lib/dovecot/deliver -c /etc/dovecot/conf.d/01-mail-stack-delivery.conf -m "${EXTENSION}"
 
 smtp_use_tls = yes

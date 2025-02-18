@@ -1668,8 +1668,8 @@
       {
         "current": {
           "selected": false,
-          "text": "fds-es01.okfn.de",
-          "value": "fds-es01.okfn.de"
+          "text": "fds-es1.okfn.de",
+          "value": "fds-es1.okfn.de"
         },
         "datasource": {
           "type": "prometheus",

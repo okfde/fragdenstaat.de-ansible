@@ -1,0 +1,27 @@
+services:
+  nocodb:
+    depends_on:
+      root_db:
+        condition: service_healthy
+    environment:
+      NC_DB: "pg://root_db:5432?u={{ nc_db_user }}&p={{ nc_db_password }}&d={{ nc_db_name }}"
+    image: "nocodb/nocodb:latest"
+    ports:
+      - "{{ nc_local_port }}:8080"
+    restart: always
+    volumes:
+      - "{{ nc_data_volume }}:/usr/app/data"
+  root_db:
+    environment:
+      POSTGRES_DB: "{{ nc_db_user }}"
+      POSTGRES_PASSWORD: "{{ nc_db_password }}"
+      POSTGRES_USER: "{{ nc_db_user }}"
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""
+      timeout: 2s
+    image: postgres:16.6
+    restart: always
+    volumes:
+      - "{{ nc_db_data_volume }}:/var/lib/postgresql/data"

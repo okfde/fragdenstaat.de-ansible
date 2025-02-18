@@ -91,26 +91,11 @@ flowchart TB
         rabbitmq[RabbitMQ Queue]
         brookessd[(SSD storage)]
     end
-    subgraph schoch
-        schochssh[[SSH access]]
-        schochnginx[nginx frontend server]
-        schochnginx--authenticating access --> appserver
-        schochnginx-->schochhdd[(HDD storage)]
-        nfs-->schochhdd[(HDD storage)]
-    end
-    subgraph fds-es01
-        fdses01ssh[[SSH access]]
-        appserver-->elasticsearch[Elasticsearch server]
-        elasticsearch-->fdses01ssd[(SSD storage)]
-    end
-    subgraph backupstorage
-        backup[(duplicity backup)]
-    end
     subgraph brooke
         brookenginx-->appserver
         brookenginx-->brookessd
         appserver-->db
-        nfsmount-->nfs
+        nfsmount-- media files -->nfs
         appserver-->nfsmount
         appserver-->rabbitmq
         appserver-->memcached
@@ -123,47 +108,102 @@ flowchart TB
         dovecot-->brookessd
 
         appworker-->db
-        appworker-->elasticsearch
         appworker-->nfsmount
         appworker-- fetch mail -->dovecot
         appworker-- Mail Log reading -->brookessd
 
         wireguard-->brookenginx
 
-        cronbackup[Cron Backup Task]
-        brookessd-- mail storage --> cronbackup
-        brookessd-- database dumps --> cronbackup
-        nfsmount-- media files --> cronbackup
-        cronbackup --> backup
+        brooke-cronbackup[Cron Backup Task]
+        brookessd-- mail storage --> brooke-cronbackup
+        brookessd-- database dumps --> brooke-cronbackup
+        nfsmount
+
+        brooke-graylog-sidecar[[graylog sidecar]]
+        brooke-prometheus-exporter[[prometheus exporter]]
     end
+
+    subgraph schoch
+        schochssh[[SSH access]]
+        schochnginx[nginx frontend server]
+        schochnginx--authenticating access --> appserver
+        schochnginx-->schochhdd[(HDD storage)]
+        nfs<-->schochhdd[(HDD storage)]-->schoch-cronbackup[Cron Backup Task]
+        schoch-graylog-sidecar[[graylog sidecar]]
+        schoch-prometheus-exporter[[prometheus exporter]]
+    end
+
     subgraph schaar
         schaarssh[[SSH access]]
-        fdsbot[Slack fdsbot]-->brookessh
+        fdsbot[Slack fdsbot]
         schaarnginx
         db-->dbreplica[Postgres Database Replica]
+        schaar-graylog-sidecar[[graylog sidecar]]
+        schaar-prometheus-exporter[[prometheus exporter]]
+        docker-->schaar-cronbackup[Cron Backup Task]
     end
     subgraph schaar
         schaarnginx[nginx frontend server]
         subgraph docker
             schaarnginx-->weblate
-            schaarnginx-->sentry
+            schaarnginx-->fds-forum
             schaarnginx-->fds-ogimage
             schaarnginx-->metabase
         end
         metabase-- reporting schema views -->db
     end
+
+    subgraph fds-es1
+        fdses01ssh[[SSH access]]
+        elasticsearch[Elasticsearch server]<-->appworker
+        elasticsearch-->fdses01ssd[(SSD storage)]
+        fds-es1-graylog-sidecar[[graylog sidecar]]
+        fds-es1-prometheus-exporter[[prometheus exporter]]
+    end
+
     subgraph internet
-        slack([Slack])==>fdsbot
-        %% fdsdev([FDS developer])==>brookessh
-        %% fdsdev==>schaarssh
-        %% fdsdev==>schochssh
-        %% fdsdev==>fdses01ssh
+        slack([Slack])==>fdsbot-->brookessh
         user([User])== media.frag-den-staat.de ==>schochnginx
         user== fragdenstaat.de / static.frag-den-staat.de ==>brookenginx
-        user== sentry.okfn.de / ogimage.frag-den-staat.de / weblate / metabase ==>schaarnginx
+        user== ogimage.frag-den-staat.de ==>schaarnginx
         mailuser([Email])==>postfix
         fdsstaff([FDS staff])==>dovecot
         fdsstaff==>schaarnginx
         fdsstaff==>wireguard
+    end
+
+    subgraph backupstorage
+        backup[(backup storage)]
+        brooke-cronbackup-->backup
+        schoch-cronbackup-->backup
+        schaar-cronbackup-->backup
+    end
+
+    subgraph fds-tst
+        fdsstaff==>fds-tstwireguard[Wireguard VPN]-->fds-tstnginx[nginx reverse proxy]
+        fdsstaff==>fds-tstmail[SMTP proxy]
+    end
+    subgraph fds-tst
+        subgraph fds-tstvm[VMs]
+            fds-tstmail-->brooke-tst
+            fds-tstnginx-->brooke-tst
+            fds-tstnginx-->schaar-tst
+            fds-tstnginx-->schoch-tst
+            fds-tstnginx-->fds-es01-tst
+        end
+    end
+
+    subgraph fds-mon
+        fdsstaff==>fds-monwireguard-->fds-monnginx
+        fds-monwireguard[Wireguard VPN]
+        fds-monnginx[Nginx reverse proxy]
+    end
+    subgraph fds-mon
+        subgraph fds-mondocker[docker]
+            fds-monnginx-->sentry
+            fds-monnginx-->grafana
+            fds-monnginx-->graylog
+            fds-monnginx-->prometheus
+        end
     end
 ```

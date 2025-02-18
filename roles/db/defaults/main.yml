@@ -8,16 +8,20 @@ db_user_reporting: "fds_report"
 
 db_reporting_views:
   - name: donations
-    query: "SELECT id, timestamp, completed, amount, reference, donor_id, purpose, method, received_timestamp, recurring, amount_received, first_recurring, keyword, number, project FROM public.fds_donation_donation;"
+    query: "SELECT public.fds_donation_donation.id AS id, public.fds_donation_donation.timestamp AS timestamp, completed, amount, reference, donor_id, purpose, method, public.fds_donation_donation.received_timestamp AS received_timestamp, recurring, amount_received, first_recurring, keyword, number, project, public.froide_payment_payment.status AS payment_status FROM public.fds_donation_donation LEFT OUTER JOIN public.froide_payment_payment ON public.fds_donation_donation.payment_id = public.froide_payment_payment.id"
   - name: donors
-    query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor;"
+    query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor"
   - name: subscribers
-    query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id FROM public.fds_newsletter_subscriber;"
+    query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id FROM public.fds_newsletter_subscriber"
   - name: foirequests
-    query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason, public, status, visibility, law_id, is_foi, same_as_id, same_as_count, jurisdiction_id, resolution, reference, project_id, closed, campaign_id, language FROM public.foirequest_foirequest;"
+    query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason, public, status, visibility, law_id, is_foi, same_as_id, same_as_count, jurisdiction_id, resolution, reference, project_id, closed, campaign_id, language FROM public.foirequest_foirequest"
   - name: documents
-    query: "SELECT id, title, slug, description, num_pages, language, public, publicbody_id, foirequest_id, file_size, pending, properties, data, content_hash FROM public.document_document;"
+    query: "SELECT id, title, slug, description, num_pages, language, public, publicbody_id, foirequest_id, file_size, pending, properties, data, content_hash FROM public.document_document"
   - name: articles
-    query: "SELECT id, title, slug, status, creation_date, start_publication, language FROM public.fds_blog_article;"
+    query: "SELECT id, title, slug, status, creation_date, start_publication, language FROM public.fds_blog_article"
   - name: publicbodies
-    query: "SELECT id, name, other_names, slug, description, parent_id, root_id, depth, classification_id, email, fax, contact, address, request_note, source_reference, alternative_emails, extra_data, change_history, file_index, org_chart, created_at, updated_at, confirmed, wikidata_item, jurisdiction_id, geo FROM public.publicbody_publicbody;"
+    query: "SELECT id, name, other_names, slug, description, parent_id, root_id, depth, classification_id, email, fax, contact, address, request_note, source_reference, alternative_emails, extra_data, change_history, file_index, org_chart, created_at, updated_at, confirmed, wikidata_item, jurisdiction_id, geo FROM public.publicbody_publicbody"
+  - name: newsletter_feedback
+    query: "SELECT id, created, reason, comment, newsletter_id FROM public.fds_newsletter_unsubscribefeedback"
+  - name: problemreports
+    query: "SELECT id, kind, timestamp, auto_submitted, resolved, message_id, user_id, resolution_timestamp, moderator_id, escalated FROM public.problem_problemreport"

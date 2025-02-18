@@ -1,0 +1,15 @@
+---
+
+- name: Deploy a discourse instance
+  hosts: discourse
+  become: true
+  become_user: root
+  roles:
+    - role: docker
+      tags: docker
+    - role: certbot
+      tags: certbot
+    - role: nginx
+      tags: nginx
+    - role: discourse
+      tags: discourse

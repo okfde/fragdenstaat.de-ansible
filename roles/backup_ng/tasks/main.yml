@@ -38,13 +38,6 @@
   become: true
   when: ansible_distribution_version >= "22.04"
 
-- name: Add ssh-key to authorized_keys
-  ansible.builtin.shell:
-    cmd: cat /root/.ssh/id_storagebox.pub | sshpass -p {{ backup_repo[inventory_hostname]['password'] }} ssh -p{{ backup_repo[inventory_hostname]['port'] }} {{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }} -o StrictHostKeyChecking=no install-ssh-key
-  changed_when: false
-  become: true
-  when: ansible_distribution_version == "20.04"
-
 - name: Initialize borg repo
   ansible.builtin.shell:
     cmd: "BORG_PASSPHRASE={{ backup_repo[inventory_hostname].repokey }} /usr/bin/borg init ssh://{{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}:{{ backup_repo[inventory_hostname]['port'] }}/./{{ backup_repo[inventory_hostname]['path'] }}/ -e repokey --make-parent-dirs"
@@ -59,16 +52,16 @@
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ borg.prescript }}"
-  when: "(borg is defined) and ('prescript' in borg)"
+  with_items: "{{ borg.prescripts }}"
+  when: "(borg is defined) and ('prescripts' in borg)"
 
 - name: Create postscripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ borg.postscript }}"
-  when: "(borg is defined) and ('postscript' in borg)"
+  with_items: "{{ borg.postscripts }}"
+  when: "(borg is defined) and ('postscripts' in borg)"
 
 - name: Create borg backup scripts
   ansible.builtin.template:
@@ -120,16 +113,16 @@
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ restic.prescript }}"
-  when: "(restic is defined) and ('prescript' in restic)"
+  with_items: "{{ restic.prescripts }}"
+  when: "(restic is defined) and ('prescripts' in restic)"
 
 - name: Create postscripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/root/{{ item }}"
     mode: "0750"
-  with_items: "{{ restic.postscript }}"
-  when: "(restic is defined) and ('postscript' in restic)"
+  with_items: "{{ restic.postscripts }}"
+  when: "(restic is defined) and ('postscripts' in restic)"
 
 - name: Create restic backup scripts
   ansible.builtin.template:
