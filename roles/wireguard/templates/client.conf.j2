@@ -3,6 +3,14 @@
 PrivateKey = {{ private_key.stdout }}
 Address = {{ vpn_network }}{{ peer_id | int }}/32, {{ vpn_networkv6 }}{{ '%0x' % (peer_id | int) }}/128
 
+#If VPN IPs aren't reachable anymore after the VPN connection was made, try uncomment the following:
+#Table = 55999
+#FwMark = 55999
+#PostUp = ip rule add not fwmark 55999 table 55999
+#PostUp = ip rule add table main suppress_prefixlength 0
+#PreDown = ip rule del table main suppress_prefixlength 0
+#PreDown = ip rule del not fwmark 55999 table 55999
+
 {% for host in groups['vpn'] %}
 [Peer]
 PublicKey = {{ hostvars[host].host_data.wg_publickey }}
