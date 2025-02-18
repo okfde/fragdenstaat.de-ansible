@@ -16,6 +16,14 @@
   ansible.builtin.apt:
     name: needrestart
 
+- name: Configure needrestart
+  ansible.builtin.copy:
+    src: needrestart.conf
+    dest: /etc/needrestart/conf.d/fds.conf
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Update all packages to their latest version
   ansible.builtin.apt:
     name: "*"
