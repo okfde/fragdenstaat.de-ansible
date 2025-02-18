@@ -4,7 +4,7 @@
     name:
       - opendmarc
     state: present
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: mkdir /etc/opendmarc

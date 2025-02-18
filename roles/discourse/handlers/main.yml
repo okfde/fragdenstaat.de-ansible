@@ -1,0 +1,10 @@
+- name: Rebuild discourse
+  ansible.builtin.command:
+    cmd: "{{ discourse.path }}/{{ discourse_domain }}/launcher rebuild app"
+  become: true
+  changed_when: false
+
+- name: Reload nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded

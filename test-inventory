@@ -59,3 +59,15 @@ schaar-tst.okfn.de
 schoch-tst.okfn.de
 fds-es01-tst.okfn.de
 fds-tst.okfn.de
+
+[discourse]
+schaar-tst.okfn.de
+
+[sentry]
+schaar-tst.okfn.de
+
+[backup]
+[backup_ng]
+[mail_light]
+[msmtp]
+[monitor]

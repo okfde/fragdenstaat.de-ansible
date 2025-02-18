@@ -24,3 +24,12 @@
     - role: postfix_light
       tags: mail_light
       when: inventory_hostname in groups["mail_light"]
+    - role: msmtp
+      tags: msmtp
+      when: inventory_hostname in groups["msmtp"]
+    - role: fonts
+      tags: fonts
+    - role: scripts
+      tags: scripts
+    - role: updates
+      tags: updates

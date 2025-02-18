@@ -1,18 +1,11 @@
-- name: Enable Focal deb-src
+- name: Enable deb-src
   ansible.builtin.apt_repository:
-    repo: deb-src http://de.archive.ubuntu.com/ubuntu focal main restricted
+    repo: "deb-src http://de.archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} main restricted"
     state: present
-  when: ansible_distribution_version == "20.04"
-
-- name: Enable Focal deb-src
-  ansible.builtin.apt_repository:
-    repo: deb-src http://de.archive.ubuntu.com/ubuntu jammy main restricted
-    state: present
-  when: ansible_distribution_version == "22.04"
 
 - name: Install the imagemagick
   ansible.builtin.apt:
     pkg: imagemagick
     state: present
-  retries: 30
+  retries: 3
   delay: 10

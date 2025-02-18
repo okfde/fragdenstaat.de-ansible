@@ -11,7 +11,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
 
-- name: Install PostgreSQL (20.04)
+- name: Install PostgreSQL
   ansible.builtin.apt:
     pkg:
       - "postgresql-{{ pg_version }}"
@@ -24,25 +24,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
-  when: ansible_distribution_version == "20.04"
-  retries: 30
-  delay: 10
-
-- name: Install PostgreSQL (22.04)
-  ansible.builtin.apt:
-    pkg:
-      - "postgresql-{{ pg_version }}"
-      - "postgresql-contrib"
-      - "libpq-dev"
-      - "postgis"
-      - "postgresql-{{ pg_version }}-postgis-3"
-      - "postgis-doc"
-      - "python3-psycopg2"
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  tags: packages
-  when: ansible_distribution_version == "22.04"
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Ensure the PostgreSQL service is running
@@ -59,7 +41,7 @@
     state: latest
     update_cache: "{{ update_apt_cache }}"
   register: locale_exists
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Ensure locale exists
@@ -134,3 +116,9 @@
   when: inventory_hostname in groups['db']
   notify:
     - restart postgresql
+
+- name: Start postgres after network is online
+  ansible.builtin.lineinfile:
+    path: /lib/systemd/system/postgresql@.service
+    regex: "^After=network.target$"
+    line: "After=network-online.target"

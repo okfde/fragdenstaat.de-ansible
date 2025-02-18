@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sed -e "s/From: root (Cron Daemon)/From: root@{{ inventory_hostname.replace('.okfn.de','') }}/" | /usr/bin/msmtp $BASH_ARGV

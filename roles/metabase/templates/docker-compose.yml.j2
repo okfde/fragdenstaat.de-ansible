@@ -10,6 +10,11 @@ services:
       POSTGRES_DB: metabase
       POSTGRES_USER: metabase_user
       POSTGRES_PASSWORD: metabase
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://192.168.100.5:12201"
+        tag: "metabase"
 
   metabase:
     depends_on:
@@ -26,3 +31,8 @@ services:
       MB_DB_USER: metabase_user
       MB_DB_PASS: metabase
       MB_DB_HOST: postgres
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://192.168.100.5:12201"
+        tag: "metabase"

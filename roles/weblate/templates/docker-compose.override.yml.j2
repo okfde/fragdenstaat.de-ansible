@@ -22,6 +22,11 @@ x-override: &override
     WEBLATE_EMAIL_HOST_USER: {{ weblate_mail_username }}
     WEBLATE_EMAIL_HOST_PASSWORD: "{{ weblate_mail_password }}"
     SENTRY_DSN: {{ weblate_sentry_dsn }}
+  logging:
+    driver: "gelf"
+    options:
+      gelf-address: "udp://192.168.100.5:12201"
+      tag: "weblate"
 
 version: '3'
 services:

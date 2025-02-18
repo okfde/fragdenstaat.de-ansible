@@ -2,33 +2,31 @@
   ansible.builtin.apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
     state: present
-  retries: 30
+  retries: 3
   delay: 10
+  when: ansible_distribution_major_version|int <= 22
 
-- name: Add node to the sources list
-  ansible.builtin.apt_repository:
-    repo: "deb https://deb.nodesource.com/node_16.x focal main"
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  when: ansible_distribution_version == "20.04"
-
-- name: Add node to the sources list
-  ansible.builtin.apt_repository:
-    repo: "deb https://deb.nodesource.com/node_20.x jammy main"
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  when: ansible_distribution_version == "22.04"
-
-- name: Add yarn key
+- name: Add node key
   ansible.builtin.apt_key:
-    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+    url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
     state: present
+  retries: 3
+  delay: 10
+  when: ansible_distribution_major_version|int >= 24
 
-- name: Add yarn to the sources list
+- name: Add node to the sources list
   ansible.builtin.apt_repository:
-    repo: "deb https://dl.yarnpkg.com/debian/ stable main"
+    repo: "deb https://deb.nodesource.com/node_20.x {{ ansible_distribution_release }} main"
     update_cache: "{{ update_apt_cache }}"
     state: present
+  when: ansible_distribution_major_version|int <= 22
+
+- name: Add node to the sources list
+  ansible.builtin.apt_repository:
+    repo: "deb https://deb.nodesource.com/node_20.x nodistro main"
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  when: ansible_distribution_major_version|int >= 24
 
 - name: Install node
   ansible.builtin.apt:
@@ -37,17 +35,14 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
-- name: Install yarn
-  ansible.builtin.apt:
-    name: yarn
-    update_cache: "{{ update_apt_cache }}"
-    state: present
-  tags: packages
-  retries: 30
-  delay: 10
+- name: Setup pnpm
+  ansible.builtin.command: corepack enable pnpm
+  become: true
+  become_user: root
+  changed_when: false
 
 - name: Creates public directory
   ansible.builtin.file:
@@ -56,14 +51,27 @@
     owner: "{{ gunicorn_user }}"
     mode: "0755"
 
-- name: Setup yarn build script
-  ansible.builtin.template:
-    src: yarn-build.sh.j2
-    dest: "{{ virtualenv_path }}/yarn-build.sh"
-    mode: "0755"
+- name: Install frontend dependencies
+  ansible.builtin.command: pnpm install
+  args:
+    chdir: "{{ project_path }}"
+  become: true
+  become_user: "{{ gunicorn_user }}"
+  tags:
+    - deploy
+    - deploy-frontend
+  changed_when: false
 
-- name: Run yarn setup script
-  ansible.builtin.command: "{{ virtualenv_path }}/yarn-build.sh"
+- name: Build frontend bundle
+  ansible.builtin.command: pnpm run build
+  args:
+    chdir: "{{ project_path }}"
+  environment:
+    ASSET_PATH: "{{ static_asset_path }}"
+    SENTRY_URL: "{{ sentry_url }}"
+    SENTRY_ORG: "{{ sentry_org }}"
+    SENTRY_AUTH_TOKEN: "{{ sentry_auth_token }}"
+    SENTRY_PROJECT: "{{ sentry_project }}"
   become: true
   become_user: "{{ gunicorn_user }}"
   changed_when: false

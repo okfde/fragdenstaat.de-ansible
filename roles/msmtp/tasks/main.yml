@@ -1,0 +1,36 @@
+- name: Install msmtp and dependencies
+  ansible.builtin.apt:
+    pkg: "{{ item }}"
+  with_items:
+    - msmtp-mta
+    - bsd-mailx
+
+- name: Configure msmtp
+  ansible.builtin.template:
+    src: msmtprc.j2
+    dest: /etc/msmtprc
+    mode: "0644"
+
+- name: Create /etc/mail.rc
+  ansible.builtin.copy:
+    src: mail.rc
+    dest: /etc/mail.rc
+    mode: "0644"
+
+- name: Set crontabs MAILTO var
+  community.general.cronvar:
+    name: MAILTO
+    value: "{{ cron_mailto_from }}"
+    user: root
+
+- name: Create msmtp wrapper
+  ansible.builtin.template:
+    src: msmtp-pseudo-mta.sh.j2
+    dest: /usr/local/bin/msmtp-pseudo-mta.sh
+    mode: "0755"
+
+- name: Link msmtp wrapper
+  ansible.builtin.file:
+    state: link
+    src: /usr/local/bin/msmtp-pseudo-mta.sh
+    dest: /usr/sbin/sendmail

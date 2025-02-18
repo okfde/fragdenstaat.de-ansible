@@ -1,0 +1,219 @@
+#!/bin/bash
+
+export BORG_REPO="{{ light_sync.repo }}"
+export BORG_PASSPHRASE="{{ light_sync.repo_pass }}"
+
+repos=("brooke" "schoch")
+brooke_ip="192.168.122.123"
+schoch_ip="192.168.122.240"
+ssh_port="2228"
+restore_mountpoint="/mnt"
+
+borg_bin="/usr/bin/borg"
+brooke_restoredir="false"
+
+start_docker(){
+    echo "Start docker container"
+    curl 'https://raw.githubusercontent.com/postgis/docker-postgis/master/14-3.4/Dockerfile' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > Dockerfile
+    curl 'https://raw.githubusercontent.com/postgis/docker-postgis/master/14-3.4/initdb-postgis.sh' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > initdb-postgis.sh
+    curl 'https://raw.githubusercontent.com/postgis/docker-postgis/master/14-3.4/update-postgis.sh' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > update-postgis.sh
+    chmod 0755 initdb-postgis.sh
+    chmod 0755 update-postgis.sh
+    sed -i 's/"${psql\[@\]}"/psql/g' initdb-postgis.sh
+    docker build . --tag=restore-postgres
+    docker run -d --rm --name backup-light-postgres -e psql=psql -e POSTGRES_HOST_AUTH_METHOD=trust -e PGDATA=/var/lib/postgresql/data/pgdata -p 127.0.0.1:5432:5432 restore-postgres
+    echo "Wait for postgres start"
+    sleep 10
+}
+
+shutdown_docker(){
+    echo "Shutdown docker container"
+    docker stop backup-light-postgres
+    echo "Remove docker container"
+    docker rm backup-light-postgres
+}
+
+mount_backups(){
+    for repo in ${repos[@]}; do
+        echo "Mount ${repo} backup"
+        mkdir -p ${restore_mountpoint}/borg/${repo}
+        ${borg_bin} --bypass-lock mount --last 1 ${BORG_REPO}/${repo}/borg/ /mnt/borg/${repo}
+        restoredir=$(ls "/mnt/borg/${repo}")
+        echo ${restoredir}
+    done
+
+    mkdir -p ${restore_mountpoint}/backup-light/db
+    brooke_restoredir=$(ls "${restore_mountpoint}/borg/brooke")
+}
+
+get_db(){
+    echo "db backup file ${sqldate}"
+    echo "Create database"
+    createdb -h localhost -p 5432 -U postgres -O postgres fragdenstaat_de
+    echo "Import backup"
+    gunzip -k -c /mnt/borg/brooke/${brooke_restoredir}/var/www/fragdenstaat.de/backup/sqlbackup-${sqldate}.sql.gz | psql -h localhost -p 5432 -U postgres fragdenstaat_de
+
+    echo "Create light dump"
+    pg_dump -h localhost -U postgres fragdenstaat_de --schema-only > schema.sql
+    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/create_light_sql.py' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > create_light_sql.py
+    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_tables.txt' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > safe_tables.txt
+    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_fks.txt' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > safe_fks.txt
+    python3 -m pip install graphlib-backport
+    python3 create_light_sql.py generate --source_connection="-h localhost -U postgres" --target_connection="-h localhost -p 5432 -U postgres" > make_light.sh
+    bash make_light.sh
+    pg_dump -h localhost -p 5432 -U postgres fragdenstaat_de_light > backup_light.sql
+}
+
+restore_db(){
+    echo "Import db on brooke-tst"
+    echo "Stop services"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo supervisorctl stop all"
+    echo "Copy database dump"
+    scp -P ${ssh_port} ./backup_light.sql ${brooke_ip}:/tmp/
+    echo "Set access rights for dump"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo chown postgres:root /tmp/backup_light.sql"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo chmod 0640 /tmp/backup_light.sql"
+    echo "Drop old db"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo -u postgres dropdb fragdenstaat_de"
+    echo "Create new db"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo -u postgres createdb -O fragdenstaat_de fragdenstaat_de"
+    echo "Import dump"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo -u postgres psql -d fragdenstaat_de -a -f /tmp/backup_light.sql"
+    echo "Delete dump file"
+    ssh ${brooke_ip} -p ${ssh_port} "rm /tmp/backup_light.sql"
+    echo "Start services"
+    ssh ${brooke_ip} -p ${ssh_port} "sudo supervisorctl start all"
+}
+
+get_db_files(){
+    echo "Copy ${2}"
+    for i in $(echo "${1}" | psql -U postgres -h localhost -p 5432 fragdenstaat_de_light | grep "${1}/" | awk '{$1=$1};1'); do
+        dir="$(dirname "${i}")"
+        file="$(basename "${i}")"
+        mkdir -p ./media/${dir}
+        source=$(echo "${i}" | sed "s|${2}/|/mnt/borg/schoch/${schoch_restoredir}/home/storage-box/home/files/${2}/|g")
+        echo "${source} - ./media/${dir}/${file}"
+        cp "${source}" ./media/${dir}/${file}
+    done
+}
+
+get_files(){
+    echo "Get media files"
+    schoch_restoredir=$(ls "/mnt/borg/schoch")
+    mkdir ./media
+    mount /dev/vg0/media /root/light_sync/media
+    get_db_files "SELECT DISTINCT pdf_file FROM document_document" "docs"
+    get_db_files "SELECT image, image_large, image_normal, image_small FROM filingcabinet_page" "docs"
+    get_db_files "SELECT file FROM foirequest_foiattachment" "foi"
+    get_db_files "SELECT DISTINCT document FROM froide_legalaction_proposaldocument" "legalaction"
+    get_db_files "SELECT DISTINCT profile_photo FROM account_user" "profile"
+
+    echo "Get static files"
+    dirs=("campaign" "cms_page_media" "contractor" "media" "orglogo")
+    for i in ${dirs[@]}; do
+        echo "${i}"
+        mkdir -p ./media/${i}
+        rsync -rav /mnt/borg/schoch/${schoch_restoredir}/home/storage-box/home/files/${i}/* ./media/${i}/
+    done
+}
+
+restore_files(){
+    echo "Copy files to schoch-tst"
+    ssh ${schoch_ip} -p ${ssh_port} "mkdir -p /home/storage-box/home/files/"
+    rsync -rav -e "ssh -p ${ssh_port}" "./media/" "${schoch_ip}:/home/storage-box/home/files/"
+    echo "Set file owner/group"
+    ssh ${schoch_ip} -p ${ssh_port} "chown fragdenstaat_de:www-data -R /home/storage-box/home/files/"
+}
+
+cleanup(){
+    echo "Cleanup"
+
+    for repo in ${repos[@]}; do
+        echo "Unmount ${repo} backup"
+        umount /mnt/borg/${repo}
+    done
+
+    umount /root/light_sync/media
+    rm ./backup_light.sql
+}
+
+cleanup_only() {
+    shutdown_docker
+    cleanup
+    exit 0
+}
+
+usage(){
+cat << EOF
+Usage: $0
+   [ -d | --help ]          Display this help
+   [ -d | --db ]            Don't restore the database on brooke-tst (default: false)
+   [ -f | --files ]         Don't get files from backup (default: false)
+   [ -c | --copy ]          Don't copy files to brooke-tst (default: false)
+   [ -s | --date input ]    Use date input as sql backup filename (e.g. 2024-02-11, default: current date)
+   [ -u | --cleanup ]       Cleanup only (remove docker container, unmount backup, remove tempfiles)
+EOF
+exit 1
+}
+
+args=$(getopt -a -o dfcus:h --long db,files,copy,cleanup,date:,help -- "$@")
+if [[ $? -gt 0 ]]; then
+  usage
+fi
+
+eval set -- ${args}
+while :
+do
+  case $1 in
+    -d | --db)       db=false     ; shift   ;;
+    -f | --files)    files=false  ; shift   ;;
+    -h | --help)     usage        ; shift   ;;
+    -c | --copy)     copy=false   ; shift   ;;
+    -u | --cleanup)  cleanup_only ; shift   ;;
+    -s | --date)     sqldate=$2   ; shift 2 ;;
+
+    --) shift; break ;;
+    *) usage ;;
+  esac
+done
+
+if [ -z ${copy} ]; then
+    copy=true
+fi
+if [ -z ${db} ]; then
+    db=true
+fi
+if [ -z ${files} ]; then
+    files=true
+fi
+if [ -z ${sqldate} ]; then
+    sqldate=$(date -d "yesterday 00:01" +"%Y-%m-%d")
+fi
+
+if [ ${db} == "true" ] || [ ${files} == "true" ]; then
+    start_docker
+    mount_backups
+    get_db
+fi
+if [ ${db} == "true" ]; then
+    restore_db
+fi
+if [ ${files} == "true" ]; then
+    get_files
+fi
+if [ ${copy} == "true" ]; then
+    restore_files
+fi
+if [ ${db} == "true" ] || [ ${files} == "true" ]; then
+    shutdown_docker
+fi
+if [ ${db} == "true" ] || [ ${files} == "true" ] || [ ${copy} == "true" ]; then
+    cleanup
+fi
+
+if [ ${db} == "false" ] && [ ${files} == "false" ] && [ ${copy} == "false" ]; then
+    echo "Nothing to do..."
+    exit 2
+fi
+
+exit 0

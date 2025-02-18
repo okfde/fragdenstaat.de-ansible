@@ -1,0 +1,14 @@
+---
+- name: Deploy nocodb container
+  hosts: auxiliary
+  become: true
+  become_user: root
+  roles:
+    - role: docker
+      tags: docker
+    - role: nginx
+      tags: nginx
+    - role: certbot
+      tags: certbot
+    - role: nocodb
+      tags: nocodb

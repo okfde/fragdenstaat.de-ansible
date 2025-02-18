@@ -117,6 +117,7 @@ do_cleanup () {
 trap 'echo "received signal to stop"; do_cleanup interrupted; exit 1' SIGQUIT SIGTERM SIGINT # Gracefully quit on break
 
 echo "" > "${LOGFILE}"
+echo "{{ borg.locations }}" > "${LOGFILE}"
 
 curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup start","status":"OK"}'
 echo "Start Backup $(date)"
@@ -131,7 +132,7 @@ next
 
 step "Create snapshots"
 {% for s in borg.snapshots %}
-  try /sbin/lvcreate -l100%FREE -s -n {{ s.name }}-snapshot {{ s.dev }}
+  try /sbin/lvcreate -l{{ s.lvm_free|default('100%') }}FREE -s -n {{ s.name }}-snapshot {{ s.dev }}
 {% endfor %}
 next
 
@@ -177,7 +178,7 @@ step "Prune backup generations"
   try /usr/bin/borg prune --keep-daily={{ borg.keepdaily }} --show-rc
 next
 
-if (( $(date +"%u") == 1)); then
+if (( $(date +"%d") == 1)); then
   step "Backup Check (verify)"
     try /usr/bin/borg check --verify-data --show-rc
   next

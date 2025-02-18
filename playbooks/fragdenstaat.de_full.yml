@@ -11,10 +11,7 @@
       tags: base
     - role: network
       tags: network
-      when: "not 'tst.okfn.de' in inventory_hostname"
-    - role: check_mk
-      tags: check_mk
-      when: "not 'tst.okfn.de' in inventory_hostname"
+      when: "not 'tst.okfn.de' in inventory_hostname or inventory_hostname == 'fds-tst.okfn.de'"
 
 - name: Create db server
   hosts: db
@@ -33,6 +30,8 @@
   vars_files:
     - ../local_vars/local_config.yml
   roles:
+    - role: certbot
+      tags: certbot
     - role: postfix
       tags: postfix
       when: "not 'tst.okfn.de' in inventory_hostname"
@@ -71,6 +70,7 @@
   become_user: root
   vars_files:
     - ../local_vars/local_config.yml
+
   roles:
     - redis
   tags:

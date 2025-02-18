@@ -3,3 +3,4 @@
 /^simon74@outlook.com$/ REJECT
 /^markwoolstonmail@gmail.com$/ REJECT
 /@qq.com$/ REJECT
+/@checkdomain.de$/ REJECT

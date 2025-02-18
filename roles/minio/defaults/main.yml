@@ -1,0 +1,10 @@
+s3_url: "s3.frag-den-staat.de"
+s3_console_url: "s3-console.frag-den-staat.de"
+s3_port: 9000
+s3_console_port: 9001
+minio_release: "20250120144907.0.0_amd64"
+mcli_release: "20250117232550.0.0_amd64"
+minio_path: "/mnt/minio/data"
+
+# in secrets.yml
+#minio_admin_password: ""

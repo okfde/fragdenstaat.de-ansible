@@ -1,0 +1,15 @@
+[graylog]
+api_url = {{ item.graylog_api_url }}
+api_token = {{ item.graylog_api_token }}
+query_string = {{ item.graylog_query_string }}
+query_source = {{ item.graylog_query_source }}
+query_limit = {{ item.graylog_query_limit }}
+stream = {{ item.graylog_stream }}
+
+[db]
+url = {{ item.db_url }}
+commit = {{ item.db_commit | default('False') }}
+
+[logging]
+level = {{ item.loglevel | default('INFO') }}
+verbose = {{ item.verbose | default('False') }}

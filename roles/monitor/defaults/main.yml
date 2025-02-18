@@ -9,8 +9,8 @@ rsyslog: true
 
 monitor_server: fds-mon.okfn.de
 monitor_dir: /var/www/monitor
-monitor_domain: mon.fragdenstaat.de
-log_domain: log.fragdenstaat.de
+monitor_domain: mon.zerschlagdenstaat.de
+log_domain: log.zerschlagdenstaat.de
 graylog_api_url: http://192.168.100.5:9010/api/
 grafana_api_url: http://192.168.100.5:3000
 grafana_datasources:

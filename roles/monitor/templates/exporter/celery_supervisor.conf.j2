@@ -1,0 +1,8 @@
+[program:celery_exporter]
+directory=/opt/celery_exporter
+command=/opt/celery_exporter/celery_exporter --accept-content="json,pickle,application/json,application/json,application/x-python-serialize" --broker-url="amqp://{{ rabbitmq_application_user }}:{{ rabbitmq_application_password }}@localhost/{{ rabbitmq_application_vhost }}" -Q celery
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/supervisor/celery_exporter.log
+redirect_stderr=true
+user=nobody

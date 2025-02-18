@@ -1,0 +1,5 @@
+[program:minio]
+environment = MINIO_ROOT_USER="admin",MINIO_ROOT_PASSWORD="{{ minio_admin_password }}"
+stdout_logfile = /var/log/supervisor/minio.log
+stderr_logfile = /var/log/supervisor/minio.log
+command = /usr/local/bin/minio server {{ minio_path }} --console-address "127.0.0.1:{{ s3_console_port }}"

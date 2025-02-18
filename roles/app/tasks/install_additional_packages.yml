@@ -13,6 +13,7 @@
       - libpoppler-cpp-dev
       - ocrmypdf
       - optipng
+      - osmctools
       - jpegoptim
       - dirmngr
       - git
@@ -26,7 +27,7 @@
     update_cache: "{{ update_apt_cache }}"
     force: true
     state: present
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Upgrade pip
@@ -34,6 +35,15 @@
     name: pip
     state: latest
   tags: packages
+  when: ansible_distribution_major_version|int <= 22
+
+- name: Install uv
+  ansible.builtin.pip:
+    name: uv
+    break_system_packages: true
+  tags:
+    - packages
+    - skip_ansible_lint
 
 - name: Comment out ImageMagick policy entries for PDF none
   ansible.builtin.replace:
@@ -77,22 +87,15 @@
 
 - name: Add LibreOffice repository
   ansible.builtin.apt_repository:
-    repo: "ppa:libreoffice/libreoffice-6-4"
-    state: present
-  when: ansible_distribution_version == "20.04"
-
-- name: Add LibreOffice repository
-  ansible.builtin.apt_repository:
     repo: "ppa:libreoffice/ppa"
     state: present
-  when: ansible_distribution_version == "22.04"
 
 - name: Install LibreOffice
   ansible.builtin.apt:
     name: libreoffice
     state: latest
     update_cache: true
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install Tor
@@ -101,5 +104,5 @@
     state: latest
     update_cache: true
   when: onion_service_enabled
-  retries: 30
+  retries: 3
   delay: 10

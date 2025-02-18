@@ -6,7 +6,7 @@
       - wireguard
     state: present
     update_cache: true
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Enable IPv4 traffic forwarding

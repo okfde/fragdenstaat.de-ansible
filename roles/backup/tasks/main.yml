@@ -10,7 +10,7 @@
   tags:
     - packages
     - backup
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Install duplicity from pip
@@ -34,21 +34,21 @@
     mode: "0755"
   tags: backup
 
-- name: Place backup script
-  ansible.builtin.template:
-    src: backup.sh.j2
-    dest: /usr/local/bin/backup.sh
-    mode: "0600"
-  tags: backup
+# - name: Place backup script
+#  ansible.builtin.template:
+#    src: backup.sh.j2
+#    dest: /usr/local/bin/backup.sh
+#    mode: "0600"
+#  tags: backup
 
-- name: Setup cron script
-  ansible.builtin.cron:
-    name: "Run backup script"
-    minute: "0"
-    hour: "5"
-    job: "sh /usr/local/bin/backup.sh"
-  when: "not 'tst.okfn.de' in inventory_hostname"
-  tags: backup
+# - name: Setup cron script
+#  ansible.builtin.cron:
+#    name: "Run backup script"
+#    minute: "0"
+#    hour: "5"
+#    job: "sh /usr/local/bin/backup.sh"
+#  when: "not 'tst.okfn.de' in inventory_hostname"
+#  tags: backup
 
 - name: set mailto env in cron
   ansible.builtin.cron:

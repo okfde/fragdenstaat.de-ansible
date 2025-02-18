@@ -1,0 +1,65 @@
+server {
+    listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
+    server_name         {{ icingaweb2_host }};
+
+    ssl_certificate     /etc/letsencrypt/live/{{ icingaweb2_host }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ icingaweb2_host }}/privkey.pem;
+
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/letsencrypt/live/{{ icingaweb2_host }}/fullchain.pem;
+
+    ssl_dhparam          /etc/ssl/certs/dhparams.pem;
+
+    location ~ ^/icingaweb2/index\.php(.*)$ {
+      fastcgi_pass unix:/run/php/php{{ icingaweb2_php_version }}-fpm.sock;
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME /usr/share/icingaweb2/public/index.php;
+      fastcgi_param ICINGAWEB_CONFIGDIR /etc/icingaweb2;
+      fastcgi_param REMOTE_USER $remote_user;
+    }
+
+    location ~ ^/icingaweb2(.+)? {
+      alias /usr/share/icingaweb2/public;
+      index index.php;
+      try_files $1 $uri $uri/ /icingaweb2/index.php$is_args$args;
+    }
+    location /api/v1/status {
+	    proxy_pass https://localhost:5665/v1/status;
+	    limit_except GET { deny all; }
+    }
+    location /api/v1/objects/services {
+	    proxy_pass https://localhost:5665/v1/objects/services;
+	    limit_except GET { deny all; }
+    }
+    location /api/v1/objects/hosts {
+	    proxy_pass https://localhost:5665/v1/objects/hosts;
+	    limit_except GET { deny all; }
+    }
+    location /api/v1/objects/downtimes {
+	    proxy_pass https://localhost:5665/v1/objects/downtimes;
+	    limit_except GET POST { deny all; }
+    }
+    location /api/v1/actions/acknowledge-problem {
+	    proxy_pass https://localhost:5665/v1/actions/acknowledge-problem;
+	    limit_except GET POST { deny all; }
+    }
+    location /api/v1/actions/reschedule-check {
+	    proxy_pass https://localhost:5665/v1/actions/reschedule-check;
+	    limit_except GET POST { deny all; }
+    }
+    location /api/v1/actions/schedule-downtime {
+	    proxy_pass https://localhost:5665/v1/actions/schedule-downtime;
+	    limit_except GET POST { deny all; }
+    }
+}
