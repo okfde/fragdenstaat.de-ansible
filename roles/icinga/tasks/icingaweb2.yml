@@ -1,0 +1,163 @@
+- name: Install icingaweb2
+  ansible.builtin.apt:
+    name: icingaweb2
+
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+
+- name: Install php-fpm
+  ansible.builtin.apt:
+    name: php{{ icingaweb2_php_version }}-fpm
+
+- name: Install mariadb
+  ansible.builtin.apt:
+    name: mariadb-server
+
+- name: Create icingaweb2 database
+  community.mysql.mysql_db:
+    name: icingaweb2
+    state: present
+  tags:
+    - skip_ansible_lint
+
+- name: Create database user
+  community.mysql.mysql_user:
+    name: "{{ icingaweb2_db_user }}"
+    password: "{{ icingaweb2_db_pass }}"
+    priv: 'icingaweb2.*:ALL,GRANT'
+    state: present
+  tags:
+    - skip_ansible_lint
+
+- name: Check for icingaweb mysql db schema
+  ansible.builtin.command:
+    cmd: mysql {{ icingaweb2_db }} -Ns -e "select * from icingaweb_user"
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: _icingaweb2_db_schema
+
+- name: Import icingaweb2 mysql db schema
+  ansible.builtin.shell:
+    cmd: mysql {{ icingaweb2_db }} < /usr/share/icingaweb2/schema/mysql.schema.sql
+  when: _icingaweb2_db_schema.rc != 0
+  run_once: true
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Check for icingaweb user
+  ansible.builtin.command:
+    cmd: mysql {{ icingaweb2_db }} -Ns -e "select name from icingaweb_user where name like '{{ icingaweb2_user }}'"
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: _icingaweb2_db_user
+
+- name: Ensure admin user exists
+  ansible.builtin.shell:
+    cmd: set -e pipefail; echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ icingaweb2_user }}', 1, '"`php -r 'echo password_hash("{{ icingaweb2_pass }}", PASSWORD_DEFAULT);'`"')" |  mysql -Ns {{ icingaweb2_db }}
+  when: _icingaweb2_db_user.stdout_lines | length <= 0
+  run_once: true
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Configure icingaweb2
+  ansible.builtin.copy:
+    src: icingaweb2/config.ini
+    dest: /etc/icingaweb2/config.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Configure authentication
+  ansible.builtin.copy:
+    src: icingaweb2/authentication.ini
+    dest: /etc/icingaweb2/authentication.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Configure groups
+  ansible.builtin.copy:
+    src: icingaweb2/groups.ini
+    dest: /etc/icingaweb2/groups.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Fetch ido db password
+  ansible.builtin.shell:
+    cmd: cat /etc/icinga2/features-enabled/ido-mysql.conf | grep password | awk -F'"' '{print $2}'
+  register: icinga2_ido_db_pass
+  changed_when: false
+
+- name: Configure resources
+  ansible.builtin.template:
+    src: icingaweb2/resources.ini.j2
+    dest: /etc/icingaweb2/resources.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+  when: "'stdout' in icinga2_ido_db_pass"
+
+- name: Configure roles
+  ansible.builtin.template:
+    src: icingaweb2/roles.ini.j2
+    dest: /etc/icingaweb2/roles.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Create monitoring config dirs
+  ansible.builtin.file:
+    state: directory
+    recurse: true
+    dest: /etc/icingaweb2/modules/monitoring/
+    mode: "0755"
+    owner: root
+    group: icingaweb2
+
+- name: Configure backends
+  ansible.builtin.copy:
+    src: icingaweb2/modules/monitoring/backends.ini
+    dest: /etc/icingaweb2/modules/monitoring/backends.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Configure commandtransport
+  ansible.builtin.copy:
+    src: icingaweb2/modules/monitoring/commandtransports.ini
+    dest: /etc/icingaweb2/modules/monitoring/commandtransports.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Configure icingaweb
+  ansible.builtin.copy:
+    src: icingaweb2/config.ini
+    dest: /etc/icingaweb2/config.ini
+    mode: "0660"
+    owner: www-data
+    group: icingaweb2
+
+- name: Configure php-fpm
+  community.general.ini_file:
+    path: "/etc/php/{{ icingaweb2_php_version }}/fpm/pool.d/www.conf"
+    section: www
+    option: "php_flag[display_errors]"
+    value: "off"
+    mode: "0644"
+  notify: reload php-fpm
+
+- name: Configure nginx
+  ansible.builtin.template:
+    src: icingaweb2/nginx.conf.j2
+    dest: "/etc/nginx/sites-enabled/icingaweb2.conf"
+    mode: "0660"
+    owner: root
+    group: root
+  notify: reload nginx

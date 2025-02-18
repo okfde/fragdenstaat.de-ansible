@@ -42,6 +42,7 @@
     name: systemd-resolved
     enabled: true
     state: started
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: replace /etc/resolv.conf with a symlink to the systemd-resolved stub
   become: true
@@ -50,6 +51,7 @@
     src: /run/systemd/resolve/stub-resolv.conf
     state: link
     force: true
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Add host name to hosts file
   ansible.builtin.lineinfile:
@@ -57,6 +59,7 @@
     regex: "\\s+{{ item }}$"
     line: "{{ hostvars[groups[item][0]].host_data.site_ipv4 }} {{ item }}"
     state: present
+  when: "not 'tst.okfn.de' in inventory_hostname"
   loop:
     - db
     - mail

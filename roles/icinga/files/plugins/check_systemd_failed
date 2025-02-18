@@ -1,0 +1,11 @@
+#!/bin/bash
+
+result=$(systemctl list-units --state=failed | grep "loaded units listed" | awk '{print $1}')
+
+if (( "${result}" == "0" )); then
+    echo "All units OK"
+    exit 0
+else
+    echo "${result} units in failed state"
+    exit 2
+fi

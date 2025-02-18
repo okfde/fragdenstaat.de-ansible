@@ -1,0 +1,35 @@
+{% for host in groups['icinga'] %}
+{% if 'icinga' in hostvars[host] %}
+object Host "{{ host }}" {
+  import "generic-host"
+
+  vars.notification.mail.groups = [ "icingaadmins" ]
+  vars.notification.slack.users = [ "icingaadmin" ]
+
+{% if 'vars' in hostvars[host].icinga %}
+{% for var in hostvars[host].icinga.vars %}
+  vars.{{ var }}
+{% endfor %}
+{% endif %}
+
+{% if 'https_domains' in hostvars[host] %}
+{% for items in hostvars[host].https_domains %}
+{% for domain in items %}
+{% if not domain.startswith('*') %}
+  vars.ssl_cert["ssl_cert {{ domain }}"] = {
+    address = "{{ domain }}"
+  }
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+  vars.disks["disk /"] = { disk_partitions = "/" }
+  vars.disks["disk /boot"] = { disk_partitions = "/boot" }
+  vars.os = "{{ hostvars[host].icinga.os | default('Linux') }}"
+  vars.agent_endpoint = name
+
+  address = "{{ hostvars[host].icinga.ip_override | default(hostvars[host].host_data.site_ipv4) }}"
+}
+{% endif %}
+{% endfor %}

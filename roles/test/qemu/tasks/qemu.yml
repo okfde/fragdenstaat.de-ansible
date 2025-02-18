@@ -25,6 +25,12 @@
     dest: /opt/qemu/templates/network_default.xml
     mode: "0600"
 
+- name: Create authorized_keys template
+  ansible.builtin.template:
+    src: authorized_keys.j2
+    dest: /opt/qemu/templates/id_fds.pub
+    mode: "0600"
+
 - name: Apply network configuration (Host)
   community.libvirt.virt_net:
     command: define

@@ -1,0 +1,15 @@
+---
+
+- name: Icinga
+  hosts: icinga
+  become: true
+  become_user: root
+  vars_files:
+    - ../local_vars/local_config.yml
+
+  roles:
+    - role: certbot
+      tags: certbot
+      when: https_domains is defined
+    - role: icinga
+      tags: icinga

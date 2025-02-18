@@ -2,14 +2,18 @@
   <name>{{ item.name }}</name>
   <memory unit='MiB'>{{ item.ram }}</memory>
   <vcpu placement='static'>{{ item.vcpus }}</vcpu>
-  <os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <os firmware="efi">
     <type arch='x86_64' machine='pc-q35-6.2'>hvm</type>
     <boot dev='hd'/>
   </os>
   <devices>
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='raw' discard='unmap'/>
+      <driver name='qemu' type='qcow2' discard='unmap'/>
       <source file='/var/lib/libvirt/images/{{ item.name }}.qcow2'/>
       <target dev='vda' bus='virtio'/>
     </disk>

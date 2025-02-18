@@ -1,0 +1,28 @@
+---
+host_data:
+  region: falkenstein1
+  datacenter: fsn1-dc11
+  interface_name: enp6s0
+  mac: 9c:6b:00:26:53:74
+  global_ipv4: 148.251.51.49
+  global_ipv6: 2a01:4f8:202:113b::2
+  site_ipv4: 192.168.100.13
+  disk_type: ssd
+  ubuntu: noble
+
+create_swap_file: false
+elasticsearch_heapsize: 22g
+
+prometheus_exporter:
+  - node_exporter
+
+icinga:
+  vars:
+    - ssh_port = 2228
+    - procs_warning = 750
+    - procs_critical = 1000
+    - swap_wfree = "10%"
+    - swap_cfree = "5%"
+    - elasticsearch = 1
+    - smartmon = "nvme"
+    - temp = 0

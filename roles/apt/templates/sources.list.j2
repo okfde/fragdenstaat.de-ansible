@@ -1,0 +1,15 @@
+{% if "ubuntu" in host_data %}
+{% set distname = host_data.ubuntu %}
+{% else %}
+{% set distname = "jammy" %}
+{% endif %}
+# Base
+deb http://mirror.hetzner.com/ubuntu/packages {{ distname }} main restricted universe multiverse
+deb http://mirror.hetzner.com/ubuntu/packages {{ distname }}-updates main restricted universe multiverse
+deb http://mirror.hetzner.com/ubuntu/packages {{ distname }}-security main restricted universe multiverse
+deb http://mirror.hetzner.com/ubuntu/packages {{ distname }}-backports main restricted universe multiverse
+
+# src repos
+# deb-src http://archive.ubuntu.com/ubuntu/ {{ distname }} main restricted universe multiverse
+# deb-src http://archive.ubuntu.com/ubuntu/ {{ distname }}-updates main restricted universe multiverse
+# deb-src http://security.ubuntu.com/ubuntu/ {{ distname }}-security main restricted universe multiverse

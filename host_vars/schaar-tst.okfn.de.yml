@@ -7,6 +7,7 @@ host_data:
   global_ipv4: 192.168.122.178
   global_ipv6: none
   site_ipv4: 192.168.122.178
+  ubuntu: noble
 
 https_domains:
   - ["sentry.test.zerschlagdenstaat.de"]
@@ -21,3 +22,4 @@ prometheus_exporter:
 
 ogimage_domain: ogimage.test.zerschlagdenstaat.de
 discourse_domain: forum.test.zerschlagdenstaat.de
+weblate_domain: weblate.test.zerschlagdenstaat.de

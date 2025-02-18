@@ -1,0 +1,25 @@
+object User "icingaadmin" {
+  import "generic-user"
+
+  display_name = "Icinga 2 Admin"
+  groups = [ "icingaadmins" ]
+
+  email = "{{ icingaadmin_email }}"
+}
+
+object UserGroup "icingaadmins" {
+  display_name = "Icinga 2 Admin Group"
+}
+
+{% for user in icingausers %}
+object User "{{ user }}" {
+  import "generic-user"
+
+  display_name = "{{ user }}"
+  groups = [ "icingaadmins" ]
+
+  email = "{{ icingausers[user].email }}"
+  vars.pushover_user_key = "{{ icingausers[user].pushover_user_key }}"
+  vars.pushover_api_token = "{{ icingausers[user].pushover_api_token }}"
+}
+{% endfor %}

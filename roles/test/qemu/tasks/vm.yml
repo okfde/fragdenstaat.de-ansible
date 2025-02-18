@@ -40,7 +40,7 @@
         --selinux-relabel --network \
         --copy-in "/opt/qemu/templates/50-cloud-init.yaml:/etc/netplan/" \
         --ssh-inject root:file:/opt/qemu/templates/id_fds.pub \
-        --firstboot-command "chmod 600 /etc/netplan/50-cloud-init.yaml;netplan apply"
+        --firstboot-command "chmod 600 /etc/netplan/50-cloud-init.yaml;netplan apply;ssh-keygen -A"
   when: "not vmdisk.stat.exists"
   changed_when: false
   ignore_errors: "{{ ansible_check_mode }}"
@@ -56,3 +56,8 @@
     xml: "{{ lookup('template', 'vm-template.xml.j2') }}"
     autostart: true
   when: "('list_vms' in all_vms) and (item.name not in all_vms.list_vms)"
+
+- name: Start VM
+  community.libvirt.virt:
+    name: "{{ item.name }}"
+    state: running

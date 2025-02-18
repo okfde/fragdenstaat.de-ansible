@@ -1,0 +1,17 @@
+[icingaweb_db]
+type = "db"
+db = "mysql"
+host = "localhost"
+dbname = "{{ icingaweb2_db }}"
+username = "{{ icingaweb2_db_user }}"
+password = "{{ icingaweb2_db_pass }}"
+use_ssl = "0"
+
+[icinga_ido]
+type = "db"
+db = "mysql"
+host = "localhost"
+dbname = "icinga2"
+username = "icinga2"
+password = "{{ icinga2_ido_db_pass.stdout }}"
+use_ssl = "0"

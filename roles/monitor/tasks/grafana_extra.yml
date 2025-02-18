@@ -18,33 +18,33 @@
   tags: grafana
   changed_when: false
 
-- name: Copy dashboards
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "/tmp/{{ item | basename }}"
-    mode: "0644"
-  changed_when: false
-  with_fileglob: "files/dashboards/*.json"
-  tags: grafana
+# - name: Copy dashboards
+#  ansible.builtin.copy:
+#    src: "{{ item }}"
+#    dest: "/tmp/{{ item | basename }}"
+#    mode: "0644"
+#  changed_when: false
+#  with_fileglob: "files/dashboards/*.json"
+#  tags: grafana
 
-- name: Import dashboards
-  community.grafana.grafana_dashboard:
-    grafana_url: "{{ grafana_api_url }}"
-    grafana_user: "{{ grafana_admin_user }}"
-    grafana_password: "{{ grafana_admin_password }}"
-    state: present
-    overwrite: false
-    commit_message: Updated by ansible
-    path: "/tmp/{{ item | basename }}"
-    folder: "{{ item.split('_')[0] | basename | default(omit) }}"
-  with_fileglob: "files/dashboards/*.json"
-  tags: grafana
-  failed_when: false
+# - name: Import dashboards
+#  community.grafana.grafana_dashboard:
+#    grafana_url: "{{ grafana_api_url }}"
+#    grafana_user: "{{ grafana_admin_user }}"
+#    grafana_password: "{{ grafana_admin_password }}"
+#    state: present
+#    overwrite: false
+#    commit_message: Updated by ansible
+#    path: "/tmp/{{ item | basename }}"
+#    folder: "{{ item.split('_')[0] | basename | default(omit) }}"
+#  with_fileglob: "files/dashboards/*.json"
+#  tags: grafana
+#  failed_when: false
 
-- name: Remove dashboards tempfiles
-  ansible.builtin.file:
-    path: "tmp/{{ item | basename }}"
-    state: absent
-  changed_when: false
-  with_fileglob: "files/dashboards/*.json"
-  tags: grafana
+# - name: Remove dashboards tempfiles
+#  ansible.builtin.file:
+#    path: "tmp/{{ item | basename }}"
+#    state: absent
+#  changed_when: false
+#  with_fileglob: "files/dashboards/*.json"
+#  tags: grafana

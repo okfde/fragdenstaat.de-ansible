@@ -1,5 +1,4 @@
 ---
-
 git_repo: https://github.com/okfde/fragdenstaat_de.git
 
 ssh_port: "22"
@@ -15,10 +14,10 @@ network_vlan:
   id: 4000
 
 # Declare the VPN subnet
-vpn_network: '10.9.0.'
-vpn_network_subnet: '10.9.0.0/24'
-vpn_networkv6: 'fc00::'
-vpn_networkv6_subnet: 'fc00::0/120'
+vpn_network: "10.9.0."
+vpn_network_subnet: "10.9.0.0/24"
+vpn_networkv6: "fc00::"
+vpn_networkv6_subnet: "fc00::0/120"
 
 maintenance: false
 maintenance_media: false
@@ -135,27 +134,6 @@ frontex_captcha_model_path: "/var/www/fragdenstaat.de/data/model.pth"
 #     auth: false
 
 release_repo: okfde/fragdenstaat_de
-release_notifications:
-  - name: django-filingcabinet
-    repo: okfde/django-filingcabinet
-  - name: froide
-    repo: okfde/froide
-  - name: froide-campaign
-    repo: okfde/froide-campaign
-  - name: froide-crowdfunding
-    repo: okfde/froide-crowdfunding
-  - name: froide-govplan
-    repo: okfde/froide-govplan
-  - name: froide-exam
-    repo: okfde/froide-exam
-  - name: froide-fax
-    repo: okfde/froide-fax
-  - name: froide-food
-    repo: okfde/froide-food
-  - name: froide-legalaction
-    repo: okfde/froide-legalaction
-  - name: froide-payment
-    repo: okfde/froide-payment
 
 celery_workers:
   - name: celery
@@ -197,7 +175,7 @@ rabbitmq_node: "rabbit@localhost"
 # This needs tessdata/ for tesseract >= 4 starting Ubuntu 18.04
 tesseract_data_path: /usr/share/tesseract-ocr/4.00/tessdata/
 
-dovecot_passwdfile_scheme: 'sha512-crypt'
+dovecot_passwdfile_scheme: "sha512-crypt"
 
 ## in secrets.yml
 # email_accounts:
@@ -276,7 +254,6 @@ nginx_private_media_prefix:
   - url: "/files/export/"
   - url: "/smedia"
 
-
 redirect_domains:
   - from: "blog.fragdenstaat.de"
     domain: "fragdenstaat.de/blog"
@@ -337,9 +314,12 @@ simple_files:
     filename: security.txt
   - path: "/.well-known/apple-app-site-association"
     filename: apple-app-site-association
-    mimetype: 'application/pkcs7-mime'
+    mimetype: "application/json"
   - path: "/.well-known/apple-developer-merchantid-domain-association"
     filename: apple-developer-merchantid-domain-association.dms
+  - path: "/.well-known/assetlinks.json"
+    filename: assetlinks.json
+    mimetype: "application/json"
   - path: "/BingSiteAuth.xml"
     filename: BingSiteAuth.xml
   - filename: mta-sts.txt
@@ -406,7 +386,6 @@ priviliged_media_content_security_policy:
   - "frame-ancestors *"
   - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
-
 nginx_extra_domains:
   - domain: mta-sts.fragdenstaat.de
     files:
@@ -451,9 +430,13 @@ geoip_account_id: 0
 geoip_license_key: ""
 suspicious_asn_list: ""
 
-# use base64 encoded JSON
 fds_legal_backup_credentials: ""
-fds_legal_backup_folder_id: ""
+fds_legal_backup_url: ""
 
 donation_backup_url: ""
 donation_backup_credentials: ""
+
+paperless_api_url: ""
+paperless_api_token: ""
+
+froide_evidencecollection_gsheet_import_config: ""

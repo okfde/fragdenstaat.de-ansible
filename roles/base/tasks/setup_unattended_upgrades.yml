@@ -5,7 +5,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
     pkg: unattended-upgrades
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Set up unattended upgrades
@@ -13,6 +13,13 @@
     src: ./files/apt_periodic
     dest: /etc/apt/apt.conf.d/10periodic
     mode: "0644"
+
+- name: Adjust execution time
+  ansible.builtin.template:
+    src: unattended.timer.j2
+    dest: /etc/systemd/system/apt-daily-upgrade.timer
+    mode: "0644"
+  notify: "reload systemd"
 
 - name: Automatically remove unused dependencies
   ansible.builtin.lineinfile:

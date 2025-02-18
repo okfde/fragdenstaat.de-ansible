@@ -23,7 +23,7 @@ fds-mon.okfn.de
 [msmtp]
 schaar.okfn.de
 schoch.okfn.de
-fds-es01.okfn.de
+fds-es1.okfn.de
 
 [queue]
 brooke.okfn.de
@@ -32,7 +32,7 @@ brooke.okfn.de
 brooke.okfn.de
 
 [search]
-fds-es01.okfn.de
+fds-es1.okfn.de
 
 [broker]
 brooke.okfn.de
@@ -46,7 +46,7 @@ schoch.okfn.de
 [vpn]
 brooke.okfn.de
 schaar.okfn.de
-fds-mon.okfn.de
+schoch.okfn.de
 
 [auxiliary]
 schaar.okfn.de
@@ -71,3 +71,11 @@ schaar.okfn.de
 
 [sentry]
 fds-mon.okfn.de
+
+[icinga]
+fds-mon.okfn.de
+fds-tst.okfn.de
+schoch.okfn.de
+schaar.okfn.de
+brooke.okfn.de
+fds-es1.okfn.de

@@ -10,13 +10,13 @@
   roles:
     - role: base
       tags: base
-    - role: check_mk
-      tags: checkmk
     - role: test/qemu
       tags: qemu
     - role: test/nginx
       tags: nginxtest
     - role: certbot
       tags: certbot
-    - role: test/minio
+    - role: minio
       tags: minio
+    - role: test/light_sync
+      tags: lightsync

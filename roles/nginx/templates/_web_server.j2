@@ -35,10 +35,13 @@ client_max_body_size 50M;
 access_log {{ nginx_access_log_file }};
 error_log {{ nginx_error_log_file }};
 
+if ($badagent) {
+    return 403;
+}
 
 {% if temp_redirect_paths is defined %}
     {% for redirect_path in temp_redirect_paths %}
-        location ~ {{ redirect_path.from }}([^\s]*)$ {
+        location ~* {{ redirect_path.from }}([^\s]*)$ {
           {{ add_web_headers() }}
           return 302 {{ redirect_path.path }}$1$is_args$args;
         }
@@ -99,7 +102,9 @@ location /static/ {
 
 {% for url_realm in protected_urls %}
     location {{ url_realm.url }} {
-        {{ basic_auth(url_realm.realm) }}
+        {% if url_realm.realm is defined %}
+            {{ basic_auth(url_realm.realm) }}
+        {% endif %}
         {% if url_realm.only_ip is defined %}
             {% for ip in url_realm.only_ip %}
             allow {{ ip }};
@@ -140,11 +145,15 @@ location /ws/ {
 {% for path in nginx_cache_urls %}
 location = {{ path }} {
     proxy_cache fds_cache;
+    proxy_cache_key $scheme$proxy_host$uri;
     proxy_cache_bypass $cookie_sessionid $cookie_csrftoken;
     proxy_no_cache $cookie_sessionid $cookie_csrftoken;
     proxy_cache_valid 10m;
     proxy_ignore_headers Expires;
     proxy_ignore_headers "Cache-Control";
+    proxy_ignore_headers "Set-Cookie";
+    proxy_cache_use_stale updating;
+    proxy_cache_lock on;
 
     add_header X-Proxy-Cache $upstream_cache_status;
 
@@ -161,6 +170,20 @@ location / {
     {{ cors(static_server_url, repeat_headers=default_headers) }}
 
     {{ proxy_wsgi_upstream() }}
+}
+
+# temporary workaround for huge .zip download issue
+location ~* /dokumente/sammlung/[^/]*/zip/ {
+    {% set default_headers = add_web_headers() %}
+    {{ default_headers }}
+    {{ cors(static_server_url, repeat_headers=default_headers) }}
+    {{ proxy_asgi_upstream() }}
+}
+location ~* /en/documents/collection/[^/]*/zip/ {
+    {% set default_headers = add_web_headers() %}
+    {{ default_headers }}
+    {{ cors(static_server_url, repeat_headers=default_headers) }}
+    {{ proxy_asgi_upstream() }}
 }
 
 # Error pages

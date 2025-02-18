@@ -1,0 +1,12 @@
+---
+
+- name: Provision db servers
+  hosts:
+    - db
+    - dbreplica
+  become: true
+  roles:
+    # - base
+    # - network
+    # - check_mk
+    - db

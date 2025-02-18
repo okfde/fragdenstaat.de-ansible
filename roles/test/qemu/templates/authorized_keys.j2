@@ -1,0 +1,8 @@
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDGZvbUrHuYJfhDeDNqJ/Aa+OnNPEyLyawZowLLpbIkDINyGk1sIEMd8HuWZ+fZX0BNUC06bIgQbQ1wTlGtuaru+qsxa2KEuueFGpxFL+aauhbchWeApE20PEecnK7sxZ71g8VbTF8orDl1jCdAdnWlBn3BfA1Pe4jOUtRulT6n4mDdJUglfXbPH29jbWaAEsE3uOGpgR2e9UwoqbTLBYoqhbGeMsHiE1Li4Y3/O0tGxIImmPI4deK5e3fnXcL5/4d9u5wxD1G9D955atrnmSgeEABYrxSDVQNEGcvbY0MtxexWTkVILtNMAYusvt3hVyBVPw9hWULAxJgQd+oL0mD/gnYQut4Tf9GSXb5AO0EXoWshfI8iLmQjTicOM3WN+93Y78PS4ITDNTS2LKRAH1oYo0XlYxHBvU04FraAAIvL9fxE5h4ug1M2POcM54Uj9zYLBpTedEbb51GOqzx6Rzh7azKc11nF5JJ0Lq7xQzR1OQsdvCjD+aXtWgqWOh0GEg0= root@fds-tst.okfn.de
+{% for user in ssh_users %}
+{% if 'ssh_public_keys' in user %}
+{% for key in user.ssh_public_keys %}
+{{ key }}
+{% endfor %}
+{% endif %}
+{% endfor %}

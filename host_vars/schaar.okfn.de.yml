@@ -10,6 +10,7 @@ host_data:
   disk_type: hdd
   wg_publickey: "n77Y3S6AkvoTUztuSlr8H9UzkkDs2RzhrhQaHJUPLVY="
   vpn_peer_id: 201
+  ubuntu: noble
 
 prometheus_exporter:
   - node_exporter
@@ -17,3 +18,18 @@ prometheus_exporter:
 borg:
   locations: /var/www/ /opt/discourse_docker/shared/standalone/backups/default/
   keepdaily: 7
+
+icinga:
+  vars:
+    - ssh_port = 2228
+    - backup = "borg"
+    - procs_warning = 400
+    - procs_critical = 500
+    - node_exporter = 1
+    - docker = 1
+    - ogimage_port = 3000
+    - metabase_port = 8042
+    - weblate_port = 8020
+    - discourse_port = 8035
+    - roundcube_port = 9800
+    - smartmon = "sd"

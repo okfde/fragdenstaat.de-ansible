@@ -32,7 +32,7 @@
     - deploy-web
     - deploy-backend
 
-- name: "Reassign all object in database bar owned by db_user to django_migrations"
+- name: "Reassign all object in database owned by db_user to django_migrations"
   community.postgresql.postgresql_owner:
     db: "{{ db_name }}"
     new_owner: django_migrations
@@ -57,15 +57,61 @@
     - deploy-backend
   become: true
   become_user: "{{ gunicorn_user }}"
+  notify:
+    - restart celery workers
+    - set db access rights
+  changed_when: true
+  when: true
   ignore_errors: true
 
+- name: "Set db_user privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    grant_option: true
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
+- name: "Set db_user schema privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: public
+    privs: ALL
+    grant_option: true
+    type: schema
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
+- name: "Set db_user sequence privs"
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    role: "{{ db_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: USAGE
+    grant_option: true
+    type: sequence
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
 - name: Run Django compilemessages
-  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de"
+  ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
   args:
-    chdir: "{{ item }}"
-  with_items:
-    - "{{ virtualenv_path }}/src"
-    - "{{ project_path }}"
+    chdir: "{{ virtualenv_path }}"
   environment: "{{ django_environment }}"
   register: compile_result
   changed_when: "'processing file' in compile_result.stdout"
@@ -92,3 +138,13 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+
+- name: Set site domain
+  community.general.postgresql_query:
+    db: "fragdenstaat_de"
+    query: "UPDATE django_site SET domain = '{{ domain_name }}' WHERE id = 1 AND name = 'FragDenStaat';"
+  become_user: postgres
+  become: true
+  changed_when: false
+  tags:
+    - setsitedomain

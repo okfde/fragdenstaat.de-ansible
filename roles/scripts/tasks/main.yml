@@ -1,0 +1,59 @@
+- name: Copy scripts
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}/{{ item.src }}"
+    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+  when: scripts is defined and not 'venv' in item
+  with_items: "{{ scripts }}"
+
+- name: Create directory for virtualenv
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ item.dest }}/{{ item.src }}"
+    mode: "{{ item.dirmode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+  when: scripts is defined and 'venv' in item
+  with_items: "{{ scripts }}"
+
+- name: Copy scripts (virtualenv)
+  ansible.builtin.copy:
+    src: "{{ item.src }}/"
+    dest: "{{ item.dest }}/{{ item.src }}/"
+    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+  when: scripts is defined and 'venv' in item
+  with_items: "{{ scripts }}"
+
+- name: Create venv for script
+  ansible.builtin.pip:
+    requirements: "{{ item.dest }}/{{ item.src }}/requirements.txt"
+    virtualenv: "{{ item.dest }}/{{ item.src }}/"
+  when: scripts is defined and 'venv' in item
+  with_items: "{{ scripts }}"
+
+- name: Create cronjob for script
+  ansible.builtin.cron:
+    name: "{{ item.src }}"
+    minute: "{{ item.cron.minute | default('*') }}"
+    hour: "{{ item.cron.hour | default('*') }}"
+    day: "{{ item.cron.day | default('*') }}"
+    month: "{{ item.cron.month | default('*') }}"
+    dow: "{{ item.cron.dow | default('*') }}"
+    job: "{{ item.cron.job }}"
+    user: "{{ item.cron.user | default('root') }}"
+  when: scripts is defined and 'cron' in item
+  with_items: "{{ scripts }}"
+
+- name: Create configfile for script
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('0640') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+  when: scripts_config is defined and item.target == inventory_hostname
+  with_items: "{{ scripts_config }}"

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ ! -f /var/log/borg.log ]; then
+    echo "UNKNOWN - Backup Logfile does not exists"
+    exit 3
+fi
+
+lastrun=$(cat /var/log/borg.log | grep "Start Backup" | awk '{ print $3 $4 $5 $9 }')
+today=$(date | awk '{ print $1 $2 $3 $7 }')
+failcheck=$(grep "FAIL" /var/log/borg.log)
+
+if [ ${failcheck} ]; then
+    echo "WARNING -There were failures during borg run - ${failcheck}"
+    exit 1
+fi
+
+if [ "${lastrun}" == "${today}" ]; then
+    echo "OK - Backup was created without errors"
+    exit 0
+else
+    echo "CRITICAL - Backup did not run today"
+    exit 2
+fi
+
+exit 3

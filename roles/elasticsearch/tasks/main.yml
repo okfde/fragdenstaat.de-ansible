@@ -6,7 +6,7 @@
     update_cache: "{{ update_apt_cache }}"
     state: present
   tags: packages
-  retries: 30
+  retries: 3
   delay: 10
 
 - name: Add Elasticsearch apt key.
@@ -17,7 +17,7 @@
 
 - name: Add Elasticsearch repository.
   ansible.builtin.apt_repository:
-    repo: 'deb https://artifacts.elastic.co/packages/{{ elasticsearch_version }}/apt stable main'
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/elasticsearch.asc] https://artifacts.elastic.co/packages/8.x/apt stable main"
     state: present
     update_cache: true
   tags: packages

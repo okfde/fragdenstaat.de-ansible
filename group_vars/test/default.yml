@@ -26,9 +26,9 @@ bounce_email_host: "127.0.0.1"
 unsubscribe_email_host: "127.0.0.1"
 gunicorn_user_uid: "1111"
 
-sentry_domain: "sentry.test.zerschlagdenstaat.de"
-sentry_url: "https://sentry.test.zerschlagdenstaat.de"
-sentry_webhook_url: "https://sentry.test.zerschlagdenstaat.de"
+sentry_domain: "sentry.okfn.de"
+sentry_url: "https://sentry.okfn.de"
+sentry_webhook_url: "https://sentry.okfn.de"
 django_sentry_dsn: ""
 django_sentry_public_dsn: ""
 
@@ -60,3 +60,6 @@ nginx_real_ip_header: "X-Forwarded-For"
 
 minio_release: 20231115204325.0.0_amd64
 mcli_release: 20231115224558.0.0_amd64
+
+network_vlan:
+  id: 4000

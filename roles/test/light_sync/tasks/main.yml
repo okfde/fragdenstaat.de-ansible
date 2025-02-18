@@ -1,0 +1,15 @@
+- name: Create light_sync directory
+  ansible.builtin.file:
+    dest: /root/light_sync/
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Create light_sync script
+  ansible.builtin.template:
+    src: light_sync.sh.j2
+    dest: /root/light_sync/light_sync.sh
+    mode: "0750"
+    owner: root
+    group: root

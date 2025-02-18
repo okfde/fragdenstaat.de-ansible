@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -u fragdenstaat_de /usr/lib/nagios/plugins/check_postgres --action=query_time -db=fragdenstaat_de -dbuser=fragdenstaat_de -w 30 -c 60
