@@ -68,3 +68,11 @@
     commands: /usr/bin/supervisorctl status
   when: "'supervisor = 1' in icinga.vars"
   tags: sudo
+
+- name: Add options for needrestart check to sudoers
+  community.general.sudoers:
+    name: allow-needrestart
+    state: present
+    user: nagios
+    commands: /usr/sbin/needrestart
+  tags: sudo

@@ -184,7 +184,7 @@ if (( $(date +"%d") == 15)); then
   next
 fi
 
-if (( $(date +"%u") == 1)); then
+if (( $(date +"%d") == 1)); then
   step "Backup Check (verify)"
     export TMPDIR="/var/tmp/restic"
     mkdir -p "/var/tmp/restic"

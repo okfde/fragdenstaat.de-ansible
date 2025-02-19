@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily apt upgrade and clean activities
+After=apt-daily.timer
+
+[Timer]
+OnCalendar={{ unattended_calendar }}
+RandomizedDelaySec={{ unattended_delay }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -49,7 +49,6 @@
     group: "www-data"
   when: external_media_storage
   become: true
-  ignore_errors: true
   tags:
     - storageaccess
 

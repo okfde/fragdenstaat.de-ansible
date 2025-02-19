@@ -1,6 +1,6 @@
 ---
 
-virtualenv_python_version: python3.8
+virtualenv_python_version: python3.10
 
 git_branch: main
 
