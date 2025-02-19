@@ -29,6 +29,10 @@ logserver_server_name: 'log.zerschlagdenstaat.de'
 
 borg:
   snapshots:
+    - name: docker
+      dev: /dev/vg1/container
+      mnt: /mnt/container-snapshot
+      lvm_free: 25%
     - name: monitor
       dev: /dev/vg1/monitor
       mnt: /mnt/monitor-snapshot
@@ -36,8 +40,8 @@ borg:
     - name: root
       dev: /dev/vg0/root
       mnt: /mnt/root-snapshot
-      lvm_free: 75%
-  locations: /mnt/monitor-snapshot/graylog/mongodb_data/ /mnt/root-snapshot/var/lib/docker/volumes/sentry*
+      lvm_free: 50%
+  locations: /mnt/monitor-snapshot/graylog/mongodb_data/ /mnt/container-snapshot/volumes/sentry*
   keepdaily: 7
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de

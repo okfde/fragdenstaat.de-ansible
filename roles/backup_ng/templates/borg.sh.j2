@@ -178,7 +178,7 @@ step "Prune backup generations"
   try /usr/bin/borg prune --keep-daily={{ borg.keepdaily }} --show-rc
 next
 
-if (( $(date +"%u") == 1)); then
+if (( $(date +"%d") == 1)); then
   step "Backup Check (verify)"
     try /usr/bin/borg check --verify-data --show-rc
   next
