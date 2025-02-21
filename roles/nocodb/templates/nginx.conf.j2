@@ -20,7 +20,17 @@ server {
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
+    location {{ noco_location }} {
+        add_header Set-Cookie "bverfg={{ noco_cookie }}; Path=/; Secure; HttpOnly; Max-Age=86400";
+        alias /var/www/html/nocodb;
+        index index.html;
+        try_files $uri $uri/ =404;
+    }
+
     location / {
+        if ($cookie_bverfg != "{{ noco_cookie }}") {
+            return 403;
+        }
         proxy_pass http://nocodb;
 		proxy_set_header X-Forwarded-Proto $scheme;
 		proxy_set_header Upgrade $http_upgrade;
