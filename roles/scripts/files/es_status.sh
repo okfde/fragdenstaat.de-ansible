@@ -48,7 +48,7 @@ if [ ${max_task_wait_time} == "-" ]; then
   max_task_wait_time=0
 fi
 
-active_shards_percent=$(echo ${health} | awk '{print $14}' | sed 's/%//g')
+active_shards_percent=$(echo ${health} | awk '{print $15}' | sed 's/%//g')
 
 echo "es_status_epoch{cluster=\"${cluster}\"} ${epoch}" >> /var/lib/prometheus/node-exporter/es_status.prom
 echo "es_status_state{cluster=\"${cluster}\"} ${status}" >> /var/lib/prometheus/node-exporter/es_status.prom
