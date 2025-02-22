@@ -5,6 +5,7 @@ services:
         condition: service_healthy
     environment:
       NC_DB: "pg://root_db:5432?u={{ nc_db_user }}&p={{ nc_db_password }}&d={{ nc_db_name }}"
+      NC_ATTACHMENT_FIELD_SIZE: 500000000
     image: "nocodb/nocodb:latest"
     ports:
       - "{{ nc_local_port }}:8080"
