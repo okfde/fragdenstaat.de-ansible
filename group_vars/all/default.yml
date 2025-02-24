@@ -233,6 +233,8 @@ nginx_public_media:
   - url: "/files/orglogo/"
   - url: "/files/docs/"
     force_download: true
+  - url: "/files/datashow/"
+    force_download: true
 
 nginx_public_privileged_media:
   - "/files/campaign/"
