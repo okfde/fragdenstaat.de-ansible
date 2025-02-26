@@ -28,9 +28,9 @@ server {
     }
 
     location / {
-        if ($cookie_bverfg != "{{ noco_cookie }}") {
-            return 403;
-        }
+        # if ($cookie_bverfg != "{{ noco_cookie }}") {
+        #    return 403;
+        # }
         proxy_pass http://nocodb;
 		proxy_set_header X-Forwarded-Proto $scheme;
 		proxy_set_header Upgrade $http_upgrade;
