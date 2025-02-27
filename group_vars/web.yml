@@ -14,3 +14,4 @@ https_domains:
 nginx_cache_urls:
   - "/"
   - "/artikel/exklusiv/2024/10/sachsenwald/"
+  - "/artikel/exklusiv/2025/02/beraterberichte/"
