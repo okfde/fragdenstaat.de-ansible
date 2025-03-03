@@ -33,7 +33,7 @@
 - name: Configure email report (recipient)
   ansible.builtin.lineinfile:
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
-    regexp: "//Unattended-Upgrade::Mail \"\";"
+    regexp: "Unattended-Upgrade::Mail "
     line: "Unattended-Upgrade::Mail \"root@fragdenstaat.de\";"
     state: present
     create: true
@@ -42,7 +42,7 @@
 - name: Configure email report (sender)
   ansible.builtin.lineinfile:
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
-    regexp: "//Unattended-Upgrade::Sender \"sender@host.acme.com\";"
+    regexp: "Unattended-Upgrade::Sender"
     line: "Unattended-Upgrade::Sender \"upgrades@{{ inventory_hostname_short }}\";"
     state: present
     create: true
@@ -51,7 +51,7 @@
 - name: Configure email report (mode)
   ansible.builtin.lineinfile:
     dest: /etc/apt/apt.conf.d/50unattended-upgrades
-    regexp: "//Unattended-Upgrade::MailReport \"on-change\";"
+    regexp: "Unattended-Upgrade::MailReport"
     line: "Unattended-Upgrade::MailReport \"always\";"
     state: present
     create: true
