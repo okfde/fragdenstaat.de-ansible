@@ -16,3 +16,4 @@ ansible-env/
 local_config.yml
 
 vault.key
+.lock
