@@ -8,6 +8,14 @@
   retries: 3
   delay: 10
 
+- name: Install apt-listchanges Upgrades
+  ansible.builtin.apt:
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+    pkg: apt-listchanges
+  retries: 3
+  delay: 10
+
 - name: Set up unattended upgrades
   ansible.builtin.copy:
     src: ./files/apt_periodic
