@@ -39,6 +39,11 @@
     group: "root"
   notify: docker compose up nocodb
 
+- name: Pull docker images for nocodb
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ nc_dir }}"
+  notify: docker compose restart nocodb
+
 - name: Create nginx config
   ansible.builtin.template:
     src: nginx.conf.j2
@@ -47,12 +52,6 @@
     owner: "root"
     group: "root"
   notify: restart nginx
-
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ item }}"
-  with_items: "{{ nc_db_brooke }}"
-  tags: debug
 
 - name: Create additional databases on brooke
   community.general.postgresql_db:

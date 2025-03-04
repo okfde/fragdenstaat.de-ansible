@@ -4,6 +4,12 @@
     chdir: "{{ nc_dir }}"
   changed_when: false
 
+- name: docker compose restart nocodb
+  ansible.builtin.command:
+    cmd: docker compose restart
+    chdir: "{{ nc_dir }}"
+  changed_when: false
+
 - name: restart nginx
   ansible.builtin.service:
     name: nginx
