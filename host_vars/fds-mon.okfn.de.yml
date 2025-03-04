@@ -85,3 +85,14 @@ icinga:
     - backup = "borg"
     - elasticsearch = 1
     - smartmon = "sd"
+
+dockerupdate:
+  graylog:
+    path: "/var/www/monitor/"
+dockerupdate_compose_lines:
+  graylog:
+    path: "/var/www/monitor/"
+    regexp: "-graylog/graylog:(.*)"
+    line: "    image: \"${GRAYLOG_IMAGE:-graylog/graylog:{{ graylog_version }}}\""
+
+graylog_version: "6.1.7"

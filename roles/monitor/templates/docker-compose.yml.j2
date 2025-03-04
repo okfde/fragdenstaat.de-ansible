@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 {% if prometheus is true %}
   prometheus:
@@ -82,7 +80,7 @@ services:
   graylog:
     container_name: graylog
     hostname: "server"
-    image: "${GRAYLOG_IMAGE:-graylog/graylog:6.1.7}"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog:{{ graylog_version }}}"
     depends_on:
       opensearch:
         condition: "service_started"
