@@ -70,6 +70,7 @@ icinga:
     - http_vhosts["weblate.frag-den-staat.de"] = { http_uri = "https://weblate.frag-den-staat.de" }
 
     - disks["disk vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
+    - disks["disk vg1-container"] = { disk_partitions = "/dev/mapper/vg1-container" }
     - node_exporter = 1
     - mailq_warning = 100
     - mailq_critical = 200
