@@ -381,9 +381,8 @@ def parse_image_name(image_name):
     #   https://docs.docker.com/engine/reference/commandline/tag/#extended-description
     #   https://github.com/docker/distribution/blob/master/reference/regexp.go
     host_segment_re = '[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?'
-    hostname_re = '({host_segment}\.)+{host_segment}'.format(host_segment=host_segment_re)
-    registry_re = '((?P<registry>({hostname_re}(:\d+)?|{host_segment_re}:\d+))/)'.format(
-        host_segment_re=host_segment_re, hostname_re=hostname_re)
+    hostname_re = host_segment_re
+    registry_re = hostname_re
     name_component_ends_re = '[a-z0-9]'
     name_component_middle_re = '[a-z0-9._-]'  # Ignoring spec limit of two _
     name_component_re = '({end}{middle}*{end}|{end})'.format(end=name_component_ends_re,
