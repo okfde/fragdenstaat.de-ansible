@@ -11,6 +11,7 @@
     mode: "0644"
   notify: Restart node exporter
   tags: exporter
+  when: "'vlan_ipv4' in host_data"
 
 - name: Configure firewall
   community.general.ufw:
