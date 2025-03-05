@@ -1,0 +1,23 @@
+- name: Update docker-compose.yml
+  ansible.builtin.lineinfile:
+    path: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}/docker-compose.yml"
+    regexp: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].regexp }}"
+    line: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].line }}"
+    state: present
+  with_items: "{{ dockerupdate_compose_lines }}"
+  when: dockerupdate_compose_lines is defined
+
+- name: Pull docker images
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}"
+  register: pullstatus
+  with_items: "{{ dockerupdate }}"
+  when: dockerupdate is defined
+
+- name: Restart docker container
+  community.docker.docker_compose_v2:
+    project_src: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}"
+    recreate: always
+  with_items: "{{ dockerupdate }}"
+  when: pullstatus.changed
+  tags: skip_ansible_lint
