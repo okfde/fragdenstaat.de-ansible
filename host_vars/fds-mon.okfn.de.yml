@@ -68,6 +68,7 @@ icinga:
     - http_vhosts["ogimage-next.frag-den-staat.de"] = { http_uri = "https://ogimage-next.frag-den-staat.de" }
     - http_vhosts["sentry.okfn.de"] = { http_uri = "https://sentry.okfn.de" }
     - http_vhosts["weblate.frag-den-staat.de"] = { http_uri = "https://weblate.frag-den-staat.de" }
+    - http_vhosts["traffic.okfn.de"] = { http_uri = "https://traffic.okfn.de" }
 
     - disks["disk vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
     - disks["disk vg1-container"] = { disk_partitions = "/dev/mapper/vg1-container" }
