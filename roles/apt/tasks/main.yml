@@ -24,6 +24,14 @@
     group: root
     mode: "0644"
 
+- name: Configure apt (needrestart)
+  ansible.builtin.template:
+    src: apt-needrestart.conf.j2
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Update all packages to their latest version
   ansible.builtin.apt:
     name: "*"
