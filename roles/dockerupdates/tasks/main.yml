@@ -18,6 +18,7 @@
   community.docker.docker_compose_v2:
     project_src: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}"
     recreate: always
+    state: restarted
   with_items: "{{ dockerupdate }}"
   when: pullstatus.changed
   tags: skip_ansible_lint
