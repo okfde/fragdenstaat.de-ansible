@@ -15,11 +15,24 @@
   with_items: "{{ dockerupdate }}"
   when: dockerupdate is defined
 
+- name: Stop docker container
+  community.docker.docker_compose_v2:
+    project_src: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}"
+    state: stopped
+  with_items: "{{ dockerupdate }}"
+  when:
+    - pullstatus is defined and
+      pullstatus.changed or
+      composestatus is defined and
+      composestatus.changed
+  tags: skip_ansible_lint
+
 - name: Restart docker container
   community.docker.docker_compose_v2:
     project_src: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}"
     recreate: always
-    state: restarted
+    pull: always
+    state: present
     wait: true
   with_items: "{{ dockerupdate }}"
   when:
