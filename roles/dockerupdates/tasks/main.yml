@@ -20,6 +20,7 @@
     project_src: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].path }}"
     recreate: always
     state: restarted
+    wait: true
   with_items: "{{ dockerupdate }}"
   when:
     - pullstatus is defined and
