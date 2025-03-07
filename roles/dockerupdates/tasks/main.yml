@@ -4,6 +4,7 @@
     regexp: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].regexp }}"
     line: "{{ hostvars[inventory_hostname].dockerupdate_compose_lines[item].line }}"
     state: present
+  register: composestatus
   with_items: "{{ dockerupdate_compose_lines }}"
   when: dockerupdate_compose_lines is defined
 
@@ -20,5 +21,9 @@
     recreate: always
     state: restarted
   with_items: "{{ dockerupdate }}"
-  when: pullstatus.changed
+  when:
+    - pullstatus is defined and
+      pullstatus.changed or
+      composestatus is defined and
+      composestatus.changed
   tags: skip_ansible_lint
