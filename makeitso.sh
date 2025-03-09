@@ -81,4 +81,4 @@ for i in playbooks/*.yml; do
     next
 done
 
-cat ${OGFILE}
+cat ${LOGFILE}
