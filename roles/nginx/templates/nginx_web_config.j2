@@ -46,6 +46,21 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60
             {% with server_name = redirect_domain.from %}
                 {% include '_ssl.j2' %}
             {% endwith %}
+
+            {% if redirect_domain.simple_files is defined %}
+                {% for simple_file in redirect_domain.simple_files %}
+                    {% if simple_file.path is defined %}
+                        location = {{ simple_file.path }} {
+                            {{ add_web_headers() }}
+                            {% if simple_file.mimetype is defined %}
+                                add_header Content-Type "{{ simple_file.mimetype }}";
+                            {% endif %}
+                            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
+                        }
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
             location / {
                 return 301 https://{{ redirect_domain.domain }}$request_uri;
             }
