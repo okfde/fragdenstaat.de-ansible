@@ -33,6 +33,16 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60
            root {{ letsencrypt_tmp_dir }};
         }
 
+        {% if redirect_domain.simple_files is defined %}
+            {% for simple_file in redirect_domain.simple_files %}
+                {% if simple_file.path is defined %}
+                    location = {{ simple_file.path }} {
+                        return 301 https://{{ redirect_domain.from }}{{ simple_file.path }};
+                    }
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
         location / {
             return 301 https://{{ redirect_domain.domain }}$request_uri;
         }
