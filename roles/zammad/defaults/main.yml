@@ -1,0 +1,12 @@
+zammad_dir: "/var/www/support.fragdenstaat.de"
+zammad_fqdn: "support.frag-den-staat.de"
+zammad_port: 9888
+zammad_version: "6.4.1-64"
+zammad_elasticsearch_version: "8.17.3"
+zammad_postgres_version: "17.4-alpine"
+zammad_redis_version: "7.4.2-alpine"
+zammad_memcache_version: "1.6.37-alpine"
+
+# in secrets.yml
+# zammad_db_password: ""
+# zammad_elasticsearch_password: ""

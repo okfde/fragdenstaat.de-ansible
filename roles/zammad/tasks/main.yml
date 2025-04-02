@@ -1,0 +1,47 @@
+- name: Create zammad directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ zammad_dir }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create data directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ zammad_dir }}/data"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ zammad_dir }}/docker-compose.yml"
+    mode: "0640"
+    owner: "root"
+    group: "root"
+  notify: docker compose up zammad
+
+- name: Create nginx config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/sites-enabled/zammad.conf"
+    mode: "0640"
+    owner: "root"
+    group: "root"
+  notify: restart nginx zammad
+
+- name: Pull docker images for zammad
+  community.docker.docker_compose_v2_pull:
+    project_src: "{{ zammad_dir }}"
+  notify: docker compose restart zammad
+
+- name: Create nginx config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/sites-enabled/zammad.conf"
+    mode: "0640"
+    owner: "root"
+    group: "root"
+  notify: restart nginx zammad

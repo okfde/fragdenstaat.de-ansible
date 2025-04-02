@@ -1,0 +1,112 @@
+x-shared:
+  zammad-service: &zammad-service
+    environment: &zammad-environment
+      MEMCACHE_SERVERS: "zammad-memcached:11211"
+      POSTGRESQL_DB: "zammad_production"
+      POSTGRESQL_HOST: "zammad-postgresql"
+      POSTGRESQL_USER: "zammad"
+      POSTGRESQL_PASS: "{{ zammad_db_password }}"
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_OPTIONS: "?pool=50"
+      REDIS_URL: "redis://zammad-redis:6379"
+      BACKUP_DIR: "/var/tmp/zammad"
+      BACKUP_TIME: "03:00"
+      HOLD_DAYS: "-10"
+      TZ: "Europe/Berlin"
+      ELASTICSEARCH_USER: "elastic"
+      ELASTICSEARCH_PASS: "{{ zammad_elasticsearch_password }}"
+      ZAMMAD_HTTP_TYPE: "http"
+      ZAMMAD_FQDN: "{{ zammad_fqdn }}"
+
+    image: ghcr.io/zammad/zammad:{{ zammad_version }}
+    restart: ${RESTART:-always}
+    volumes:
+      - ./data/zammad-storage:/opt/zammad/storage
+    depends_on:
+      - zammad-memcached
+      - zammad-postgresql
+      - zammad-redis
+
+services:
+  zammad-backup:
+    <<: *zammad-service
+    command: ["zammad-backup"]
+    volumes:
+      - ./data/zammad-backup:/var/tmp/zammad
+      - ./data/zammad-storage:/opt/zammad/storage:ro
+    user: 0:0
+
+  zammad-elasticsearch:
+    image: bitnami/elasticsearch:{{ zammad_elasticsearch_version }}
+    restart: always
+    volumes:
+      - ./data/elasticsearch-data:/bitnami/elasticsearch/data
+    environment:
+      ELASTICSEARCH_ENABLE_SECURITY: 'true'
+      ELASTICSEARCH_SKIP_TRANSPORT_TLS: 'true'
+      ELASTICSEARCH_ENABLE_REST_TLS: 'false'
+      # ELASTICSEARCH_USER is hardcoded to 'elastic' in the container.
+      ELASTICSEARCH_PASSWORD: "{{ zammad_elasticsearch_password }}"
+
+  zammad-init:
+    <<: *zammad-service
+    command: ["zammad-init"]
+    depends_on:
+      - zammad-postgresql
+    restart: on-failure
+    user: 0:0
+
+  zammad-memcached:
+    command: memcached -m 256M
+    image: memcached:{{ zammad_memcache_version }}
+    restart: always
+
+  zammad-nginx:
+    <<: *zammad-service
+    command: ["zammad-nginx"]
+    expose:
+      - "8080:-8080"
+    ports:
+      - "{{ zammad_port }}:8080"
+    depends_on:
+      - zammad-railsserver
+
+  zammad-postgresql:
+    environment:
+      POSTGRES_DB: zammad_production
+      POSTGRES_USER: zammad
+      POSTGRES_PASSWORD: {{ zammad_db_password }}
+    image: postgres:{{ zammad_postgres_version }}
+    restart: always
+    volumes:
+      - ./data/postgresql-data:/var/lib/postgresql/data
+
+  zammad-railsserver:
+    <<: *zammad-service
+    command: ["zammad-railsserver"]
+
+  zammad-redis:
+    image: redis:{{ zammad_redis_version }}
+    restart: always
+    volumes:
+      - ./data/redis-data:/data
+
+  zammad-scheduler:
+    <<: *zammad-service
+    command: ["zammad-scheduler"]
+
+  zammad-websocket:
+    <<: *zammad-service
+    command: ["zammad-websocket"]
+
+volumes:
+  elasticsearch-data:
+    driver: local
+  postgresql-data:
+    driver: local
+  redis-data:
+    driver: local
+  zammad-backup:
+    driver: local
+  zammad-storage:
+    driver: local

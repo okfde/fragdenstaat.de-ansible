@@ -1,0 +1,17 @@
+- name: docker compose up zammad
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ zammad_dir }}"
+  changed_when: false
+
+- name: docker compose restart zammad
+  ansible.builtin.command:
+    cmd: docker compose restart
+    chdir: "{{ zammad_dir }}"
+  changed_when: false
+
+- name: restart nginx zammad
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: true
