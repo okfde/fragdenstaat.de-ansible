@@ -24,7 +24,7 @@
       changed_when: true
 
     - name: Include role vars
-      ansible.builtin.include_vars: "../roles/wireguard/defaults/main.yml"
+      ansible.builtin.include_vars: "../../roles/wireguard/defaults/main.yml"
 
     - name: Load vpn client list
       ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
@@ -34,7 +34,7 @@
             - vpnclients.yml
             - vpnclients-default.yml
           paths:
-            - "../env_vars"
+            - "../../env_vars"
 
     - name: Find max VPN peer id
       ansible.builtin.set_fact:
@@ -51,21 +51,21 @@
 
     - name: Make peer config
       ansible.builtin.template:
-        src: "../roles/wireguard/templates/client.conf.j2"
+        src: "../../roles/wireguard/templates/client.conf.j2"
         dest: "../FDS_VPN_{{ client_name }}.conf"
         mode: "0640"
       delegate_to: localhost
 
     - name: Store peer config
       ansible.builtin.template:
-        src: "../roles/wireguard/templates/clientgroups.yml.j2"
-        dest: "../env_vars/vpnclients.yml"
+        src: "../../roles/wireguard/templates/clientgroups.yml.j2"
+        dest: "../../env_vars/vpnclients.yml"
         mode: "0640"
       delegate_to: localhost
 
     - name: Encrypt vpn client list
       ansible.builtin.command:
-        cmd: "ansible-vault encrypt --vault-password-file ../vault.key ../env_vars/vpnclients.yml"
+        cmd: "ansible-vault encrypt --vault-password-file ../../vault.key ../../env_vars/vpnclients.yml"
       delegate_to: localhost
       changed_when: true
 

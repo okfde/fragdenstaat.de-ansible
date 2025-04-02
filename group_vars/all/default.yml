@@ -264,8 +264,12 @@ redirect_domains:
     domain: "fragdenstaat.de/shop"
     https: true
   - from: "app.fragdenstaat.de"
-    domain: "fragdenstaat.de/app"
+    domain: "fragdenstaat.de/app/scanner/deep"
     https: true
+    simple_files:
+      - path: "/.well-known/apple-app-site-association"
+        filename: apple-app-site-association
+        mimetype: "application/json"
   - from: "mail.fragdenstaat.de"
     domain: "fragdenstaat.de"
     https: true
