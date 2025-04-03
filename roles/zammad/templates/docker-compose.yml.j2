@@ -15,11 +15,11 @@ x-shared:
       TZ: "Europe/Berlin"
       ELASTICSEARCH_USER: "elastic"
       ELASTICSEARCH_PASS: "{{ zammad_elasticsearch_password }}"
-      ZAMMAD_HTTP_TYPE: "http"
+      ZAMMAD_HTTP_TYPE: "https"
       ZAMMAD_FQDN: "{{ zammad_fqdn }}"
-
+      S3_URL: "{{ zammad_s3_url }}"
     image: ghcr.io/zammad/zammad:{{ zammad_version }}
-    restart: ${RESTART:-always}
+    restart: always
     volumes:
       - ./data/zammad-storage:/opt/zammad/storage
     depends_on:
@@ -28,14 +28,6 @@ x-shared:
       - zammad-redis
 
 services:
-  zammad-backup:
-    <<: *zammad-service
-    command: ["zammad-backup"]
-    volumes:
-      - ./data/zammad-backup:/var/tmp/zammad
-      - ./data/zammad-storage:/opt/zammad/storage:ro
-    user: 0:0
-
   zammad-elasticsearch:
     image: bitnami/elasticsearch:{{ zammad_elasticsearch_version }}
     restart: always
@@ -98,6 +90,10 @@ services:
   zammad-websocket:
     <<: *zammad-service
     command: ["zammad-websocket"]
+
+  zammad-backup:
+    profiles:
+      - do-not-start
 
 volumes:
   elasticsearch-data:
