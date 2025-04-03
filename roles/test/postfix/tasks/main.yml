@@ -100,6 +100,7 @@
   when: not mail_log_rotated.stat.exists and gunicorn_user is defined
   changed_when: false
   failed_when: "'FAILED' in command_result.stderr"
+  register: command_result
 
 - name: configure smtp ports in firewall
   community.general.ufw:

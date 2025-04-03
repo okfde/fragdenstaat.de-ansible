@@ -31,3 +31,4 @@
     name: nginx
     state: reloaded
   failed_when: "'FAILED' in command_result.stderr"
+  register: command_result
