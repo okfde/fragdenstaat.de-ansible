@@ -1,4 +1,6 @@
 server {
+    listen 80;
+    listen [::]:80;
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
 
@@ -18,6 +20,10 @@ server {
         proxy_read_timeout 86400;
 
         proxy_pass http://localhost:{{ zammad_port }}/;
+
+        if ($ssl_protocol = "") {
+            return 301 https://$host$request_uri;
+        }
     }
 
     ssl_certificate /etc/letsencrypt/live/support.frag-den-staat.de/fullchain.pem; # managed by Certbot
