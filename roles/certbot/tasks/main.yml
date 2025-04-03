@@ -3,22 +3,22 @@
 - name: Install http-01 dependencies
   when: "certbot_mode is defined and certbot_mode == 'http-01'"
   block:
-  - name: Ensure software-properties-common installed
-    ansible.builtin.apt:
-      name: software-properties-common
-      state: latest
-    register: certbot_repo_added
-    retries: 3
-    delay: 10
+    - name: Ensure software-properties-common installed
+      ansible.builtin.apt:
+        name: software-properties-common
+        state: latest
+      register: certbot_repo_added
+      retries: 3
+      delay: 10
 
-  - name: Install Certbot.
-    ansible.builtin.apt:
-      pkg:
-        - certbot
-        - python3-certbot-nginx
-      state: latest
-    retries: 3
-    delay: 10
+    - name: Install Certbot.
+      ansible.builtin.apt:
+        pkg:
+          - certbot
+          - python3-certbot-nginx
+        state: latest
+      retries: 3
+      delay: 10
 
 - name: Install dns-01 dependencies
   when: "certbot_mode is defined and certbot_mode == 'dns-01'"

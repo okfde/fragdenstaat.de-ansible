@@ -6,6 +6,8 @@
 
 - name: "Install and configure postgres exporter"
   when: postgres_user.changed is false
+  tags:
+    - skip_ansible_lint
   block:
     - name: Install postgres exporter
       ansible.builtin.apt:

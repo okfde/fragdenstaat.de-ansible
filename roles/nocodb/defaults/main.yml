@@ -4,6 +4,6 @@ nc_db_data_volume: "/var/www/nocodb/data/nc/"
 nc_local_port: 8888
 
 # in secrets.yml
-#nc_db_user: "postgres"
-#nc_db_password: "password"
-#nc_db_name: "root_db"
+# nc_db_user: "postgres"
+# nc_db_password: "password"
+# nc_db_name: "root_db"

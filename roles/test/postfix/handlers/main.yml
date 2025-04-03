@@ -30,4 +30,4 @@
   ansible.builtin.service:
     name: nginx
     state: reloaded
-  ignore_errors: true
+  failed_when: "'FAILED' in command_result.stderr"
