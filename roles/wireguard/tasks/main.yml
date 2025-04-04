@@ -35,10 +35,12 @@
   when: wg0_conf is not defined or not wg0_conf.stat.exists
 
 - name: Generate private and public keys for the server
-  ansible.builtin.shell: |
-    set -o pipefail
-    umask 077
-    wg genkey | tee privatekey | wg pubkey > server.public
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      umask 077
+      wg genkey | tee privatekey | wg pubkey > server.public
+    executable: /bin/bash
   args:
     chdir: /etc/wireguard/keys
   register: key_files

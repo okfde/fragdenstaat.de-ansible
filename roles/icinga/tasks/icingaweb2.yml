@@ -90,7 +90,10 @@
 
 - name: Fetch ido db password
   ansible.builtin.shell:
-    cmd: set -o pipefail && false | cat /etc/icinga2/features-enabled/ido-mysql.conf | grep password | awk -F'"' '{print $2}'
+    cmd: |
+      set -o pipefail;
+      cat /etc/icinga2/features-enabled/ido-mysql.conf | grep password | awk -F'"' '{print $2}'
+    executable: /bin/bash
   register: icinga2_ido_db_pass
   changed_when: false
 
