@@ -439,6 +439,16 @@ apply Service "metabase" {
   assign where host.vars.metabase_port
 }
 
+apply Service "zammad" {
+  import "generic-service"
+
+  check_command = "zammad"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.zammad
+}
+
 apply Service "ogimage" {
   import "generic-service"
 

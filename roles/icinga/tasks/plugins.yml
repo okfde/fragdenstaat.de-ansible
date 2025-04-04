@@ -16,6 +16,16 @@
     group: nagios
     mode: "0750"
 
+- name: Copy scripts (templates)
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: /usr/lib/nagios/plugins/{{ item | basename | regex_replace('\.j2$', '') }}
+    owner: root
+    group: nagios
+    mode: "0755"
+  with_fileglob:
+    - ../templates/plugins/*.j2
+
 - name: Add options for raid check to sudoers
   community.general.sudoers:
     name: allow-dmsetup

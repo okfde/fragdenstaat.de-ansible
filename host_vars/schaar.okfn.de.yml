@@ -33,3 +33,4 @@ icinga:
     - discourse_port = 8035
     - roundcube_port = 9800
     - smartmon = "sd"
+    - zammad = 1
