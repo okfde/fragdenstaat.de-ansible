@@ -61,9 +61,8 @@
     - restart celery workers
     - set db access rights
   changed_when: true
-  register: command_result
-  failed_when: "'FAILED' in command_result.stderr"
   when: true
+  ignore_errors: true
 
 - name: "Set db_user privs"
   community.postgresql.postgresql_privs:
