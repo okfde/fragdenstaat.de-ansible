@@ -8,7 +8,7 @@ db_user_reporting: "fds_report"
 
 db_reporting_views:
   - name: donations
-    query: "SELECT public.fds_donation_donation.id AS id, public.fds_donation_donation.timestamp AS timestamp, completed, amount, reference, donor_id, purpose, method, public.fds_donation_donation.received_timestamp AS received_timestamp, recurring, amount_received, first_recurring, keyword, number, project, public.froide_payment_payment.status AS payment_status FROM public.fds_donation_donation LEFT OUTER JOIN public.froide_payment_payment ON public.fds_donation_donation.payment_id = public.froide_payment_payment.id"
+    query: "SELECT public.fds_donation_donation.id AS id, public.fds_donation_donation.timestamp AS timestamp, completed, amount, reference, donor_id, purpose, method, public.fds_donation_donation.received_timestamp AS received_timestamp, recurring, amount_received, first_recurring, keyword, form_url, number, project, public.froide_payment_payment.status AS payment_status FROM public.fds_donation_donation LEFT OUTER JOIN public.froide_payment_payment ON public.fds_donation_donation.payment_id = public.froide_payment_payment.id"
   - name: donors
     query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor"
   - name: subscribers
