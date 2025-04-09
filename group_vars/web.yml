@@ -15,3 +15,5 @@ nginx_cache_urls:
   - "/"
   - "/artikel/exklusiv/2024/10/sachsenwald/"
   - "/artikel/exklusiv/2025/02/beraterberichte/"
+  - "/kampagnen/verschlusssache-pruefung/"
+  - "/dokumente/258046-koalitionsvertrag-cdu-csu-spd-2025-entwurf/"
