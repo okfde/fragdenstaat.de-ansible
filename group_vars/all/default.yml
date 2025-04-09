@@ -299,6 +299,8 @@ redirect_paths:
     path: "/"
   - from: "^/r/"
     path: "/a/"
+  - from: "/blog/feed/"
+    path: "/artikel/feed/"
   - from: "^/des/?$"
     path: "/dossier/desiderius-erasmus-stiftung/?pk_campaign=zdfmr"
 
