@@ -67,6 +67,7 @@
       become: true
       tags: exporter
       changed_when: false
+      when: "not 'tst.okfn.de' in inventory_hostname"
 
     - name: postgres - Create views
       community.postgresql.postgresql_query:
@@ -81,6 +82,7 @@
       become: true
       tags: exporter
       changed_when: false
+      when: "not 'tst.okfn.de' in inventory_hostname"
 
     - name: postgres - Grant accees rights to prometheus
       community.postgresql.postgresql_privs:
@@ -93,6 +95,7 @@
       become_user: postgres
       become: true
       tags: exporter
+      when: "not 'tst.okfn.de' in inventory_hostname"
 
     - name: Configure firewall
       community.general.ufw:

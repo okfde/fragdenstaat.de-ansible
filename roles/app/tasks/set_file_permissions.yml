@@ -48,6 +48,7 @@
     owner: "{{ gunicorn_user }}"
     group: "www-data"
   when: external_media_storage
+  ignore_errors: true
   become: true
   tags:
     - storageaccess
