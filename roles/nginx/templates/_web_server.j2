@@ -146,9 +146,9 @@ location /ws/ {
 location = {{ cache_url.path }} {
     proxy_cache fds_cache;
     {% if cache_url.with_params is defined and cache_url.with_params %}
-        proxy_cache_key $scheme$proxy_host$uri;
-    {% else %}
         proxy_cache_key $scheme$proxy_host$request_uri;
+    {% else %}
+        proxy_cache_key $scheme$proxy_host$uri;
     {% endif %}
     proxy_cache_bypass $cookie_sessionid $cookie_csrftoken;
     proxy_no_cache $cookie_sessionid $cookie_csrftoken;
