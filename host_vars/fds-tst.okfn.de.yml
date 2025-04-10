@@ -10,6 +10,7 @@ host_data:
   vlan_ipv4: 192.168.100.10
   vpn_peer_id: 210
   ubuntu: noble
+  wg_publickey: "tMty2vJ+FtEfJ8j9GeeYrEAWCbYhj/R0ay0BtHOyayE="
 
 monitor_server: fds-tst.okfn.de
 prometheus: false

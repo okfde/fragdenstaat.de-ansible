@@ -17,3 +17,5 @@ local_config.yml
 
 vault.key
 .lock
+
+FDS_VPN_*.conf

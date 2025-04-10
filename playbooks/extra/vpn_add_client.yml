@@ -6,7 +6,9 @@
     - name: client_name
       prompt: "Name of the client?"
       private: false
-
+    - name: server
+      prompt: "List of allowed endpoints (as python list), or press enter to allow all endpoints"
+      private: false
   tasks:
     - name: Generate new private key locally
       ansible.builtin.command:
@@ -52,7 +54,7 @@
     - name: Make peer config
       ansible.builtin.template:
         src: "../../roles/wireguard/templates/client.conf.j2"
-        dest: "../FDS_VPN_{{ client_name }}.conf"
+        dest: "./FDS_VPN_{{ client_name }}.conf"
         mode: "0640"
       delegate_to: localhost
 

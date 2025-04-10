@@ -10,10 +10,12 @@ PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -
 {% if clientgroup.group in group_names %}
 # {{ clientgroup.name }}
 {% for peer in clientgroup.peers %}
+{% if not "server" in peer or inventory_hostname in peer.server %}
 [Peer]
 # {{ peer.name }}
 PublicKey = {{ peer.publickey }}
 AllowedIPs = {{ vpn_network }}{{ peer.peer_id }}/32, {{ vpn_networkv6 }}{{ '%0x' % peer.peer_id }}/128
+{% endif %}
 {% endfor %}
 {% endif %}
 {% endfor %}
