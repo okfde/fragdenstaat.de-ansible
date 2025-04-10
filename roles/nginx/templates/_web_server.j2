@@ -142,10 +142,14 @@ location /ws/ {
     {{ proxy_asgi_upstream() }}
 }
 
-{% for path in nginx_cache_urls %}
-location = {{ path }} {
+{% for cache_url in nginx_cache_urls %}
+location = {{ cache_url.path }} {
     proxy_cache fds_cache;
-    proxy_cache_key $scheme$proxy_host$uri;
+    {% if cache_url.with_params is defined and cache_url.with_params %}
+        proxy_cache_key $scheme$proxy_host$uri;
+    {% else %}
+        proxy_cache_key $scheme$proxy_host$request_uri;
+    {% endif %}
     proxy_cache_bypass $cookie_sessionid $cookie_csrftoken;
     proxy_no_cache $cookie_sessionid $cookie_csrftoken;
     proxy_cache_valid 10m;
