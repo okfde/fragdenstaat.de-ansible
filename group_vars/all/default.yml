@@ -270,6 +270,9 @@ redirect_domains:
       - path: "/.well-known/apple-app-site-association"
         filename: apple-app-site-association
         mimetype: "application/json"
+      - path: "/.well-known/assetlinks.json"
+        filename: assetlinks.json
+        mimetype: "application/json"
   - from: "mail.fragdenstaat.de"
     domain: "fragdenstaat.de"
     https: true
