@@ -44,6 +44,7 @@ site_url: "https://fragdenstaat.de"
 media_url: "https://media.frag-den-staat.de/files/"
 static_url: "https://static.frag-den-staat.de/static/"
 allowed_hosts: '"fragdenstaat.de","media.frag-den-staat.de","testserver"'
+payment_host: "fragdenstaat.de"
 
 external_media_storage: true
 external_media_storage_src: "/home/storage-box/home"
