@@ -1,7 +1,6 @@
 ---
-
 nginx_ssl_dest_dir: /etc/ssl
-nginx_strong_dh_group: true  # Strongly recomended in production. See weakdh.org.
+nginx_strong_dh_group: true # Strongly recomended in production. See weakdh.org.
 nginx_use_letsencrypt: false
 
 # Nginx settings.
@@ -16,3 +15,6 @@ nginx_media_dir: "{{ virtualenv_path }}/public"
 letsencrypt_cert_filename: fullchain.pem
 letsencrypt_privkey_filename: privkey.pem
 nginx_log_retention_days: 7
+
+nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"
+nginx_pixel_log_retention_days: 14
