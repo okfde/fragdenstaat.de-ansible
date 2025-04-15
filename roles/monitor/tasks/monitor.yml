@@ -119,3 +119,48 @@
     owner: "root"
     group: "root"
   notify: docker compose up monitor
+
+- name: Start opensearch
+  ansible.builtin.command:
+    cmd: docker compose up opensearch -d
+    chdir: "{{ monitor_dir }}"
+  changed_when: false
+
+- name: Wait for opensearch to startup
+  ansible.builtin.wait_for:
+    host: "127.0.0.1"
+    port: 9200
+    delay: 5
+    connect_timeout: 1
+    timeout: 60
+
+- name: Get opensearch settings
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:9200/_cluster/settings?pretty"
+    body_format: "json"
+  register: os_config
+
+- name: Disable opensearch top_queries insights
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:9200/_cluster/settings"
+    method: PUT
+    body_format: "json"
+    body: |
+      {
+        "persistent": {
+          "search": {
+            "insights": {
+              "top_queries": {
+                "{{ item }}": {
+                  "enabled": false
+                }
+              }
+            }
+          }
+        }
+      }
+  with_items:
+    - "cpu"
+    - "memory"
+    - "latency"
+  when: os_config is not skipped and item is not in os_config.json.persistent.search.insights.top_queries
