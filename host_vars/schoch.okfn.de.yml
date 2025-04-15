@@ -38,3 +38,9 @@ icinga:
     - smartmon = "sd"
     - disks["disk /home"] = { disk_partitions = "/home" }
     - temp = 0
+
+sysctl_settings:
+  dev.raid.speed_limit_max:
+    value: 50000
+  dev.raid.speed_limit_min:
+    value: 5000
