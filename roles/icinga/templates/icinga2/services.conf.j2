@@ -116,6 +116,7 @@ apply Service "load" {
   import "generic-service"
 
   check_command = "load"
+  enable_flapping = 1
 
   vars.load_wload1 = "{{ ansible_processor_vcpus * 3 }}"
   vars.load_wload5 =  "{{ ansible_processor_vcpus * 2 }}"
@@ -334,6 +335,7 @@ apply Service "docker" {
   check_command = "docker"
   vars.notification.pushover = 1
   vars.notification.slack = 1
+  vars.notification_delay = 2m
 
   assign where host.vars.docker
 }
@@ -363,6 +365,7 @@ apply Service "supervisor" {
   check_command = "supervisor"
   vars.notification.pushover = 1
   vars.notification.slack = 1
+  vars.notification_delay = 2m
 
   assign where (host.vars.supervisor)
 }
