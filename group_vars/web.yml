@@ -9,6 +9,9 @@ https_domains:
   - ["verklagdenstaat.de", "www.verklagdenstaat.de"]
   - ["zerschlagdenstaat.de", "www.zerschlagdenstaat.de"]
   - ["mta-sts.fragdenstaat.de"]
+  - ["pixel.fragdenstaat.de"]
+
+nginx_pixel_domain: "pixel.fragdenstaat.de"
 
 nginx_cache_urls:
   - path: "/"

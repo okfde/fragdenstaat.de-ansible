@@ -65,6 +65,7 @@ http {
 	# Logging Settings
 	##
 
+    log_format pixel '$time_local|$request';
 	access_log off;
 	error_log /var/log/nginx/error.log;
 

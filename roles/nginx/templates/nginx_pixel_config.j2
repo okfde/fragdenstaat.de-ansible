@@ -1,0 +1,31 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ nginx_pixel_domain }};
+
+    location /.well-known/acme-challenge/ {
+    default_type "text/plain";
+    root {{ letsencrypt_tmp_dir }};
+    }
+
+    location / {
+        return 301 https://{{ nginx_pixel_domain }}$request_uri;
+    }
+}
+{% if active_https_domains[nginx_pixel_domain] %}
+    server {
+        listen              443 ssl http2;
+        listen         [::]:443 ssl http2;
+        server_name         {{ nginx_pixel_domain }};
+
+        {% with server_name = nginx_pixel_domain %}
+            {% include '_ssl.j2' %}
+        {% endwith %}
+
+        access_log {{ nginx_pixel_log_file }} pixel;
+
+        location ~ .gif$ {
+            empty_gif;
+        }
+    }
+{% endif %}
