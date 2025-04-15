@@ -27,5 +27,9 @@ server {
         location ~ .gif$ {
             empty_gif;
         }
+
+        location / {
+            return 404;
+        }
     }
 {% endif %}
