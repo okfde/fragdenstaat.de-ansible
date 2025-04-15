@@ -96,3 +96,9 @@
 - name: Import setup_fail2ban.yml
   ansible.builtin.import_tasks: setup_fail2ban.yml
   when: enable_fail2ban is defined and enable_fail2ban
+
+- name: Import sysctl_settings.yml
+  ansible.builtin.import_tasks: sysctl_settings.yml
+  when: sysctl_settings is defined
+  tags:
+    - sysctl
