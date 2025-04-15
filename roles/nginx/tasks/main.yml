@@ -189,7 +189,7 @@
     dest: "/etc/nginx/sites-enabled/pixel.conf"
     state: link
   notify: reload nginx
-  when: inventory_hostname in groups['web']
+  when: "inventory_hostname in groups['web']"
   tags:
     - nginx
 
