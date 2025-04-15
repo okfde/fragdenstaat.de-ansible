@@ -7,7 +7,13 @@ vpn_clientgroups:
 {% for peer in clientgroup.peers %}      - name: {{ peer.name }}
         publickey: {{ peer.publickey }}
         peer_id: {{ peer.peer_id }}
+{% if "server" in peer %}
+        server: {{ peer.server }}
+{% endif %}
 {% endfor %}{% if clientgroup.group == "vpn" %}      - name: {{ client_name }}
         publickey: {{ public_key.stdout }}
         peer_id: {{ peer_id | int }}
+{% if server %}
+        server: {{ server }}
+{% endif %}
 {% endif %}{% endfor %}
