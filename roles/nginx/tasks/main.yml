@@ -80,6 +80,14 @@
   tags:
     - nginx
 
+- name: Make sure pixel log permission is set
+  ansible.posix.acl:
+    path: "{{ nginx_pixel_log_file }}"
+    entity: "{{ gunicorn_user }}"
+    etype: user
+    permissions: r
+    state: present
+
 - name: Set nginx logrotate settings
   ansible.builtin.lineinfile:
     path: "/etc/logrotate.d/nginx"
