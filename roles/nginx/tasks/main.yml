@@ -69,16 +69,16 @@
     - nginx
 
 - name: "Create the Nginx pixel log file"
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_pixel_log_file }}"
     state: touch
     mode: "0550"
     owner: www-data
     group: www-data
-
-- name: Make sure pixel log permission is set
-  ansible.builtin.command:
-    cmd: "/usr/bin/setfacl -m u:{{ gunicorn_user }}:r {{ nginx_pixel_log_file }}"
+    access_time: preserve
+    modification_time: preserve
+  tags:
+    - nginx
 
 - name: Set nginx logrotate settings
   ansible.builtin.lineinfile:
@@ -165,13 +165,23 @@
   tags:
     - nginx
 
-- name: Ensure that the application site is enabled
+- name: Ensure that the monitor site is enabled
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/monitor.conf"
     dest: "/etc/nginx/sites-enabled/monitor.conf"
     state: link
   notify: reload nginx
   when: "'monitor' in groups and inventory_hostname in groups['monitor']"
+  tags:
+    - nginx
+
+- name: Ensure that the pixel site is enabled
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/pixel.conf"
+    dest: "/etc/nginx/sites-enabled/pixel.conf"
+    state: link
+  notify: reload nginx
+  when: inventory_hostname in groups['web']
   tags:
     - nginx
 
