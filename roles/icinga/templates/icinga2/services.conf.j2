@@ -483,3 +483,25 @@ apply Service "weblate" {
 
   assign where host.vars.weblate_port
 }
+
+apply Service "onion_web" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "{{ onion_services.onion_web.internal_port }}"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.onion_web
+}
+
+apply Service "onion_static_media" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "{{ onion_services.onion_static_media.internal_port }}"
+  vars.tcp_address = "127.0.0.1"
+  vars.notification.pushover = 1
+
+  assign where host.vars.onion_static_media
+}
