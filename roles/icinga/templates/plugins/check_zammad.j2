@@ -9,10 +9,10 @@ message=$(echo ${result} | jq .message)
 issues=$(echo ${result} | jq .issues)
 actions=$(echo ${result} | jq .actions)
 
-if [ ${healthy} == "true" ]; then
+if [ "${healthy}" == "true" ]; then
     errorlevel=0
     echo "OK: Zammad is healthy ${message}"
-elif [ ${message} != "success" ]; then
+elif [ "${message}" != "success" ]; then
     errorlevel=2
     echo "CRIT: Zammad reported an error: ${issues} ${actions}"
 else
