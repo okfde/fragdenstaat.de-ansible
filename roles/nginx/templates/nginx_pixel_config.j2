@@ -3,6 +3,8 @@ server {
     listen [::]:80;
     server_name {{ nginx_pixel_domain }};
 
+    access_log off;
+
     location /.well-known/acme-challenge/ {
     default_type "text/plain";
     root {{ letsencrypt_tmp_dir }};
@@ -12,6 +14,13 @@ server {
         return 301 https://{{ nginx_pixel_domain }}$request_uri;
     }
 }
+
+map $request_uri $pixelloggable {
+    / 0;
+    /favicon.ico 0;
+    default 1;
+}
+
 {% if active_https_domains[nginx_pixel_domain] %}
     server {
         listen              443 ssl http2;
@@ -22,7 +31,7 @@ server {
             {% include '_ssl.j2' %}
         {% endwith %}
 
-        access_log {{ nginx_pixel_log_file }} pixel;
+        access_log {{ nginx_pixel_log_file }} pixel if=$pixelloggable;
 
         location ~ .gif$ {
             empty_gif;
