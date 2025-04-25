@@ -13,7 +13,7 @@
 }
 
 {{ nginx_pixel_log_file }} {
-        daily
+        monthly
         missingok
         rotate {{ nginx_pixel_log_retention_days }}
         compress
