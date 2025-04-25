@@ -134,33 +134,19 @@
     connect_timeout: 1
     timeout: 60
 
-- name: Get opensearch settings
-  ansible.builtin.uri:
-    url: "http://127.0.0.1:9200/_cluster/settings?pretty"
-    body_format: "json"
-  register: os_config
+- name: Checking for opensearch plugins
+  ansible.builtin.command:
+    cmd: "docker compose exec opensearch opensearch-plugin list"
+    chdir: "{{ monitor_dir }}"
+  register: os_plugin_list
+  changed_when: false
 
-- name: Disable opensearch top_queries insights
-  ansible.builtin.uri:
-    url: "http://127.0.0.1:9200/_cluster/settings"
-    method: PUT
-    body_format: "json"
-    body: |
-      {
-        "persistent": {
-          "search": {
-            "insights": {
-              "top_queries": {
-                "{{ item }}": {
-                  "enabled": false
-                }
-              }
-            }
-          }
-        }
-      }
+- name: Disable opensearch plugins
+  ansible.builtin.command:
+    cmd: "docker compose exec opensearch opensearch-plugin remove {{ item }}"
+    chdir: "{{ monitor_dir }}"
+  ignore_errors: true
+  changed_when: false
   with_items:
-    - "cpu"
-    - "memory"
-    - "latency"
-  when: os_config is not skipped and item is not in os_config.json.persistent.search.insights.top_queries
+    - "query-insights"
+  when: os_plugin_list is not skipped and item in os_plugin_list.stdout_lines
