@@ -145,8 +145,8 @@
   ansible.builtin.command:
     cmd: "docker compose exec opensearch opensearch-plugin remove {{ item }}"
     chdir: "{{ monitor_dir }}"
-  ignore_errors: true
-  changed_when: false
+  changed_when: true
   with_items:
     - "query-insights"
   when: os_plugin_list is not skipped and item in os_plugin_list.stdout_lines
+  notify: docker compose restart monitor
