@@ -18,6 +18,30 @@ apply Service "ping6" {
   assign where host.address6
 }
 
+apply Service for (tor => config in host.vars.tor_onion_target) {
+  import "generic-service"
+
+  check_command = "tor"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  vars += config
+
+  assign where host.vars.tor_onion_target
+}
+
+apply Service "tor proxy" {
+  import "generic-service"
+
+  check_command = "tcp"
+  vars.tcp_port = "$host.vars.tor_proxy_port$"
+  vars.tcp_address = "$host.vars.tor_proxy$"
+  vars.notification.pushover = 1
+  vars.notification.slack = 1
+
+  assign where host.vars.tor_proxy
+}
+
 apply Service "apt" {
   import "generic-service"
 

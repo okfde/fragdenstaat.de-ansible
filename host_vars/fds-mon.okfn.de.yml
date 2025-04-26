@@ -87,6 +87,13 @@ icinga:
     - elasticsearch = 1
     - smartmon = "sd"
 
+    - tor_proxy = "127.0.0.1"
+    - tor_proxy_port = 9050
+    - tor_onion_target["tor - onion_whistleblow_portal"] = { onion = "cejukxlcaj4umxbtwj3xknyrgr5utkigwvfnymcyvfmh3wlhkec257ad" }
+    - tor_onion_target["tor - onion_web_server"] = { onion = "fdstaat23zv6kdmntgkvdzkr7hipl5oqswwi3xawzkj2w2gwsbxmrwyd" }
+    - tor_onion_target["tor - onion_media_server"] = { onion = "media.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad" }
+    - tor_onion_target["tor - onion_static_server"] = { onion = "static.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad" }
+
 dockerupdate:
   graylog:
     path: "/var/www/monitor/"
