@@ -12,3 +12,8 @@
   ansible.builtin.service:
     name: php{{ icingaweb2_php_version }}-fpm
     state: reloaded
+
+- name: restart tor
+  ansible.builtin.service:
+    name: tor
+    state: restarted

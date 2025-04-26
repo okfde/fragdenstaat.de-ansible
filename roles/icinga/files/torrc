@@ -1,0 +1,6 @@
+SocksPort 9050
+SocksPolicy accept 127.0.0.1/32
+Log notice syslog
+RunAsDaemon 1
+DataDirectory /var/lib/tor
+ControlPort 9051

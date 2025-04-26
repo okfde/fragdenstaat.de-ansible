@@ -142,3 +142,24 @@
   ansible.builtin.systemd:
     name: icinga2
     state: reloaded
+
+- name: Install tor proxy (to monitor .onion services)
+  ansible.builtin.apt:
+    name: tor
+    state: present
+  notify: restart tor
+  tags:
+    - icinga
+    - icingator
+
+- name: Configure torrc
+  ansible.builtin.copy:
+    src: 'torrc'
+    dest: '/etc/tor/torrc'
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart tor
+  tags:
+    - icinga
+    - icingator
