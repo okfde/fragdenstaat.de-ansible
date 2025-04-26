@@ -53,6 +53,7 @@ location /static/ {
         location = {{ simple_file.path }} {
             {% if simple_file.mimetype is defined %}
                 add_header Content-Type "{{ simple_file.mimetype }}";
+                default_type {{ simple_file.mimetype }};
             {% endif %}
             {{ add_static_headers() }}
 

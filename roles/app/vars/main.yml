@@ -79,3 +79,4 @@ django_environment:
   PAPERLESS_API_TOKEN: "{{ paperless_api_token }}"
   DJANGO_FROIDE_EVIDENCECOLLECTION_GSHEET_IMPORT_CONFIG: "{{ froide_evidencecollection_gsheet_import_config }}"
   PAYMENT_HOST: "{{ payment_host }}"
+  NEWSLETTER_PIXEL_LOG: "{{ nginx_pixel_log_file }}"
