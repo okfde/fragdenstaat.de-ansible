@@ -27,3 +27,26 @@ db_reporting_views:
     query: "SELECT id, created, reason, comment, newsletter_id FROM public.fds_newsletter_unsubscribefeedback"
   - name: problemreports
     query: "SELECT id, kind, timestamp, auto_submitted, resolved, message_id, user_id, resolution_timestamp, moderator_id, escalated FROM public.problem_problemreport"
+  - name: mailings
+    query: |
+      WITH mailing_count AS (
+      SELECT mailing_id,
+        COUNT(*) AS recipient_count,
+        COUNT(*) FILTER (WHERE bounced IS TRUE) AS bounced_count
+        FROM fds_mailing_mailingmessage
+        WHERE sent IS NOT NULL
+        GROUP BY mailing_id
+      )
+      SELECT
+        fds_mailing_mailing.id AS id,
+        'mailing-' || COALESCE(to_char(sending_date, 'YYYYMMDDHHMM'), '') || '-' || fds_mailing_mailing.id AS mailing_ident,
+        fds_mailing_mailing.name AS name, sender_name, sender_email, subject, preheader,
+        fds_mailing_mailing.created AS created, sending_date, sent_date, open_count, open_log_timestamp,
+        mailing_count.recipient_count,
+        mailing_count.bounced_count,
+        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate,
+        fds_mailing_mailing.open_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS open_rate
+      FROM fds_mailing_mailing
+      JOIN fds_mailing_emailtemplate ON fds_mailing_emailtemplate.id = fds_mailing_mailing.email_template_id
+      JOIN mailing_count ON mailing_count.mailing_id = fds_mailing_mailing.id
+      WHERE submitted IS TRUE
