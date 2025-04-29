@@ -47,12 +47,19 @@ db_reporting_views:
       ),
       unsubscribes AS (
         SELECT
-        unsubscribe_reference as mailing_id,
+        unsubscribe_reference as mailing_ident,
         COUNT(*) as unsubscribe_count
         FROM fds_newsletter_subscriber
         WHERE unsubscribed IS NOT NULL
         AND unsubscribe_reference LIKE 'mailing-%'
         GROUP BY unsubscribe_reference
+      ),
+      clicks AS (
+        SELECT
+        reference AS mailing_ident,
+        SUM(count) AS click_count
+        FROM fds_donation_donationformviewcount
+        GROUP BY reference
       ),
       mailings AS (
         SELECT 
@@ -77,14 +84,17 @@ db_reporting_views:
         subject, preheader,
         mailing_count.recipient_count,
         mailing_count.bounced_count,
+        COALESCE(clicks.click_count, 0) AS click_count,
         COALESCE(unsubscribe_count, 0) AS unsubscribe_count,
-        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate,
         open_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS open_rate,
-        COALESCE(unsubscribe_count::decimal, 0) / NULLIF(mailing_count.recipient_count::decimal, 0) AS unsubscribe_rate
+        COALESCE(clicks.click_count, 0)::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS click_rate,
+        COALESCE(unsubscribe_count, 0)::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS unsubscribe_rate,
+        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate
       FROM mailings
       JOIN fds_mailing_emailtemplate ON fds_mailing_emailtemplate.id = mailings.email_template_id
       JOIN fds_newsletter_newsletter ON fds_newsletter_newsletter.id = mailings.newsletter_id
       JOIN mailing_count ON mailing_count.mailing_id = mailings.id
       LEFT OUTER JOIN segments ON segments.mailing_id = mailings.id
-      LEFT OUTER JOIN unsubscribes ON unsubscribes.mailing_id = mailing_ident
+      LEFT OUTER JOIN unsubscribes ON unsubscribes.mailing_ident = mailings.mailing_ident
+      LEFT OUTER JOIN clicks ON clicks.mailing_ident = mailings.mailing_ident
       WHERE submitted IS TRUE
