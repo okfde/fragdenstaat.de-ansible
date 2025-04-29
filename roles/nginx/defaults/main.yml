@@ -17,3 +17,4 @@ letsencrypt_privkey_filename: privkey.pem
 nginx_log_retention_days: 7
 
 nginx_pixel_log_retention_days: 14
+nginx_pixel_log_file: "/var/log/nginx/pixel_access.log"

@@ -77,6 +77,7 @@
     group: www-data
     access_time: preserve
     modification_time: preserve
+  register: pixel_log
   tags:
     - nginx
 
@@ -87,6 +88,8 @@
     etype: user
     permissions: r
     state: present
+  when: pixel_log is not skipped
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Set nginx logrotate settings
   ansible.builtin.lineinfile:
