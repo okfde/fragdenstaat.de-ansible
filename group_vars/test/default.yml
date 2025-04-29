@@ -59,8 +59,5 @@ nginx_extra_domains:
 nginx_set_real_ip_from: "192.168.122.0/24"
 nginx_real_ip_header: "X-Forwarded-For"
 
-minio_release: 20231115204325.0.0_amd64
-mcli_release: 20231115224558.0.0_amd64
-
 network_vlan:
   id: 4000
