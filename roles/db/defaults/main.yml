@@ -8,13 +8,15 @@ db_user_reporting: "fds_report"
 
 db_reporting_views:
   - name: donations
-    query: "SELECT public.fds_donation_donation.id AS id, public.fds_donation_donation.timestamp AS timestamp, completed, amount, reference, donor_id, purpose, method, public.fds_donation_donation.received_timestamp AS received_timestamp, recurring, amount_received, first_recurring, keyword, form_url, number, project, public.froide_payment_payment.status AS payment_status, public.froide_payment_order.subscription_id AS subscription_id FROM public.fds_donation_donation LEFT OUTER JOIN public.froide_payment_payment ON public.fds_donation_donation.payment_id = public.froide_payment_payment.id LEFT OUTER JOIN public.froide_payment_order ON public.fds_donation_donation.order_id = public.froide_payment_order.id"
+    query: "SELECT public.fds_donation_donation.id AS id, public.fds_donation_donation.timestamp AS timestamp, completed, amount, reference, donor_id, purpose, method, public.fds_donation_donation.received_timestamp AS received_timestamp, recurring, amount_received, first_recurring, keyword, form_url, public.fds_donation_donation.data AS data, number, project, public.froide_payment_payment.status AS payment_status, public.froide_payment_order.subscription_id AS subscription_id FROM public.fds_donation_donation LEFT OUTER JOIN public.froide_payment_payment ON public.fds_donation_donation.payment_id = public.froide_payment_payment.id LEFT OUTER JOIN public.froide_payment_order ON public.fds_donation_donation.order_id = public.froide_payment_order.id"
+  - name: donation_form_views
+    query: "SELECT path, reference, count, last_updated FROM public.fds_donation_donationformviewcount"
   - name: subscriptions
-    query: " SELECT froide_payment_subscription.id AS id, froide_payment_subscription.created AS created, last_date, next_date, canceled, public.froide_payment_plan.amount AS amount, public.froide_payment_plan.interval AS interval, public.froide_payment_plan.amount_year AS amount_year, public.froide_payment_plan.provider as provider, donor_id FROM public.froide_payment_subscription LEFT OUTER JOIN public.froide_payment_plan ON public.froide_payment_subscription.plan_id = public.froide_payment_plan.id LEFT OUTER JOIN public.fds_donation_donor_subscriptions ON public.fds_donation_donor_subscriptions.subscription_id = public.froide_payment_subscription.id"
+    query: "SELECT froide_payment_subscription.id AS id, froide_payment_subscription.created AS created, last_date, next_date, canceled, public.froide_payment_plan.amount AS amount, public.froide_payment_plan.interval AS interval, public.froide_payment_plan.amount_year AS amount_year, public.froide_payment_plan.provider as provider, donor_id FROM public.froide_payment_subscription LEFT OUTER JOIN public.froide_payment_plan ON public.froide_payment_subscription.plan_id = public.froide_payment_plan.id LEFT OUTER JOIN public.fds_donation_donor_subscriptions ON public.fds_donation_donor_subscriptions.subscription_id = public.froide_payment_subscription.id"
   - name: donors
     query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor"
   - name: subscribers
-    query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id FROM public.fds_newsletter_subscriber"
+    query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id, unsubscribe_method, unsubscribe_reference FROM public.fds_newsletter_subscriber"
   - name: foirequests
     query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason, public, status, visibility, law_id, is_foi, same_as_id, same_as_count, jurisdiction_id, resolution, reference, project_id, closed, campaign_id, language FROM public.foirequest_foirequest"
   - name: documents
@@ -47,12 +49,19 @@ db_reporting_views:
       ),
       unsubscribes AS (
         SELECT
-        unsubscribe_reference as mailing_id,
+        unsubscribe_reference as mailing_ident,
         COUNT(*) as unsubscribe_count
         FROM fds_newsletter_subscriber
         WHERE unsubscribed IS NOT NULL
         AND unsubscribe_reference LIKE 'mailing-%'
         GROUP BY unsubscribe_reference
+      ),
+      clicks AS (
+        SELECT
+        reference AS mailing_ident,
+        SUM(count) AS click_count
+        FROM fds_donation_donationformviewcount
+        GROUP BY reference
       ),
       mailings AS (
         SELECT 
@@ -77,14 +86,17 @@ db_reporting_views:
         subject, preheader,
         mailing_count.recipient_count,
         mailing_count.bounced_count,
+        COALESCE(clicks.click_count, 0) AS click_count,
         COALESCE(unsubscribe_count, 0) AS unsubscribe_count,
-        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate,
         open_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS open_rate,
-        COALESCE(unsubscribe_count::decimal, 0) / NULLIF(mailing_count.recipient_count::decimal, 0) AS unsubscribe_rate
+        COALESCE(clicks.click_count, 0)::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS click_rate,
+        COALESCE(unsubscribe_count, 0)::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS unsubscribe_rate,
+        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate
       FROM mailings
       JOIN fds_mailing_emailtemplate ON fds_mailing_emailtemplate.id = mailings.email_template_id
       JOIN fds_newsletter_newsletter ON fds_newsletter_newsletter.id = mailings.newsletter_id
       JOIN mailing_count ON mailing_count.mailing_id = mailings.id
       LEFT OUTER JOIN segments ON segments.mailing_id = mailings.id
-      LEFT OUTER JOIN unsubscribes ON unsubscribes.mailing_id = mailing_ident
+      LEFT OUTER JOIN unsubscribes ON unsubscribes.mailing_ident = mailings.mailing_ident
+      LEFT OUTER JOIN clicks ON clicks.mailing_ident = mailings.mailing_ident
       WHERE submitted IS TRUE
