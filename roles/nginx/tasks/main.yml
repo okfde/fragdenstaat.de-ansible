@@ -64,7 +64,7 @@
     mode: "0644"
     backup: true
   notify: reload nginx
-  when: "inventory_hostname in groups['web']"
+  when: inventory_hostname is "brooke.okfn.de"
   tags:
     - nginx
 
