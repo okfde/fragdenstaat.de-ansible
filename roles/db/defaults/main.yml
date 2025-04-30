@@ -10,7 +10,7 @@ db_reporting_views:
   - name: donations
     query: "SELECT public.fds_donation_donation.id AS id, public.fds_donation_donation.timestamp AS timestamp, completed, amount, reference, donor_id, purpose, method, public.fds_donation_donation.received_timestamp AS received_timestamp, recurring, amount_received, first_recurring, keyword, form_url, public.fds_donation_donation.data AS data, number, project, public.froide_payment_payment.status AS payment_status, public.froide_payment_order.subscription_id AS subscription_id FROM public.fds_donation_donation LEFT OUTER JOIN public.froide_payment_payment ON public.fds_donation_donation.payment_id = public.froide_payment_payment.id LEFT OUTER JOIN public.froide_payment_order ON public.fds_donation_donation.order_id = public.froide_payment_order.id"
   - name: donation_form_views
-    query: "SELECT path, reference, count, last_updated FROM public.fds_donation_donationformviewcount"
+    query: "SELECT path, reference, date, count, last_updated FROM public.fds_donation_donationformviewcount"
   - name: subscriptions
     query: "SELECT froide_payment_subscription.id AS id, froide_payment_subscription.created AS created, last_date, next_date, canceled, public.froide_payment_plan.amount AS amount, public.froide_payment_plan.interval AS interval, public.froide_payment_plan.amount_year AS amount_year, public.froide_payment_plan.provider as provider, donor_id FROM public.froide_payment_subscription LEFT OUTER JOIN public.froide_payment_plan ON public.froide_payment_subscription.plan_id = public.froide_payment_plan.id LEFT OUTER JOIN public.fds_donation_donor_subscriptions ON public.fds_donation_donor_subscriptions.subscription_id = public.froide_payment_subscription.id"
   - name: donors
