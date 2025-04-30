@@ -78,6 +78,7 @@
     access_time: preserve
     modification_time: preserve
   register: pixel_log
+  when: inventory_hostname is "brooke.okfn.de"
   tags:
     - nginx
 
@@ -88,7 +89,7 @@
     etype: user
     permissions: r
     state: present
-  when: pixel_log is not skipped
+  when: pixel_log is not skipped and inventory_hostname is "brooke.okfn.de"
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Set nginx logrotate settings
