@@ -215,7 +215,8 @@ for t in range(1,hours + 1):
 
     if r.status_code != 200:
         logging.error('Error fetching data from graylog API for timerange: %s - %s', currentStart, currentEnd)
-        pprint(r.text)
+        if args.verbose:
+            pprint(r.text)
         continue
 
     try:
