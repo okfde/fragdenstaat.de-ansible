@@ -60,8 +60,10 @@ Store public key in host variables file in `host_vars/` under the key `host_data
 Run this script to add a client:
 
 ```
-ansible-playbook -v playbooks/vpn_add_client.yml
+ansible-playbook -v playbooks/extra/vpn_add_client.yml
 ```
+
+The playbook will ask for the client name and a (python) list of allowed endpoints. The endpoint names must match the server names in the `inventory`. If no endpoints are given, access will be granted to all of them.
 
 After it's done, a client configuration file is in your local directory and the public key has been recorded in encrypted form `env_vars/vpnclients.yml`.
 You should commit `env_vars/vpnclients.yml`.
