@@ -47,7 +47,6 @@ if [[ $HELP == 'true' ]] ; then
     cat <<EOF
 check_tor - Monitor tor services via tor socks5h proxy.
 based on check_socks Ekhozie (ekhozie@users.noreply.github.com)
-Copyright (c) 2025 FragDenStaat <denis.witt@okfn.de>
 Usage:
     --help     = Print this message
     -i         = Proxy IP address (default: ${IP})
@@ -63,6 +62,8 @@ fi
 
 TARGET="http://${TARGET}.onion"
 ts=$(date +%s%N)
+sudo systemctl restart tor
+sleep 1
 curl --max-time "${MAX_TIME}" -sf --socks5-hostname "${IP}:${PORT}" "${TARGET}" &>/dev/null
 ret=$?
 tt=$((($(date +%s%N) - $ts)/1000000))

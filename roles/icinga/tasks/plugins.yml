@@ -60,6 +60,15 @@
   when: "'mysql = 1' in icinga.vars"
   tags: sudo
 
+- name: Add options for tor check to sudoers
+  community.general.sudoers:
+    name: allow-torcheck
+    state: present
+    user: nagios
+    commands: "/usr/bin/systemctl restart tor"
+  when: "'tor_proxy = 1' in icinga.vars"
+  tags: sudo
+
 - name: Grant check_postgres access as fragdenstaat user
   community.general.sudoers:
     name: nagiosaspostgres

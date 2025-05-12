@@ -22,11 +22,18 @@ apply Service for (tor => config in host.vars.tor_onion_target) {
   import "generic-service"
 
   check_command = "tor"
+
+  max_check_attempts = 10
+  check_interval = 1h
+  retry_interval = 10m
+
   vars.notification.pushover = 1
-  vars.notification.slack = 1
+  vars.notification.slack = 0
   vars.notification_delay = 30m
 
   vars += config
+  vars.proxy_host = "$host.vars.tor_proxy_host$"
+  vars.proxy_port = "$host.vars.tor_proxy_port$"
 
   assign where host.vars.tor_onion_target
 }
@@ -36,7 +43,7 @@ apply Service "tor proxy" {
 
   check_command = "tcp"
   vars.tcp_port = "$host.vars.tor_proxy_port$"
-  vars.tcp_address = "$host.vars.tor_proxy$"
+  vars.tcp_address = "$host.vars.tor_proxy_host$"
   vars.notification.pushover = 1
   vars.notification.slack = 1
 
