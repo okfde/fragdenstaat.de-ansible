@@ -1,0 +1,69 @@
+#! /bin/bash
+
+unset -v API_URL
+unset -v API_TOKEN
+
+external_commands='curl jq'
+
+for cmd in ${external_commands}; do
+    if ! command -v ${cmd} 2>&1 >/dev/null; then
+        echo "UNKNOWN: The '${cmd}' command is missing"
+        exit 3
+    fi
+done
+
+# You CAN set defaults here
+#API_URL=""
+#API_TOKEN=""
+
+while getopts hu:t: opt; do
+    case ${opt} in
+        h) HELP=true ;;
+        u) API_URL=$OPTARG ;;
+        t) API_TOKEN=$OPTARG ;;
+        *) break ;;
+    esac
+done
+
+# remove all already processed arguments
+shift "$(( OPTIND - 1 ))"
+
+if [[ ${HELP} == 'true' ]]; then
+    cat <<EOF
+check_graylog_leader - Monitor graylog leader status
+Usage:
+    -h = Print this message
+    -u = API URL
+    -t = API Token
+EOF
+    exit 0
+fi
+
+if [[ -z "${API_URL}" ]] || [[ -z ${API_TOKEN} ]]; then
+    echo "UNKNOWN: Missing parameters (see '-h' for help)"
+    exit 3
+fi
+
+cluster_status="$(curl -s -L -u ${API_TOKEN}:token -H 'Accept: application/json' -X GET ${API_URL})";ret=$?
+
+if [[ ${ret} != 0 ]]; then
+    echo "WARNING: curl reported an error getting the cluster status via graylog API."
+    exit 1
+fi
+
+is_leader="$(echo ${cluster_status} | jq '.[].is_leader')";ret=$?
+
+if [[ ${ret} != 0 ]]; then
+    echo "WARNING: jq could not parse the cluster status feedback"
+    exit 1
+fi
+
+check_leader="$(echo ${is_leader} | grep -o 'true' | wc -l)"
+
+if [[ ${check_leader} != 1 ]]; then
+    echo "CRITICAL: Cluster has no (or more than one) leader"
+    exit 2
+fi
+
+echo "Ok: Status reports exactly one leader"
+exit 0

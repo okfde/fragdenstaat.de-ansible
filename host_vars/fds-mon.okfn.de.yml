@@ -95,6 +95,9 @@ icinga:
     - tor_onion_target["tor - onion_media_server"] = { onion = "media.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad" }
     - tor_onion_target["tor - onion_static_server"] = { onion = "static.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad" }
 
+    - graylog_api_url = "http://localhost:9010/api/cluster/"
+    - graylog_api_token = "{{ icinga_graylog_api_token }}"
+
 dockerupdate:
   graylog:
     path: "/var/www/monitor/"

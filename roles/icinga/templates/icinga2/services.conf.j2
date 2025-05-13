@@ -50,6 +50,19 @@ apply Service "tor proxy" {
   assign where host.vars.tor_proxy
 }
 
+apply Service "graylog leader" {
+  import "generic-service"
+
+  check_command = "graylog_is_leader"
+  vars.graylog_api_url = "$host.vars.graylog_api_url$"
+  vars.graylog_api_token = "$host.vars.graylog_api_token$"
+  vars.notification.pushover = 1
+  vars.notification.slack = 0
+
+  assign where host.vars.graylog
+}
+
+
 apply Service "apt" {
   import "generic-service"
 
