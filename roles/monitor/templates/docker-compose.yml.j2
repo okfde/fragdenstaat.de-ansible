@@ -38,7 +38,7 @@ services:
 {% if graylog is true %}
   mongodb:
     container_name: graylog_mongodb
-    image: "mongo:6.0"
+    image: "mongo:7.0"
     volumes:
       - "{{ monitor_dir }}/graylog/mongodb_data:/data/db"
     restart: unless-stopped
@@ -51,7 +51,7 @@ services:
 
   opensearch:
     container_name: graylog_opensearch
-    image: "opensearchproject/opensearch:2"
+    image: "opensearchproject/opensearch:2.15.0"
     environment:
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD={{ opensearch_init_password }}"
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
@@ -104,6 +104,7 @@ services:
       GRAYLOG_TRANSPORT_EMAIL_FROM_EMAIL: "graylog@zerschlagdenstaat.de"
       GRAYLOG_TRANSPORT_EMAIL_USE_TLS: "false"
       GRAYLOG_TIMEZONE: "Europe/Berlin"
+      GRAYLOG_ROOT_TIMEZONE: "Europe/Berlin"
       GRAYLOG_IS_LEADER: "True"
       TZ: "Europe/Berlin"
     logging:
