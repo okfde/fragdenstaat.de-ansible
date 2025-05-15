@@ -95,7 +95,7 @@ db_reporting_views:
         mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate
       FROM mailings
       JOIN fds_mailing_emailtemplate ON fds_mailing_emailtemplate.id = mailings.email_template_id
-      JOIN fds_newsletter_newsletter ON fds_newsletter_newsletter.id = mailings.newsletter_id
+      LEFT OUTER JOIN fds_newsletter_newsletter ON fds_newsletter_newsletter.id = mailings.newsletter_id
       JOIN mailing_count ON mailing_count.mailing_id = mailings.id
       LEFT OUTER JOIN segments ON segments.mailing_id = mailings.id
       LEFT OUTER JOIN unsubscribes ON unsubscribes.mailing_ident = mailings.mailing_ident
