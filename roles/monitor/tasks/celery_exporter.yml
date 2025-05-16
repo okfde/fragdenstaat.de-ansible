@@ -7,8 +7,8 @@
 
 - name: Install celery exporter
   ansible.builtin.get_url:
-    url: https://github.com/danihodovic/celery-exporter/releases/download/v0.10.4/celery-exporter
-    dest: /opt/celery_exporter/celery_exporter
+    url: https://github.com/danihodovic/celery-exporter/releases/download/latest/celery-exporter
+    dest: /opt/celery_exporter/
     mode: "0755"
   notify: Restart celery exporter
   tags: exporter
