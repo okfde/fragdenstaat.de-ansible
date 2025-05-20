@@ -64,7 +64,7 @@
     mode: "0644"
     backup: true
   notify: reload nginx
-  when: inventory_hostname is "brooke.okfn.de"
+  when: inventory_hostname in groups['pixel']
   tags:
     - nginx
 
@@ -78,7 +78,7 @@
     access_time: preserve
     modification_time: preserve
   register: pixel_log
-  when: inventory_hostname is "brooke.okfn.de"
+  when: inventory_hostname in groups['pixel']
   tags:
     - nginx
 
@@ -89,7 +89,7 @@
     etype: user
     permissions: r
     state: present
-  when: pixel_log is not skipped and inventory_hostname is "brooke.okfn.de"
+  when: pixel_log is not skipped and inventory_hostname in groups['pixel']
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Set nginx logrotate settings
