@@ -8,3 +8,4 @@ collections:
   - community.postgresql
   - community.rabbitmq
   - community.crypto
+  - community.libvirt
