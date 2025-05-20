@@ -6,22 +6,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create vault.key dummy
+        run: |
+          echo "false" > vault.key
       - name: run-ansible-lint
-      # You may pin to the exact commit or the version.
-      # uses: ansible/ansible-lint@e98f9b38769d45cbe3c55a23b2eb25631babe7c4
         uses: ansible/ansible-lint@v25.4.0
-        #with:
-          # Arguments to be passed to ansible-lint command.
-          #args: # optional, default is 
-          # If false, this action will not setup python and will instead rely on the already installed python.
-          #setup_python: # optional, default is true
-          # The directory where to run ansible-lint from. Default is `github.workspace`.
-          #working_directory: # optional, default is 
-          # Path to the requirements YAML file to install role and collection dependencies.
-          #requirements_file: # optional, default is 
-          # Expected return code from ansible-lint. Default is 0. Used for self-testing purposes.
-          #expected_return_code: # optional, default is 0
-          # The branch, tag, or commit to use for ansible-lint.
-          #gh_action_ref: # optional, default is 
-          
