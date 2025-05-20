@@ -64,7 +64,7 @@ db_reporting_views:
         GROUP BY reference
       ),
       mailings AS (
-        SELECT 
+        SELECT
           *,
           'mailing-' || COALESCE(to_char(sending_date AT TIME ZONE 'UTC', 'YYYYMMDDHH24MI'), '') || '-' || fds_mailing_mailing.id AS mailing_ident
         FROM fds_mailing_mailing
