@@ -23,8 +23,8 @@ icinga:
   vars:
     - ssh_port = 2228
     - backup = "borg"
-    - procs_warning = 500
-    - procs_critical = 600
+    - procs_warning = 600
+    - procs_critical = 700
     - node_exporter = 1
     - docker = 1
     - ogimage_port = 3000
