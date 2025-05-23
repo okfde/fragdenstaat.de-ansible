@@ -46,7 +46,7 @@ smtp_tls_protocols = !SSLv2, !SSLv3
 smtpd_tls_ciphers = high
 smtpd_tls_exclude_ciphers = RC4:aNULL:eNULL:LOW:3DES:MD5:EXP:PSK:SRP:DSS
 
-smtpd_tls_dh1024_param_file = /etc/ssl/certs/dhparams.pem
+smtpd_tls_dh1024_param_file = auto
 smtpd_tls_eecdh_grade = ultra
 
 # The server sets the preferred cipher order
