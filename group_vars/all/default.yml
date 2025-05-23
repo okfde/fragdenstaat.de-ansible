@@ -347,7 +347,7 @@ cors_exceptions:
 
 content_security_policy:
   "default-src": "'none'"
-  "script-src": "'self' 'unsafe-inline' __static__ https://traffic.okfn.de https://js.stripe.com"
+  "script-src": "'self' __static__ https://traffic.okfn.de https://js.stripe.com"
   "style-src": "'self' 'unsafe-inline' __static__"
   "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
   "media-src": "__static__ __media__"
