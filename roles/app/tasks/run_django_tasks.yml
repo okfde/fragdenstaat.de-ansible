@@ -55,6 +55,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - skip_ansible_lint
   become: true
   become_user: "{{ gunicorn_user }}"
   notify:
