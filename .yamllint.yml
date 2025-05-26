@@ -6,5 +6,4 @@ yaml-files:
 
 rules:
   document-start: disable
-  line-length:
-    level: warning
+  line-length: disable
