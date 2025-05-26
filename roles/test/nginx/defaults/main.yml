@@ -42,7 +42,7 @@ nginx_proxy_headers:
   - "X-Forwarded-Proto $scheme"
 
 nginx_headers:
-  - 'Strict-Transport-Security "max-age=63072000" always'
+  Strict-Transport-Security: 'max-age=63072000'
 
 nginx_client_max_body_size: "8192M"
 nginx_gzip: "off"

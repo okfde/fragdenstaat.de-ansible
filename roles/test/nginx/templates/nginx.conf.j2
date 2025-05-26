@@ -15,6 +15,15 @@ http {
 		''      close;
 	}
 
+{% for header, value in nginx_headers.items() %}
+    map $http_{{ header.replace('-','_').lower() }} ${{ header.replace('-','_').lower() }} {
+        default "{{ value }}";
+        "" "";
+    }
+
+    add_header {{ header }} ${{ header.replace('-','_').lower() }} always;
+{% endfor %}
+
 	sendfile on;
 	tcp_nopush on;
 	types_hash_max_size 2048;
@@ -39,10 +48,6 @@ http {
 	ssl_stapling {{ nginx_ocsp_stapling }};
 	ssl_stapling_verify {{ nginx_ocsp_stapling_verify }};
 	resolver {{ nginx_resolver }};
-
-{% for header in nginx_headers %}
-	add_header {{ header }};
-{% endfor %}
 
 	proxy_cache_path {{ nginx_proxy_path }};
 	proxy_redirect {{ nginx_proxy_redirect }};
