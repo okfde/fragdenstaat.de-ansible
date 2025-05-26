@@ -16,14 +16,6 @@
   become_user: "{{ fdsbot_user }}"
   become: true
 
-- name: Create the virtualenv
-  ansible.builtin.command:
-    cmd: "python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env"
-    creates: "{{ fdsbot_ansible_dir }}/ansible-env/bin/activate"
-  become_user: "{{ fdsbot_user }}"
-  become: true
-  changed_when: false
-
 - name: Install build dependencies
   ansible.builtin.apt:
     pkg:
@@ -32,14 +24,33 @@
       - python3-pip
       - libffi-dev
 
-- name: Install ansible dependencies
+- name: Install uv
   ansible.builtin.pip:
-    virtualenv: "{{ fdsbot_ansible_dir }}/ansible-env"
-    chdir: "{{ fdsbot_ansible_dir }}"
-    requirements: "requirements.txt"
-    state: latest
+    name: uv
+    break_system_packages: true
+  become: true
+  become_user: "{{ fdsbot_user }}"
+  tags:
+    - packages
+    - skip_ansible_lint
+
+- name: Create the virtualenv
+  ansible.builtin.command:
+    cmd: "python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env"
+    creates: "{{ fdsbot_ansible_dir }}/ansible-env/bin/activate"
   become_user: "{{ fdsbot_user }}"
   become: true
+  changed_when: false
+
+- name: Install ansible dependencies
+  ansible.builtin.command:
+    cmd: "/home/fdsbot/.local/bin/uv pip sync requirements.txt"
+    chdir: "{{ fdsbot_ansible_dir }}"
+  environment:
+    VIRTUAL_ENV: "{{ fdsbot_ansible_dir }}/ansible-env"
+  become: true
+  become_user: "{{ fdsbot_user }}"
+  changed_when: false
 
 # the ansible-core version currently used is unsupported by ansible-galaxy
 # TODO: upgrade ansible-core
@@ -72,14 +83,20 @@
 #   become: true
 #   changed_when: false
 
+- name: Creates local_vars directory
+  ansible.builtin.file:
+    path: "{{ fdsbot_ansible_dir }}/local_vars"
+    state: "directory"
+    owner: "{{ fdsbot_user }}"
+    mode: "0755"
+
 - name: Setup local config file
   ansible.builtin.copy:
     src: "{{ fdsbot_ansible_dir }}/local_vars/local_config.yml.example"
     remote_src: true
     dest: "{{ fdsbot_ansible_dir }}/local_vars/local_config.yml"
     mode: "0664"
-  become_user: "{{ fdsbot_user }}"
-  become: true
+    owner: "{{ fdsbot_user }}"
 
 - name: Set ansible user in local config
   ansible.builtin.lineinfile:
