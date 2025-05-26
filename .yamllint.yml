@@ -1,0 +1,10 @@
+---
+
+yaml-files:
+  - "*.yml"
+  - "*.yaml"
+
+rules:
+  document-start: disable
+  line-length:
+    level: warning
