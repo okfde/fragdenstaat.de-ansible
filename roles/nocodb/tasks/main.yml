@@ -62,13 +62,24 @@
   become_user: postgres
   with_items: "{{ nc_db_brooke }}"
 
-- name: Ensure user has access to the new database
+- name: Create database user
   community.general.postgresql_user:
     name: "{{ item.db_user }}"
     password: "{{ item.db_pass }}"
     db: "{{ item.db_name }}"
-    priv: "ALL"
     state: present
+  delegate_to: "brooke.okfn.de"
+  become: true
+  become_user: postgres
+  with_items: "{{ nc_db_brooke }}"
+
+- name: Ensure user has access to the new database
+  community.postgresql.postgresql_privs:
+    db: "{{ item.db_name }}"
+    privs: ALL
+    type: schema
+    objs: public
+    role: "{{ item.db_user }}"
   delegate_to: "brooke.okfn.de"
   become: true
   become_user: postgres
