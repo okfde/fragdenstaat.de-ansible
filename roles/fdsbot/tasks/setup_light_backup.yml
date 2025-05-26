@@ -52,6 +52,7 @@
     src: dump_light.sh.j2
     dest: "{{ fdsbot_backup_dir }}/dump_light.sh"
     mode: "0744"
+    owner: "{{ fdsbot_user }}"
 
 - name: Create backup light cronjob
   ansible.builtin.cron:
@@ -59,7 +60,7 @@
     minute: "30"
     hour: "7"
     job: "bash {{ fdsbot_backup_dir }}/dump_light.sh"
-    user: fdsbot
+    user: "{{ fdsbot_user }}"
   when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Set fdsbot light backup server systemd service
