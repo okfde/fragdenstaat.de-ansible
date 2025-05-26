@@ -15,3 +15,8 @@ jobs:
         uses: ansible/ansible-lint@v25.4.0
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
+      - name: yamllint
+        run: |
+          apt update
+          apt install yamllint -y
+          find . -name "*.yml" -exec yamllint {} \;
