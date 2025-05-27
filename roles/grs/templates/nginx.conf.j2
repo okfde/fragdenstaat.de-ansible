@@ -1,8 +1,8 @@
 server {
 	server_name gegenrechtsschutz.de www.gegenrechtsschutz.de;
 	listen 443 ssl;
-	ssl_certificate /etc/letsencrypt/live/gegenrechtsschutz.de-0001/fullchain.pem; # managed by Certbot
-	ssl_certificate_key /etc/letsencrypt/live/gegenrechtsschutz.de-0001/privkey.pem; # managed by Certbot
+	ssl_certificate /etc/letsencrypt/live/gegenrechtsschutz.de/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/gegenrechtsschutz.de/privkey.pem; # managed by Certbot
 	include /etc/letsencrypt/options-ssl-nginx.conf;
 	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
