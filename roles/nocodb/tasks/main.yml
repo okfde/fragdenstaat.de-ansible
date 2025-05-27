@@ -40,8 +40,13 @@
   notify: docker compose up nocodb
 
 - name: Pull docker images for nocodb
-  community.docker.docker_compose_v2_pull:
-    project_src: "{{ nc_dir }}"
+  # community.docker.docker_compose_v2_pull:
+  #  project_src: "{{ nc_dir }}"
+  #  policy: always
+  ansible.builtin.command:
+    cmd: docker compose pull
+    chdir: "{{ nc_dir }}"
+  changed_when: false
   notify: docker compose restart nocodb
 
 - name: Create nginx config
@@ -66,7 +71,7 @@
   community.general.postgresql_user:
     name: "{{ item.db_user }}"
     password: "{{ item.db_pass }}"
-    db: "{{ item.db_name }}"
+    login_db: "{{ item.db_name }}"
     state: present
   delegate_to: "brooke.okfn.de"
   become: true
