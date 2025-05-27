@@ -19,4 +19,5 @@ jobs:
         run: |
           sudo apt update
           sudo apt install yamllint -y
+          echo "Running yamllint"
           find . -name "*.yml" -exec yamllint {} \;
