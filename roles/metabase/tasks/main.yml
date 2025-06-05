@@ -1,5 +1,16 @@
 ---
 
+- name: Check if HTTPS certificates exist
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+  register: https_cert_check
+  with_items: "{{ https_domains }}"
+
+- name: Set HTTPS certificate facts
+  ansible.builtin.set_fact:
+    active_https_domains: "{{ active_https_domains | default({}) | combine({item.item: item.stat.exists}) }}"
+  with_items: "{{ https_cert_check.results }}"
+
 - name: Create metabase directory
   ansible.builtin.file:
     path: "{{ metabase_dir }}"
@@ -12,6 +23,13 @@
     src: docker-compose.yml.j2
     dest: "{{ metabase_dir }}/docker-compose.yml"
     mode: "0644"
+  notify: restart metabase
+
+- name: Pull latest version
+  ansible.builtin.command:
+    cmd: docker compose pull
+    chdir: "{{ metabase_dir }}"
+  changed_when: true
   notify: restart metabase
 
 - name: Set metabase systemd service
