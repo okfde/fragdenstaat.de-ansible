@@ -18,6 +18,15 @@ prometheus_exporter:
 borg:
   locations: /var/www/ /opt/discourse_docker/shared/standalone/backups/default/
   keepdaily: 7
+  prescripts_docker:
+    - name: metabase
+      container_name: postgres
+      path: "/var/www/metabase/"
+      src: create_postgres_backup_docker.sh
+      dest: metabase_backup.sh
+      db_name: metabase
+      db_user: metabase_user
+      db_password: metabase
 
 icinga:
   vars:

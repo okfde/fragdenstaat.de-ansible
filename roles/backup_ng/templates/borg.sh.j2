@@ -124,6 +124,22 @@ curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_host
 echo "Start Backup $(date)"
 echo "-------------------------------------------------------------------------------"
 echo ""
+{% if 'prescripts' in borg %}
+{% for prescript in borg.prescripts %}
+step "Prescript {{ prescript }}"
+  try /root/{{ prescript }}
+next
+{% endfor %}
+{% endif %}
+
+{% if 'prescripts_docker' in borg %}
+{% for prescript in borg.prescripts_docker %}
+step "Prescript {{ prescript.name }}"
+  try /root/{{ prescript.dest }}
+next
+{% endfor %}
+{% endif %}
+
 {% if 'snapshots' in borg %}
 step "Create mountpoints"
 {% for mk in borg.snapshots %}
@@ -142,14 +158,6 @@ step "Mount snapshots"
   try /bin/mount {{ m.dev }}-snapshot {{ m.mnt }}
 {% endfor %}
 next
-{% endif %}
-
-{% if 'prescripts' in borg %}
-{% for prescript in borg.prescripts %}
-step "Prescript {{ prescript }}"
-  try /root/{{ prescript }}
-next
-{% endfor %}
 {% endif %}
 
 step "Create backup"

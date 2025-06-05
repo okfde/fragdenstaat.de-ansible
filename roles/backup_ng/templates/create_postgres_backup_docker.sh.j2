@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -ex
+
+PATH=/usr/bin:/bin
+DATE=`date +%F`
+DAYOFMONTH=`date +%d`
+
+cd {{ item.path }}
+docker compose exec -e PGPASSWORD={{ item.db_password }} {{ item.container_name }} pg_dump --username={{ item.db_user }} {{ item.db_name }} | gzip -c > {{ item.path }}/sqlbackup-$DATE.sql.gz

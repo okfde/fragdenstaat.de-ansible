@@ -55,6 +55,14 @@
   with_items: "{{ borg.prescripts }}"
   when: "(borg is defined) and ('prescripts' in borg)"
 
+- name: Create prescripts docker
+  ansible.builtin.template:
+    src: "{{ item.src }}.j2"
+    dest: "/root/{{ item.dest }}"
+    mode: "0750"
+  with_items: "{{ borg.prescripts_docker }}"
+  when: "(borg is defined) and ('prescripts_docker' in borg)"
+
 - name: Create postscripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
