@@ -12,6 +12,10 @@
       tags: apt
     - role: dockerupdates
       tags: dockerupdates
+
     - role: nocodb
       tags: nocodb
+      when: inventory_hostname in groups["auxiliary"]
+    - role: metabase
+      tags: metabase
       when: inventory_hostname in groups["auxiliary"]
