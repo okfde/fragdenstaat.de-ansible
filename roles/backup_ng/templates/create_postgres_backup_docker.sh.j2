@@ -8,3 +8,4 @@ DAYOFMONTH=`date +%d`
 
 cd {{ item.path }}
 docker compose exec -e PGPASSWORD={{ item.db_password }} {{ item.container_name }} pg_dump --username={{ item.db_user }} {{ item.db_name }} | gzip -c > {{ item.path }}/sqlbackup-$DATE.sql.gz
+find {{ item.path }} -maxdepth 1 -name "*.sql.gz" -mtime +7 -delete
