@@ -45,8 +45,8 @@ http {
 	ssl_ciphers {{ nginx_ciphers }};
 	ssl_prefer_server_ciphers {{ nginx_prefer_server_ciphers }};
 
-	ssl_stapling {{ nginx_ocsp_stapling }};
-	ssl_stapling_verify {{ nginx_ocsp_stapling_verify }};
+	ssl_stapling off;
+	ssl_stapling_verify off;
 	resolver {{ nginx_resolver }};
 
 	proxy_cache_path {{ nginx_proxy_path }};

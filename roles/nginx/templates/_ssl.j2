@@ -17,8 +17,8 @@ ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDS
 ssl_prefer_server_ciphers off;
 
 {% if letsencrypt_enabled %}
-ssl_stapling on;
-ssl_stapling_verify on;
+ssl_stapling off;
+ssl_stapling_verify off;
 ssl_trusted_certificate /etc/letsencrypt/live/{{ server_name }}/fullchain.pem;
 {% endif %}
 
