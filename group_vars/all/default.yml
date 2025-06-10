@@ -65,6 +65,7 @@ db_user: "{{ application_name }}"
 db_user_readonly: "{{ application_name }}_readonly"
 ## in secets.yml
 # db_password_readonly:
+db_reporting_schema: "reporting"
 
 collect_release_info: true
 

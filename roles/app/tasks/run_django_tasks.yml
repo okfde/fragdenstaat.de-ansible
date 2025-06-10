@@ -44,6 +44,18 @@
   become: true
   become_user: postgres
 
+- name: Drop reporting views
+  community.postgresql.postgresql_query:
+    db: "{{ db_name }}"
+    query: DROP VIEW IF EXISTS {{ db_reporting_schema }}.{{ item.name }}
+  with_items: "{{ db_reporting_views }}"
+  become_user: postgres
+  become: true
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
 - name: Run Django database migrations
   community.general.django_manage:
     command: "migrate --noinput"
@@ -64,6 +76,18 @@
   changed_when: true
   when: true
   ignore_errors: true
+
+- name: Setup reporting views
+  community.postgresql.postgresql_query:
+    db: "{{ db_name }}"
+    query: CREATE OR REPLACE VIEW {{ db_reporting_schema }}.{{ item.name }} AS ({{ item.query }})
+  with_items: "{{ db_reporting_views }}"
+  become_user: postgres
+  become: true
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
 
 - name: "Set db_user privs"
   community.postgresql.postgresql_privs:
