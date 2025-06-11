@@ -2,5 +2,3 @@
 pg_version: 14
 db_user_replication: "replication"
 # db_password_replication
-db_user_reporting: "fds_report"
-# db_password_reporting

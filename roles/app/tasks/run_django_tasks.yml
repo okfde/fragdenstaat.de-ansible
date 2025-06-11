@@ -133,6 +133,22 @@
     - deploy-web
     - deploy-backend
 
+
+- name: Ensure reporting user has select access to all tables in schema
+  community.postgresql.postgresql_privs:
+    db: "{{ db_name }}"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+    schema: "{{ db_reporting_schema }}"
+    role: "{{ db_user_reporting }}"
+    grant_option: true
+  become: true
+  become_user: postgres
+  tags:
+    - django.migrate
+    - deploy-web
+    - deploy-backend
+
 - name: Run Django compilemessages
   ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
   args:
