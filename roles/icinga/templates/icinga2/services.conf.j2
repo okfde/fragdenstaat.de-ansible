@@ -84,6 +84,16 @@ apply Service "raid" {
   assign where host.vars.os == "Linux"
 }
 
+apply Service "systemd_logind" {
+  import "generic-service"
+
+  check_command = "systemd_logind"
+  vars.notification.pushover = 0
+  vars.notification.slack = 0
+
+  assign where host.vars.os == "Linux"
+}
+
 apply Service "needrestart" {
   import "generic-service"
 

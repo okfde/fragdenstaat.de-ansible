@@ -1,0 +1,18 @@
+#!/bin/bash
+
+service_status="$(systemctl is-active --quiet systemd-logind &> /dev/null)";ret=$?
+
+if [[ ${ret} != 0 ]]; then
+    echo "WARNING - systemd-logind is not active"
+    exit 1
+fi
+
+service_response="$(loginctl list-sessions &> /dev/null)";ret=$?
+
+if [[ ${ret} != 0 ]]; then
+    echo "CRITICAL - systemd-logind is active but not responding"
+    exit 2
+fi
+
+echo "OK - systemd-logind is active and responding"
+exit 0
