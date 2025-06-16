@@ -79,10 +79,12 @@ location /favicon.ico {
     return 404;
 }
 
+{% if app_bind_localhost_port is not defined %}
 location /static/ {
     {{ add_web_headers() }}
     rewrite     ^ https://{{ static_server_name }}$request_uri? permanent;
 }
+{% endif %}
 
 {% for loc in nginx_public_media %}
     location {{ loc.url }} {

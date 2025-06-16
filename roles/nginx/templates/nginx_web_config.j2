@@ -7,7 +7,11 @@ upstream {{ application_name }}_wsgi_server {
   # to return a good HTTP response (in case the Unicorn master nukes a
   # single worker for timing out).
 
+  {% if app_bind_localhost_port is defined %}
+  server 127.0.0.1:{{ app_bind_localhost_port }};
+  {% else %}
   server unix:{{ virtualenv_path }}/run/gunicorn.sock fail_timeout=0;
+  {% endif %}
 }
 
 upstream {{ application_name }}_asgi_server {

@@ -28,3 +28,6 @@ https_domains:
 
 fonts:
   - hk_grotesk
+
+# Deploy nginx with this enabled to serve traffic from this port
+# app_bind_localhost_port: 8000
