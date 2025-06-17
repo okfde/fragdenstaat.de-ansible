@@ -9,8 +9,8 @@ lastrun=$(cat /var/log/borg.log | grep "Start Backup" | awk '{ print $3 $4 $5 $9
 today=$(date | awk '{ print $1 $2 $3 $7 }')
 failcheck=$(grep "FAIL" /var/log/borg.log)
 
-if [ ${failcheck} ]; then
-    echo "WARNING -There were failures during borg run - ${failcheck}"
+if [ "${failcheck}" ]; then
+    echo -e "WARNING - There were failures during borg run \n${failcheck}"
     exit 1
 fi
 
