@@ -453,5 +453,7 @@ donation_backup_credentials: ""
 
 paperless_api_url: ""
 paperless_api_token: ""
+paperless_uploaded_type: ""
+paperless_request_field: ""
 
 froide_evidencecollection_gsheet_import_config: ""

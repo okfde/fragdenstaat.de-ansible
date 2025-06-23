@@ -77,6 +77,8 @@ django_environment:
   SITE_EMAIL: "{{ fds_site_email }}"
   PAPERLESS_API_URL: "{{ paperless_api_url }}"
   PAPERLESS_API_TOKEN: "{{ paperless_api_token }}"
+  PAPERLESS_UPLOADED_TYPE: "{{ paperless_uploaded_type }}"
+  PAPERLESS_REQUEST_FIELD: "{{ paperless_request_field }}"
   DJANGO_FROIDE_EVIDENCECOLLECTION_GSHEET_IMPORT_CONFIG: "{{ froide_evidencecollection_gsheet_import_config }}"
   PAYMENT_HOST: "{{ payment_host }}"
   NEWSLETTER_PIXEL_LOG: "{{ nginx_pixel_log_file }}"
