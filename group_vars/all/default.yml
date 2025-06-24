@@ -292,6 +292,12 @@ redirect_domains:
   - from: "zerschlagdenstaat.de"
     domain: "fragdenstaat.de"
     https: true
+  - from: "frag-den-staat.de"
+    domain: "fragdenstaat.de"
+    https: true
+  - from: "www.frag-den-staat.de"
+    domain: "fragdenstaat.de"
+    https: true
 
 certbot_mode: "http-01"
 

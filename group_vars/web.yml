@@ -10,7 +10,7 @@ https_domains:
   - ["zerschlagdenstaat.de", "www.zerschlagdenstaat.de"]
   - ["mta-sts.fragdenstaat.de"]
   - ["pixel.fragdenstaat.de"]
-  - ["frag-den-staat.de"]
+  - ["frag-den-staat.de", "www.frag-den-staat.de"]
 
 nginx_pixel_domain: "pixel.fragdenstaat.de"
 nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"
