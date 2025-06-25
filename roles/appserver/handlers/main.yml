@@ -1,5 +1,4 @@
 ---
-
 - name: restart app server
   community.general.supervisorctl:
     name: "{{ application_name }}_{{ item }}"
@@ -18,6 +17,15 @@
   with_items:
     - "gunicorn"
     - "uvicorn"
+  notify:
+    - restart memcached
+
+- name: restart CMS app server
+  community.general.supervisorctl:
+    name: "{{ item }}_onion"
+    state: restarted
+  when: onion_service_enabled
+  with_items: "{{ cms_sites }}"
   notify:
     - restart memcached
 

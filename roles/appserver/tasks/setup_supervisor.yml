@@ -31,3 +31,17 @@
   with_items:
     - "{{ application_name }}_gunicorn"
     - "{{ application_name }}_uvicorn"
+
+- name: Create the Supervisor config file for CMS sites
+  ansible.builtin.template:
+    src: "supervisor_app_gunicorn_cmssite.j2"
+    dest: "/etc/supervisor/conf.d/app_gunicorn_{{ item.key }}.conf"
+    backup: true
+    mode: "600"
+  with_items: "{{ cms_sites }}"
+
+- name: Re-read the Supervisor config files
+  community.general.supervisorctl:
+    name: "app_gunicorn_{{ item.key }}"
+    state: present
+  with_items: "{{ cms_sites }}"

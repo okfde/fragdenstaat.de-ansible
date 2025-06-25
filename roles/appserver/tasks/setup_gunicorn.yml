@@ -46,3 +46,18 @@
     - deploy
     - deploy-backend
     - deploy-web
+
+- name: Create the gunicorn/uvicorn script file
+  ansible.builtin.template:
+    src: "gunicorn_cmssite_start.j2"
+    dest: "{{ virtualenv_path }}/bin/gunicorn_{{ item.key }}_start"
+    owner: "{{ gunicorn_user }}"
+    group: "{{ gunicorn_group }}"
+    mode: "0755"
+    backup: true
+  with_items: "{{ cms_sites }}"
+  notify: restart app server
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-web

@@ -1,0 +1,22 @@
+{% extends "gunicorn_start.j2" %}
+
+{% block vars %}
+NAME="{{ application_name }}_{{ item.name}}"
+DJANGODIR="{{ project_path }}"
+SOCKFILE={{ virtualenv_path }}/run/gunicorn_{{ item.name }}.sock
+USER={{ gunicorn_user }}
+GROUP={{ gunicorn_group }}
+NUM_WORKERS={{ gunicorn_cmssite_num_workers}}
+{% endblock %}
+
+{% block extra_env_vars %}
+export ALLOWED_HOSTS={{ item.domain }}
+export CSRF_TRUSTED_ORIGINS={{ item.site_url }}
+# Don't pollute other app cache
+export CACHE_KEY_PREFIX={{ item.key }}
+export CACHE_LOCAL_MEMORY=1
+export DJANGO_CONFIGURATION={{ item.name }}
+
+{% endblock %}
+
+{% block extra_bind %}{% endblock %}
