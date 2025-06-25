@@ -23,3 +23,8 @@ nginx_cache_urls:
   - path: "/kampagnen/verschlusssache-pruefung/"
     with_params: true
   - path: "/dokumente/258046-koalitionsvertrag-cdu-csu-spd-2025-entwurf/"
+
+cms_sites:
+  - name: "grs"
+    domain: "gegenrechtsschutz.de"
+    site_url: "https://gegenrechtsschutz.de"

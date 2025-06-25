@@ -1,0 +1,6 @@
+{% extends "supervisor_app_gunicorn.j2" %}
+
+{% block vars %}[program:cmssite_gunicorn_{{ item.key}}]
+command = {{ virtualenv_path }}/bin/gunicorn_{{ item.key }}_start
+stdout_logfile = {{ application_log_dir }}/gunicorn_{{ item.key }}_supervisor.log
+{% endblock %}

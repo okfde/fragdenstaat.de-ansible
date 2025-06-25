@@ -35,6 +35,19 @@
     - nginx
     - config_update
 
+- name: Create Nginx CMS configuration file
+  ansible.builtin.template:
+    src: nginx_cms_config.j2
+    dest: "/etc/nginx/sites-available/{{ item.domain }}"
+    mode: "0600"
+    backup: true
+  notify: reload nginx
+  with_items: "{{ cms_sites }}"
+  when: inventory_hostname in groups['web']
+  tags:
+    - nginx
+    - config_update
+
 - name: Create the Nginx media configuration file
   ansible.builtin.template:
     src: nginx_media_config.j2
