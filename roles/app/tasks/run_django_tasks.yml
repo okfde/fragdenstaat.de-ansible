@@ -1,153 +1,44 @@
 ---
 
-- name: Save django db user name
-  ansible.builtin.set_fact:
-    django_environment_db_user: "{{ django_environment['DATABASE_USER'] }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-
-- name: Save django db user password
-  ansible.builtin.set_fact:
-    django_environment_db_password: "{{ django_environment['DATABASE_PASSWORD'] }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-
-- name: Overwrite django db user
-  ansible.builtin.set_fact:
-    django_environment: "{{ django_environment | combine({'DATABASE_USER': 'django_migrations'}) }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-
-- name: Overwrite django db user password
-  ansible.builtin.set_fact:
-    django_environment: "{{ django_environment | combine({'DATABASE_PASSWORD': '{{ django_migrations_db_password }}'}) }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-
-- name: "Reassign all object in database owned by db_user to django_migrations"
-  community.postgresql.postgresql_owner:
-    db: "{{ db_name }}"
-    new_owner: django_migrations
-    reassign_owned_by: "{{ django_environment_db_user }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-  become: true
-  become_user: postgres
-
-- name: Drop reporting views
-  community.postgresql.postgresql_query:
-    db: "{{ db_name }}"
-    query: DROP VIEW IF EXISTS {{ db_reporting_schema }}.{{ item.name }}
-  with_items: "{{ db_reporting_views }}"
-  become_user: postgres
-  become: true
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-
-- name: Run Django database migrations
+- name: Check for Django database migrations
   community.general.django_manage:
-    command: "migrate --noinput"
+    command: "migrate --noinput --plan"
     app_path: "{{ project_path }}"
     virtualenv: "{{ virtualenv_path }}"
     settings: "{{ django_settings_file }}"
   environment: "{{ django_environment }}"
   tags:
-    - django.migrate
-    - deploy-web
+    - deploy
     - deploy-backend
+    - deploy-web
+    - deploy-frontend
+    - django.migrate
     - skip_ansible_lint
   become: true
   become_user: "{{ gunicorn_user }}"
-  notify:
-    - restart celery workers
-    - set db access rights
-  changed_when: true
-  when: true
-  ignore_errors: true
+  changed_when: false
+  failed_when: false
+  register: migrate_check_result
 
-- name: Setup reporting views
-  community.postgresql.postgresql_query:
-    db: "{{ db_name }}"
-    query: CREATE OR REPLACE VIEW {{ db_reporting_schema }}.{{ item.name }} AS ({{ item.query }})
-  with_items: "{{ db_reporting_views }}"
-  become_user: postgres
-  become: true
+- name: Set needs db migration fact
+  ansible.builtin.set_fact:
+    needs_db_migration: "{{ 'No planned migration operations.' not in migrate_check_result.out }}"
   tags:
-    - django.migrate
-    - deploy-web
+    - deploy
     - deploy-backend
+    - deploy-web
+    - deploy-frontend
+    - django.migrate
 
-- name: "Set db_user privs"
-  community.postgresql.postgresql_privs:
-    db: "{{ db_name }}"
-    role: "{{ db_user }}"
-    objs: ALL_IN_SCHEMA
-    privs: ALL
-    grant_option: true
-  become: true
-  become_user: postgres
+- name: Import migrate_db.yml
+  ansible.builtin.import_tasks: migrate_db.yml
+  when: "needs_db_migration"
   tags:
-    - django.migrate
-    - deploy-web
+    - deploy
     - deploy-backend
-
-- name: "Set db_user schema privs"
-  community.postgresql.postgresql_privs:
-    db: "{{ db_name }}"
-    role: "{{ db_user }}"
-    objs: public
-    privs: ALL
-    grant_option: true
-    type: schema
-  become: true
-  become_user: postgres
-  tags:
-    - django.migrate
     - deploy-web
-    - deploy-backend
-
-- name: "Set db_user sequence privs"
-  community.postgresql.postgresql_privs:
-    db: "{{ db_name }}"
-    role: "{{ db_user }}"
-    objs: ALL_IN_SCHEMA
-    privs: USAGE
-    grant_option: true
-    type: sequence
-  become: true
-  become_user: postgres
-  tags:
+    - deploy-frontend
     - django.migrate
-    - deploy-web
-    - deploy-backend
-
-
-- name: Ensure reporting user has select access to all tables in schema
-  community.postgresql.postgresql_privs:
-    db: "{{ db_name }}"
-    privs: SELECT
-    objs: ALL_IN_SCHEMA
-    schema: "{{ db_reporting_schema }}"
-    role: "{{ db_user_reporting }}"
-    grant_option: true
-  become: true
-  become_user: postgres
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
 
 - name: Run Django compilemessages
   ansible.builtin.command: "{{ virtualenv_path }}/bin/python {{ virtualenv_path }}/fragdenstaat.de/manage.py compilemessages -l de --ignore **node_modules/**"
@@ -163,22 +54,6 @@
     - deploy-web
     - deploy-backend
   ignore_errors: true
-
-- name: Restore django environment db user
-  ansible.builtin.set_fact:
-    django_environment: "{{ django_environment | combine({'DATABASE_USER': '{{ django_environment_db_user }}'}) }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
-
-- name: Restore django environment db user password
-  ansible.builtin.set_fact:
-    django_environment: "{{ django_environment | combine({'DATABASE_PASSWORD': '{{ django_environment_db_password }}'}) }}"
-  tags:
-    - django.migrate
-    - deploy-web
-    - deploy-backend
 
 - name: Set site domain
   community.general.postgresql_query:
