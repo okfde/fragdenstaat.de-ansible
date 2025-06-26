@@ -11,6 +11,7 @@ https_domains:
   - ["mta-sts.fragdenstaat.de"]
   - ["pixel.fragdenstaat.de"]
   - ["frag-den-staat.de", "www.frag-den-staat.de"]
+  - ["next.gegenrechtsschutz.de"]
 
 nginx_pixel_domain: "pixel.fragdenstaat.de"
 nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"
@@ -25,6 +26,7 @@ nginx_cache_urls:
   - path: "/dokumente/258046-koalitionsvertrag-cdu-csu-spd-2025-entwurf/"
 
 cms_sites:
-  - name: "grs"
-    domain: "gegenrechtsschutz.de"
-    site_url: "https://gegenrechtsschutz.de"
+  - key: "grs"
+    name: "Gegenrechtsschutz"
+    domain: "next.gegenrechtsschutz.de"
+    site_url: "https://next.gegenrechtsschutz.de"
