@@ -422,6 +422,8 @@ sentry_org: ""
 sentry_project: ""
 sentry_webhook_url: ""
 
+matomo_site_id: "25"
+
 yelp_api_key: ""
 foursquare_api_key: ""
 mapbox_api_key: ""
