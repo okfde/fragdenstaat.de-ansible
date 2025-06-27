@@ -1,9 +1,9 @@
 {% extends "gunicorn_start.j2" %}
 
 {% block vars %}
-NAME="{{ application_name }}_{{ item.name}}"
+NAME="{{ application_name }}_{{ item.key}}"
 DJANGODIR="{{ project_path }}"
-SOCKFILE={{ virtualenv_path }}/run/gunicorn_{{ item.name }}.sock
+SOCKFILE={{ virtualenv_path }}/run/gunicorn_{{ item.key }}.sock
 USER={{ gunicorn_user }}
 GROUP={{ gunicorn_group }}
 NUM_WORKERS={{ gunicorn_cmssite_num_workers}}

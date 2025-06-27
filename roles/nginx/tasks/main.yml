@@ -200,6 +200,17 @@
   tags:
     - nginx
 
+- name: Ensure that the CMS sites are enabled
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ item.domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.domain }}"
+    state: link
+  notify: reload nginx
+  with_items: "{{ cms_sites }}"
+  when: "inventory_hostname in groups['web']"
+  tags:
+    - nginx
+
 - name: Ensure that the pixel site is enabled
   ansible.builtin.file:
     src: "/etc/nginx/sites-available/pixel.conf"

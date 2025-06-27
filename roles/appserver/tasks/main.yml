@@ -1,5 +1,4 @@
 ---
-
 - name: Import setup_gunicorn.yml
   ansible.builtin.import_tasks: setup_gunicorn.yml
 
@@ -80,6 +79,20 @@
   with_items:
     - "{{ application_name }}_gunicorn_onion"
     - "{{ application_name }}_uvicorn_onion"
+  notify:
+    - restart memcached
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
+    - deploy-web
+
+- name: Reload CMS applications
+  community.general.supervisorctl:
+    name: "app_gunicorn_{{ item.key }}"
+    state: signalled
+    signal: HUP
+  with_items: "{{ cms_sites }}"
   notify:
     - restart memcached
   tags:

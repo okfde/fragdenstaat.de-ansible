@@ -22,9 +22,8 @@
 
 - name: restart CMS app server
   community.general.supervisorctl:
-    name: "{{ item }}_onion"
+    name: "app_gunicorn_{{ item }}"
     state: restarted
-  when: onion_service_enabled
   with_items: "{{ cms_sites }}"
   notify:
     - restart memcached
