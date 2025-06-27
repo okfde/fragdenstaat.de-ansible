@@ -1,0 +1,47 @@
+
+{% from '_utils.j2' import proxy_wsgi_upstream, hsts_header with context %}
+
+upstream {{ item.key }}_wsgi_server {
+  # fail_timeout=0 means we always retry an upstream even if it failed
+  # to return a good HTTP response (in case the Unicorn master nukes a
+  # single worker for timing out).
+
+  server unix:{{ virtualenv_path }}/run/gunicorn_{{ item.key }}.sock fail_timeout=0;
+}
+
+server {
+    listen      80;
+    listen [::]:80;
+    server_name {{ item.domain }};
+    rewrite     ^ https://{{ item.domain }}$request_uri? permanent;
+}
+
+{% if active_https_domains[item.domain] %}
+    server {
+        listen              443 ssl http2;
+        listen         [::]:443 ssl http2;
+        server_name         {{ item.domain }};
+
+        {% with server_name = item.domain %}
+            {% include '_ssl.j2' %}
+        {% endwith %}
+
+        {% for simple_file in item.simple_files %}
+            {% if simple_file.path is defined %}
+                location = {{ simple_file.path }} {
+                    {{ hsts_header() }}
+                    {% if simple_file.mimetype is defined %}
+                        add_header Content-Type "{{ simple_file.mimetype }}";
+                        default_type {{ simple_file.mimetype }};
+                    {% endif %}
+                    alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
+                }
+            {% endif %}
+        {% endfor %}
+
+        location / {
+            {{ hsts_header() }}
+            {{ proxy_wsgi_upstream(item.key) }}
+        }
+    }
+{% endif %}

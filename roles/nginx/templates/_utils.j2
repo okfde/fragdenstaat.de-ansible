@@ -7,12 +7,16 @@
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 {%- endmacro %}
 
-{% macro proxy_wsgi_upstream(wsgi_app_name=wsgi_app_name) -%}
+{% macro proxy_wsgi_upstream(app_name="") -%}
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header Host $host;
-    proxy_pass http://{{ wsgi_app_name|default(application_name) }}_wsgi_server;
+    {% if app_name != "" %}
+        proxy_pass http://{{ app_name }}_wsgi_server;
+    {% else %}
+        proxy_pass http://{{ wsgi_app_name|default(application_name)  }}_wsgi_server;
+    {% endif %}
 {%- endmacro %}
 
 {% macro proxy_asgi_upstream() -%}

@@ -30,3 +30,4 @@ cms_sites:
     name: "Gegenrechtsschutz"
     domain: "next.gegenrechtsschutz.de"
     site_url: "https://next.gegenrechtsschutz.de"
+    simple_files: []
