@@ -16,6 +16,15 @@ db_reporting_views:
     query: "SELECT froide_payment_subscription.id AS id, froide_payment_subscription.created AS created, last_date, next_date, canceled, public.froide_payment_plan.amount AS amount, public.froide_payment_plan.interval AS interval, public.froide_payment_plan.amount_year AS amount_year, public.froide_payment_plan.provider as provider, donor_id FROM public.froide_payment_subscription LEFT OUTER JOIN public.froide_payment_plan ON public.froide_payment_subscription.plan_id = public.froide_payment_plan.id LEFT OUTER JOIN public.fds_donation_donor_subscriptions ON public.fds_donation_donor_subscriptions.subscription_id = public.froide_payment_subscription.id"
   - name: donors
     query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor"
+  - name: recurrences
+    query: |
+      SELECT public.fds_donation_recurrence.id, public.fds_donation_recurrence.donor_id, public.fds_donation_recurrence.subscription_id, public.fds_donation_recurrence.method, public.fds_donation_recurrence.start_date, public.fds_donation_recurrence.interval, public.fds_donation_recurrence.amount, public.fds_donation_recurrence.amount / public.fds_donation_recurrence.interval AS amount_month, public.fds_donation_recurrence.cancel_date,
+      fds_donation_donation.reference, fds_donation_donation.keyword, fds_donation_donation.form_url, fds_donation_donation.data
+      FROM public.fds_donation_recurrence JOIN (
+        SELECT DISTINCT ON (fds_donation_donation.recurrence_id) *
+        FROM public.fds_donation_donation
+        ORDER BY fds_donation_donation.recurrence_id, fds_donation_donation.received_timestamp DESC
+      ) fds_donation_donation ON fds_donation_donation.recurrence_id = public.fds_donation_recurrence.id
   - name: subscribers
     query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id, unsubscribe_method, unsubscribe_reference FROM public.fds_newsletter_subscriber"
   - name: foirequests
