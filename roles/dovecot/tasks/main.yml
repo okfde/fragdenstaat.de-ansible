@@ -69,6 +69,7 @@
   with_items: "{{ dovepasswd.results }}"
   notify: restart dovecot
   changed_when: false
+  no_log: true
 
 - name: configure imaps port in ufw
   community.general.ufw:
