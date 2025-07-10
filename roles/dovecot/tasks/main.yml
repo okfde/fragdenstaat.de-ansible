@@ -52,14 +52,23 @@
     group: "dovecot"
     mode: "0650"
 
+- name: Encrypt dovecot passwords
+  ansible.builtin.command:
+    cmd: "doveadm pw -s {{ dovecot_passwdfile_scheme }} -p {{ item.password }}"
+  with_items: "{{ email_accounts }}"
+  changed_when: false
+  no_log: true
+  register: dovepasswd
+
 - name: Add dovecot passwords
   ansible.builtin.lineinfile:
     dest: "{{ dovecot_passwd_file }}"
-    regexp: "^{{ item.user }}"
-    line: "{{ item.user }}:{plain}{{ item.password }}"
+    regexp: "^{{ item.item.user }}"
+    line: "{{ item.item.user }}:{{ item.stdout }}"
     state: present
-  with_items: "{{ email_accounts }}"
+  with_items: "{{ dovepasswd.results }}"
   notify: restart dovecot
+  changed_when: false
 
 - name: configure imaps port in ufw
   community.general.ufw:
