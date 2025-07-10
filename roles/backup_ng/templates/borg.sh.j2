@@ -41,6 +41,9 @@ step() {
     echo "$(date)" >> "${LOGFILE}"
     echo "$*" >> "${LOGFILE}"
 
+    STEP_NAME="$@"
+    STEP_START=$(date +"%s")
+
     STEP_OK=0
     STEP_NAME="$@"
     [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
@@ -71,6 +74,11 @@ next() {
     [[ -f /tmp/step.$$ ]] && { STEP_OK=$(< /tmp/step.$$); rm -f /tmp/step.$$; }
     [[ $STEP_OK -eq 0 ]]  && echo_success || echo_failure
     echo
+
+    STEP_END=$(date +"%s")
+    STEP_TIME=$(( ${STEP_END} - ${STEP_START} ))
+    STEP_NAME_SAVE=$(echo ${STEP_NAME} | sed 's/ //g' | sed 's/(//g' | sed 's/)//g' )
+    echo "borg_${STEP_NAME_SAVE}_seconds{hostname=\"$(hostname)\"} ${STEP_TIME}" >> /var/log/borg_execution.log
 
     return $STEP_OK
 }
@@ -118,6 +126,8 @@ trap 'echo "received signal to stop"; do_cleanup interrupted; exit 1' SIGQUIT SI
 cp ${LOGFILE} ${LOGFILE}.1; /bin/true
 
 echo "" > "${LOGFILE}"
+echo "" > /var/log/borg_execution.log
+
 echo "{{ borg.locations }}" > "${LOGFILE}"
 
 curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup start","status":"OK"}'
@@ -219,3 +229,36 @@ echo "--------------------------------------------------------------------------
 echo "Logfile:"
 cat "${LOGFILE}"
 echo "-------------------------------------------------------------------------------"
+
+# prometheus logging
+hostname=$(hostname)
+
+borg_info=$(borg info --json)
+
+total_chunks=$(echo ${borg_info} | jq .cache.stats.total_chunks)
+total_csize=$(echo ${borg_info} | jq .cache.stats.total_csize)
+total_size=$(echo ${borg_info} | jq .cache.stats.total_size)
+total_unique_chunks=$(echo ${borg_info} | jq .cache.stats.total_unique_chunks)
+unique_csize=$(echo ${borg_info} | jq .cache.stats.unique_csize)
+unique_size=$(echo ${borg_info} | jq .cache.stats.unique_size)
+
+last_modified=$(echo ${borg_info} | jq .repository.last_modified)
+repository_id=$(echo ${borg_info} | jq .repository.id)
+location=$(echo ${borg_info} | jq .repository.location)
+encryption=$(echo ${borg_info} | jq .encryption.mode)
+
+last_modified_epoch=$(date -d"${last_modified" +%s)
+
+if [ -f "/var/log/borg_execution.log" ]; then
+    cat /var/log/borg_execution.log > /var/lib/prometheus/node-exporter/borg.prom
+else
+    echo "" > /var/lib/prometheus/node-exporter/borg.prom
+fi
+
+echo "borg_total_chunks{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_csize{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_size{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_size}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_unique_chunks{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_unique_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_unique_csize{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${unique_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_unique_size{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${unique_size}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_info{hostname=\"${hostname}\",last_modified=${last_modified},repository_id=${repository_id},location=${location},encryption=${encryption}} 0" >> /var/lib/prometheus/node-exporter/borg.prom
