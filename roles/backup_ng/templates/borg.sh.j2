@@ -295,4 +295,5 @@ echo "borg_total_size{hostname=\"${hostname}\",repository_id=${repository_id}} $
 echo "borg_total_unique_chunks{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_unique_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
 echo "borg_unique_csize{hostname=\"${hostname}\",repository_id=${repository_id}} ${unique_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
 echo "borg_unique_size{hostname=\"${hostname}\",repository_id=${repository_id}} ${unique_size}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_info{hostname=\"${hostname}\",last_modified=${last_modified},repository_id=${repository_id},location=${location},encryption=${encryption}} ${last_modified_epoch}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_info{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${last_modified_epoch}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_last_modified{hostname=\"${hostname}\",repository_id=${repository_id},last_modified=${last_modified}} ${last_modified_epoch}" >> /var/lib/prometheus/node-exporter/borg.prom
