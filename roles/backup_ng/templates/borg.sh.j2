@@ -231,6 +231,26 @@ cat "${LOGFILE}"
 echo "-------------------------------------------------------------------------------"
 
 # prometheus logging
+if_empty() {
+  local var="${1}"
+
+  if [[ -z "${var}" ]]; then
+    var=0
+  fi
+
+  echo "${var}"
+}
+
+if_empty_quote() {
+  local var="${1}"
+
+  if [[ -z "${var}" ]]; then
+    var='"none"'
+  fi
+  
+  echo "${var}"
+}
+
 hostname=$(hostname)
 
 borg_info=$(borg info --json)
@@ -247,7 +267,21 @@ repository_id=$(echo ${borg_info} | jq .repository.id)
 location=$(echo ${borg_info} | jq .repository.location)
 encryption=$(echo ${borg_info} | jq .encryption.mode)
 
-last_modified_epoch=$(date -d"${last_modified" +%s)
+last_modified_strip=$(echo ${last_modified} | sed 's/"//g')
+last_modified_epoch=$(date -d"${last_modified_strip}" +%s)
+
+total_chunks=$(if_empty "${total_chunks}")
+total_csize=$(if_empty "${total_csize}")
+total_size=$(if_empty "${total_size}")
+total_unique_chunks=$(if_empty "${total_unique_chunks}")
+unique_csize=$(if_empty "${unique_csize}")
+unique_size=$(if_empty "${unique_size}")
+
+last_modified=$(if_empty_quote "${last_modified}")
+repository_id=$(if_empty_quote "${repository_id}")
+location=$(if_empty_quote "${location")
+encryption=$(if_empty_quote "${encryption}")
+last_modified_epoch=$(if_empty_quote "${last_modified_epoch}")
 
 if [ -f "/var/log/borg_execution.log" ]; then
     cat /var/log/borg_execution.log > /var/lib/prometheus/node-exporter/borg.prom
@@ -255,10 +289,10 @@ else
     echo "" > /var/lib/prometheus/node-exporter/borg.prom
 fi
 
-echo "borg_total_chunks{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_total_csize{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_total_size{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_size}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_total_unique_chunks{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${total_unique_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_unique_csize{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${unique_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_unique_size{hostname=\"${hostname}\",repository_id=${repository_id},location=${location},encryption=${encryption}} ${unique_size}" >> /var/lib/prometheus/node-exporter/borg.prom
-echo "borg_info{hostname=\"${hostname}\",last_modified=${last_modified},repository_id=${repository_id},location=${location},encryption=${encryption}} 0" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_chunks{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_csize{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_size{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_size}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_total_unique_chunks{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_unique_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_unique_csize{hostname=\"${hostname}\",repository_id=${repository_id}} ${unique_csize}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_unique_size{hostname=\"${hostname}\",repository_id=${repository_id}} ${unique_size}" >> /var/lib/prometheus/node-exporter/borg.prom
+echo "borg_info{hostname=\"${hostname}\",last_modified=${last_modified},repository_id=${repository_id},location=${location},encryption=${encryption}} ${last_modified_epoch}" >> /var/lib/prometheus/node-exporter/borg.prom
