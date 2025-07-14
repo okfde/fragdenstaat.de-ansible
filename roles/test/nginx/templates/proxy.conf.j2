@@ -29,5 +29,9 @@ server {
 
         proxy_pass https://{{ hostvars[item].host_data.site_ipv4 }};
         proxy_pass_header X-CSRFToken;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
     }
 }
