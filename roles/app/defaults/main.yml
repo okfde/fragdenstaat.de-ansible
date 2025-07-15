@@ -23,7 +23,7 @@ db_reporting_views:
       FROM public.fds_donation_recurrence JOIN (
         SELECT DISTINCT ON (fds_donation_donation.recurrence_id) *
         FROM public.fds_donation_donation
-        ORDER BY fds_donation_donation.recurrence_id, fds_donation_donation.received_timestamp DESC
+        ORDER BY fds_donation_donation.recurrence_id, COALESCE(fds_donation_donation.received_timestamp, fds_donation_donation.timestamp) ASC
       ) fds_donation_donation ON fds_donation_donation.recurrence_id = public.fds_donation_recurrence.id
       WHERE public.fds_donation_recurrence.project = 'FDS'
   - name: subscribers
