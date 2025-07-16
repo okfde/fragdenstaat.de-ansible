@@ -1,5 +1,4 @@
 ---
-
 - name: Install dovecot
   ansible.builtin.apt:
     name: dovecot-imapd
@@ -80,6 +79,24 @@
     direction: in
   with_items:
     - imaps
+
+- name: configure imaps port in ufw from auxiliary host ipv4
+  community.general.ufw:
+    rule: allow
+    port: "imaps"
+    proto: tcp
+    from_ip: "{{ hostvars[item].host_data.global_ipv4 }}"
+    direction: in
+  with_items: "{{ groups['auxiliary'] }}"
+
+- name: configure imaps port in ufw from auxiliary host ipv6
+  community.general.ufw:
+    rule: allow
+    port: "imaps"
+    proto: tcp
+    from_ip: "{{ hostvars[item].host_data.global_ipv6 }}"
+    direction: in
+  with_items: "{{ groups['auxiliary'] }}"
 
 - name: Ensure dovecot is started and enabled at boot.
   ansible.builtin.service:

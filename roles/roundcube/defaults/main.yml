@@ -1,4 +1,4 @@
 ---
-
 roundcube_dir: /var/www/roundcube
-roundcube_ip: "{{ vpn_network }}{{ host_data.vpn_peer_id }}"
+roundcube_domain: webmail.frag-den-staat.de
+roundcube_port: 9800

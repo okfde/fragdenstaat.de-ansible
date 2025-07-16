@@ -1,8 +1,12 @@
+{% if active_https_domains[roundcube_domain] %}
 server {
-    server_name {{ roundcube_ip }};
+    server_name {{ roundcube_domain }};
 
     location / {
-      proxy_pass              http://localhost:9800;
+      auth_basic "Restricted";
+      auth_basic_user_file {{ roundcube_dir }}/htpasswd;
+
+      proxy_pass              http://localhost:{{ roundcube_port }};
       proxy_http_version 1.1;
       proxy_redirect off;
       proxy_buffering off;
@@ -18,5 +22,32 @@ server {
       expires             6h;
     }
 
-    listen {{ roundcube_ip }}:9800; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/{{ roundcube_domain }}/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/{{ roundcube_domain }}/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    location /.well-known/acme-challenge/ {
+      default_type "text/plain";
+      root {{ letsencrypt_tmp_dir }};
+    }
+}
+{% endif %}
+
+server {
+  {% if active_https_domains[roundcube_domain] %}
+    if ($host = {{ roundcube_domain }}) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+  {% endif %}
+
+  server_name     {{ roundcube_domain }};
+    listen 80;
+    return 404; # managed by Certbot
+
+  location /.well-known/acme-challenge/ {
+    default_type "text/plain";
+    root {{ letsencrypt_tmp_dir }};
+  }
 }

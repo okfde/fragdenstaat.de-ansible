@@ -1,5 +1,4 @@
 ---
-
 - name: Setup directory
   ansible.builtin.file:
     path: "{{ roundcube_dir }}"
@@ -24,7 +23,31 @@
     state: restarted
     daemon_reload: true
 
-- name: Create the Nginx site API configuration
+- name: Check if HTTPS certificates exist
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+  register: https_cert_check
+  with_items: "{{ https_domains }}"
+
+- name: Set HTTPS certificate facts
+  ansible.builtin.set_fact:
+    active_https_domains: "{{ active_https_domains | default({}) | combine({item.item: item.stat.exists}) }}"
+  with_items: "{{ https_cert_check.results }}"
+
+- name: Create htpassword files for webmail
+  community.general.htpasswd:
+    path: "{{ roundcube_dir }}/htpasswd"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    owner: www-data
+    group: www-data
+    mode: "0550"
+  with_items: "{{ webmail_htpasswd }}"
+  notify: reload nginx
+  tags:
+    - nginx
+
+- name: Create the Nginx site configuration
   ansible.builtin.template:
     src: nginx-site.j2
     dest: "/etc/nginx/sites-available/roundcube"
@@ -38,10 +61,3 @@
     dest: "/etc/nginx/sites-enabled/roundcube"
     state: link
   notify: reload nginx
-
-- name: Allow roundcube on VPN network
-  community.general.ufw:
-    rule: allow
-    port: 9800
-    to_ip: "{{ roundcube_ip }}"
-    proto: tcp

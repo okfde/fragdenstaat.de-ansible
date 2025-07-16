@@ -6,7 +6,7 @@ services:
     container_name: roundcubemail
     restart: unless-stopped
     ports:
-      - 127.0.0.1:9800:80
+      - 127.0.0.1:{{ roundcube_port }}:80
     volumes:
       - ./data/www:/var/www/html
       - ./data/db:/var/roundcube/db
@@ -14,6 +14,7 @@ services:
     environment:
       - ROUNDCUBEMAIL_DB_TYPE=sqlite
       - ROUNDCUBEMAIL_SKIN=elastic
-      - ROUNDCUBEMAIL_DEFAULT_HOST=tls://{{ mail_domain}}
-      - ROUNDCUBEMAIL_SMTP_SERVER=tls://{{ mail_domain }}
+      - ROUNDCUBEMAIL_DEFAULT_HOST=ssl://{{ mail_domain}}
+      - ROUNDCUBEMAIL_DEFAULT_PORT=993
+      - ROUNDCUBEMAIL_SMTP_SERVER=ssl://{{ mail_domain }}
       - ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE=20M

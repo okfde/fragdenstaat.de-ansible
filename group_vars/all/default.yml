@@ -114,6 +114,9 @@ application_log_dir: "/var/www/fragdenstaat.de/logs"
 #     password: password
 #     realm: admin
 
+## in secrets.yml
+webmail_htpasswd: []
+
 django_media_root: "/var/www/fragdenstaat.de/storage/files"
 django_static_root: "/var/www/fragdenstaat.de/public/static"
 
