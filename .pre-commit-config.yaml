@@ -14,6 +14,12 @@ repos:
       - id: check-symlinks
       - id: pretty-format-json
 
+- repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.37.1
+  hooks:
+    - id: yamllint
+      args: [--strict, -c=.yamllint.yml]
+
 - repo: local
   hooks:
     - id: ansible-vault
