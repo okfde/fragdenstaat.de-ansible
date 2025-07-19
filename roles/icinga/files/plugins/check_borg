@@ -18,7 +18,7 @@ if [ "${lastrun}" == "${today}" ]; then
     echo "OK - Backup was created without errors"
     exit 0
 else
-    if $(ps aux | grep borg); then
+    if ps aux | grep -q "[b]org"; then
      echo "UNKNOWN - Backup still running"
      exit 3
     else
