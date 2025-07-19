@@ -18,8 +18,13 @@ if [ "${lastrun}" == "${today}" ]; then
     echo "OK - Backup was created without errors"
     exit 0
 else
-    echo "CRITICAL - Backup did not run today"
-    exit 2
+    if $(ps aux | grep borg); then
+     echo "UNKNOWN - Backup still running"
+     exit 3
+    else
+      echo "CRITICAL - Backup did not run today"
+      exit 2
+    fi
 fi
 
 exit 3
