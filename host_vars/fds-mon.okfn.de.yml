@@ -41,7 +41,7 @@ borg:
       dev: /dev/vg0/root
       mnt: /mnt/root-snapshot
       lvm_free: 50%
-  locations: /mnt/monitor-snapshot/graylog/mongodb_data/ /mnt/container-snapshot/volumes/sentry*
+  locations: /mnt/monitor-snapshot/ /mnt/container-snapshot/volumes/sentry* -e /mnt/monitor-snapshot/graylog/mongodb_data/ -e /mnt/monitor-snapshot/prometheus/data/data/
   keepdaily: 7
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de
