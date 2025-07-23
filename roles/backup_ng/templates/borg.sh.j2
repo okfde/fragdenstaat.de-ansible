@@ -199,11 +199,11 @@ next
 
 if (( $(date +"%d") == 1)); then
   step "Backup Check (verify)"
-    try /usr/bin/borg check --verify-data --show-rc
+    try /usr/bin/borg check --verify-data --last 1 --show-rc
   next
 else
   step "Backup Check (quick)"
-    try /usr/bin/borg check --show-rc
+    try /usr/bin/borg check --last 1 --show-rc
   next
 fi
 
