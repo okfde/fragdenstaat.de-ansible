@@ -1,22 +1,22 @@
-- name: Ensure datasources exists
-  community.grafana.grafana_datasource:
-    grafana_url: "{{ grafana_api_url }}/"
-    grafana_user: "{{ grafana_admin_user }}"
-    grafana_password: "{{ grafana_admin_password }}"
-    name: "{{ item.name }}"
-    ds_url: "{{ item.url }}"
-    ds_type: "{{ item.type }}"
-    access: "{{ item.access | default(omit) }}"
-    is_default: "{{ item.isDefault | default(omit) }}"
-    basic_auth_user: "{{ item.basicAuthUser | default(omit) }}"
-    basic_auth_password: "{{ item.basicAuthPassword | default(omit) }}"
-    database: "{{ item.database | default(omit) }}"
-    user: "{{ item.user | default(omit) }}"
-    password: "{{ item.password | default(omit) }}"
-    time_field: "{{ item.time_field | default(omit) }}"
-  with_items: "{{ grafana_datasources }}"
-  tags: grafana
-  changed_when: false
+#- name: Ensure datasources exists
+#  community.grafana.grafana_datasource:
+#    grafana_url: "{{ grafana_api_url }}/"
+#    grafana_user: "{{ grafana_admin_user }}"
+#    grafana_password: "{{ grafana_admin_password }}"
+#    name: "{{ item.name }}"
+#    ds_url: "{{ item.url }}"
+#    ds_type: "{{ item.type }}"
+#    access: "{{ item.access | default(omit) }}"
+#    is_default: "{{ item.isDefault | default(omit) }}"
+#    basic_auth_user: "{{ item.basicAuthUser | default(omit) }}"
+#    basic_auth_password: "{{ item.basicAuthPassword | default(omit) }}"
+#    database: "{{ item.database | default(omit) }}"
+#    user: "{{ item.user | default(omit) }}"
+#    password: "{{ item.password | default(omit) }}"
+#    time_field: "{{ item.time_field | default(omit) }}"
+#  with_items: "{{ grafana_datasources }}"
+#  tags: grafana
+#  changed_when: false
 
 # - name: Copy dashboards
 #  ansible.builtin.copy:
