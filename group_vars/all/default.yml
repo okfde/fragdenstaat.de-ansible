@@ -302,6 +302,9 @@ redirect_domains:
   - from: "www.frag-den-staat.de"
     domain: "fragdenstaat.de"
     https: true
+  - from: "www.gegenrechtsschutz.de"
+    domain: "gegenrechtsschutz.de"
+    https: true
 
 certbot_mode: "http-01"
 

@@ -11,7 +11,7 @@ https_domains:
   - ["mta-sts.fragdenstaat.de"]
   - ["pixel.fragdenstaat.de"]
   - ["frag-den-staat.de", "www.frag-den-staat.de"]
-  - ["next.gegenrechtsschutz.de"]
+  - ["gegenrechtsschutz.de", "www.gegenrechtsschutz.de"]
 
 nginx_pixel_domain: "pixel.fragdenstaat.de"
 nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"
@@ -28,6 +28,10 @@ nginx_cache_urls:
 cms_sites:
   - key: "grs"
     name: "Gegenrechtsschutz"
-    domain: "next.gegenrechtsschutz.de"
-    site_url: "https://next.gegenrechtsschutz.de"
-    simple_files: []
+    domain: "gegenrechtsschutz.de"
+    site_url: "https://gegenrechtsschutz.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
