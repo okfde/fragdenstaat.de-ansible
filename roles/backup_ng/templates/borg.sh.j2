@@ -11,6 +11,8 @@ SETCOLOR_NORMAL="echo -en \\033[0;39m"
 export BORG_REPO="ssh://{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:{{ backup_repo[inventory_hostname].port }}/./{{ backup_repo[inventory_hostname].path }}"
 export BORG_PASSPHRASE="{{ backup_repo[inventory_hostname].repokey }}"
 
+TIME_TOTAL=0
+
 echo_success() {
     [ "$BOOTUP" = "color" ] && $MOVE_TO_COL
     echo -n "  ["
@@ -77,8 +79,10 @@ next() {
 
     STEP_END=$(date +"%s")
     STEP_TIME=$(( ${STEP_END} - ${STEP_START} ))
+    TIME_TOTAL=$(( ${STEP_TIME} + ${TIME_TOTAL} ))
     STEP_NAME_SAVE=$(echo ${STEP_NAME} | sed 's/ //g' | sed 's/(//g' | sed 's/)//g' | sed 's/\./_/g' )
     echo "borg_${STEP_NAME_SAVE}_seconds{hostname=\"$(hostname)\"} ${STEP_TIME}" >> /var/log/borg_execution.log
+    echo "borg_total_time_seconds{hostname=\"$(hostname)\"} ${TIME_TOTAL}" > /tmp/borg_total_time.log
 
     return $STEP_OK
 }
@@ -291,6 +295,7 @@ last_modified_epoch=$(if_empty_quote "${last_modified_epoch}")
 
 if [ -f "/var/log/borg_execution.log" ]; then
     cat /var/log/borg_execution.log > /var/lib/prometheus/node-exporter/borg.prom
+    cat /tmp/borg_total_time.log >> /var/lib/prometheus/node-exporter/borg.prom
 else
     echo "" > /var/lib/prometheus/node-exporter/borg.prom
 fi
