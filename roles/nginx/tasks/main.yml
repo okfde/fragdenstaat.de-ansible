@@ -13,7 +13,7 @@
 
 - name: Set fact for active HTTPS domain list
   ansible.builtin.set_fact:
-    active_https_domain_list: "{{ active_https_domain_list | default([]) + item.item }}"
+    active_https_domain_list: "{{ active_https_domain_list | default([]) + (item.item | default([])) }}"
   when: item.stat.exists
   with_items: "{{ https_cert_check.results }}"
   tags:
