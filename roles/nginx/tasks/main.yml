@@ -4,17 +4,29 @@
 
 - name: Check if HTTPS certificates exist
   ansible.builtin.stat:
-    path: "/etc/letsencrypt/live/{{ item }}/{{ letsencrypt_cert_filename }}"
+    path: "/etc/letsencrypt/live/{{ item[0] }}/{{ letsencrypt_cert_filename }}"
   register: https_cert_check
-  with_items: "{{ https_domains }}"
+  loop: "{{ https_domains }}"
   tags:
     - nginx
     - config_update
 
-- name: Set HTTPS certificate facts
+- name: Set fact for active HTTPS domain list
   ansible.builtin.set_fact:
-    active_https_domains: "{{ active_https_domains | default({}) | combine({item.item: item.stat.exists}) }}"
+    active_https_domain_list: "{{ active_https_domain_list | default([]) + item.item }}"
+  when: item.stat.exists
   with_items: "{{ https_cert_check.results }}"
+  tags:
+    - nginx
+    - config_update
+
+- name: "Active https domain list"
+  ansible.builtin.debug:
+    var: active_https_domain_list
+
+- name: Set fact for active HTTPS domains dict
+  ansible.builtin.set_fact:
+    active_https_domains: "{{ dict(active_https_domain_list | product([true])) }}"
   tags:
     - nginx
     - config_update

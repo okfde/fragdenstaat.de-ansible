@@ -1,3 +1,4 @@
+{% with server_name=server_name|regex_replace('^www\.', '', count=1) %}
 {% if letsencrypt_enabled %}
 ssl_certificate     /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_cert_filename }};
 ssl_certificate_key /etc/letsencrypt/live/{{ server_name }}/{{ letsencrypt_privkey_filename }};
@@ -21,6 +22,7 @@ ssl_stapling off;
 ssl_stapling_verify off;
 ssl_trusted_certificate /etc/letsencrypt/live/{{ server_name }}/fullchain.pem;
 {% endif %}
+{% endwith %}
 
 {% if nginx_strong_dh_group %}
 ssl_dhparam          /etc/ssl/certs/dhparams.pem;
