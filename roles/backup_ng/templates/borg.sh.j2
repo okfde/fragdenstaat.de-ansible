@@ -202,18 +202,12 @@ step "Prune backup generations"
 next
 
 if (( $(date +"%d") == 1)); then
-  step "Backup Check (verify last)"
+  step "Backup Check (verify)"
     try /usr/bin/borg check --verify-data --last 1 --show-rc
   next
-  step "Backup Check (verify first)"
-    try /usr/bin/borg check --verify-data --first 1 --show-rc
-  next
 else
-  step "Backup Check (quick last)"
+  step "Backup Check (quick)"
     try /usr/bin/borg check --last 1 --show-rc
-  next
-  step "Backup Check (quick first)"
-    try /usr/bin/borg check --first 1 --show-rc
   next
 fi
 
