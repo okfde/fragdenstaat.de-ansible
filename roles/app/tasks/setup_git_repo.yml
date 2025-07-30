@@ -40,20 +40,6 @@
   tags:
     - release
 
-# clean node_modules for pnpm migration
-- name: Check if yarn.lock exists
-  ansible.builtin.stat:
-    path: "{{ project_path }}/yarn.lock"
-  register: yarn_lock
-
-- name: Delete node_modules if yarn.lock is present
-  ansible.builtin.command: rm -rf node_modules
-  args:
-    chdir: "{{ project_path }}"
-  when: yarn_lock.stat.exists
-  tags: git
-  changed_when: false
-
 - name: Setup the Git repo
   ansible.builtin.git:
     repo: "{{ git_repo }}"
