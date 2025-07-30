@@ -9,7 +9,7 @@ upstream {{ item.key }}_wsgi_server {
   server unix:{{ virtualenv_path }}/run/gunicorn_{{ item.key }}.sock fail_timeout=0;
 }
 
-proxy_cache_path /var/cache/nginx-cms-{{ item.key }} levels=1:2 keys_zone=cms_{{ item.key }}_cache:50m inactive=60m;
+proxy_cache_path /var/cache/nginx-cms-{{ item.key }} levels=1:2 keys_zone=cms_{{ item.key }}_cache:50m inactive=300m;
 
 server {
     listen      80;
@@ -45,6 +45,7 @@ server {
             proxy_cache cms_{{ item.key }}_cache;
             proxy_cache_key $scheme$proxy_host$uri;
             proxy_cache_valid 10m;
+            proxy_cache_use_stale error timeout invalid_header http_500 http_502 http_503 http_504;
             proxy_ignore_headers Expires;
             proxy_ignore_headers "Cache-Control";
             proxy_ignore_headers "Set-Cookie";
