@@ -4,14 +4,22 @@ Description=FDSBot
 [Service]
 User={{ fdsbot_user }}
 WorkingDirectory={{ fdsbot_dir }}
-ExecStart={{ fdsbot_dir }}/bin/hubot --adapter slack
+ExecStart=pnpm run start
 Restart=always
 Environment="ALLOWED_USERS={{ fdsbot_slack_users }}"
 Environment="SUPER_USERS={{ fdsbot_super_users }}"
-Environment="SLACK_ROOM={{ fdsbot_slack_room }}"
+Environment="SLACK_ROOM_PROD={{ fdsbot_slack_room_prod }}"
+Environment="SLACK_ROOM_TEST={{ fdsbot_slack_room_test }}"
 Environment="CHECK_REPOS={{ fdsbot_check_repos }}"
 Environment="OCTOKIT_TOKEN={{ fdsbot_octokit_token }}"
-Environment="HUBOT_SLACK_TOKEN={{ fdsbot_slack_token }}"
+Environment="SLACK_APP_TOKEN={{ fdsbot_slack_app_token }}"
+Environment="SLACK_BOT_TOKEN={{ fdsbot_slack_bot_token }}"
+Environment="SLACK_SIGNING_SECRET={{ fdsbot_slack_signing_secret }}"
+Environment="ANSIBLE_ROOT={{ fdsbot_ansible_dir }}"
+Environment="ANSIBLE_BIN={{ fdsbot_ansible_env }}/bin/ansible-playbook"
+Environment="ANSIBLE_PLAYBOOK={{ fdsbot_ansible_playbook }}"
+Environment="DEPLOYMENT_HIGHLIGHTS={{ fdsbot_deployment_highlights }}"
+Environment="SENTRY_DSN={{ fdsbot_sentry_dsn }}"
 
 [Install]
 WantedBy=multi-user.target
