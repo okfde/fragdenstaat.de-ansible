@@ -1,0 +1,8 @@
+---
+- name: Deploy additional smtp
+  hosts: auxiliary
+  become: true
+  become_user: root
+  roles:
+    - role: auxsmtp
+      tags: postfix

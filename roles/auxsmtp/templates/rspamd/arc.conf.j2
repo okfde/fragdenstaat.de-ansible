@@ -1,0 +1,64 @@
+# local.d/arc.conf
+
+# Allowed settings id
+allowed_ids = nil;
+# If false, messages with empty envelope from are not signed
+allow_envfrom_empty = true;
+# If true, envelope/header domain mismatch is ignored
+allow_hdrfrom_mismatch = false;
+# Domain mismatch allowed for local IP
+allow_hdrfrom_mismatch_local = true;
+# Domain mismatch allowed for sign_networks
+allow_hdrfrom_mismatch_sign_networks = false;
+# If true, multiple from headers are allowed (but only first is used)
+allow_hdrfrom_multiple = false;
+# If true, username does not need to contain matching domain
+allow_username_mismatch = true;
+# Banned settings id
+forbidden_ids = nil;
+# Default path to key, can include '$domain' and '$selector' variables
+path = "${DBDIR}/arc/$domain.$selector.key";
+# Default selector to use
+selector = "arc";
+# If false, messages from authenticated users are not selected for signing
+sign_authenticated = true;
+# If false, inbound messages are not selected for signing
+sign_inbound = true;
+# If false, messages from local networks are not selected for signing
+sign_local = true;
+# Symbol to add when message is signed
+sign_symbol = "ARC_SIGNED";
+# Whether to fallback to global config
+try_fallback = true;
+# Domain to use for ARC signing: can be "header" (MIME From), "envelope" (SMTP From), "recipient" (SMTP To), "auth" (SMTP username) or directly specified domain name
+use_domain = "header";
+# Whether to normalise domains to eSLD
+use_esld = true;
+# Whether to get keys from Redis
+use_redis = false;
+# Hash for ARC keys in Redis
+key_prefix = "ARC_KEYS";
+# Reuse the existing authentication results
+reuse_auth_results = false;
+# map of domains -> names of selectors (since rspamd 1.5.3)
+#selector_map = "/etc/rspamd/arc_selectors.map";
+# map of domains -> paths to keys (since rspamd 1.5.3)
+#path_map = "/etc/rspamd/arc_paths.map";
+# map of trusted domains. Symbol ARC_ALLOW_TRUSTED is added to messages
+# with valid ARC chains from these domains. A failed DMARC result is removed/ignored.
+# whitelisted_signers_map = ["example.org", "example.com"]
+
+# From version 1.8.4, Rspamd uses a different set of sign_headers for ARC:
+sign_headers = "(o)from:(o)sender:(o)reply-to:(o)subject:(o)date:(o)message-id:(o)to:(o)cc:(o)mime-version:(o)content-type:(o)content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:(o)in-reply-to:(o)references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post:dkim-signature"
+
+# Domain specific settings
+domain {
+{% for domain in dkim_domains %}
+  {{ domain.name }} {
+    # Private key path
+    path = "/var/lib/rspamd/dkim/{{ domain.name }}.{{ domain.selector }}.key";
+    # Selector
+    selector = "{{ domain.selector }}";
+  }
+{% endfor %}
+}
