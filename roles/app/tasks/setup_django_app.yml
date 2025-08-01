@@ -21,3 +21,14 @@
   tags:
     - djangoreq
   changed_when: false
+
+- name: Overwrite froide version
+  ansible.builtin.command: 'uv pip install "froide @ git+https://github.com/okfde/froide.git@{{ froide_version }}"'
+  when: "froide_version is defined and inventory_hostname == 'brooke-tst.okfn.de'"
+  environment:
+    VIRTUAL_ENV: "{{ virtualenv_path }}"
+  become: true
+  become_user: "{{ gunicorn_user }}"
+  tags:
+    - djangoreq
+  changed_when: false

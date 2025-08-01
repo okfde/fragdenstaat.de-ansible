@@ -62,6 +62,18 @@
     - deploy-frontend
   changed_when: false
 
+- name: Overwrite froide frontend version
+  # --no-lockfile is used to not alter the pnpm-lock.yaml file
+  # pnpm does not support --no-save yet (which would prevent altering the package.json file)
+  ansible.builtin.command: 'pnpm install --no-lockfile "github:okfde/froide#{{ froide_version }}"'
+  when: "froide_version is defined and inventory_hostname == 'brooke-tst.okfn.de'"
+  become: true
+  become_user: "{{ gunicorn_user }}"
+  tags:
+    - deploy
+    - deploy-frontend
+  changed_when: false
+
 - name: Build frontend bundle
   ansible.builtin.command: pnpm run build
   args:
