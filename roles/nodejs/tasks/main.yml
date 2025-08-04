@@ -1,0 +1,46 @@
+- name: Add node key
+  ansible.builtin.apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+  retries: 3
+  delay: 10
+  when: ansible_distribution_major_version|int <= 22
+
+- name: Add node key
+  ansible.builtin.apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+    state: present
+  retries: 3
+  delay: 10
+  when: ansible_distribution_major_version|int >= 24
+
+- name: Add node to the sources list
+  ansible.builtin.apt_repository:
+    repo: "deb https://deb.nodesource.com/node_22.x {{ ansible_distribution_release }} main"
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  when: ansible_distribution_major_version|int <= 22
+
+- name: Add node to the sources list
+  ansible.builtin.apt_repository:
+    repo: "deb https://deb.nodesource.com/node_22.x nodistro main"
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  when: ansible_distribution_major_version|int >= 24
+
+- name: Install node
+  ansible.builtin.apt:
+    name:
+      - nodejs
+    update_cache: "{{ update_apt_cache }}"
+    state: latest
+
+  tags: packages
+  retries: 3
+  delay: 10
+
+- name: Setup pnpm
+  ansible.builtin.command: corepack enable pnpm
+  become: true
+  become_user: root
+  changed_when: false
