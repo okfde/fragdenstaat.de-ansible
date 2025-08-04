@@ -1,5 +1,9 @@
 ---
 
+- name: Setup Node.js
+  ansible.builtin.import_role:
+    name: nodejs
+
 - name: Setup ansible Git repo
   ansible.builtin.git:
     repo: "{{ fdsbot_ansible_git_repo }}"
@@ -135,6 +139,10 @@
   become_user: "{{ fdsbot_user }}"
   become: true
   changed_when: false
+
+- name: test
+  ansible.builtin.debug:
+    msg: "{{ fdsbot_deployment_highlights }}"
 
 - name: Set fdsbot systemd service
   ansible.builtin.template:
