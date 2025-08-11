@@ -20,6 +20,13 @@
   become_user: "{{ fdsbot_user }}"
   become: true
 
+- name: Setup SSH config
+  ansible.builtin.template:
+    src: ssh_config.j2
+    dest: "/home/{{ fdsbot_user }}/.ssh/config"
+    owner: "{{ fdsbot_user }}"
+    mode: "0644"
+
 - name: Install build dependencies
   ansible.builtin.apt:
     pkg:
