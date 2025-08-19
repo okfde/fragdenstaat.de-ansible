@@ -19,3 +19,24 @@
     - role: metabase
       tags: metabase
       when: inventory_hostname in groups["auxiliary"]
+    - role: ogimage
+      tags: ogimage
+      when: inventory_hostname in groups["auxiliary"]
+    - role: discourse
+      tags: discourse
+      when: inventory_hostname in groups["discourse"]
+    - role: fdsbot
+      tags: fdsbot
+      when: inventory_hostname in groups["fdsbot"]
+    - role: minio
+      tags: minio
+      when: inventory_hostname in groups["s3"]
+    - role: zammad
+      tags: zammad
+      when: inventory_hostname in groups["auxiliary"]
+    - role: monitor
+      tags: monitor
+      when: inventory_hostname in groups["monitor"]
+    - role: sentry
+      tags: sentry
+      when: inventory_hostname in groups["sentry"]
