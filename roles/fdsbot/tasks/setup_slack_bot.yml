@@ -1,5 +1,9 @@
 ---
 
+- name: Setup Node.js
+  ansible.builtin.import_role:
+    name: nodejs
+
 - name: Setup ansible Git repo
   ansible.builtin.git:
     repo: "{{ fdsbot_ansible_git_repo }}"
@@ -15,6 +19,13 @@
     mode: "0640"
   become_user: "{{ fdsbot_user }}"
   become: true
+
+- name: Setup SSH config
+  ansible.builtin.template:
+    src: ssh_config.j2
+    dest: "/home/{{ fdsbot_user }}/.ssh/config"
+    owner: "{{ fdsbot_user }}"
+    mode: "0644"
 
 - name: Install build dependencies
   ansible.builtin.apt:
@@ -36,8 +47,8 @@
 
 - name: Create the virtualenv
   ansible.builtin.command:
-    cmd: "python3 -m venv {{ fdsbot_ansible_dir }}/ansible-env"
-    creates: "{{ fdsbot_ansible_dir }}/ansible-env/bin/activate"
+    cmd: "python3 -m venv {{ fdsbot_ansible_env }}"
+    creates: "{{ fdsbot_ansible_env }}/bin/activate"
   become_user: "{{ fdsbot_user }}"
   become: true
   changed_when: false
@@ -47,7 +58,7 @@
     cmd: "/home/fdsbot/.local/bin/uv pip sync requirements.txt"
     chdir: "{{ fdsbot_ansible_dir }}"
   environment:
-    VIRTUAL_ENV: "{{ fdsbot_ansible_dir }}/ansible-env"
+    VIRTUAL_ENV: "{{ fdsbot_ansible_env }}"
   become: true
   become_user: "{{ fdsbot_user }}"
   changed_when: false
@@ -113,7 +124,32 @@
     force: true
   become_user: "{{ fdsbot_user }}"
   become: true
-  notify: restart fdsbot
+
+- name: Setup pnpm
+  ansible.builtin.command: corepack enable pnpm
+  become: true
+  become_user: root
+  changed_when: false
+
+- name: Install fdsbot dependencies
+  ansible.builtin.command: pnpm install
+  args:
+    chdir: "{{ fdsbot_dir }}"
+  become_user: "{{ fdsbot_user }}"
+  become: true
+  changed_when: false
+
+- name: Build fdsbot
+  ansible.builtin.command: pnpm run build
+  args:
+    chdir: "{{ fdsbot_dir }}"
+  become_user: "{{ fdsbot_user }}"
+  become: true
+  changed_when: false
+
+- name: test
+  ansible.builtin.debug:
+    msg: "{{ fdsbot_deployment_highlights }}"
 
 - name: Set fdsbot systemd service
   ansible.builtin.template:
