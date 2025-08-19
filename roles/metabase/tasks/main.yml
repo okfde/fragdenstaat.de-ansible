@@ -51,6 +51,7 @@
     mode: "0644"
     backup: true
   notify: reload nginx
+  when: metabase_domain in active_https_domains
 
 - name: Ensure that the application site is enabled
   ansible.builtin.file:
@@ -58,3 +59,4 @@
     dest: "/etc/nginx/sites-enabled/{{ metabase_domain }}"
     state: link
   notify: reload nginx
+  when: metabase_domain in active_https_domains
