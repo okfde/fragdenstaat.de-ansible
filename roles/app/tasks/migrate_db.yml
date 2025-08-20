@@ -60,6 +60,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - reporting-views
   when: not ansible_check_mode
 
 - name: Run Django database migrations
@@ -94,6 +95,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - reporting-views
   when: not ansible_check_mode
 
 - name: "Set db_user privs"
@@ -157,6 +159,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - reporting-views
   when: not ansible_check_mode
 
 - name: Restore django environment db user
