@@ -10,11 +10,15 @@
   roles:
     - role: apt
       tags: apt
+
     - role: dockerupdates
       tags: dockerupdates
 
     - role: nocodb
       tags: nocodb
+      when: inventory_hostname in groups["auxiliary"]
+    - role: weblate
+      tags: weblate
       when: inventory_hostname in groups["auxiliary"]
     - role: metabase
       tags: metabase
@@ -40,3 +44,7 @@
     - role: sentry
       tags: sentry
       when: inventory_hostname in groups["sentry"]
+
+    - role: icinga
+      tags: icinga
+      when: inventory_hostname in groups["monitor"]
