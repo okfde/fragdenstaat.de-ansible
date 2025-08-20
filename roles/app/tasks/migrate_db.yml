@@ -7,6 +7,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Save django db user password
   ansible.builtin.set_fact:
@@ -15,6 +16,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Overwrite django db user
   ansible.builtin.set_fact:
@@ -23,6 +25,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Overwrite django db user password
   ansible.builtin.set_fact:
@@ -31,6 +34,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: "Reassign all object in database owned by db_user to django_migrations"
   community.postgresql.postgresql_owner:
@@ -43,6 +47,7 @@
     - deploy-backend
   become: true
   become_user: postgres
+  when: not ansible_check_mode
 
 - name: Drop reporting views
   community.postgresql.postgresql_query:
@@ -55,6 +60,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Run Django database migrations
   community.general.django_manage:
@@ -75,6 +81,7 @@
     - set db access rights
   changed_when: true
   ignore_errors: true
+  when: not ansible_check_mode
 
 - name: Setup reporting views
   community.postgresql.postgresql_query:
@@ -87,6 +94,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: "Set db_user privs"
   community.postgresql.postgresql_privs:
@@ -101,6 +109,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: "Set db_user schema privs"
   community.postgresql.postgresql_privs:
@@ -116,6 +125,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: "Set db_user sequence privs"
   community.postgresql.postgresql_privs:
@@ -131,6 +141,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Ensure reporting user has select access to all tables in schema
   community.postgresql.postgresql_privs:
@@ -146,6 +157,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Restore django environment db user
   ansible.builtin.set_fact:
@@ -154,6 +166,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode
 
 - name: Restore django environment db user password
   ansible.builtin.set_fact:
@@ -162,3 +175,4 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+  when: not ansible_check_mode

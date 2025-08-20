@@ -5,6 +5,7 @@
     update: true
   become: true
   register: sentry_updated
+  when: not ansible_check_mode
 
 - name: Start sentry service
   ansible.builtin.systemd:

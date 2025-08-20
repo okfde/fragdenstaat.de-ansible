@@ -4,14 +4,14 @@
     path: "/etc/skel/.bashrc"
     regexp: "PS1='\\${"
     replace: "PS1='TESTSYSTEM: ${"
-  when: "'tst.okfn.de' in inventory_hostname"
+  when: "'tst.okfn.de' in inventory_hostname and not ansible_check_mode"
 
 - name: Set livesystem indicator in .bashrc (skel)
   ansible.builtin.replace:
     path: "/etc/skel/.bashrc"
     regexp: "PS1='\\${"
     replace: "PS1='LIVESYSTEM: ${"
-  when: "not 'tst.okfn.de' in inventory_hostname"
+  when: "not 'tst.okfn.de' in inventory_hostname and not ansible_check_mode"
 
 - name: Allow passwordless sudo
   ansible.builtin.lineinfile:
@@ -36,6 +36,7 @@
     key: "{{ item.1 }}"
   loop: "{{ ssh_users | subelements('ssh_public_keys', 'skip_missing=True') }}"
   ignore_errors: true
+  when: not ansible_check_mode
   tags:
     - skip_ansible_lint
 
@@ -52,7 +53,7 @@
     path: "/home/{{ item.name }}/.bashrc"
     regexp: "PS1='\\${"
     replace: "PS1='LIVESYSTEM: ${"
-  when: "not 'tst.okfn.de' in inventory_hostname"
+  when: "not 'tst.okfn.de' in inventory_hostname and not ansible_check_mode"
   with_items: "{{ ssh_users }}"
 
 - name: Set testsystem indicator in .bashrc (root)
@@ -67,7 +68,7 @@
     path: "/root/.bashrc"
     regexp: "PS1='\\${"
     replace: "PS1='LIVESYSTEM: ${"
-  when: "not 'tst.okfn.de' in inventory_hostname"
+  when: "not 'tst.okfn.de' in inventory_hostname and not ansible_check_mode"
 
 - name: Remove authorized keys for users
   ansible.posix.authorized_key:

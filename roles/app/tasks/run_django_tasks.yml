@@ -29,10 +29,11 @@
     - deploy-web
     - deploy-frontend
     - django.migrate
+  when: not ansible_check_mode
 
 - name: Import migrate_db.yml
   ansible.builtin.import_tasks: migrate_db.yml
-  when: "needs_db_migration"
+  when: needs_db_migration is defined and not ansible_check_mode
   tags:
     - deploy
     - deploy-backend
