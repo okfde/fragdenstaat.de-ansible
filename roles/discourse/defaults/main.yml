@@ -24,10 +24,6 @@ discourse:
     - host: /opt/discourse_docker/shared/standalone/log/var-log
       guest: /var/log
   plugins:
-    - git clone https://github.com/discourse/docker_manager.git
-    - git clone https://github.com/discourse/discourse-oauth2-basic.git
-    - git clone https://github.com/discourse/discourse-solved.git
-    - git clone https://github.com/discourse/discourse-chat-integration.git
     - git clone https://github.com/discourse/abbreviation-discourse-plugin.git
 
 # in secrets.yml

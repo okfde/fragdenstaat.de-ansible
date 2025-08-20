@@ -51,6 +51,7 @@ hooks:
 {% for cmd in discourse.plugins %}
           - {{ cmd }}
 {% endfor %}
+          - git clone https://github.com/discourse/docker_manager.git
 
 ## Any custom commands to run after building
 run:
