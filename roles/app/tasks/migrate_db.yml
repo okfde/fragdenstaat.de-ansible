@@ -55,6 +55,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - reporting-views
 
 - name: Run Django database migrations
   community.general.django_manage:
@@ -87,6 +88,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - reporting-views
 
 - name: "Set db_user privs"
   community.postgresql.postgresql_privs:
@@ -146,6 +148,7 @@
     - django.migrate
     - deploy-web
     - deploy-backend
+    - reporting-views
 
 - name: Restore django environment db user
   ansible.builtin.set_fact:

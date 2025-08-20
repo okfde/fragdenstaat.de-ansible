@@ -30,6 +30,12 @@
     - deploy-frontend
     - django.migrate
 
+- name: Set needs db migration fact to true when rebuilding reporting views
+  ansible.builtin.set_fact:
+    needs_db_migration: true
+  tags:
+    - reporting-views
+
 - name: Import migrate_db.yml
   ansible.builtin.import_tasks: migrate_db.yml
   when: "needs_db_migration"
