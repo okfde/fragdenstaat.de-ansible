@@ -81,4 +81,4 @@ for i in playbooks/*.yml; do
     next
 done
 
-cat ${LOGFILE}
+echo "See ${LOGFILE} for details..."

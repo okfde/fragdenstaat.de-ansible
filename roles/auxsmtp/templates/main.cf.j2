@@ -131,6 +131,4 @@ smtpd_milters =
 non_smtpd_milters = $smtpd_milters
 {% endif %}
 
-{% if '-tst.okfn.de' in inventory_hostname %}
 transport_maps = hash:/etc/postfix/transport
-{% endif %}
