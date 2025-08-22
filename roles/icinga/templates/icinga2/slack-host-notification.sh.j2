@@ -66,7 +66,7 @@ shift $((OPTIND-1))
 notificationTitle="[${notificationType}] Host ${notificationHostDisplayName} is ${notificationState}!"
 
 # Construct the notification message
-notificationMessage="***** Host Monitoring on $(hostname) *****\n\n${notificationHostDisplayName} is ${notificationState}!\n\nInfo:    ${notificationOutput}\n\nWhen:    ${notificationLongDateTime}\nHost:    ${notificationHostName}"
+notificationMessage="${notificationHostDisplayName} is ${notificationState}!\n\nInfo:    ${notificationOutput}\n\nWhen:    ${notificationLongDateTime}\nHost:    ${notificationHostName}"
 [ -z "$notificationHostAddress" ] || notificationMessage="${notificationMessage}\nIPv4:    ${notificationHostAddress}"
 [ -z "$notificationHostAddress6" ] || notificationMessage="${notificationMessage}\nIPv6:    ${notificationHostAddress6}"
 [ -z "$notificationComment" ] || notificationMessage="${notificationMessage}\n\nComment by ${notificationAuthor}:\n  ${notificationComment}"
