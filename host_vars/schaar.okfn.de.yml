@@ -51,3 +51,6 @@ icinga:
     - roundcube_port = 9800
     - smartmon = "sd"
     - zammad = 1
+
+domain_name: "zerschlagdenstaat.de"
+postfix_hostname: "fds-smtp1.zerschlagdenstaat.de"
