@@ -2,11 +2,14 @@
 
 BOOTUP=mono
 LOGFILE="/tmp/ansible.log"
+PROMFILE="/tmp/ansible.prom"
 RES_COL=70
 MOVE_TO_COL="echo -en \\033[${RES_COL}G"
 SETCOLOR_SUCCESS="echo -en \\033[1;32m"
 SETCOLOR_FAILURE="echo -en \\033[1;31m"
 SETCOLOR_NORMAL="echo -en \\033[0;39m"
+
+TIME_TOTAL=0
 
 echo_success() {
     [ "$BOOTUP" = "color" ] && $MOVE_TO_COL
@@ -37,6 +40,9 @@ step() {
     echo "$(date)" >> "${LOGFILE}"
     echo "$*" >> "${LOGFILE}"
     echo "********************************************************************************" >> ${LOGFILE}
+
+    STEP_NAME="$@"
+    STEP_START=$(date +"%s")
 
     STEP_OK=0
     STEP_NAME="$@"
@@ -70,6 +76,42 @@ next() {
     echo
     echo "********************************************************************************" >> ${LOGFILE}
 
+    STEP_END=$(date +"%s")
+    STEP_TIME=$(( ${STEP_END} - ${STEP_START} ))
+    TIME_TOTAL=$(( ${STEP_TIME} + ${TIME_TOTAL} ))
+    STEP_NAME_SAVE=$(echo ${STEP_NAME} | \
+        sed 's/Running//g' | \
+        sed 's/playbooks//g' | \
+        sed 's/yml//g' | \
+        sed 's/--check//g' | \
+        sed 's/--//g' | \
+        sed 's/ //g' | \
+        sed 's/(//g' | \
+        sed 's/)//g' | \
+        sed 's/\.//g' | \
+        sed 's|/||g' )
+    echo "apt_${STEP_NAME_SAVE}_seconds{hostname=\"$(hostname)\"} ${STEP_TIME}" >> ${PROMFILE}
+
+    cat ${LOGFILE} | \
+        grep -e failed= \
+            -e changed= \
+            -e unreachable= \
+            -e rescued= \
+            -e skipped= \
+            -e ok= \
+            -e ignored= | \
+        sed 's/\s\+/=/g' | \
+        awk -v step="${STEP_NAME_SAVE}" -F'[:=]' \
+            '{ 
+                print "apt_"$4"{hostname=\""$1"\",task=\""step"\"} "$5" \
+                \napt_"$6"{hostname=\""$1"\",task=\""step"\"} "$7" \
+                \napt_"$8"{hostname=\""$1"\",task=\""step"\"} "$9" \
+                \napt_"$10"{hostname=\""$1"\",task=\""step"\"} "$11" \
+                \napt_"$12"{hostname=\""$1"\",task=\""step"\"} "$13" \
+                \napt_"$14"{hostname=\""$1"\",task=\""step"\"} "$15" \
+                \napt_"$16"{hostname=\""$1"\",task=\""step"\"} "$17 \
+            } ' >> ${PROMFILE}
+
     return $STEP_OK
 }
 
@@ -81,4 +123,7 @@ for i in playbooks/*.yml; do
     next
 done
 
+echo "apt_total_time_seconds{hostname=\"$(hostname)\"} ${TIME_TOTAL}" >> ${PROMFILE}
+
 echo "See ${LOGFILE} for details..."
+mv ${PROMFILE} /var/lib/prometheus/node-exporter/ansible_playbooks.prom
