@@ -90,7 +90,7 @@ next() {
         sed 's/)//g' | \
         sed 's/\.//g' | \
         sed 's|/||g' )
-    echo "ansible_${STEP_NAME_SAVE}_seconds{hostname=\"$(hostname)\"} ${STEP_TIME}" >> ${PROMFILE}
+    echo "ansible_playbookruntime_seconds{hostname=\"$(hostname)\",task=\"${STEP_NAME_SAVE}\"} ${STEP_TIME}" >> ${PROMFILE}
 
     cat ${LOGFILE} | \
         grep -e failed= \
@@ -126,4 +126,4 @@ done
 echo "ansible_total_time_seconds{hostname=\"$(hostname)\"} ${TIME_TOTAL}" >> ${PROMFILE}
 
 echo "See ${LOGFILE} for details..."
-mv ${PROMFILE} /var/lib/prometheus/node-exporter/ansible_playbooks.prom
+cat ${PROMFILE} | awk '{$1=$1;print}' > /var/lib/prometheus/node-exporter/ansible_playbooks.prom
