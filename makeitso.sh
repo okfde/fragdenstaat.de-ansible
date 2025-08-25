@@ -90,7 +90,7 @@ next() {
         sed 's/)//g' | \
         sed 's/\.//g' | \
         sed 's|/||g' )
-    echo "apt_${STEP_NAME_SAVE}_seconds{hostname=\"$(hostname)\"} ${STEP_TIME}" >> ${PROMFILE}
+    echo "ansible_${STEP_NAME_SAVE}_seconds{hostname=\"$(hostname)\"} ${STEP_TIME}" >> ${PROMFILE}
 
     cat ${LOGFILE} | \
         grep -e failed= \
@@ -103,13 +103,13 @@ next() {
         sed 's/\s\+/=/g' | \
         awk -v step="${STEP_NAME_SAVE}" -F'[:=]' \
             '{ 
-                print "apt_"$4"{hostname=\""$1"\",task=\""step"\"} "$5" \
-                \napt_"$6"{hostname=\""$1"\",task=\""step"\"} "$7" \
-                \napt_"$8"{hostname=\""$1"\",task=\""step"\"} "$9" \
-                \napt_"$10"{hostname=\""$1"\",task=\""step"\"} "$11" \
-                \napt_"$12"{hostname=\""$1"\",task=\""step"\"} "$13" \
-                \napt_"$14"{hostname=\""$1"\",task=\""step"\"} "$15" \
-                \napt_"$16"{hostname=\""$1"\",task=\""step"\"} "$17 \
+                print "ansible_"$4"{hostname=\""$1"\",task=\""step"\"} "$5" \
+                \nansible_"$6"{hostname=\""$1"\",task=\""step"\"} "$7" \
+                \nansible_"$8"{hostname=\""$1"\",task=\""step"\"} "$9" \
+                \nansible_"$10"{hostname=\""$1"\",task=\""step"\"} "$11" \
+                \nansible_"$12"{hostname=\""$1"\",task=\""step"\"} "$13" \
+                \nansible_"$14"{hostname=\""$1"\",task=\""step"\"} "$15" \
+                \nansible_"$16"{hostname=\""$1"\",task=\""step"\"} "$17 \
             } ' >> ${PROMFILE}
 
     return $STEP_OK
@@ -123,7 +123,7 @@ for i in playbooks/*.yml; do
     next
 done
 
-echo "apt_total_time_seconds{hostname=\"$(hostname)\"} ${TIME_TOTAL}" >> ${PROMFILE}
+echo "ansible_total_time_seconds{hostname=\"$(hostname)\"} ${TIME_TOTAL}" >> ${PROMFILE}
 
 echo "See ${LOGFILE} for details..."
 mv ${PROMFILE} /var/lib/prometheus/node-exporter/ansible_playbooks.prom
