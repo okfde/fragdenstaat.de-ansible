@@ -118,7 +118,7 @@ echo "" > ${LOGFILE}
 
 for i in playbooks/*.yml; do
     step "Running ${i} ${@}"
-    try ansible-playbook ./${i} ${@} >> ${LOGFILE}
+    try ansible-playbook ./${i} ${@} > ${LOGFILE}
     next
 done
 
