@@ -94,9 +94,7 @@ shift $((OPTIND-1))
 notificationTitle="[${notificationType}] ${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!"
 
 # Construct the notification message
-notificationMessage="***** Service Monitoring on $(hostname) *****\n\n${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!\n\nInfo:    ${notificationOutput}\n\nWhen:    ${notificationLongDateTime}\nService: ${notificationServiceName}\nHost:    ${notificationHostName}"
-[ -z "$notificationHostAddress" ] || notificationMessage="${notificationMessage}\nIPv4:    ${notificationHostAddress}"
-[ -z "$notificationHostAddress6" ] || notificationMessage="${notificationMessage}\nIPv6:    ${notificationHostAddress6}"
+notificationMessage="${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!\n\n${notificationOutput}\n\n${notificationLongDateTime}"
 [ -z "$notificationComment" ] || notificationMessage="${notificationMessage}\n\nComment by ${notificationAuthor}:\n  ${notificationComment}"
 [ -z "$notificationIcingaweb2URL" ] || notificationMessage="${notificationMessage}\n\n${notificationIcingaweb2URL}/monitoring/service/show?host=$(urlEncode "${notificationHostName}")&service=$(urlEncode "${notificationServiceName}")"
 notificationMessage=$(echo "$notificationMessage")
