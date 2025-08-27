@@ -33,7 +33,8 @@ db_reporting_views:
         public.froide_payment_order.subscription_id AS subscription_id,
         (public.fds_donation_donation.received_timestamp IS NOT NULL OR (
                   (fds_donation_donation.method = 'banktransfer' AND date_trunc('month', fds_donation_donation.timestamp) > (now() - '35 days'::interval))
-                OR (fds_donation_donation.method = 'sepa' AND fds_donation_donation.timestamp > (now() - '7 days'::interval))
+                OR (fds_donation_donation.method = 'sepa' AND fds_donation_donation.timestamp > (now() - '24 days'::interval)
+                    AND froide_payment_payment.status NOT IN ('rejected', 'refunded', 'error', 'canceled'))
                 )) AS receiving
       FROM
         public.fds_donation_donation
@@ -62,7 +63,8 @@ db_reporting_views:
         fds_donation_donation.purpose,
         fds_donation_donation.keyword,
         fds_donation_donation.form_url,
-        fds_donation_donation.data
+        fds_donation_donation.data,
+        froide_payment_payment.status AS first_payment_status
       FROM
         public.fds_donation_recurrence
         JOIN (
@@ -77,11 +79,13 @@ db_reporting_views:
               fds_donation_donation.timestamp
             ) ASC
         ) fds_donation_donation ON fds_donation_donation.recurrence_id = public.fds_donation_recurrence.id
+        LEFT OUTER JOIN public.froide_payment_payment ON fds_donation_donation.payment_id = public.froide_payment_payment.ID
       WHERE
         public.fds_donation_recurrence.project = 'FDS'
         AND (fds_donation_recurrence.active OR (
             (fds_donation_recurrence.method = 'banktransfer' and date_trunc('month', fds_donation_recurrence.start_date) > (now() - '35 days'::interval))
-          OR (fds_donation_recurrence.method = 'sepa' and fds_donation_recurrence.start_date > (now() - '7 days'::interval))
+          OR (fds_donation_recurrence.method = 'sepa' and fds_donation_recurrence.start_date > (now() - '24 days'::interval)
+              AND froide_payment_payment.status NOT IN ('rejected', 'refunded', 'error', 'canceled'))
           ))
   - name: subscribers
     query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id, unsubscribe_method, unsubscribe_reference FROM public.fds_newsletter_subscriber"
