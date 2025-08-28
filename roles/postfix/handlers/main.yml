@@ -16,6 +16,18 @@
   notify: restart postfix
   changed_when: false
 
+- name: update transport postmap
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/transport"
+  notify: restart postfix
+  changed_when: false
+
+- name: update sasl_passwd postmap
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/sasl_passwd"
+  notify: restart postfix
+  changed_when: false
+
 - name: restart opendkim
   ansible.builtin.service:
     name: opendkim

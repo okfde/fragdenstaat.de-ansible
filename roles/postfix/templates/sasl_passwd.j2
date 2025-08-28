@@ -1,0 +1,2 @@
+{% for smtp in smtp_relays %}[{{ smtp.domain }}]:587                     {{ smtp.username }}:{{ smtp.password }}
+{% endfor %}
