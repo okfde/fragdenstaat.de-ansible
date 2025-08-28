@@ -215,6 +215,12 @@ unsubscribe_email_host: "mail.fragdenstaat.de"
 #     to: "root@fragdenstaat.de"
 
 ## in secret.yml
+smtp_relays: []
+#  - domain: ""
+#    username: ""
+#    password: ""
+
+## in secret.yml
 alias_foi_domains: []
 
 ## in secret.yml
