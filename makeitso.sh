@@ -125,12 +125,11 @@ done
 echo "ansible_totaltime_seconds{hostname=\"$(hostname)\"} ${TIME_TOTAL}" >> ${PROMFILE}
 
 if [ ! -d "/var/lib/prometheus/node-exporter/" ]; then
+    echo ""
     cat ${PROMFILE} | awk '{$1=$1;print}' | sort | uniq -u -z
 else
     cat ${PROMFILE} | awk '{$1=$1;print}' | sort | uniq -u -z > /var/lib/prometheus/node-exporter/ansible_playbooks.prom
+    rm ${PROMFILE}
 fi
 
-cat ${LOGFILE}
-
 rm ${LOGFILE}
-rm ${PROMFILE}
