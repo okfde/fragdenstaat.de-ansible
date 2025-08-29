@@ -125,6 +125,8 @@ dovecot_destination_recipient_limit = 1
 virtual_mailbox_domains = hash:/etc/postfix/vmail_domains
 virtual_mailbox_maps = hash:/etc/postfix/vmail_mailbox
 virtual_alias_maps = pgsql:/etc/postfix/postgres-virtual-alias-maps.cf
+# 100 MB, should be larger then message_size_limit
+virtual_mailbox_limit = 104857600
 
 virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
