@@ -220,6 +220,10 @@ smtp_relays: []
 #    username: ""
 #    password: ""
 
+transport_maps: []
+#  - from: """
+#    to: ""
+
 ## in secret.yml
 alias_foi_domains: []
 

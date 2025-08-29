@@ -36,9 +36,9 @@
     mode: "0644"
   notify: restart postfix
 
-- name: Install transport
-  ansible.builtin.copy:
-    src: transport
+- name: Install transport map
+  ansible.builtin.template:
+    src: transport.j2
     dest: /etc/postfix/transport
     mode: "0600"
   notify: update transport postmap
