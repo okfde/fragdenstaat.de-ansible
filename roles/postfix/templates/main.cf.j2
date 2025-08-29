@@ -63,7 +63,7 @@ smtpd_tls_received_header = yes
 
 
 # secure outgoing mail
-smtp_tls_security_level = dane
+# smtp_tls_security_level = dane
 
 # See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
 # information on enabling SSL in the smtp client.
@@ -125,6 +125,8 @@ dovecot_destination_recipient_limit = 1
 virtual_mailbox_domains = hash:/etc/postfix/vmail_domains
 virtual_mailbox_maps = hash:/etc/postfix/vmail_mailbox
 virtual_alias_maps = pgsql:/etc/postfix/postgres-virtual-alias-maps.cf
+# 100 MB, should be larger then message_size_limit
+virtual_mailbox_limit = 104857600
 
 virtual_uid_maps = static:5000
 virtual_gid_maps = static:5000
@@ -158,3 +160,11 @@ smtpd_milters =
     inet:127.0.0.1:12301
     inet:127.0.0.1:8893
 non_smtpd_milters = inet:localhost:12301
+
+transport_maps = hash:/etc/postfix/transport
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_tls_security_level = may
+header_size_limit = 4096000
