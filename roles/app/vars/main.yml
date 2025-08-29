@@ -87,7 +87,6 @@ django_environment:
   FROIDE_EVIDENCECOLLECTION_NOCODB_TABLE_ACTOR: "{{ froide_evidencecollection_nocodb_table_actor }}"
   FROIDE_EVIDENCECOLLECTION_NOCODB_TABLE_AFFILIATION: "{{ froide_evidencecollection_nocodb_table_affiliation }}"
   FROIDE_EVIDENCECOLLECTION_NOCODB_TABLE_EVIDENCE: "{{ froide_evidencecollection_nocodb_table_evidence }}"
-  FROIDE_EVIDENCECOLLECTION_NOCODB_TABLE_ROLE: "{{ froide_evidencecollection_nocodb_table_role }}"
   FROIDE_EVIDENCECOLLECTION_NOCODB_VIEW_ACTOR_ORGANIZATION: "{{ froide_evidencecollection_nocodb_view_actor_organization }}"
   FROIDE_EVIDENCECOLLECTION_NOCODB_VIEW_ACTOR_PERSON: "{{ froide_evidencecollection_nocodb_view_actor_person }}"
   PAYMENT_HOST: "{{ payment_host }}"
