@@ -6,6 +6,7 @@
       - postfix-pgsql
       - postfix-pcre
       - postfix-policyd-spf-python
+      - libsasl2-modules
     state: present
   retries: 3
   delay: 10
