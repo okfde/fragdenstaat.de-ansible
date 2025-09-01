@@ -59,6 +59,8 @@ db_reporting_views:
         public.fds_donation_recurrence.amount,
         public.fds_donation_recurrence.amount / public.fds_donation_recurrence.interval as amount_month,
         public.fds_donation_recurrence.cancel_date,
+        public.fds_donation_recurrence.cancel_reason,
+        public.fds_donation_recurrence.cancel_feedback,
         fds_donation_donation.reference,
         fds_donation_donation.purpose,
         fds_donation_donation.keyword,
