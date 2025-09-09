@@ -59,6 +59,8 @@ db_reporting_views:
         public.fds_donation_recurrence.amount,
         public.fds_donation_recurrence.amount / public.fds_donation_recurrence.interval as amount_month,
         public.fds_donation_recurrence.cancel_date,
+        public.fds_donation_recurrence.cancel_reason,
+        public.fds_donation_recurrence.cancel_feedback,
         fds_donation_donation.reference,
         fds_donation_donation.purpose,
         fds_donation_donation.keyword,
@@ -82,6 +84,7 @@ db_reporting_views:
         LEFT OUTER JOIN public.froide_payment_payment ON fds_donation_donation.payment_id = public.froide_payment_payment.ID
       WHERE
         public.fds_donation_recurrence.project = 'FDS'
+        AND fds_donation_donation.completed IS TRUE
         AND (fds_donation_recurrence.active OR (
             (fds_donation_recurrence.method = 'banktransfer' and date_trunc('month', fds_donation_recurrence.start_date) > (now() - '35 days'::interval))
           OR (fds_donation_recurrence.method = 'sepa' and fds_donation_recurrence.start_date > (now() - '24 days'::interval)

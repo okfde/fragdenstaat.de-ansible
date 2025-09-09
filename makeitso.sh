@@ -90,7 +90,7 @@ next() {
         sed 's/)//g' | \
         sed 's/\.//g' | \
         sed 's|/||g' )
-    
+
     cat ${LOGFILE} | \
         grep -e failed= \
             -e changed= \
@@ -101,7 +101,7 @@ next() {
             -e ignored= | \
         sed 's/\s\+/=/g' | \
         awk -v step="${STEP_NAME_SAVE}" -F'[:=]' \
-            '{ 
+            '{
                 print "ansible_"$4"{hostname=\""$1"\",task=\""step"\"} "$5" \
                 \nansible_"$6"{hostname=\""$1"\",task=\""step"\"} "$7" \
                 \nansible_"$8"{hostname=\""$1"\",task=\""step"\"} "$9" \
