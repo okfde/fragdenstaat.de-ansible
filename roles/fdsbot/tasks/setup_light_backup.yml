@@ -47,6 +47,11 @@
     - "{{ db_name }}"
   become: true
 
+- name: ensures {{ fdsbot_backup_dir }}/conf dir exists
+  file: 
+    path: "{{ fdsbot_backup_dir }}"
+    state: directory
+
 - name: Set fdsbot light dump scripts
   ansible.builtin.template:
     src: dump_light.sh.j2
@@ -68,12 +73,14 @@
     src: fdsbot_backup_server.service.j2
     dest: /etc/systemd/system/fdsbot_backup_server.service
     mode: "0444"
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Start fdsbot_backup_server service
   ansible.builtin.systemd:
     name: fdsbot_backup_server
     state: started
     daemon_reload: true
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Allow light backup server on VPN IP
   community.general.ufw:
@@ -81,3 +88,4 @@
     port: "{{ fdsbot_backup_serve_port }}"
     to_ip: "{{ vpn_network }}{{ host_data.vpn_peer_id }}"
     proto: tcp
+  when: "not 'tst.okfn.de' in inventory_hostname"

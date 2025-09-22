@@ -20,7 +20,7 @@
   ansible.builtin.command:
     cmd: "./install.sh --skip-user-creation --no-report-self-hosted-issues"
     chdir: "{{ sentry_dir }}"
-  when: sentry_updated.changed
+  when: "sentry_updated.changed and not 'tst.okfn.de' in inventory_hostname"
   tags:
     - skip_ansible_lint
 
@@ -127,6 +127,7 @@
   ansible.builtin.systemd:
     name: sentry
     state: started
+  when: "not 'tst.okfn.de' in inventory_hostname"
 
 - name: Create the Nginx site configuration
   ansible.builtin.template:
