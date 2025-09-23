@@ -48,7 +48,7 @@
   become: true
 
 - name: ensures {{ fdsbot_backup_dir }}/conf dir exists
-  file:
+  ansible.builtin.file:
     path: "{{ fdsbot_backup_dir }}"
     state: directory
 
