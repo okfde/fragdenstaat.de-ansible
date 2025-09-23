@@ -3,6 +3,7 @@
     repo: "{{ sentry_git_repo }}"
     dest: "{{ sentry_dir }}"
     update: true
+    force: true
   become: true
   register: sentry_updated
   when: not ansible_check_mode
