@@ -51,6 +51,8 @@
   ansible.builtin.file:
     path: "{{ fdsbot_backup_dir }}"
     state: directory
+    mode: "0755"
+    owner: "{{ fdsbot_user }}"
 
 - name: Set fdsbot light dump scripts
   ansible.builtin.template:
