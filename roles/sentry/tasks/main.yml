@@ -2,6 +2,7 @@
   ansible.builtin.git:
     repo: "{{ sentry_git_repo }}"
     dest: "{{ sentry_dir }}"
+    version: "{{ sentry_version }}"
     update: true
     force: true
   become: true
@@ -92,9 +93,8 @@
       value: "True"
 
 - name: Copy Sentry .env to .env.custom
-  ansible.builtin.copy:
-    src: "{{ sentry_dir }}/.env"
-    remote_src: true
+  ansible.builtin.template:
+    src: "env.j2"
     dest: "{{ sentry_dir }}/.env.custom"
     mode: "0644"
   when: sentry_updated.changed
