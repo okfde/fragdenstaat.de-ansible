@@ -155,7 +155,7 @@ celery_workers:
     worker: 2
   - name: mailsend_bulk
     queues: "emailsend_bulk"
-    worker: 4
+    worker: 6
   - name: search
     queues: "searchindex"
     worker: 4
