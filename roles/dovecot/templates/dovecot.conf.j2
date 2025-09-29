@@ -23,6 +23,11 @@
 # Enable installed protocols
 !include_try /usr/share/dovecot/protocols.d/*.protocol
 
+passdb {
+  driver = passwd-file
+  args = {{ dovecot_passwd_file }}
+}
+
 # Most of the actual configuration gets included below. The filenames are
 # first sorted by their ASCII value and parsed in that order. The 00-prefixes
 # in filenames are intended to make it easier to understand the ordering.
@@ -43,11 +48,6 @@ mail_privileged_group = mail
 mail_uid = vmail
 # managesieve_notify_capability = mailto
 # managesieve_sieve_capability = fileinto reject envelope encoded-character vacation subaddress comparator-i;ascii-numeric relational regex imap4flags copy include variables body enotify environment mailbox date ihave
-
-passdb {
-  driver = passwd-file
-  args = {{ dovecot_passwd_file }}
-}
 
 userdb {
   args = uid=5000 gid=5000 home=/var/vmail/%d/%n allow_all_users=yes
