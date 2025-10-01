@@ -375,7 +375,7 @@ content_security_policy:
   "default-src": "'none'"
   "script-src": "'self' __static__ https://traffic.okfn.de https://js.stripe.com"
   "style-src": "'self' 'unsafe-inline' __static__"
-  "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com"
+  "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de *.tile.openstreetmap.org *.global.ssl.fastly.net i.ytimg.com https://cdn.pretix.cloud"
   "media-src": "__static__ __media__"
   "worker-src": "'self' blob: __static__"
   "frame-src": "'self' blob: __static__ __media__ https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://datawrapper.dwcdn.net"
