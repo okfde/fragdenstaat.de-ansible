@@ -29,7 +29,7 @@ x-shared:
 
 services:
   zammad-elasticsearch:
-    image: bitnami/elasticsearch:{{ zammad_elasticsearch_version }}
+    image: bitnamilegacy/elasticsearch:{{ zammad_elasticsearch_version }}
     restart: always
     volumes:
       - ./data/elasticsearch-data:/bitnami/elasticsearch/data
