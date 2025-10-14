@@ -36,6 +36,11 @@
     mode: "0644"
   notify: restart dovecot
 
+- name: Remove default dovecot auth file
+  ansible.builtin.file:
+    path: "/etc/dovecot/conf.d/10-auth.conf"
+    state: absent
+
 - name: Configure dovecot logrotate
   ansible.builtin.copy:
     src: logrotate.conf
