@@ -107,4 +107,4 @@ dockerupdate_compose_lines:
     regexp: "-graylog/graylog:(.*)"
     line: "    image: \"${GRAYLOG_IMAGE:-graylog/graylog:{{ graylog_version }}}\""
 
-graylog_version: "6.3.3"
+graylog_version: "6.3.5"
