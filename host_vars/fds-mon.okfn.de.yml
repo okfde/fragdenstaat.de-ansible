@@ -4,7 +4,7 @@ host_data:
   datacenter: fsn1-dc14
   interface_name: enp0s31f6
   mac: 90:1b:0e:ab:a5:66
-  global_ipv4: 144.76.157.203
+  global_ipv4: 159.69.138.15
   global_ipv6: 2a01:4f8:231:1ec6::2
   site_ipv4: 192.168.100.5
   disk_type: ssd
@@ -20,12 +20,12 @@ prometheus_exporter:
   - node_exporter
 
 https_domains:
-  - ['mon.zerschlagdenstaat.de']
-  - ['log.zerschlagdenstaat.de']
-  - ['sentry.okfn.de']
+  - ["mon.zerschlagdenstaat.de"]
+  - ["log.zerschlagdenstaat.de"]
+  - ["sentry.okfn.de"]
 
-monitor_server_name: 'mon.zerschlagdenstaat.de'
-logserver_server_name: 'log.zerschlagdenstaat.de'
+monitor_server_name: "mon.zerschlagdenstaat.de"
+logserver_server_name: "log.zerschlagdenstaat.de"
 
 borg:
   snapshots:
@@ -105,6 +105,6 @@ dockerupdate_compose_lines:
   graylog:
     path: "/var/www/monitor/"
     regexp: "-graylog/graylog:(.*)"
-    line: "    image: \"${GRAYLOG_IMAGE:-graylog/graylog:{{ graylog_version }}}\""
+    line: '    image: "${GRAYLOG_IMAGE:-graylog/graylog:{{ graylog_version }}}"'
 
 graylog_version: "6.3.5"
