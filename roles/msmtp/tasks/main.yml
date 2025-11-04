@@ -23,6 +23,12 @@
     value: "{{ cron_mailto_from }}"
     user: root
 
+- name: Set crontabs MAILFROM var
+  community.general.cronvar:
+    name: MAILFROM
+    value: "root@{{ inventory_hostname.replace('.okfn.de', '') }}.zerschlagdenstaat.de"
+    user: root
+
 - name: Create msmtp wrapper
   ansible.builtin.template:
     src: msmtp-pseudo-mta.sh.j2
