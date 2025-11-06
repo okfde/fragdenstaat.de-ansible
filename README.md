@@ -33,7 +33,7 @@ There are tags available:
 Use like this:
 
 ```
-ansible-playbook fragdenstaat.de.yml -v -t deploy-web -t deploy-frontend
+ansible-playbook playbooks/fragdenstaat.de.yml -v -t deploy-web -t deploy-frontend
 ```
 
 ## Secrets management
