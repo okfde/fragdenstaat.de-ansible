@@ -87,6 +87,17 @@
     - deploy-frontend
     - deploy-web
 
+- name: Ensure CMS applications are started
+  community.general.supervisorctl:
+    name: "cmssite_gunicorn_{{ item.key }}"
+    state: started
+  with_items: "{{ cms_sites }}"
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-frontend
+    - deploy-web
+
 - name: Reload CMS applications
   community.general.supervisorctl:
     name: "cmssite_gunicorn_{{ item.key }}"
