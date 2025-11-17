@@ -29,6 +29,7 @@ cms_sites:
   - key: "grs"
     name: "Gegenrechtsschutz"
     domain: "gegenrechtsschutz.de"
+    site_id: 2
     site_url: "https://gegenrechtsschutz.de"
     simple_files:
       - path: "/robots.txt"
