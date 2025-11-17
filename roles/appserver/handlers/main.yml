@@ -22,7 +22,7 @@
 
 - name: restart CMS app server
   community.general.supervisorctl:
-    name: "cmssite_gunicorn_{{ item }}"
+    name: "cmssite_gunicorn_{{ item.key }}"
     state: restarted
   with_items: "{{ cms_sites }}"
   notify:
