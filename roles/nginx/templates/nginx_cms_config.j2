@@ -42,6 +42,7 @@ server {
         {% endfor %}
 
         location / {
+            {% if "-tst" not in inventory_hostname %}
             proxy_cache cms_{{ item.key }}_cache;
             proxy_cache_key $scheme$proxy_host$uri;
             proxy_cache_valid 10m;
@@ -53,6 +54,7 @@ server {
             proxy_cache_lock on;
 
             add_header X-Proxy-Cache $upstream_cache_status;
+            {% endif %}
 
             {{ hsts_header() }}
             {{ proxy_wsgi_upstream(item.key) }}
