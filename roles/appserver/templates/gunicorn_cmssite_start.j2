@@ -16,6 +16,7 @@ export CSRF_TRUSTED_ORIGINS={{ item.site_url }}
 export CACHE_KEY_PREFIX={{ item.key }}
 export CACHE_LOCAL_MEMORY=1
 export DJANGO_CONFIGURATION={{ item.name }}
+export DJANGO_SITE_ID={{ item.site_id }}
 
 {% endblock %}
 
