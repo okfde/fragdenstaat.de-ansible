@@ -23,6 +23,8 @@
 - name: "Active https domain list"
   ansible.builtin.debug:
     var: active_https_domain_list
+  tags:
+    - nginx
 
 - name: Set fact for active HTTPS domains dict
   ansible.builtin.set_fact:
