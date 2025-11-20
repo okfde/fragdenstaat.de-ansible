@@ -1,5 +1,5 @@
-nfs_exports:
-  - "{{ external_media_storage_src }} 192.168.100.1(rw,sync,no_subtree_check,all_squash,anonuid=1001,anongid=33)"
-
 nfs: true
 nfs_allow_from: 192.168.100.1
+
+nfs_exports:
+  - "{{ external_media_storage_src }} {{ nfs_allow_from }}(rw,sync,no_subtree_check,all_squash,anonuid={{ gunicorn_user_uid }},anongid=33)"

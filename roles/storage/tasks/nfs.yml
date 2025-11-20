@@ -1,8 +1,16 @@
+- name: Create the application user
+  ansible.builtin.user:
+    name: "{{ gunicorn_user }}"
+    uid: "{{ gunicorn_user_uid }}"
+    state: present
+
 - name: Create external media storage directory
   ansible.builtin.file:
     path: "{{ external_media_storage_src }}"
     mode: "02750"
     state: directory
+    owner: "{{ gunicorn_user }}"
+    group: "www-data"
   notify: Reload exports
 
 - name: Install nfs-kernel-server
