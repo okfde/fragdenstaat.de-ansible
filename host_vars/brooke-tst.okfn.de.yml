@@ -28,28 +28,6 @@ https_domains:
   - ["grs.test.zerschlagdenstaat.de"]
   - ["ubf.test.zerschlagdenstaat.de"]
 
-cms_sites:
-  - key: "grs"
-    name: "Gegenrechtsschutz"
-    domain: "grs.test.zerschlagdenstaat.de"
-    site_id: 3
-    site_url: "https://grs.test.zerschlagdenstaat.de"
-    simple_files:
-      - path: "/robots.txt"
-        filename: robots.txt
-      - path: "/.well-known/security.txt"
-        filename: security.txt
-  - key: "ubf"
-    name: "Ubf"
-    domain: "ubf.test.zerschlagdenstaat.de"
-    site_id: 2
-    site_url: "https://ubf.test.zerschlagdenstaat.de"
-    simple_files:
-      - path: "/robots.txt"
-        filename: robots.txt
-      - path: "/.well-known/security.txt"
-        filename: security.txt
-
 
 fonts:
   - hk_grotesk

@@ -126,6 +126,18 @@ django_configuration: "FragDenStaat"
 django_geoip_path: "/var/www/fragdenstaat.de/data"
 frontex_captcha_model_path: "/var/www/fragdenstaat.de/data/model.pth"
 
+cms_sites:
+  - key: "grs"
+    name: "Gegenrechtsschutz"
+    domain: "gegenrechtsschutz.de"
+    site_id: 2
+    site_url: "https://gegenrechtsschutz.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+
 ## in secrets.yml
 # django_secret_url_admin: "admin"
 
