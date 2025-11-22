@@ -85,7 +85,7 @@ http {
 
 	map $http_user_agent $badagent {
 		default "";
-		~*(CCBot|ChatGPT-User|GPTBot|Google-Extended|anthropic-ai|Omgilibot|Omgili|FacebookBot|Diffbot|ImagesiftBot|cohere-ai|ClaudeBot|GPTBot|Amazonbot|AhrefsBot|BLEXBot|YandexBot|serpstatbot|DataForSeoBot|Lucifer\sSearch\sBot|AcademicBotRTU|Bytespider) $http_user_agent;
+		~*(CCBot|ChatGPT-User|GPTBot|Google-Extended|anthropic-ai|Omgilibot|Omgili|FacebookBot|Diffbot|ImagesiftBot|cohere-ai|ClaudeBot|GPTBot|Amazonbot|AhrefsBot|BLEXBot|YandexBot|serpstatbot|DataForSeoBot|Lucifer\sSearch\sBot|AcademicBotRTU|Bytespider|Sogou\sweb) $http_user_agent;
 	}
 	map $http_user_agent $limit_bots {
 		default "";
