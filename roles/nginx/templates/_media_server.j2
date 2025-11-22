@@ -110,6 +110,10 @@ location = /error_451.html {
         {{ cors(static_server_url, repeat_headers=default_headers) }}
         {{ cors(web_server_url, repeat_headers=default_headers) }}
 
+        {% for cms_site in cms_sites %}
+        {{ cors(cms_site.site_url, repeat_headers=default_headers) }}
+        {% endfor %}
+
         alias   {{ nginx_media_dir }}{{ loc.url }};
     }
 {% endfor %}

@@ -33,6 +33,28 @@ sentry_webhook_url: "https://sentry.okfn.de"
 django_sentry_dsn: ""
 django_sentry_public_dsn: ""
 
+cms_sites:
+  - key: "grs"
+    name: "Gegenrechtsschutz"
+    domain: "grs.test.zerschlagdenstaat.de"
+    site_id: 3
+    site_url: "https://grs.test.zerschlagdenstaat.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+  - key: "ubf"
+    name: "Ubf"
+    domain: "ubf.test.zerschlagdenstaat.de"
+    site_id: 2
+    site_url: "https://ubf.test.zerschlagdenstaat.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+
 certbot_mode: "dns-01"
 certbot_script: /opt/certbot/bin/certbot
 
