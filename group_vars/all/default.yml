@@ -315,6 +315,33 @@ redirect_domains:
   - from: "www.gegenrechtsschutz.de"
     domain: "gegenrechtsschutz.de"
     https: true
+  - from: "xn--ueberbrckungsfonds-s6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--berbrueckungsfonds-l6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--berbrckungsfonds-izbf.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.xn--ueberbrckungsfonds-s6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.xn--berbrueckungsfonds-l6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.xn--berbrckungsfonds-izbf.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--ueberbrckungsfonds-s6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--berbrueckungsfonds-l6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.ueberbrueckungsfonds.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
 
 certbot_mode: "http-01"
 

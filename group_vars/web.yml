@@ -13,6 +13,9 @@ https_domains:
   - ["frag-den-staat.de", "www.frag-den-staat.de"]
   - ["gegenrechtsschutz.de", "www.gegenrechtsschutz.de"]
   - ["ueberbrueckungsfonds.de", "www.ueberbrueckungsfonds.de"]
+  - ["xn--ueberbrckungsfonds-s6b.de", "www.xn--ueberbrckungsfonds-s6b.de"]
+  - ["xn--berbrueckungsfonds-l6b.de", "www.xn--berbrueckungsfonds-l6b.de"]
+  - ["xn--berbrckungsfonds-izbf.de", "www.xn--berbrckungsfonds-izbf.de"]
 
 nginx_pixel_domain: "pixel.fragdenstaat.de"
 nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"
