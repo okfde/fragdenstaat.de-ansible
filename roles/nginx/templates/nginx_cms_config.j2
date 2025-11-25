@@ -1,5 +1,4 @@
-
-{% from '_utils.j2' import proxy_wsgi_upstream, hsts_header with context %}
+{% from '_utils.j2' import basic_auth, proxy_wsgi_upstream, hsts_header with context %}
 
 upstream {{ item.key }}_wsgi_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
@@ -18,7 +17,7 @@ server {
     rewrite     ^ https://{{ item.domain }}$request_uri? permanent;
 }
 
-{% if active_https_domains[item.domain] %}
+{% if active_https_domains[item.domain] is defined %}
     server {
         listen              443 ssl http2;
         listen         [::]:443 ssl http2;
@@ -54,6 +53,10 @@ server {
             proxy_cache_lock on;
 
             add_header X-Proxy-Cache $upstream_cache_status;
+            {% endif %}
+
+            {% if item.basic_auth_realm is defined %}
+                {{ basic_auth(item.basic_auth_realm) }}
             {% endif %}
 
             {{ hsts_header() }}

@@ -12,6 +12,7 @@ https_domains:
   - ["pixel.fragdenstaat.de"]
   - ["frag-den-staat.de", "www.frag-den-staat.de"]
   - ["gegenrechtsschutz.de", "www.gegenrechtsschutz.de"]
+  - ["ueberbrueckungsfonds.de", "www.ueberbrueckungsfonds.de"]
 
 nginx_pixel_domain: "pixel.fragdenstaat.de"
 nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"
@@ -36,3 +37,14 @@ cms_sites:
         filename: robots.txt
       - path: "/.well-known/security.txt"
         filename: security.txt
+  - key: "ubf"
+    name: "Ubf"
+    domain: "ueberbrueckungsfonds.de"
+    site_id: 3
+    site_url: "https://ueberbrueckungsfonds.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+    basic_auth_realm: "admin"
