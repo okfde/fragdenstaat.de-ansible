@@ -109,6 +109,7 @@ location = /error_451.html {
         {{ default_headers }}
         {{ cors(static_server_url, repeat_headers=default_headers) }}
         {{ cors(web_server_url, repeat_headers=default_headers) }}
+        {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
 
         alias   {{ nginx_media_dir }}{{ loc.url }};
     }
