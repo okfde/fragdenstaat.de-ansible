@@ -50,4 +50,3 @@ cms_sites:
         filename: robots.txt
       - path: "/.well-known/security.txt"
         filename: security.txt
-    basic_auth_realm: "admin"
