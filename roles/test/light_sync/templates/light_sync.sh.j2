@@ -14,14 +14,7 @@ brooke_restoredir="false"
 
 start_docker(){
     echo "Start docker container"
-    curl 'https://raw.githubusercontent.com/postgis/docker-postgis/master/14-3.4/Dockerfile' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > Dockerfile
-    curl 'https://raw.githubusercontent.com/postgis/docker-postgis/master/14-3.4/initdb-postgis.sh' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > initdb-postgis.sh
-    curl 'https://raw.githubusercontent.com/postgis/docker-postgis/master/14-3.4/update-postgis.sh' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > update-postgis.sh
-    chmod 0755 initdb-postgis.sh
-    chmod 0755 update-postgis.sh
-    sed -i 's/"${psql\[@\]}"/psql/g' initdb-postgis.sh
-    docker build . --tag=restore-postgres
-    docker run -d --rm --name backup-light-postgres -e psql=psql -e POSTGRES_HOST_AUTH_METHOD=trust -e PGDATA=/var/lib/postgresql/data/pgdata -p 127.0.0.1:5432:5432 restore-postgres
+    docker run -d --rm --name backup-light-postgres -e psql=psql -e POSTGRES_HOST_AUTH_METHOD=trust -p 127.0.0.1:5432:5432 "postgis/postgis:16-3.4"
     echo "Wait for postgres start"
     sleep 10
 }
@@ -55,10 +48,9 @@ get_db(){
 
     echo "Create light dump"
     pg_dump -h localhost -U postgres fragdenstaat_de --schema-only > schema.sql
-    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/create_light_sql.py' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > create_light_sql.py
-    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_tables.txt' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > safe_tables.txt
-    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_fks.txt' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.7,de-DE;q=0.3' -H 'Accept-Encoding: gzip, deflate, br' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Sec-Fetch-User: ?1' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' | gunzip > safe_fks.txt
-    python3 -m pip install graphlib-backport
+    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/create_light_sql.py' > create_light_sql.py
+    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_tables.txt' > safe_tables.txt
+    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_fks.txt' > safe_fks.txt
     python3 create_light_sql.py generate --source_connection="-h localhost -U postgres" --target_connection="-h localhost -p 5432 -U postgres" > make_light.sh
     bash make_light.sh
     pg_dump -h localhost -p 5432 -U postgres fragdenstaat_de_light > backup_light.sql
