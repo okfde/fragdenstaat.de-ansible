@@ -1,3 +1,42 @@
+- name: Install borg
+  ansible.builtin.apt:
+    pkg: borgbackup
+
+- name: Install sshpass
+  ansible.builtin.apt:
+    pkg: sshpass
+
+- name: Generate ssh-key
+  community.crypto.openssh_keypair:
+    path: /root/.ssh/id_storagebox
+    type: ed25519
+  become: true
+
+- name: Create ssh config
+  ansible.builtin.blockinfile:
+    path: /root/.ssh/config
+    block: |
+      {% for item in ("brooke.okfn.de", "schoch.okfn.de") %}
+      Host {{ backup_repo[item]['host'] }}
+      HostName {{ backup_repo[item]['host'] }}
+      User {{ backup_repo[item]['user'] }}
+      IdentityFile /root/.ssh/id_storagebox
+      Port {{ backup_repo[item]['port'] }}
+
+      {% endfor %}
+    mode: "0640"
+    create: true
+  become: true
+
+- name: Copy ssh-key
+  ansible.builtin.command:
+    cmd: sshpass -p {{ backup_repo[item]['password'] }} ssh-copy-id -o StrictHostKeyChecking=no -p {{ backup_repo[item]['port'] }} -s {{ backup_repo[item]['user'] }}@{{ backup_repo[item]['host'] }}
+  changed_when: false
+  loop:
+    - brooke.okfn.de
+    - schoch.okfn.de
+  become: true
+
 - name: Create light_sync directory
   ansible.builtin.file:
     dest: /root/light_sync/

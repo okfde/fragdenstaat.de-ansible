@@ -20,7 +20,7 @@
 
 - name: Overwrite django db user
   ansible.builtin.set_fact:
-    django_environment: "{{ django_environment | combine({'DATABASE_USER': 'django_migrations'}) }}"
+    django_environment: "{{ django_environment | combine({'DATABASE_USER': django_migrations_db_user}) }}"
   tags:
     - django.migrate
     - deploy-web
@@ -29,7 +29,7 @@
 
 - name: Overwrite django db user password
   ansible.builtin.set_fact:
-    django_environment: "{{ django_environment | combine({'DATABASE_PASSWORD': '{{ django_migrations_db_password }}'}) }}"
+    django_environment: "{{ django_environment | combine({'DATABASE_PASSWORD': django_migrations_db_password}) }}"
   tags:
     - django.migrate
     - deploy-web
