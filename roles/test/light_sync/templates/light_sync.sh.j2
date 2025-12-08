@@ -4,13 +4,19 @@ export BORG_REPO="{{ light_sync.repo }}"
 export BORG_PASSPHRASE="{{ light_sync.repo_pass }}"
 
 repos=("brooke" "schoch")
+
+borg_repos=({% for host in ("brooke.okfn.de", "schoch.okfn.de") %}"ssh://{{ backup_repo[host].user }}@{{ backup_repo[host].host }}:{{ backup_repo[host].port }}/./{{ backup_repo[host].path }}" {% endfor %})
+borg_repokeys=("{{ backup_repo["brooke.okfn.de"]["repokey"] }}" "{{ backup_repo["schoch.okfn.de"]["repokey"] }}")
+
+ssh_port="{{ ssh_port }}"
+
 brooke_ip="192.168.122.123"
 schoch_ip="192.168.122.240"
-ssh_port="2228"
 restore_mountpoint="/mnt"
 
-borg_bin="/usr/bin/borg"
 brooke_restoredir="false"
+
+cd /root/light_sync
 
 start_docker(){
     echo "Start docker container"
@@ -22,15 +28,15 @@ start_docker(){
 shutdown_docker(){
     echo "Shutdown docker container"
     docker stop backup-light-postgres
-    echo "Remove docker container"
-    docker rm backup-light-postgres
 }
 
 mount_backups(){
-    for repo in ${repos[@]}; do
+    for i in ${!repos[@]}; do
+        repo=${repos[$i]}
         echo "Mount ${repo} backup"
         mkdir -p ${restore_mountpoint}/borg/${repo}
-        ${borg_bin} --bypass-lock mount --last 1 ${BORG_REPO}/${repo}/borg/ /mnt/borg/${repo}
+
+        BORG_PASSPHRASE=${borg_repokeys[$i]} borg --bypass-lock mount --last 1 "${borg_repos[$i]}" /mnt/borg/${repo}
         restoredir=$(ls "/mnt/borg/${repo}")
         echo ${restoredir}
     done
@@ -40,20 +46,24 @@ mount_backups(){
 }
 
 get_db(){
-    echo "db backup file ${sqldate}"
-    echo "Create database"
-    createdb -h localhost -p 5432 -U postgres -O postgres fragdenstaat_de
-    echo "Import backup"
-    gunzip -k -c /mnt/borg/brooke/${brooke_restoredir}/var/www/fragdenstaat.de/backup/sqlbackup-${sqldate}.sql.gz | psql -h localhost -p 5432 -U postgres fragdenstaat_de
+    if [ ! -f backup_light.sql ]; then
+        echo "db backup file ${sqldate}"
+        echo "Create database"
+        createdb -h localhost -p 5432 -U postgres -O postgres fragdenstaat_de
+        echo "Import backup"
+        gunzip -k -c /mnt/borg/brooke/${brooke_restoredir}/var/www/fragdenstaat.de/backup/sqlbackup-${sqldate}.sql.gz | psql -h localhost -p 5432 -U postgres fragdenstaat_de
 
-    echo "Create light dump"
-    pg_dump -h localhost -U postgres fragdenstaat_de --schema-only > schema.sql
-    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/create_light_sql.py' > create_light_sql.py
-    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_tables.txt' > safe_tables.txt
-    curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_fks.txt' > safe_fks.txt
-    python3 create_light_sql.py generate --source_connection="-h localhost -U postgres" --target_connection="-h localhost -p 5432 -U postgres" > make_light.sh
-    bash make_light.sh
-    pg_dump -h localhost -p 5432 -U postgres fragdenstaat_de_light > backup_light.sql
+        echo "Create light dump"
+        pg_dump -h localhost -U postgres fragdenstaat_de --schema-only > schema.sql
+        curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/create_light_sql.py' > create_light_sql.py
+        curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_tables.txt' > safe_tables.txt
+        curl 'https://raw.githubusercontent.com/okfde/fragdenstaat_de/main/scripts/safe_fks.txt' > safe_fks.txt
+        python3 create_light_sql.py generate --source_connection="-h localhost -U postgres" --target_connection="-h localhost -p 5432 -U postgres" > make_light.sh
+        bash make_light.sh
+        pg_dump -h localhost -p 5432 -U postgres fragdenstaat_de_light > backup_light.sql
+    else
+        echo "Reusing existing backup_light.sql..."
+    fi
 }
 
 restore_db(){
@@ -126,7 +136,7 @@ cleanup(){
     done
 
     umount /root/light_sync/media
-    rm ./backup_light.sql
+    rm ./*.sql
 }
 
 cleanup_only() {
