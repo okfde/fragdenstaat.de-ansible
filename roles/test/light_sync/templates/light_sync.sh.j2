@@ -1,12 +1,9 @@
 #!/bin/bash
 
-export BORG_REPO="{{ light_sync.repo }}"
-export BORG_PASSPHRASE="{{ light_sync.repo_pass }}"
-
 repos=("brooke" "schoch")
 
-borg_repos=({% for host in ("brooke.okfn.de", "schoch.okfn.de") %}"ssh://{{ backup_repo[host].user }}@{{ backup_repo[host].host }}:{{ backup_repo[host].port }}/./{{ backup_repo[host].path }}" {% endfor %})
-borg_repokeys=("{{ backup_repo["brooke.okfn.de"]["repokey"] }}" "{{ backup_repo["schoch.okfn.de"]["repokey"] }}")
+borg_repos=({% for host in ("brooke.okfn.de", "schoch.okfn.de") %}"ssh://{{ light_sync.repo[host].user }}@{{ light_sync.repo[host].host }}:{{ light_sync.repo[host].port }}/{{ light_sync.repo[host].path }}" {% endfor %})
+borg_repokeys=("{{ light_sync.repo["brooke.okfn.de"].pass }}" "{{ light_sync.repo["schoch.okfn.de"].pass }}")
 
 ssh_port="{{ ssh_port }}"
 
@@ -20,7 +17,7 @@ cd /root/light_sync
 
 start_docker(){
     echo "Start docker container"
-    docker run -d --rm --name backup-light-postgres -e psql=psql -e POSTGRES_HOST_AUTH_METHOD=trust -p 127.0.0.1:5432:5432 "postgis/postgis:16-3.4"
+    docker run -d --name backup-light-postgres -e psql=psql -e POSTGRES_HOST_AUTH_METHOD=trust -p 127.0.0.1:5432:5432 "postgis/postgis:16-3.4"
     echo "Wait for postgres start"
     sleep 10
 }

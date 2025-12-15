@@ -17,11 +17,11 @@
     path: /root/.ssh/config
     block: |
       {% for item in ("brooke.okfn.de", "schoch.okfn.de") %}
-      Host {{ backup_repo[item]['host'] }}
-      HostName {{ backup_repo[item]['host'] }}
-      User {{ backup_repo[item]['user'] }}
+      Host {{ light_sync.repo[item].host }}
+      HostName {{ light_sync.repo[item].host }}
+      User {{ light_sync.repo[item].user }}
       IdentityFile /root/.ssh/id_storagebox
-      Port {{ backup_repo[item]['port'] }}
+      Port {{ light_sync.repo[item].port }}
 
       {% endfor %}
     mode: "0640"
@@ -30,7 +30,7 @@
 
 - name: Copy ssh-key
   ansible.builtin.command:
-    cmd: sshpass -p {{ backup_repo[item]['password'] }} ssh-copy-id -o StrictHostKeyChecking=no -p {{ backup_repo[item]['port'] }} -s {{ backup_repo[item]['user'] }}@{{ backup_repo[item]['host'] }}
+    cmd: sshpass -p {{ light_sync.repo[item]['pass'] }} ssh-copy-id -o StrictHostKeyChecking=no -p {{ light_sync.repo[item]['port'] }} -s {{ light_sync.repo[item]['user'] }}@{{ light_sync.repo[item]['host'] }}
   changed_when: false
   loop:
     - brooke.okfn.de
