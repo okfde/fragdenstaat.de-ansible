@@ -1,0 +1,15 @@
+---
+
+- name: Sync data to test system
+  hosts: qemu
+  vars_files:
+    - ../../local_vars/local_config.yml
+
+  tasks:
+    - name: Run light sync
+      ansible.builtin.command:
+        cmd: /root/light_sync/light_sync.sh
+        chdir: /
+      changed_when: true
+      become: true
+      become_user: root
