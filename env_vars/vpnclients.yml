@@ -1,5 +1,4 @@
 ---
-
 vpn_clientgroups:
   - name: VPN users
     group: vpn
@@ -28,9 +27,6 @@ vpn_clientgroups:
       - name: Kara Laptop
         publickey: eE3YXMliEJOpJBg+pJOEf23oKCZx0816j1/jdWYvDF0=
         peer_id: 12
-      - name: MonicaLaptop
-        publickey: 0X9k6LonJVbc7mH4qevE5Erxz2fjsqQzv9RoSRmPJ2A=
-        peer_id: 16
       - name: Judith Laptop
         publickey: AnN3Rcd8kf9MAjwPuGnCb+AGABLDwLWPlxGXezMY2Rk=
         peer_id: 7
@@ -76,22 +72,18 @@ vpn_clientgroups:
       - name: danai
         publickey: xJEmA7mIBjPk+uluXIp+q99N/39EG11x0TncqKZhDGQ=
         peer_id: 34
-        server: ['brooke.okfn.de']
+        server: ["brooke.okfn.de"]
       - name: nadja
         publickey: 38BdjTZW4oeGPei+EUY6uow0FiZj72ZpvXqYgA1IJws=
         peer_id: 35
-        server: ['brooke.okfn.de']
+        server: ["brooke.okfn.de"]
       - name: Ilona
         publickey: FBfGoQ029aqiTHV3cxafcaG3rIJ3auQJpByqDbMCMFE=
         peer_id: 36
-        server: ['schaar.okfn.de']
+        server: ["schaar.okfn.de"]
       - name: Ida Laptop
         publickey: 8dTcRe2dAm5vm6IIPi+W6UdbnxLZAqsUI0z3wncKnx4=
         peer_id: 37
       - name: Joschi Laptop
         publickey: bN45mivKBESTuWoXGQbwY0s1YYCQiIQLm7Unu79ulyI=
         peer_id: 38
-      - name: Christoph Rauscher
-        publickey: kaEptwtiD6QRDPLveD05sEpAqAnClK5cSTJYK1YifDM=
-        peer_id: 39
-        server: ['fds-tst.okfn.de']
