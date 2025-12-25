@@ -13,8 +13,8 @@ if [ "${healthy}" == "true" ]; then
     errorlevel=0
     echo "OK: Zammad is healthy ${message}"
 elif [ "${message}" != "success" ]; then
-    errorlevel=2
-    echo "CRIT: Zammad reported an error: ${issues} ${actions}"
+    errorlevel=1
+    echo "WARN: Zammad reported an error: ${issues} ${actions}"
 else
     errorlevel=1
     echo "WARN: There was an error checking on Zammad"
