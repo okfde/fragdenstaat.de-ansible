@@ -253,6 +253,7 @@ nginx_public_media:
     force_download: true
   - url: "/files/datashow/"
     force_download: true
+  - url: "/files/campaign-logos/"
 
 nginx_public_privileged_media:
   - "/files/campaign/"
