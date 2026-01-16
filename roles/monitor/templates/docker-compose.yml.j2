@@ -26,6 +26,21 @@ services:
       - "{{ monitor_dir }}/grafana:/var/lib/grafana"
     environment:
       GF_SERVER_ROOT_URL: https://{{ monitor_domain }}/
+      GF_RENDERING_SERVER_URL: http://localhost:8081/render
+      GF_RENDERING_CALLBACK_URL: http://localhost:3000/
+    restart: unless-stopped
+    network_mode: host
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://192.168.100.5:12201"
+        tag: "monitor"
+
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    container_name: grafana-image-renderer
+    environment:
+      ENABLE_METRICS: "true"
     restart: unless-stopped
     network_mode: host
     logging:
