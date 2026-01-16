@@ -26,3 +26,21 @@
   ansible.builtin.include_tasks: sidecar.yml
   when: sidecar is defined
   tags: sidecar
+
+- name: Create glances directory
+  ansible.builtin.file:
+    state: directory
+    path: "/etc/glances"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  tags: glances
+
+- name: Create glances.conf
+  ansible.builtin.copy:
+    src: "glances.conf"
+    dest: "/etc/glances/glances.conf"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  tags: glances
