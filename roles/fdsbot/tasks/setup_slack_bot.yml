@@ -38,7 +38,6 @@
 - name: Install uv
   ansible.builtin.pip:
     name: uv
-    break_system_packages: true
   become: true
   become_user: "{{ fdsbot_user }}"
   tags:

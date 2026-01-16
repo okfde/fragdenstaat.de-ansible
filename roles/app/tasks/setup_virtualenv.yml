@@ -3,7 +3,6 @@
 - name: Install virtualenv
   ansible.builtin.pip:
     name: virtualenv
-    break_system_packages: true
   tags:
     - packages
     - skip_ansible_lint

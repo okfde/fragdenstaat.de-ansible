@@ -40,7 +40,6 @@
 - name: Install uv
   ansible.builtin.pip:
     name: uv
-    break_system_packages: true
   tags:
     - packages
     - skip_ansible_lint
