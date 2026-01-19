@@ -71,7 +71,7 @@ icinga:
     - http_vhosts["traffic.okfn.de"] = { http_uri = "https://traffic.okfn.de" }
 
     - disks["disk vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
-    - disks["disk vg1-container"] = { disk_partitions = "/dev/mapper/vg1-container" }
+    - disks["disk vg1-container"] = { disk_partitions = "/dev/mapper/vg1-container", disk_wfree = "10", disk_cfree = "5" }
     - node_exporter = 1
     - mailq_warning = 100
     - mailq_critical = 200
