@@ -181,7 +181,7 @@ rabbitmq_application_user: "{{ application_name }}"
 rabbitmq_node: "rabbit@localhost"
 
 # This needs tessdata/ for tesseract >= 4 starting Ubuntu 18.04
-tesseract_data_path: /usr/share/tesseract-ocr/4.00/tessdata/
+tesseract_data_path: /usr/share/tesseract-ocr/5/tessdata/
 
 dovecot_passwdfile_scheme: "sha512-crypt"
 
