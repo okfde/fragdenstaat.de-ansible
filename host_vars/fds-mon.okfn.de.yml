@@ -32,7 +32,7 @@ borg:
     - name: container
       dev: /dev/vg1/container
       mnt: /mnt/container-snapshot
-      lvm_free: 25%
+      lvm_free: 75%
     - name: monitor
       dev: /dev/vg1/monitor
       mnt: /mnt/monitor-snapshot
