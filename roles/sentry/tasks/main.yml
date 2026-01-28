@@ -92,15 +92,6 @@
     - key: "SOCIAL_AUTH_REDIRECT_IS_HTTPS"
       value: "True"
 
-- name: Copy Sentry .env to .env.custom
-  ansible.builtin.template:
-    src: "env.j2"
-    dest: "{{ sentry_dir }}/.env.custom"
-    mode: "0644"
-  when: sentry_updated.changed
-  tags:
-    - skip_ansible_lint
-
 - name: Customize sentry env vars
   ansible.builtin.lineinfile:
     path: "{{ sentry_dir }}/.env.custom"
@@ -111,6 +102,7 @@
     - "SENTRY_MAIL_HOST={{ sentry_mail_host }}"
     - "SENTRY_EVENT_RETENTION_DAYS=90"
     - "SENTRY_BIND=127.0.0.1:9000"
+    - "POSTGRES_MAX_CONNECTIONS=100"
 
 - name: Add GeoIP configuration
   ansible.builtin.template:

@@ -9,11 +9,11 @@ User=root
 Group=docker
 WorkingDirectory={{ sentry_dir }}
 # Shutdown container (if running) when unit is started
-ExecStartPre=docker compose --env-file {{ sentry_dir }}/.env.custom down
+ExecStartPre=docker compose --env-file {{ sentry_dir }}/.env --env-file {{ sentry_dir }}/.env.custom down
 # Start container when unit is started
-ExecStart=docker compose --env-file {{ sentry_dir }}/.env.custom up
+ExecStart=docker compose --env-file {{ sentry_dir }}/.env --env-file {{ sentry_dir }}/.env.custom up
 # Stop container when unit is stopped
-ExecStop=docker compose --env-file {{ sentry_dir }}/.env.custom down
+ExecStop=docker compose --env-file {{ sentry_dir }}/.env --env-file {{ sentry_dir }}/.env.custom down
 
 [Install]
 WantedBy=multi-user.target

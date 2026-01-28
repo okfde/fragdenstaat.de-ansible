@@ -17,4 +17,4 @@ sentry_mail_password: ""
 sentry_mail_port: 587
 sentry_mail_username: ""
 
-sentry_version: "25.9.0"
+sentry_version: "26.1.0"
