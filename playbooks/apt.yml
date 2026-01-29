@@ -41,9 +41,9 @@
     - role: monitor
       tags: monitor
       when: inventory_hostname in groups["monitor"]
-    - role: sentry
-      tags: sentry
-      when: inventory_hostname in groups["sentry"]
+    # - role: sentry
+    #  tags: sentry
+    #  when: inventory_hostname in groups["sentry"]
 
     - role: icinga
       tags: icinga
