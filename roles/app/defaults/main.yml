@@ -45,7 +45,7 @@ db_reporting_views:
   - name: subscriptions
     query: "SELECT froide_payment_subscription.id AS id, froide_payment_subscription.created AS created, last_date, next_date, canceled, public.froide_payment_plan.amount AS amount, public.froide_payment_plan.interval AS interval, public.froide_payment_plan.amount_year AS amount_year, public.froide_payment_plan.provider as provider, donor_id FROM public.froide_payment_subscription LEFT OUTER JOIN public.froide_payment_plan ON public.froide_payment_subscription.plan_id = public.froide_payment_plan.id LEFT OUTER JOIN public.fds_donation_donor_subscriptions ON public.fds_donation_donor_subscriptions.subscription_id = public.froide_payment_subscription.id"
   - name: donors
-    query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, subscriber_id FROM public.fds_donation_donor"
+    query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, recurrence_streak_start, subscriber_id FROM public.fds_donation_donor"
   - name: recurrences
     query: |
       SELECT
