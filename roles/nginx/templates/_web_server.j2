@@ -131,9 +131,7 @@ location /static/ {
         {% set default_headers = add_web_headers() %}
         {{ default_headers }}
 
-        {% for origin in url_origins.origins %}
-            {{ cors(origin | regex_replace('__media__', media_server_url) | regex_replace('__static__', static_server_url), repeat_headers=default_headers) }}
-        {% endfor %}
+        {{ cors(url_origins.origins | join('|') | regex_replace('__media__', media_server_url) | regex_replace('__static__', static_server_url), repeat_headers=default_headers) }}
 
         {{ proxy_wsgi_upstream() }}
     }
