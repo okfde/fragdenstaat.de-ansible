@@ -66,23 +66,29 @@ shift $((OPTIND-1))
 [ ! -z "$notificationComment" ] && [ -z "$notificationAuthor" ] && inputError "The author value cannot be empty, if the comment value was given."
 [ ! -z "$notificationAuthor" ] && [ -z "$notificationComment" ] && inputError "The comment value cannot be empty, if the author value was given."
 
+
 # Construct the notification title
-notificationTitle="[${notificationType}] ${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!"
+notificationTitle="${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!"
 
 # Construct the notification message
-notificationMessage="${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!\n\nInfo:    ${notificationOutput}\n\nWhen:    ${notificationLongDateTime}\nService: ${notificationServiceName}\nHost:    ${notificationHostName}"
-[ -z "$notificationHostAddress" ] || notificationMessage="${notificationMessage}\nIPv4:    ${notificationHostAddress}"
-[ -z "$notificationHostAddress6" ] || notificationMessage="${notificationMessage}\nIPv6:    ${notificationHostAddress6}"
+[ -z "$notificationOutput" ] || notificationMessage="Additional info: ${notificationOutput}\n\n"
+notificationMessage="${notificationMessage}Service: ${notificationServiceName}\nHost:    ${notificationHostName}"
 [ -z "$notificationComment" ] || notificationMessage="${notificationMessage}\n\nComment by ${notificationAuthor}:\n  ${notificationComment}"
-[ -z "$notificationIcingaweb2URL" ] || notificationMessage="${notificationMessage}\n\n${notificationIcingaweb2URL}/monitoring/service/show?host=$(urlEncode "${notificationHostName}")&service=$(urlEncode "${notificationServiceName}")"
+notificationMessage="${notificationMessage}\n\nhttps://cmk.zerschlagdenstaat.de/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&host=$(urlEncode "${notificationHostName}")&service=$(urlEncode "${notificationServiceName}")"
 notificationMessage=$(echo "$notificationMessage")
 
 # Send the push notification
 {% endraw %}
-result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
+
+if [ ${notificationStatus} == "CRITICAL" ]; then
+  result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"<!here> ${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
+  slackHttpCode=$(tail -n1 <<< "$result")
+  slackResponse=$(sed '$ d' <<< "$result")
+else
+  slackHttpCode=200
+fi
+
 {% raw %}
-slackHttpCode=$(tail -n1 <<< "$result")
-slackResponse=$(sed '$ d' <<< "$result")
 
 # If verbose output was requested
 [ -z "$verboseOutput" ] || {
