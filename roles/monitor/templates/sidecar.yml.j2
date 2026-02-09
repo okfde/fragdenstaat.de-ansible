@@ -85,14 +85,14 @@ server_api_token: "{{ graylog_server_api_token }}"
 #
 # Default:
 collector_binaries_accesslist:
-  - "/usr/bin/filebeat"
+#  - "/usr/bin/filebeat"
 #  - "/usr/bin/packetbeat"
 #  - "/usr/bin/metricbeat"
 #  - "/usr/bin/heartbeat"
 #  - "/usr/bin/auditbeat"
 #  - "/usr/bin/journalbeat"
-#  - "/usr/lib/graylog-sidecar/filebeat"
-#  - "/usr/lib/graylog-sidecar/auditbeat"
+  - "/usr/lib/graylog-sidecar/filebeat"
+  - "/usr/lib/graylog-sidecar/auditbeat"
 #  - "/usr/share/filebeat/bin/filebeat"
 #  - "/usr/share/packetbeat/bin/packetbeat"
 #  - "/usr/share/metricbeat/bin/metricbeat"
