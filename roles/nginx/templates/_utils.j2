@@ -48,10 +48,10 @@
     if ($http_origin ~* (^{{ server_url|replace(".", "\\.") }}$)) {
         set $allowedoptions 1;
     }
-    if ($request_method != 'OPTIONS') {
-        set $allowedoptions 0;
+    if ($request_method = 'OPTIONS') {
+        set $allowedoptions 1$allowedoptions;
     }
-    if ($allowedoptions) {
+    if ($allowedoptions = 11) {
         add_header Access-Control-Allow-Origin $http_origin;
         add_header Access-Control-Allow-Methods "GET,POST";
         add_header Access-Control-Allow-Headers 'X-Requested-With,Pragma,Cache-Control,Content-Type';
@@ -62,16 +62,16 @@
     }
 
     if ($http_origin ~* (^{{ server_url|replace(".", "\\.") }}$)) {
-        add_header Access-Control-Allow-Origin $http_origin always;
-        add_header Access-Control-Allow-Headers "X-Requested-With,Content-Type,pragma, cache-control" always;
-        add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method" always;
+        add_header Access-Control-Allow-Origin $http_origin;
+        add_header Access-Control-Allow-Headers "X-Requested-With,Content-Type,pragma, cache-control";
+        add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";
         {{ repeat_headers }}
     }
     {% if null_fallback and ".onion" in server_url %}
         if ($http_origin = 'null') {
-            add_header Access-Control-Allow-Origin {{ server_url }} always;
-            add_header Access-Control-Allow-Headers "pragma, cache-control" always;
-            add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method" always;
+            add_header Access-Control-Allow-Origin {{ server_url }};
+            add_header Access-Control-Allow-Headers "pragma, cache-control";
+            add_header Vary "Origin, Access-Control-Request-Headers, Access-Control-Request-Method";
             {{ repeat_headers }}
         }
     {% endif %}
