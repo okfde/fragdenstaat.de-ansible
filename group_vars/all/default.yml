@@ -397,6 +397,11 @@ cors_exceptions:
       - "__media__"
       - "https://okfde.github.io"
 
+  - url: "/newsletter/update/wahlbrief/subscribe-ajax/"
+    origins:
+      - "https://okfde.github.io"
+      - "https://wahlbrief.de"
+
 # CSP supports __wsweb__ __web__, __media__ and __static__ variable__s
 
 content_security_policy:
