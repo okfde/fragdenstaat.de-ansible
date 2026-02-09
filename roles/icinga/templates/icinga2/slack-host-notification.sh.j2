@@ -66,11 +66,9 @@ shift $((OPTIND-1))
 notificationTitle="[${notificationType}] Host ${notificationHostDisplayName} is ${notificationState}!"
 
 # Construct the notification message
-notificationMessage="${notificationHostDisplayName} is ${notificationState}!\n\nInfo:    ${notificationOutput}\n\nWhen:    ${notificationLongDateTime}\nHost:    ${notificationHostName}"
-[ -z "$notificationHostAddress" ] || notificationMessage="${notificationMessage}\nIPv4:    ${notificationHostAddress}"
-[ -z "$notificationHostAddress6" ] || notificationMessage="${notificationMessage}\nIPv6:    ${notificationHostAddress6}"
+notificationMessage="${notificationHostDisplayName} is ${notificationState}!\n\nInfo:    ${notificationOutput}\n\n"
 [ -z "$notificationComment" ] || notificationMessage="${notificationMessage}\n\nComment by ${notificationAuthor}:\n  ${notificationComment}"
-[ -z "$notificationIcingaweb2URL" ] || notificationMessage="${notificationMessage}\n\n${notificationIcingaweb2URL}/monitoring/host/show?host=$(urlEncode "${notificationHostName}")"
+notificationMessage="${notificationMessage}\n\nhttps://cmk.zerschlagdenstaat.de/monitoring/host/show?host=$(urlEncode "${notificationHostName}")"
 notificationMessage=$(echo "$notificationMessage")
 
 # Send the push notification
