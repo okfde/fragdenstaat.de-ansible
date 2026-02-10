@@ -9,6 +9,11 @@ message=$(echo ${result} | jq .message)
 issues=$(echo ${result} | jq .issues)
 actions=$(echo ${result} | jq .actions)
 
+if [[ "${issues}" == *"SearchIndexAssociationsJob"* ]]; then
+  healthy="true"
+  message="but might have some issues with an background job: ${message}\n\nThis usually fixes itself without further intervention."
+fi
+
 if [ "${healthy}" == "true" ]; then
     errorlevel=0
     echo "OK: Zammad is healthy ${message}"
