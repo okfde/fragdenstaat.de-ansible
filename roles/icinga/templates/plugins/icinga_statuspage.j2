@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# --- Configuration ---
+# Icinga API Endpoint (replace with your server's address)
+ICINGA_API_URL="https://cmk.zerschlagdenstaat.de/api/v1/objects"
+
+# API Credentials (replace with a valid user)
+API_USER="root"
+API_PASS="{{ apiuser_password }}"
+
+# Output HTML file path
+OUTPUT_FILE="/var/www/html/status.html"
+
+# --- Fetch and Process Data ---
+# Fetch host statuses and parse with jq
+HOST_DATA=$(curl -k -s -u "$API_USER:$API_PASS" \
+  -H 'Accept: application/json' \
+  "$ICINGA_API_URL/hosts?attrs=name&attrs=state&attrs=last_check&attrs=check_command" | \
+  jq -r '.results[] | .attrs | "\(.name)|\(.state)|\(.last_check)|\(.check_command)"')
+
+# Fetch service statuses and parse with jq
+SERVICE_DATA=$(curl -k -s -u "$API_USER:$API_PASS" \
+  -H 'Accept: application/json' \
+  "$ICINGA_API_URL/services?attrs=host_name&attrs=display_name&attrs=state&attrs=last_check&attrs=acknowledgement&filter=service.state!=00%26%26service.acknowledgement==0" | \
+  jq -r '.results[] | .attrs | "\(.host_name)|\(.display_name)|\(.state)|\(.last_check)"'
+)
+
+# --- Generate HTML ---
+cat > "$OUTPUT_FILE" << EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Icinga Status</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .up { color: green; }
+        .down { color: red; }
+        .unreachable { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>Icinga Status Page</h1>
+    <h2>Host Status</h2>
+    <table>
+        <tr><th>Host</th><th>Status</th><th>Last Check</th><th>Check Command</th></tr>
+$(echo "$HOST_DATA" | while IFS='|' read -r host state last_check command; do
+    case $state in
+        0) status_class="up"; status_text="UP" ;;
+        1) status_class="down"; status_text="DOWN" ;;
+        2) status_class="unreachable"; status_text="UNREACHABLE" ;;
+        *) status_class=""; status_text="UNKNOWN" ;;
+    esac
+    printf "        <tr><td>%s</td><td class='%s'>%s</td><td>%s</td><td>%s</td></tr>\n" "$host" "$status_class" "$status_text" "$(date -d "@$last_check" "+%Y-%m-%d %H:%M:%S")" "$command"
+done)
+    </table>
+
+    <h2>Services with warnings</h2>
+    <table>
+        <tr><th>Host</th><th>Service</th><th>Status</th><th>Last Check</th></tr>
+$(echo "$SERVICE_DATA" | while IFS='|' read -r host service state last_check; do
+    case $state in
+        0) status_class="up"; status_text="OK" ;;
+        1) status_class="down"; status_text="WARNING" ;;
+        2) status_class="down"; status_text="CRITICAL" ;;
+        *) status_class=""; status_text="UNKNOWN" ;;
+    esac
+    printf "        <tr><td>%s</td><td>%s</td><td class='%s'>%s</td><td>%s</td></tr>\n" "$host" "$service" "$status_class" "$status_text" "$(date -d "@$last_check" "+%Y-%m-%d %H:%M:%S")"
+done)
+    </table>
+</body>
+</html>
+EOF
+
+# Make sure the web server can read the file
+chmod 644 "$OUTPUT_FILE"
+
+# Optional: Log the run
+logger "Icinga status page updated: $(date)"
