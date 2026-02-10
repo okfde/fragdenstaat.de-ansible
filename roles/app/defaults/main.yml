@@ -29,6 +29,7 @@ db_reporting_views:
         public.fds_donation_donation.data,
         public.fds_donation_donation.number,
         public.fds_donation_donation.project,
+        (public.fds_donation_donation.recurrence_id IS NULL OR public.fds_donation_donation.first_recurring IS TRUE) as active,
         public.froide_payment_payment.status AS payment_status,
         public.froide_payment_order.subscription_id AS subscription_id,
         (public.fds_donation_donation.received_timestamp IS NOT NULL OR (
