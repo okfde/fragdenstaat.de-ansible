@@ -57,7 +57,15 @@ $(echo "$HOST_DATA" | while IFS='|' read -r host state last_check command; do
     printf "        <tr><td>%s</td><td class='%s'>%s</td><td>%s</td><td>%s</td></tr>\n" "$host" "$status_class" "$status_text" "$(date -d "@$last_check" "+%Y-%m-%d %H:%M:%S")" "$command"
 done)
     </table>
+EOF
 
+if [ -z "$SERVICE_DATA" ]; then
+  echo "<h2>Service Status</h2>All Services are running in normal parameters." >> "$OUTPUT_FILE"
+  chmod 644 "$OUTPUT_FILE"
+  exit 0
+fi
+
+cat >> "$OUTPUT_FILE" << EOF
     <h2>Services with warnings</h2>
     <table>
         <tr><th>Host</th><th>Service</th><th>Status</th><th>Last Check</th></tr>
