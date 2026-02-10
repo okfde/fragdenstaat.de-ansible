@@ -31,7 +31,7 @@ cat > "$OUTPUT_FILE" << EOF
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Icinga Status</title>
+    <title>FragDenStaat Statuspage</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
@@ -43,7 +43,7 @@ cat > "$OUTPUT_FILE" << EOF
     </style>
 </head>
 <body>
-    <h1>Icinga Status Page</h1>
+    <h1>FragDenStaat Status Page</h1>
     <h2>Host Status</h2>
     <table>
         <tr><th>Host</th><th>Status</th><th>Last Check</th><th>Check Command</th></tr>
@@ -60,7 +60,7 @@ done)
 EOF
 
 if [ -z "$SERVICE_DATA" ]; then
-  echo "<h2>Service Status</h2>All Services are running in normal parameters." >> "$OUTPUT_FILE"
+  echo "<h2>Service Status</h2><p>All Services are running in normal parameters.</p><hr><p>Next Update in 5 Minutes from "$(date +"%Y-%m-%d %H:%M:%S")"</p></body></html>" >> "$OUTPUT_FILE"
   chmod 644 "$OUTPUT_FILE"
   exit 0
 fi
@@ -79,6 +79,8 @@ $(echo "$SERVICE_DATA" | while IFS='|' read -r host service state last_check; do
     printf "        <tr><td>%s</td><td>%s</td><td class='%s'>%s</td><td>%s</td></tr>\n" "$host" "$service" "$status_class" "$status_text" "$(date -d "@$last_check" "+%Y-%m-%d %H:%M:%S")"
 done)
     </table>
+    <hr>
+    <p>Next Update in 5 Minutes from "$(date +"%Y-%m-%d %H:%M:%S")"</p>
 </body>
 </html>
 EOF
