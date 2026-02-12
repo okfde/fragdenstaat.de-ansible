@@ -91,11 +91,8 @@ EOF
 if [ -z "$SERVICE_DATA" ]; then
   echo "<h2>Service Status</h2><p class="up"><strong>All systems functioning within normal parameters.</strong></p> \
   <hr><p><small>Last update: "$(date +"%Y-%m-%d %H:%M:%S")" - All times are UTC. This page updates automatically. - You can find the source code of this page at <a href="https://github.com/okfde/fragdenstaat.de-ansible/blob/main/roles/icinga/templates/plugins/icinga_statuspage.j2">GitHub</a></small></p> \
-  </div></body></html>" >> "$OUTPUT_FILE"
-  chmod 644 "$OUTPUT_FILE"
-  exit 0
-fi
-
+  </div>" >> "$OUTPUT_FILE"
+else
 cat >> "$OUTPUT_FILE" << EOF
     <script>
         if (Notification.permission === 'granted') {
@@ -122,16 +119,17 @@ done)
 </body>
 </html>
 EOF
+fi
 
 cat > "$OUTPUT_PROM" << EOF
-$(echo "$HOST_DATA" | while IFS='|' read -r host service state last_check; do
+$(echo "$HOST_DATA" | while IFS='|' read -r host state last_check command; do
     case $state in
         0) state_numeric=0 ;;
         1) state_numeric=1 ;;
         2) state_numeric=2 ;;
         *) state_numeric=3 ;;
     esac
-    printf "icinga2_host_status{hostname=\"%s\"}: %s\n" "$host" "$status_numeric"
+    printf "icinga2_host_status{hostname=\"%s\"} %s\n" "$host" "$state_numeric"
 done)
 EOF
 
@@ -143,7 +141,7 @@ $(echo "$SERVICE_DATA" | while IFS='|' read -r host service state last_check; do
         2) state_numeric=2 ;;
         *) state_numeric=3 ;;
     esac
-    printf "icinga2_${service}_status{hostname=\"%s\"}: %s\n" "$host" "$status_numeric"
+    printf "icinga2_service_status{hostname=\"%s\", service=\"%s\"} %s\n" "$host" "$service" "$state_numeric"
 done)
 EOF
 
