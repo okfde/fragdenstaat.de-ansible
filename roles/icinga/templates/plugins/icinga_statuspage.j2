@@ -121,6 +121,7 @@ done)
 EOF
 fi
 
+if [ -d $(basename "$OUTPUT_DATA") ]; then
 cat > "$OUTPUT_PROM" << EOF
 $(echo "$HOST_DATA" | while IFS='|' read -r host state last_check command; do
     case $state in
@@ -144,6 +145,7 @@ $(echo "$SERVICE_DATA" | while IFS='|' read -r host service state last_check; do
     printf "icinga2_service_status{hostname=\"%s\", service=\"%s\"} %s\n" "$host" "$service" "$state_numeric"
 done)
 EOF
+fi
 
 # Make sure the web server can read the file
 chmod 644 "$OUTPUT_FILE"
