@@ -19,6 +19,10 @@ server {
         {% include '_ssl.j2' %}
     {% endwith %}
 
+    location /status.html {
+        root /var/www/html/;
+    }
+
     location / {
         allow 10.9.0.0/25;
         allow fc00::1/121;
