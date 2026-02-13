@@ -1,3 +1,10 @@
+apply Notification "additionalusers" to Service {
+  command = "mail-service-notification"
+  users = ["gerd"]
+  interval = 0
+  assign where service.check_command == "http" || service.check_command == "ssl_cert_cn"
+}
+
 apply Service "ping4" {
   import "generic-service"
 
