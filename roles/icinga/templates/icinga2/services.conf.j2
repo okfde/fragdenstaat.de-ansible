@@ -157,7 +157,7 @@ apply Service for (http_vhost => config in host.vars.http_vhosts) {
 
   check_command = "http"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   vars += config
 }
@@ -167,7 +167,7 @@ apply Service for (ssl_cert => config in host.vars.ssl_cert) {
 
   check_command = "ssl_cert_cn"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   vars += config
 }
