@@ -80,15 +80,12 @@ notificationMessage=$(echo "$notificationMessage")
 # Send the push notification
 {% endraw %}
 
-if [ ${notificationStatus} == "CRITICAL" || ${notificationStatus} == "OK" || ${notificationStatus} == "UNKNOWN" || ${notificationStatus} == "CUSTOM" ]; then
-  result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"<!here> ${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
-  slackHttpCode=$(tail -n1 <<< "$result")
-  slackResponse=$(sed '$ d' <<< "$result")
-else
-  slackHttpCode=200
-fi
+result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"<!here> ${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
+slackHttpCode=$(tail -n1 <<< "$result")
+slackResponse=$(sed '$ d' <<< "$result")
 
 {% raw %}
+logger "icinga2 has sent a slack notification"
 
 # If verbose output was requested
 [ -z "$verboseOutput" ] || {
