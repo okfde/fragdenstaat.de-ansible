@@ -15,21 +15,14 @@
       }
     ]
   },
-  "description": "",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": 12708,
   "graphTooltip": 0,
   "id": 2,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef6b6c46-e2d7-42ad-9241-e84f96f2746e"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -38,15 +31,6 @@
       },
       "id": 4,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef6b6c46-e2d7-42ad-9241-e84f96f2746e"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Status",
       "type": "row"
     },
@@ -79,7 +63,7 @@
             "steps": [
               {
                 "color": "#E02F44",
-                "value": null
+                "value": 0
               },
               {
                 "color": "#FF9830",
@@ -97,18 +81,18 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 8,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -116,9 +100,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "12.3.2+security-01",
       "repeat": "instance",
       "repeatDirection": "h",
       "targets": [
@@ -141,10 +127,6 @@
     },
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "ef6b6c46-e2d7-42ad-9241-e84f96f2746e"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -153,15 +135,6 @@
       },
       "id": 6,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "ef6b6c46-e2d7-42ad-9241-e84f96f2746e"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Metrics",
       "type": "row"
     },
@@ -183,6 +156,7 @@
             "axisLabel": "Connections (rate)",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -199,6 +173,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -215,7 +190,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -234,7 +209,6 @@
         "y": 5
       },
       "id": 10,
-      "links": [],
       "options": {
         "legend": {
           "calcs": [],
@@ -243,11 +217,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "12.3.2+security-01",
       "targets": [
         {
           "datasource": {
@@ -296,6 +271,7 @@
             "axisLabel": "Connections",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -312,6 +288,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -328,7 +305,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -347,7 +324,6 @@
         "y": 5
       },
       "id": 12,
-      "links": [],
       "options": {
         "legend": {
           "calcs": [],
@@ -356,11 +332,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "12.3.2+security-01",
       "targets": [
         {
           "datasource": {
@@ -429,6 +406,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -445,6 +423,7 @@
               "type": "linear"
             },
             "showPoints": "never",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -460,7 +439,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -479,7 +458,6 @@
         "y": 15
       },
       "id": 15,
-      "links": [],
       "options": {
         "legend": {
           "calcs": [],
@@ -488,11 +466,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.2.0",
+      "pluginVersion": "12.3.2+security-01",
       "targets": [
         {
           "datasource": {
@@ -512,8 +491,9 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "5s",
-  "schemaVersion": 38,
+  "schemaVersion": 42,
   "tags": [
     "nginx",
     "prometheus"
@@ -522,10 +502,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
+          "text": "All",
           "value": [
             "$__all"
           ]
@@ -535,7 +512,6 @@
           "uid": "a0aff22a-8dea-4078-8df6-787d6b27934c"
         },
         "definition": "label_values(nginx_up,instance)",
-        "hide": 0,
         "includeAll": true,
         "label": "Instance",
         "multi": true,
@@ -548,7 +524,6 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 1,
         "type": "query"
       }
@@ -558,34 +533,9 @@
     "from": "now-24h",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
   "title": "Nginx",
   "uid": "MsjffzSZz",
-  "version": 23,
-  "weekStart": ""
+  "version": 23
 }
