@@ -121,7 +121,7 @@ done)
 EOF
 fi
 
-if [ -d $(basename "$OUTPUT_DATA") ]; then
+if [ -d $(basename "$OUTPUT_PROM") ]; then
 cat > "$OUTPUT_PROM" << EOF
 $(echo "$HOST_DATA" | while IFS='|' read -r host state last_check command; do
     case $state in
