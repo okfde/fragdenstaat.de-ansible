@@ -174,7 +174,8 @@ location / {
     {{ default_headers }}
     {{ cors(static_server_url, repeat_headers=default_headers) }}
     add_header X-Country-Code  $geoip2_data_country_iso_code;
-
+    add_header X-ASN           $geoip2_data_ip_asn;
+    add_header X-ASO           $geoip2_data_ip_aso;
     {{ proxy_wsgi_upstream() }}
 
     if ($allowed_country = no) {

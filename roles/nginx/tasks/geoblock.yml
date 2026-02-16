@@ -64,3 +64,9 @@
           $geoip2_data_continent_code   continent code;
           $geoip2_data_country_iso_code country iso_code;
       }
+
+      geoip2 GeoIP2/GeoLite2-ASN.mmdb {
+          auto_reload 1d;
+          $geoip2_data_ip_asn      source=$remote_addr autonomous_system_number;
+          $geoip2_data_ip_aso      source=$remote_addr autonomous_system_organization;
+      }
