@@ -68,7 +68,7 @@ shift $((OPTIND-1))
 
 
 # Construct the notification title
-notificationTitle="${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!"
+notificationTitle="[${notificationType}] ${notificationServiceDisplayName} on ${notificationHostDisplayName} is ${notificationState}!"
 
 # Construct the notification message
 [ -z "$notificationOutput" ] || notificationMessage="Additional info: ${notificationOutput}\n\n"
