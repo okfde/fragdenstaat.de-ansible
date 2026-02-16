@@ -16,7 +16,6 @@ object User "{{ user }}" {
   import "generic-user"
 
   display_name = "{{ user }}"
-  groups = [ "icingaadmins" ]
 
   email = "{{ icingausers[user].email }}"
   vars.pushover_user_key = "{{ icingausers[user].pushover_user_key }}"
