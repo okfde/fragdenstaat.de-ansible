@@ -173,8 +173,13 @@ location / {
     {% set default_headers = add_web_headers() %}
     {{ default_headers }}
     {{ cors(static_server_url, repeat_headers=default_headers) }}
+    add_header X-Country-Code  $geoip2_data_country_iso_code;
 
     {{ proxy_wsgi_upstream() }}
+
+    if ($allowed_country = no) {
+        return 444;
+    }
 }
 
 # temporary workaround for huge .zip download issue

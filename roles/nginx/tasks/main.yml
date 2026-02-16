@@ -2,6 +2,9 @@
 - name: Import install.yml
   ansible.builtin.import_tasks: "install.yml"
 
+- name: GeoBlocking
+  ansible.builtin.import_tasks: "geoblock.yml"
+
 - name: Check if HTTPS certificates exist
   ansible.builtin.stat:
     path: "/etc/letsencrypt/live/{{ item[0] }}/{{ letsencrypt_cert_filename }}"

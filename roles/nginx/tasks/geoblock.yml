@@ -1,0 +1,66 @@
+- name: Add Maxmind PPA
+  ansible.builtin.apt_repository:
+    repo: 'ppa:maxmind/ppa'
+    state: present
+
+- name: Install libmaxminddb
+  ansible.builtin.apt:
+    name:
+      - libmaxminddb0
+      - libmaxminddb-dev
+      - mmdb-bin
+    update_cache: true
+    state: present
+  tags: packages
+
+- name: Maxmind directory
+  ansible.builtin.file:
+    path: "/usr/share/nginx/GeoIP2"
+    mode: "0755"
+    owner: "www-data"
+    state: directory
+
+- name: Add script to update maxmind
+  ansible.builtin.template:
+    src: update-maxmind.sh.j2
+    dest: "/usr/share/nginx/GeoIP2/update-maxmind.sh"
+    mode: "0755"
+
+- name: Update maxmind database
+  ansible.builtin.command:
+    cmd: "/usr/share/nginx/GeoIP2/update-maxmind.sh"
+  become_user: "www-data"
+  become: true
+  changed_when: false
+
+- name: apt | ensure cron is installed
+  ansible.builtin.apt:
+    name: cron
+    state: present
+  retries: 3
+  delay: 10
+
+- name: cron task to update daily
+  ansible.builtin.cron:
+    name: "maxmind autoupdate"
+    minute: "0"
+    hour: "3"
+    user: "www-data"
+    job: "/usr/share/nginx/GeoIP2/update-maxmind.sh > /tmp/update_maxmind_nginx.log 2>&1"
+
+- name: Configure nginx
+  ansible.builtin.blockinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: "http {"
+    block: |
+      # Geo blocking
+
+      map $geoip2_data_country_iso_code $allowed_country {
+        default yes;
+        CN no;
+      }
+
+      geoip2 GeoIP2/GeoLite2-Country.mmdb {
+          $geoip2_data_continent_code   continent code;
+          $geoip2_data_country_iso_code country iso_code;
+      }
