@@ -1,3 +1,8 @@
+- name: Install libnginx-mod-http-geoip2
+  ansible.builtin.apt:
+    name: libnginx-mod-http-geoip2
+    state: present
+
 - name: Add Maxmind PPA
   ansible.builtin.apt_repository:
     repo: 'ppa:maxmind/ppa'
@@ -29,9 +34,7 @@
 - name: Update maxmind database
   ansible.builtin.command:
     cmd: "/usr/share/nginx/GeoIP2/update-maxmind.sh"
-  become_user: "www-data"
-  become: true
-  changed_when: false
+  ignore_errors: true
 
 - name: apt | ensure cron is installed
   ansible.builtin.apt:
@@ -48,25 +51,33 @@
     user: "www-data"
     job: "/usr/share/nginx/GeoIP2/update-maxmind.sh > /tmp/update_maxmind_nginx.log 2>&1"
 
-- name: Configure nginx
+- name: Configure nginx.conf with geoip2
+  ansible.builtin.replace:
+    path: /etc/nginx/nginx.conf
+    regexp: "http {"
+    replace: |
+      http {
+        # Geo blocking
+        map $geoip2_data_country_iso_code $allowed_country {
+          default yes;
+          CN no;
+        }
+
+        geoip2 GeoIP2/GeoLite2-Country.mmdb {
+            $geoip2_data_continent_code   continent code;
+            $geoip2_data_country_iso_code country iso_code;
+        }
+
+        geoip2 GeoIP2/GeoLite2-ASN.mmdb {
+            auto_reload 1d;
+            $geoip2_data_ip_asn      source=$remote_addr autonomous_system_number;
+            $geoip2_data_ip_aso      source=$remote_addr autonomous_system_organization;
+        }
+
+- name: Load geoip2 nginx module
   ansible.builtin.blockinfile:
     path: /etc/nginx/nginx.conf
-    insertafter: "http {"
     block: |
-      # Geo blocking
-
-      map $geoip2_data_country_iso_code $allowed_country {
-        default yes;
-        CN no;
-      }
-
-      geoip2 GeoIP2/GeoLite2-Country.mmdb {
-          $geoip2_data_continent_code   continent code;
-          $geoip2_data_country_iso_code country iso_code;
-      }
-
-      geoip2 GeoIP2/GeoLite2-ASN.mmdb {
-          auto_reload 1d;
-          $geoip2_data_ip_asn      source=$remote_addr autonomous_system_number;
-          $geoip2_data_ip_aso      source=$remote_addr autonomous_system_organization;
-      }
+      load_module modules/ngx_http_geoip2_module.so;
+      #load_module modules/ngx_stream_geoip2_module.so;
+    insertbefore: "user www-data;"

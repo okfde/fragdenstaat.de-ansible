@@ -10,7 +10,7 @@ for u in "GeoLite2-City" "GeoLite2-Country" "GeoLite2-ASN" ; do
     wget -N -q -O ${u}.tar.gz "https://download.maxmind.com/app/geoip_download?edition_id=${u}&license_key=${license_key}&suffix=tar.gz"
     MMDB_FILE=$(tar -tzf ${u}.tar.gz  | grep ".mmdb")
     tar -xvzf ${u}.tar.gz $MMDB_FILE
-    cp $MMDB_FILE ${u}.mmdb
+    mv -f $MMDB_FILE /usr/share/nginx/GeoIP2/${u}.mmdb
     rm $MMDB_FILE
     rmdir $(dirname "${MMDB_FILE}")
 done
