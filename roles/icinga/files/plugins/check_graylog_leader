@@ -60,7 +60,7 @@ fi
 
 check_leader="$(echo ${is_leader} | grep -o 'true' | wc -l)"
 
-if [[ ${check_leader} != 0 ]]; then
+if [[ ${check_leader} != 1 ]]; then
     echo "CRITICAL: Cluster has no (or more than one) leader"
     exit 2
 fi
