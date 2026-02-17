@@ -35,6 +35,9 @@
   ansible.builtin.command:
     cmd: "/usr/share/nginx/GeoIP2/update-maxmind.sh"
   ignore_errors: true
+  changed_when: false
+  tags:
+    - skip_ansible_lint
 
 - name: apt | ensure cron is installed
   ansible.builtin.apt:
