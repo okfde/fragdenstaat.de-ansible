@@ -80,7 +80,7 @@ notificationMessage=$(echo "$notificationMessage")
 # Send the push notification
 {% endraw %}
 
-if [ ${notificationType} != "RECOVERY" ]; then
+if [ ${notificationState} != "OK" && ${notificationState} != "PENDING" && ${notificationState} != "UNKNOWN" ]; then
 	notification_ping="<!here> "
 fi
 
