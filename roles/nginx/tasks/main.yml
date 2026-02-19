@@ -4,6 +4,8 @@
 
 - name: GeoBlocking
   ansible.builtin.import_tasks: "geoblock.yml"
+  tags:
+    - nginx
 
 - name: Check if HTTPS certificates exist
   ansible.builtin.stat:
