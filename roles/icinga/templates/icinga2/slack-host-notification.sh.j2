@@ -73,7 +73,7 @@ notificationMessage=$(echo "$notificationMessage")
 
 # Send the push notification
 {% endraw %}
-result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
+result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"<!channel> ${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
 {% raw %}
 slackHttpCode=$(tail -n1 <<< "$result")
 slackResponse=$(sed '$ d' <<< "$result")
