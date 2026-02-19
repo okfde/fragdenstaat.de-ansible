@@ -82,6 +82,9 @@ notificationMessage=$(echo "$notificationMessage")
 
 if [ ${notificationState} != "OK" && ${notificationState} != "PENDING" && ${notificationState} != "UNKNOWN" ]; then
 	notification_ping="<!here> "
+else {
+	notification_ping=""
+}
 fi
 
 result=$(curl -w "\n%{http_code}" -X POST -H 'Content-type: application/json' --data "{\"text\":\"${notification_ping}${notificationTitle}\\n\\n${notificationMessage}\"}" {{ icinga_slack_webhook }})
