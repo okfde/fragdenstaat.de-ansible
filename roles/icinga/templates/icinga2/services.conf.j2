@@ -463,7 +463,7 @@ apply Service "ES Status" {
 
   check_command = "es_status"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where (host.vars.elasticsearch)
 }
