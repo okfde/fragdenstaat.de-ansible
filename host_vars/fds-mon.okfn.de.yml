@@ -32,16 +32,16 @@ borg:
     - name: container
       dev: /dev/vg1/container
       mnt: /mnt/container-snapshot
-      lvm_free: 70%
+      lvm_free: 50%
     - name: monitor
       dev: /dev/vg1/monitor
       mnt: /mnt/monitor-snapshot
-      lvm_free: 30%
+      lvm_free: 100%
     - name: root
       dev: /dev/vg0/root
       mnt: /mnt/root-snapshot
-      lvm_free: 50%
-  locations: /mnt/monitor-snapshot/ /mnt/container-snapshot/volumes/sentry*
+      lvm_free: 100%
+  locations: /mnt/monitor-snapshot/
   keepdaily: 7
 
 postfix_myorigin: fds-mon.zerschlagdenstaat.de
