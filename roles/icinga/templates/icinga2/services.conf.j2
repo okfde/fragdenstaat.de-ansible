@@ -45,7 +45,7 @@ apply Service "tor proxy" {
   vars.tcp_port = "$host.vars.tor_proxy_port$"
   vars.tcp_address = "$host.vars.tor_proxy_host$"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.tor_proxy
 }
@@ -286,7 +286,7 @@ apply Service "graylog" {
   vars.tcp_port = "9010"
   vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.graylog
 }
@@ -310,7 +310,7 @@ apply Service "graylog filebeat" {
   vars.tcp_port = "5044"
   vars.tcp_address = "$graylog_filebeat_bind$"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.graylog_filebeat_bind
 }
@@ -344,7 +344,7 @@ apply Service "mailqueue" {
 
   check_command = "mailq"
   vars.notification.pushover = 1
-  vars.notification.slack = 1
+  vars.notification.slack = 0
 
   assign where (host.vars.mailq_warning || host.vars.mailq_critical)
 }
@@ -432,7 +432,7 @@ apply Service "smart_sd" {
 
   check_command = "smart_sd"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where (host.vars.smartmon == "sd" || host.vars.smartmon == "mixed")
 }
@@ -442,7 +442,7 @@ apply Service "smart_nvme" {
 
   check_command = "smart_nvme"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where (host.vars.smartmon == "nvme" || host.vars.smartmon == "mixed")
 }
@@ -452,7 +452,7 @@ apply Service "supervisor" {
 
   check_command = "supervisor"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
   vars.notification_delay = 5m
 
   assign where (host.vars.supervisor)
@@ -489,7 +489,7 @@ apply Service "postgres_repl_slots" {
   import "generic-service"
 
   check_command = "postgres_repl_slots"
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.postgres
 }
@@ -516,7 +516,7 @@ apply Service "smtp" {
 
   check_command = "smtp"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.smtp_host
 }
@@ -528,7 +528,7 @@ apply Service "metabase" {
   vars.tcp_port = "$host.vars.metabase_port$"
   vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.metabase_port
 }
@@ -538,7 +538,7 @@ apply Service "zammad" {
 
   check_command = "zammad"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
   vars.notification_delay = 30m
 
   assign where host.vars.zammad
@@ -551,7 +551,7 @@ apply Service "ogimage" {
   vars.tcp_port = "$host.vars.ogimage_port$"
   vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.ogimage_port
 }
@@ -563,7 +563,7 @@ apply Service "roundcube" {
   vars.tcp_port = "$host.vars.roundcube_port$"
   vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.roundcube_port
 }
@@ -574,7 +574,7 @@ apply Service "weblate" {
   check_command = "tcp"
   vars.tcp_port = "$host.vars.weblate_port$"
   vars.tcp_address = "127.0.0.1"
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.weblate_port
 }
@@ -586,7 +586,7 @@ apply Service "onion_web" {
   vars.tcp_port = "{{ onion_services.onion_web.internal_port }}"
   vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.onion_web
 }
@@ -598,7 +598,7 @@ apply Service "onion_static_media" {
   vars.tcp_port = "{{ onion_services.onion_static_media.internal_port }}"
   vars.tcp_address = "127.0.0.1"
   vars.notification.pushover = 1
-  vars.notification.slack = 0
+  vars.notification.slack = 1
 
   assign where host.vars.onion_static_media
 }
