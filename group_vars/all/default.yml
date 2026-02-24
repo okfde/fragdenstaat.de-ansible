@@ -522,3 +522,5 @@ froide_evidencecollection_nocodb_table_evidence: ""
 froide_evidencecollection_nocodb_table_role: ""
 froide_evidencecollection_nocodb_view_actor_organization: ""
 froide_evidencecollection_nocodb_view_actor_person: ""
+
+froide_pressconference_cvd_credentials: ""

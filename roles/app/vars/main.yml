@@ -90,5 +90,6 @@ django_environment:
   FROIDE_EVIDENCECOLLECTION_NOCODB_TABLE_ROLE: "{{ froide_evidencecollection_nocodb_table_role }}"
   FROIDE_EVIDENCECOLLECTION_NOCODB_VIEW_ACTOR_ORGANIZATION: "{{ froide_evidencecollection_nocodb_view_actor_organization }}"
   FROIDE_EVIDENCECOLLECTION_NOCODB_VIEW_ACTOR_PERSON: "{{ froide_evidencecollection_nocodb_view_actor_person }}"
+  CVD_CREDENTIALS: "{{ froide_pressconference_cvd_credentials }}"
   PAYMENT_HOST: "{{ payment_host }}"
   NEWSLETTER_PIXEL_LOG: "{{ nginx_pixel_log_file }}"
