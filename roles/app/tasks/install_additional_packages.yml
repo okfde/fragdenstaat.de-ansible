@@ -105,3 +105,16 @@
   when: onion_service_enabled
   retries: 3
   delay: 10
+
+- name: Add xtradeb repository for chromium
+  ansible.builtin.apt_repository:
+    repo: "ppa:xtradeb/apps"
+    state: present
+
+- name: Install chromium
+  ansible.builtin.apt:
+    name: chromium
+    state: present
+    update_cache: true
+  retries: 3
+  delay: 10
