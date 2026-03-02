@@ -81,6 +81,7 @@
   ansible.builtin.systemd:
     name: fdsbot_backup_server
     state: started
+    enabled: true
     daemon_reload: true
   when: "not 'tst.okfn.de' in inventory_hostname"
 
