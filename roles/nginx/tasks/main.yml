@@ -4,6 +4,7 @@
 
 - name: GeoBlocking
   ansible.builtin.import_tasks: "geoblock.yml"
+  when: inventory_hostname in groups['web']
   tags:
     - nginx
 
