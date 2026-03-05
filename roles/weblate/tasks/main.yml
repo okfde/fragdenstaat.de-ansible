@@ -4,7 +4,7 @@
   ansible.builtin.git:
     repo: "{{ weblate_git_repo }}"
     dest: "{{ weblate_dir }}"
-    version: a214e5d3d84c85e61a1453c08d998be67cef1a75
+    version: 328fbf728fa822f25288f72e1e7fd290bc731c67
   become: true
   notify: restart weblate
 

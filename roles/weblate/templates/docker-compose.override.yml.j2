@@ -21,6 +21,7 @@ x-override: &override
     WEBLATE_EMAIL_HOST: {{ weblate_mail_host }}
     WEBLATE_EMAIL_HOST_USER: {{ weblate_mail_username }}
     WEBLATE_EMAIL_HOST_PASSWORD: "{{ weblate_mail_password }}"
+    WEBLATE_SECURE_PROXY_SSL_HEADER: "HTTP_X_FORWARDED_PROTO,https"
     SENTRY_DSN: {{ weblate_sentry_dsn }}
   logging:
     driver: "gelf"
