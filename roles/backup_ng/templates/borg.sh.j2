@@ -21,7 +21,7 @@ echo_success() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo -n "]"
     echo -ne "\r"
-    #curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"'"${STEP_NAME}"'","status":"OK"}'
+    echo -n -e '{ "version": "1.1", "host": "{{ inventory_hostname }}", "facility": "borg", "status": "OK", "short_message": "'${STEP_NAME}' OK", "level": 5, "message": "'${STEP_NAME}' error, see logfile (/var/log/borg.sh.log) for details" }'"\0" | nc -w0 192.168.100.5 12201
     return 0
 }
 
@@ -33,7 +33,7 @@ echo_failure() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo -n "]"
     echo -ne "\r"
-    #curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"'"${STEP_NAME}"'","status":"ERR"}'
+    echo -n -e '{ "version": "1.1", "host": "{{ inventory_hostname }}", "facility": "borg", "status": "ERR", "short_message": "'${STEP_NAME}' ERR", "level": 5, "message": "'${STEP_NAME}' error, see logfile (/var/log/borg.sh.log) for details" }'"\0" | nc -w0 192.168.100.5 12201
     return 1
 }
 
@@ -105,7 +105,7 @@ exerror()           { echo "$1";exit "${2:-1}"; }
 exlock_now || exerror "ERROR: Lockfile exists, is there another instance already running? Exiting..."
 
 do_cleanup () {
-    #curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup failed","status":"ERR"}'
+    echo -n -e '{ "version": "1.1", "host": "{{ inventory_hostname }}", "facility": "borg", "status": "ERR", "short_message": "Backup failed", "level": 5, "message": "BACKUP ERR" }'"\0" | nc -w0 192.168.100.5 12201
     echo "ERROR, exiting..."
     echo "Unmounting and removing snapshots"
 {% if 'snapshots' in borg %}
@@ -134,7 +134,8 @@ echo "" > /var/log/borg_execution.log
 
 echo "{{ borg.locations }}" > "${LOGFILE}"
 
-#curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup start","status":"OK"}'
+echo -n -e '{ "version": "1.1", "host": "{{ inventory_hostname }}", "facility": "borg", "status": "OK", "short_message": "Backup start", "level": 5, "message": "Backup start" }'"\0" | nc -w0 192.168.100.5 12201
+
 echo "Start Backup $(date)"
 echo "-------------------------------------------------------------------------------"
 echo ""
@@ -227,7 +228,7 @@ step "Backup Info"
   try /usr/bin/borg info
 next
 
-#curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"borg","message":"Backup end","status":"OK"}'
+echo -n -e '{ "version": "1.1", "host": "{{ inventory_hostname }}", "facility": "borg", "status": "OK", "short_message": "Backup end", "level": 5, "message": "Backup end" }'"\0" | nc -w0 192.168.100.5 12201
 echo ""
 echo "-------------------------------------------------------------------------------"
 echo "Logfile:"
