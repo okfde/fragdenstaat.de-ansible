@@ -110,6 +110,9 @@
   ansible.builtin.apt_repository:
     repo: "ppa:xtradeb/apps"
     state: present
+  retries: 3
+  delay: 10
+  failed_when: false
 
 - name: Install chromium
   ansible.builtin.apt:
