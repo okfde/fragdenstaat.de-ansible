@@ -1,0 +1,30 @@
+---
+
+- name: Ensure spamassassin and dependencies are installed
+  ansible.builtin.apt:
+    pkg:
+      - spamassassin
+      - spamc
+    state: present
+  retries: 3
+  delay: 10
+
+- name: Configure spamassassin
+  ansible.builtin.copy:
+    src: spamassassin_local.cf
+    dest: /etc/spamassassin/local.cf
+    mode: "0600"
+#  notify:
+#    - restart spamassassin
+
+- name: Configure postfix
+  ansible.builtin.blockinfile:
+    path: /etc/postfix/master.cf
+    append_newline: true
+    prepend_newline: true
+    block: |
+      smtp      inet  n       -       y       -       -       smtpd
+        -o content_filter=spamassassin
+
+      spamassassin unix -     n       n       -       -       pipe
+        user=spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
