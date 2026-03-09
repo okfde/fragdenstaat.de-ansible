@@ -1,3 +1,0 @@
-- name: "Reload nginx"
-  ansible.builtin.shell: "/usr/sbin/nginx -t && /etc/init.d/nginx reload"
-  changed_when: false

@@ -32,9 +32,6 @@
     - role: fdsbot
       tags: fdsbot
       when: inventory_hostname in groups["fdsbot"]
-    - role: minio
-      tags: minio
-      when: inventory_hostname in groups["s3"]
     - role: zammad
       tags: zammad
       when: inventory_hostname in groups["auxiliary"]
