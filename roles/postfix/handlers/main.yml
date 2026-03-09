@@ -38,7 +38,7 @@
     name: opendmarc
     state: restarted
 
-# - name: restart spamassassin
-#   ansible.builtin.service:
-#     name: spamassassin
-#     state: restarted
+- name: restart spamassassin
+  ansible.builtin.service:
+    name: spamassassin
+    state: restarted

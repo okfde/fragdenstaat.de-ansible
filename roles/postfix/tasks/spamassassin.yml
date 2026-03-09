@@ -14,8 +14,8 @@
     src: spamassassin_local.cf
     dest: /etc/spamassassin/local.cf
     mode: "0600"
-#  notify:
-#    - restart spamassassin
+  notify:
+    - restart spamassassin
 
 - name: Configure postfix
   ansible.builtin.blockinfile:
