@@ -1,5 +1,5 @@
 ---
-virtualenv_python_version: python3.10
+virtualenv_python_version: "3.12"
 
 git_branch: main
 
