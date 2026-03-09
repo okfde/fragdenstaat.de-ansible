@@ -4,7 +4,7 @@
   ansible.builtin.apt:
     pkg:
       - spamassassin
-      - spamc
+      - spamd
     state: present
   retries: 3
   delay: 10
