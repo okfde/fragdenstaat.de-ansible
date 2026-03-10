@@ -1,5 +1,5 @@
 # Set required score (default is 5.0)
-required_score 5.0
+required_score 3.0
 
 # Add headers to mark spam
 add_header spam Flag _YESNOCAPS_
@@ -7,3 +7,13 @@ add_header all Status _YESNO_, score=_SCORE_ required=_REQD_ tests=_TESTS_ autol
 
 # Enable or disable rules as needed
 rewrite_header Subject [SPAM] _SUBJECT_
+
+# Enable autolearn
+use_auto_learn 1
+auto_learn_threshold_spam 4.0
+auto_learn_threshold_ham -2.0
+
+# Use network based checks
+use_dcc 1
+use_pyzor 1
+use_razor2 1

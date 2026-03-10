@@ -28,3 +28,9 @@
 
       spamassassin unix -     n       n       -       -       pipe
         user=spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
+
+- name: Install cronjob to keep data up to date
+  ansible.builtin.cron:
+    name: spamassassin update
+    job: /usr/bin/sa-update --nogpg
+    special_time: daily
