@@ -57,7 +57,7 @@ services:
     <<: *zammad-service
     command: ["zammad-nginx"]
     expose:
-      - "8080:-8080"
+      - "8080"
     ports:
       - "{{ zammad_port }}:8080"
     depends_on:
