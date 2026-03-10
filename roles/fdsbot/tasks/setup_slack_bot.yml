@@ -43,6 +43,7 @@
   tags:
     - packages
     - skip_ansible_lint
+  failed_when: false
 
 - name: Create the virtualenv
   ansible.builtin.command:

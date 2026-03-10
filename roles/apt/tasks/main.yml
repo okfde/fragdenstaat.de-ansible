@@ -48,3 +48,9 @@
 - name: Run autoclean
   ansible.builtin.apt:
     autoclean: true
+
+- name: Run needrestart
+  ansible.builtin.command: needrestart -q -b -p -ra
+  become: true
+  become_user: root
+  changed_when: false
