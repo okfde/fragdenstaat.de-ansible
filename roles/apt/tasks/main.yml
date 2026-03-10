@@ -51,7 +51,7 @@
 
 - name: Run needrestart
   ansible.builtin.command:
-    cmd: /usr/sbin/needrestart -q -b -p -ra
+    cmd: /usr/sbin/needrestart -q -b -p -ra -l
   become: true
   become_user: root
   changed_when: false
