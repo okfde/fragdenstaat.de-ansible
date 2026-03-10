@@ -50,7 +50,10 @@
     autoclean: true
 
 - name: Run needrestart
-  ansible.builtin.command: needrestart -q -b -p -ra
+  ansible.builtin.command:
+    cmd: /usr/sbin/needrestart -q -b -p -ra
   become: true
   become_user: root
   changed_when: false
+  failed_when: false
+  tags: needrestart
