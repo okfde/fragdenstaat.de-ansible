@@ -1,5 +1,5 @@
 # Set required score (default is 5.0)
-required_score 3.0
+required_score 5.0
 
 # Add headers to mark spam
 add_header spam Flag _YESNOCAPS_
