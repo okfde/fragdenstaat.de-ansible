@@ -42,3 +42,4 @@
   ansible.builtin.service:
     name: spamassassin
     state: restarted
+  failed_when: false
