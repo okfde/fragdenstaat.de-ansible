@@ -19,7 +19,7 @@ services:
   metabase:
     depends_on:
       - postgres
-    image: metabase/metabase
+    image: metabase/metabase:v0.59.x
     ports:
       - "127.0.0.1:{{ metabase_port }}:3000"
     restart: unless-stopped
