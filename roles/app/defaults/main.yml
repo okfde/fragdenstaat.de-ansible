@@ -1,5 +1,6 @@
 ---
 virtualenv_python_version: "3.12"
+uv_version: "0.10.9"
 
 git_branch: main
 

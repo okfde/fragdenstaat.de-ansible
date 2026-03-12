@@ -11,8 +11,8 @@
     - djangoreq
 
 - name: Install packages required by the Django app inside virtualenv
-  ansible.builtin.shell:
-    cmd: "{{ virtualenv_path }}/bin/python3 -m pip install -U uv && {{ virtualenv_path }}/bin/uv sync --active --no-dev --extra production"
+  ansible.builtin.command:
+    cmd: "pipx run uv=={{ uv_version }} sync --active --no-dev --extra production"
     chdir: "{{ project_path }}"
   environment:
     VIRTUAL_ENV: "{{ virtualenv_path }}"
