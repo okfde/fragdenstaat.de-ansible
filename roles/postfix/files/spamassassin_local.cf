@@ -6,20 +6,13 @@ add_header spam Flag _YESNOCAPS_
 add_header all Status _YESNO_, score=_SCORE_ required=_REQD_ tests=_TESTS_ autolearn=_AUTOLEARN_ version=_VERSION_
 
 # Enable or disable rules as needed
-rewrite_header Subject [SPAM] _SUBJECT_
-
-# Enable autolearn
-use_auto_learn 1
-auto_learn_threshold_spam 3.0
-auto_learn_threshold_ham -2.0
+rewrite_header Subject [SPAM]
 
 # Use Bayesian filtering
 use_bayes 1
 use_bayes_rules 1
 
 # Use network based checks
-enable_network_tests 1
-use_dcc 1
 use_pyzor 1
 use_razor2 1
 
@@ -35,12 +28,6 @@ score RBL_SPAMHAUS_ZEN 3.0
 blacklist_from spammer@example.com
 blacklist_from *@spam-domain.net
 blacklist_from *@*.bad-mailer.org
-
-# Reduce timeout for DNSBL checks if needed
-dns_timeout 15
-
-# Enable Auto-Whitelist
-use_auto_whitelist 1
 
 # Adding Other Free DNSBLs (Optional)
 # ———–——–——–——–

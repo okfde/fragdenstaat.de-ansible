@@ -13,7 +13,7 @@
   ansible.builtin.copy:
     src: spamassassin_local.cf
     dest: /etc/spamassassin/local.cf
-    mode: "0600"
+    mode: "0644"
   notify:
     - restart spamassassin
 
