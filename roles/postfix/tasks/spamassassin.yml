@@ -23,9 +23,6 @@
     append_newline: true
     prepend_newline: true
     block: |
-      smtp      inet  n       -       y       -       -       smtpd
-        -o content_filter=spamassassin
-
       spamassassin unix -     n       n       -       -       pipe
         user=spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
 
