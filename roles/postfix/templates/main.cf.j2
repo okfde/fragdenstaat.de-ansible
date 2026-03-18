@@ -79,6 +79,7 @@ smtpd_relay_restrictions =
 
 smtpd_recipient_restrictions =
     check_recipient_access pcre:/etc/postfix/blocklisted_recipients,
+    check_recipient_access hash:/etc/postfix/spamfilter_access,
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_unauth_destination,
