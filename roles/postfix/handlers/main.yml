@@ -38,6 +38,12 @@
     name: opendmarc
     state: restarted
 
+- name: update spamfilter_access postmap
+  ansible.builtin.command:
+    cmd: "postmap /etc/postfix/spamfilter_access"
+  notify: restart postfix
+  changed_when: false
+
 - name: restart spamassassin
   ansible.builtin.service:
     name: spamassassin

@@ -17,7 +17,7 @@
   notify:
     - restart spamassassin
 
-- name: Configure postfix
+- name: Configure postfix master.cf for spamassassin
   ansible.builtin.blockinfile:
     path: /etc/postfix/master.cf
     append_newline: true
@@ -25,6 +25,13 @@
     block: |
       spamassassin unix -     n       n       -       -       pipe
         user=spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
+
+- name: Install spamfilter_access map
+  ansible.builtin.template:
+    src: spamfilter_access.j2
+    dest: /etc/postfix/spamfilter_access
+    mode: "0644"
+  notify: update spamfilter_access postmap
 
 - name: Install cronjob to keep data up to date
   ansible.builtin.cron:
