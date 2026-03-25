@@ -396,10 +396,53 @@ cors_exceptions:
       - "__static__"
       - "__media__"
       - "https://okfde.github.io"
-
-  - url: "/newsletter/update/wahlbrief/subscribe-ajax/"
+  - url: "/newsletter/update/wahlbrief-bw/subscribe-ajax/"
     origins:
-      - "https://okfde.github.io"
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-by/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-be/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-bb/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-hb/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-hh/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-he/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-mv/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-ni/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-nw/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-rp/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-sl/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-sn/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-st/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-sh/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-th/subscribe-ajax/"
+    origins:
       - "https://wahlbrief.de"
 
 # CSP supports __wsweb__ __web__, __media__ and __static__ variable__s
