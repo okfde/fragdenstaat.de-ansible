@@ -81,7 +81,6 @@
     - restart celery workers
     - set db access rights
   changed_when: true
-  ignore_errors: true
   when: not ansible_check_mode
 
 - name: Setup reporting views
