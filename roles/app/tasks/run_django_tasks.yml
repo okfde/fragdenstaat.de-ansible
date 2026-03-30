@@ -22,7 +22,7 @@
 
 - name: Set needs db migration fact
   ansible.builtin.set_fact:
-    needs_db_migration: "{{ 'No planned migration operations.' not in migrate_check_result.out }}"
+    needs_db_migration: "{{ 'No planned migration operations.' not in migrate_check_result.out | default('') }}"
   tags:
     - deploy
     - deploy-backend
