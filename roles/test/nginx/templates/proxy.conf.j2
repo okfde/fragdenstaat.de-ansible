@@ -42,6 +42,25 @@ server {
     location / {
         allow 10.9.0.0/25;
         allow fc00::1/121;
+
+        # IPS from https://stripe.com/files/ips/ips_webhooks.txt
+        # TODO scope to webhook URLs
+        allow 3.18.12.63;
+        allow 3.130.192.231;
+        allow 13.235.14.237;
+        allow 13.235.122.149;
+        allow 18.211.135.69;
+        allow 35.154.171.200;
+        allow 52.15.183.38;
+        allow 54.88.130.119;
+        allow 54.88.130.237;
+        allow 54.187.174.169;
+        allow 54.187.205.235;
+        allow 54.187.216.72;
+        allow 35.157.207.129;
+        allow 3.69.109.8;
+        allow 3.120.168.93;
+
         deny all;
 
         proxy_set_header   Host               $host;
