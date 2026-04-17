@@ -26,6 +26,29 @@ foi_email_host: "127.0.0.1"
 bounce_email_host: "127.0.0.1"
 unsubscribe_email_host: "127.0.0.1"
 gunicorn_user_uid: "1111"
+gunicorn_num_workers: 1
+uvicorn_num_workers: 1
+gunicorn_cmssite_num_workers: 1
+celery_workers:
+  - name: celery
+    queues: "celery"
+    worker: 1
+  - name: mail
+    queues: "emailfetch,email"
+    worker: 1
+  - name: mailsend
+    queues: "emailsend"
+    worker: 1
+  - name: mailsend_bulk
+    queues: "emailsend_bulk"
+    worker: 1
+  - name: search
+    queues: "searchindex"
+    worker: 1
+  - name: celery_solo_1
+    queues: "redact,ocr,convert,convert_office,document"
+    worker: 1
+    type: slow
 
 sentry_domain: "sentry.okfn.de"
 sentry_url: "https://sentry.okfn.de"
