@@ -124,6 +124,8 @@
     force: true
   become_user: "{{ fdsbot_user }}"
   become: true
+  notify:
+    - restart fdsbot
 
 - name: Setup pnpm
   ansible.builtin.command: corepack enable pnpm
