@@ -48,6 +48,28 @@ db_reporting_views:
     query: "SELECT froide_payment_subscription.id AS id, froide_payment_subscription.created AS created, last_date, next_date, canceled, public.froide_payment_plan.amount AS amount, public.froide_payment_plan.interval AS interval, public.froide_payment_plan.amount_year AS amount_year, public.froide_payment_plan.provider as provider, donor_id FROM public.froide_payment_subscription LEFT OUTER JOIN public.froide_payment_plan ON public.froide_payment_subscription.plan_id = public.froide_payment_plan.id LEFT OUTER JOIN public.fds_donation_donor_subscriptions ON public.fds_donation_donor_subscriptions.subscription_id = public.froide_payment_subscription.id"
   - name: donors
     query: "SELECT id, city, postcode, country, first_donation, email_confirmed, contact_allowed, become_user, receipt, recurring_amount, recurrence_streak_start, subscriber_id FROM public.fds_donation_donor"
+  - name: donorevents
+    query: "SELECT id, timestamp, kind, reference, context, donor_id FROM public.fds_donation_donorevent"
+  - name: donationgiftorders
+    query: |
+      SELECT
+        public.fds_donation_donationgiftorder.id AS id,
+        public.fds_donation_donationgiftorder.timestamp AS timestamp,
+        public.fds_donation_donationgiftorder.city AS city,
+        public.fds_donation_donationgiftorder.postcode AS postcode,
+        public.fds_donation_donationgiftorder.country AS country,
+        public.fds_donation_donationgiftorder.shipped AS shipped,
+        public.fds_donation_donationgiftorder.tracking AS tracking,
+        public.fds_donation_donation.donor_id AS donor_id,
+        public.fds_donation_donationgift.name AS gift_name,
+        public.fds_donation_donationgift.category_slug AS gift_category,
+        public.fds_donation_donationgift.gift_type AS gift_type,
+        public.fds_donation_donationgift.min_recurring_amount AS gift_min_recurring_amount,
+        public.fds_donation_donationgift.min_streak_months AS gift_min_streak_months
+      FROM
+        public.fds_donation_donationgiftorder
+        INNER JOIN public.fds_donation_donationgift ON public.fds_donation_donationgiftorder.donation_gift_id = public.fds_donation_donationgift.id
+        INNER JOIN public.fds_donation_donation ON public.fds_donation_donationgiftorder.donation_id = public.fds_donation_donation.id
   - name: recurrences
     query: |
       SELECT
