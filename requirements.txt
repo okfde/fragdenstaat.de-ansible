@@ -23,7 +23,7 @@ cffi==1.14.2
     # via cryptography
 click==8.2.1
     # via black
-cryptography==44.0.1
+cryptography==46.0.5
     # via ansible-core
 filelock==3.18.0
     # via ansible-lint
