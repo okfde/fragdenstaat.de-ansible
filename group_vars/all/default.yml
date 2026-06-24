@@ -254,6 +254,7 @@ nginx_public_media:
   - url: "/files/datashow/"
     force_download: true
   - url: "/files/campaign-logos/"
+  - url: "/files/froide_evidencecollection/"
 
 nginx_public_privileged_media:
   - "/files/campaign/"
