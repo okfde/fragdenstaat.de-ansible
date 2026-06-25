@@ -364,6 +364,8 @@ redirect_paths:
     path: "/dossier/desiderius-erasmus-stiftung/?pk_campaign=zdfmr"
   - from: "^/polizeiprofessor/?$"
     path: "/artikel/exklusiv/2026/04/der-fall-stephan-maninger/"
+  - from: "^/afd-datenbank/?"
+    path: "/aktionen/afd-datenbank/"
 
 media_legal_paths: []
 # - path: "/files/foi/110867/bfr-stellungnahme.pdf"
