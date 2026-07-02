@@ -200,3 +200,14 @@ db_reporting_views:
       LEFT OUTER JOIN unsubscribes ON unsubscribes.mailing_ident = mailings.mailing_ident
       LEFT OUTER JOIN clicks ON clicks.mailing_ident = mailings.mailing_ident
       WHERE submitted IS TRUE
+  - name: mailingmessages
+    query: |
+      SELECT
+        id,
+        sent,
+        bounced,
+        mailing_id,
+        donor_id,
+        user_id
+        subscriber_id
+      FROM fds_mailing_mailingmessage
