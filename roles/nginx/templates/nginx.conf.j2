@@ -91,7 +91,7 @@ http {
 	}
 	map $http_user_agent $limit_bots {
 		default "";
-		~*(Googlebot|bingbot|meta-externalagent) $http_user_agent;
+		~*(Googlebot|bingbot|Applebot) $http_user_agent;
 	}
 
   limit_req_zone $limit_bots zone=bots:10m rate=1r/s;
