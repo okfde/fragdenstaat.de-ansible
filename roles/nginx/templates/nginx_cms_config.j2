@@ -27,6 +27,10 @@ server {
             {% include '_ssl.j2' %}
         {% endwith %}
 
+        {% with geo_block_server_name = item.domain %}
+        {% include '_geoblock_server.j2' %}
+        {% endwith %}
+
         {% for simple_file in item.simple_files %}
             {% if simple_file.path is defined %}
                 location = {{ simple_file.path }} {

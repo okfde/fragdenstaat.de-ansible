@@ -178,10 +178,6 @@ location / {
     add_header X-ASO           $geoip2_data_ip_aso;
     add_header X-GeoBlock      "true";
     {{ proxy_wsgi_upstream() }}
-
-    if ($allowed_country = no) {
-        return 444;
-    }
 }
 
 # temporary workaround for huge .zip download issue

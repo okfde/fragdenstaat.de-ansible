@@ -31,6 +31,9 @@ nginx_cache_urls:
   - path: "/artikel/exklusiv/2026/04/der-fall-stephan-maninger/"
   - path: "/aktionen/afd-datenbank/"
 
+nginx_geo_blocked_countries:
+  - CN
+
 cms_sites:
   - key: "grs"
     name: "Gegenrechtsschutz"

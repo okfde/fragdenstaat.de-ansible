@@ -1,0 +1,7 @@
+{% if nginx_geo_blocked_countries | length > 0 %}
+{% if not ".onion" in geo_block_server_name %}
+if ($allowed_country = no) {
+    return 444;
+}
+{% endif %}
+{% endif %}

@@ -114,6 +114,9 @@ server {
         {% include '_ssl.j2' %}
     {% endwith %}
 
+    {% with geo_block_server_name = web_server_name %}
+    {% include '_geoblock_server.j2' %}
+    {% endwith %}
     {% include '_web_server.j2' %}
 }
 ### _web_server.j2 end
@@ -144,6 +147,9 @@ server {
         {% include '_ssl.j2' %}
     {% endwith %}
 
+    {% with geo_block_server_name = static_server_name %}
+    {% include '_geoblock_server.j2' %}
+    {% endwith %}
     {% include '_static_server.j2' %}
 }
 ### _static_server.j2 end
@@ -157,6 +163,10 @@ server {
 
     {% with server_name = site.domain %}
         {% include '_ssl.j2' %}
+    {% endwith %}
+
+    {% with geo_block_server_name = site.domain %}
+    {% include '_geoblock_server.j2' %}
     {% endwith %}
 
     {% for file in site.files %}
