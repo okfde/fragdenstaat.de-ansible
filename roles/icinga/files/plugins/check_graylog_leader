@@ -44,7 +44,7 @@ if [[ -z "${API_URL}" ]] || [[ -z ${API_TOKEN} ]]; then
     exit 3
 fi
 
-cluster_status="$(curl -s -L -u ${API_TOKEN}:token -H 'Accept: application/json' -X GET ${API_URL})";ret=$?
+cluster_status="$(curl --fail -s -L -u ${API_TOKEN}:token -H 'Accept: application/json' -X GET ${API_URL})";ret=$?
 
 if [[ ${ret} != 0 ]]; then
     echo "WARNING: curl reported an error getting the cluster status via graylog API."
