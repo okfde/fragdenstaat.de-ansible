@@ -36,7 +36,7 @@ access_log {{ nginx_access_log_file }};
 error_log {{ nginx_error_log_file }};
 
 if ($badagent) {
-    return 403;
+    return 444;
 }
 
 {% if temp_redirect_paths is defined %}

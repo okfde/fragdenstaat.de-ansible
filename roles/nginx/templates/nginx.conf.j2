@@ -84,8 +84,10 @@ http {
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript application/x-font-ttf font/opentype image/svg+xml image/x-icon;
 
 	map $http_user_agent $badagent {
-		default "";
-		~*(CCBot|ChatGPT-User|GPTBot|Google-Extended|anthropic-ai|Omgilibot|Omgili|FacebookBot|Diffbot|ImagesiftBot|cohere-ai|ClaudeBot|GPTBot|Amazonbot|AhrefsBot|BLEXBot|YandexBot|serpstatbot|DataForSeoBot|Lucifer\sSearch\sBot|AcademicBotRTU|Bytespider|Sogou\sweb) $http_user_agent;
+		default 0;
+		"" 1;
+		"-" 1;
+		~*(CCBot|ChatGPT-User|GPTBot|Google-Extended|anthropic-ai|Omgilibot|Omgili|FacebookBot|Diffbot|ImagesiftBot|cohere-ai|ClaudeBot|Amazonbot|AhrefsBot|BLEXBot|YandexBot|serpstatbot|DataForSeoBot|Lucifer\sSearch\sBot|AcademicBotRTU|Bytespider|Sogou\sweb|meta-externalagent|python-requests|Scrapy) 1;
 	}
 	map $http_user_agent $limit_bots {
 		default "";
