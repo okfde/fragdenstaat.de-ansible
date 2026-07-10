@@ -20,4 +20,8 @@ nginx_pixel_log_retention_days: 14
 nginx_pixel_log_file: "/var/log/nginx/pixel_access.log"
 
 nginx_geoip_path: /usr/share/nginx/GeoIP2
+nginx_geo_block_countries_enabled: "{{ nginx_geo_blocked_countries | length > 0 }}"
+nginx_geo_block_asns_enabled: "{{ nginx_geo_blocked_asns | length > 0 }}"
+nginx_geo_blocking_enabled: "{{ (nginx_geo_blocked_countries | length > 0) or (nginx_geo_blocked_asns | length > 0) }}"
 nginx_geo_blocked_countries: []
+nginx_geo_blocked_asns: []

@@ -34,6 +34,9 @@ nginx_cache_urls:
 nginx_geo_blocked_countries:
   - CN
 
+nginx_geo_blocked_asns:
+  - 132203   # Tencent
+
 cms_sites:
   - key: "grs"
     name: "Gegenrechtsschutz"

@@ -1,6 +1,11 @@
-{% if nginx_geo_blocked_countries | length > 0 %}
 {% if not ".onion" in geo_block_server_name %}
+{% if nginx_geo_block_countries_enabled | bool %}
 if ($allowed_country = no) {
+    return 444;
+}
+{% endif %}
+{% if nginx_geo_block_asns_enabled | bool %}
+if ($allowed_asn = no) {
     return 444;
 }
 {% endif %}

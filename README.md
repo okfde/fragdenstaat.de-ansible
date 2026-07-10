@@ -78,14 +78,16 @@ ansible-playbook -v playbooks/vpnserver.yml
 
 Geo-blocking can help protect the site from excessive bot and crawler traffic. Blocked clients get no HTTP response (connection closed, status 444).
 
-Set ISO country codes in group or host vars to enable:
+Set ISO country codes and/or ASNs in group or host vars:
 ```yaml
 # group_vars/web.yml
 nginx_geo_blocked_countries:
   - DE
+nginx_geo_blocked_asns:
+  - 123456   # no "AS" prefix
 ```
 
-Geo-blocking is off, if the list is empty (role default).
+Geo-blocking is off when both lists are empty (role default). Either list can enable it. ASN blocking applies to all traffic from that network globally.
 
 ## Current FragDenStaat.de architecture
 
