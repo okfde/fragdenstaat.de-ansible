@@ -191,7 +191,8 @@ db_reporting_views:
         open_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS open_rate,
         COALESCE(clicks.click_count, 0)::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS click_rate,
         COALESCE(unsubscribe_count, 0)::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS unsubscribe_rate,
-        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate
+        mailing_count.bounced_count::decimal / NULLIF(mailing_count.recipient_count::decimal, 0) AS bounce_rate,
+        is_continuous
       FROM mailings
       JOIN fds_mailing_emailtemplate ON fds_mailing_emailtemplate.id = mailings.email_template_id
       LEFT OUTER JOIN fds_newsletter_newsletter ON fds_newsletter_newsletter.id = mailings.newsletter_id
@@ -208,6 +209,6 @@ db_reporting_views:
         bounced,
         mailing_id,
         donor_id,
-        user_id
+        user_id,
         subscriber_id
       FROM fds_mailing_mailingmessage
