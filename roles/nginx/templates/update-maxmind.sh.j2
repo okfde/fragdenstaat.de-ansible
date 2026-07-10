@@ -2,15 +2,16 @@
 # {{ ansible_managed }}
 ## simple cron script to update maxmindb
 set -ex
-dir={{ django_geoip_path }}
+dir={{ nginx_geoip_path }}
 license_key={{ geoip_license_key }}
 
-cd $dir
-for u in "GeoLite2-City" "GeoLite2-Country" "GeoLite2-ASN" ; do
-    wget -N -q -O ${u}.tar.gz "https://download.maxmind.com/app/geoip_download?edition_id=${u}&license_key=${license_key}&suffix=tar.gz"
-    MMDB_FILE=$(tar -tzf ${u}.tar.gz  | grep ".mmdb")
-    tar -xvzf ${u}.tar.gz $MMDB_FILE
-    mv -f $MMDB_FILE /usr/share/nginx/GeoIP2/${u}.mmdb
-    rm $MMDB_FILE
-    rmdir $(dirname "${MMDB_FILE}")
+cd "$dir"
+for u in "GeoLite2-Country" "GeoLite2-ASN"; do
+    wget -N -q -O "${u}.tar.gz" "https://download.maxmind.com/app/geoip_download?edition_id=${u}&license_key=${license_key}&suffix=tar.gz"
+    MMDB_FILE=$(tar -tzf "${u}.tar.gz" | grep ".mmdb")
+    EXTRACT_DIR=$(dirname "${MMDB_FILE}")
+    tar -xzf "${u}.tar.gz" "${MMDB_FILE}"
+    mv -f "${MMDB_FILE}" "${dir}/${u}.mmdb"
+    rm -rf "${EXTRACT_DIR}"
+    rm -f "${u}.tar.gz"
 done

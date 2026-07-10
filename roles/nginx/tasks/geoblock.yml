@@ -20,7 +20,7 @@
 
 - name: Maxmind directory
   ansible.builtin.file:
-    path: "/usr/share/nginx/GeoIP2"
+    path: "{{ nginx_geoip_path }}"
     mode: "0755"
     owner: "www-data"
     state: directory
@@ -28,13 +28,18 @@
 - name: Add script to update maxmind
   ansible.builtin.template:
     src: update-maxmind.sh.j2
-    dest: "/usr/share/nginx/GeoIP2/update-maxmind.sh"
+    dest: "{{ nginx_geoip_path }}/update-maxmind.sh"
     mode: "0755"
+    owner: www-data
+    group: www-data
 
 - name: Update maxmind database
   ansible.builtin.command:
-    cmd: "/usr/share/nginx/GeoIP2/update-maxmind.sh"
-  ignore_errors: true
+    cmd: "{{ nginx_geoip_path }}/update-maxmind.sh"
+  become_user: www-data
+  become: true
+  environment:
+    HOME: /tmp
   changed_when: false
   tags:
     - skip_ansible_lint
@@ -52,4 +57,4 @@
     minute: "0"
     hour: "3"
     user: "www-data"
-    job: "/usr/share/nginx/GeoIP2/update-maxmind.sh > /tmp/update_maxmind_nginx.log 2>&1"
+    job: "{{ nginx_geoip_path }}/update-maxmind.sh > /tmp/update_maxmind_nginx.log 2>&1"
