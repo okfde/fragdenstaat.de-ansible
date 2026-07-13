@@ -35,6 +35,14 @@ borg:
       db_name: "{{ nc_db_name }}"
       db_user: "{{ nc_db_user }}"
       db_password: "{{ nc_db_password }}"
+    - name: snipeit
+      container_name: db
+      path: "/var/www/snipeit/"
+      src: create_mariadb_backup_docker.sh
+      dest: snipeit_backup.sh
+      db_name: snipeit
+      db_user: snipeit
+      db_password: snipeit
 
 icinga:
   vars:
