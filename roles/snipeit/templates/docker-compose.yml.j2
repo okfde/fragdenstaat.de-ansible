@@ -1,0 +1,48 @@
+services:
+  app:
+    image: snipe/snipe-it:v8.6.3
+    restart: unless-stopped
+    volumes:
+      - ./snipeit-data:/var/lib/snipeit
+    ports:
+      - "127.0.0.1:{{ snipeit_port }}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    environment:
+        # see https://github.com/grokability/snipe-it/blob/master/.env.docker
+        APP_ENV: production
+        APP_DEBUG: false
+        APP_KEY: {{ snipeit_secret }}
+        APP_URL: https://{{ snipeit_domain }}
+        APP_TIMEZONE: "Europe/Berlin"
+        APP_LOCALE: de-DE
+        MAX_RESULTS: 500
+        PRIVATE_FILESYSTEM_DISK: local
+        PUBLIC_FILESYSTEM_DISK: local_public
+        DB_CONNECTION: mysql
+        DB_HOST: db
+        DB_DATABASE: snipeit
+        DB_USERNAME: snipeit
+        DB_PASSWORD: snipeit
+
+  db:
+    # unfortunately, postgres is not reliable with snipe-it at the moment
+    image: mariadb:11.4.7
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: snipeit
+      MYSQL_USER: snipeit
+      MYSQL_PASSWORD: snipeit
+      MYSQL_ROOT_PASSWORD: {{ snipeit_mariadb_root }}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+
+volumes:
+  db_data:

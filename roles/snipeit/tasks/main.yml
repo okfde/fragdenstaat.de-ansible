@@ -1,0 +1,62 @@
+---
+
+- name: Check if HTTPS certificates exist
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+  register: https_cert_check
+  with_items: "{{ https_domains }}"
+
+- name: Set HTTPS certificate facts
+  ansible.builtin.set_fact:
+    active_https_domains: "{{ active_https_domains | default({}) | combine({item.item: item.stat.exists}) }}"
+  with_items: "{{ https_cert_check.results }}"
+
+- name: Create snipeit directory
+  ansible.builtin.file:
+    path: "{{ snipeit_dir }}"
+    state: directory
+    owner: root
+    mode: "0755"
+
+- name: Set snipeit docker compose
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ snipeit_dir }}/docker-compose.yml"
+    mode: "0644"
+  notify: restart snipeit
+
+- name: Pull latest version
+  ansible.builtin.command:
+    cmd: docker compose pull
+    chdir: "{{ snipeit_dir }}"
+  changed_when: true
+  notify: restart snipeit
+
+- name: Set snipeit systemd service
+  ansible.builtin.template:
+    src: snipeit.service.j2
+    dest: /etc/systemd/system/snipeit.service
+    mode: "0444"
+
+- name: Start snipeit service
+  ansible.builtin.systemd:
+    name: snipeit
+    state: started
+    daemon_reload: true
+
+- name: Create the Nginx site configuration
+  ansible.builtin.template:
+    src: nginx-site.j2
+    dest: "/etc/nginx/sites-available/{{ snipeit_domain }}"
+    mode: "0644"
+    backup: true
+  notify: reload nginx
+  when: snipeit_domain in active_https_domains
+
+- name: Ensure that the application site is enabled
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ snipeit_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ snipeit_domain }}"
+    state: link
+  notify: reload nginx
+  when: snipeit_domain in active_https_domains

@@ -1,0 +1,7 @@
+snipeit_domain: inventar.frag-den-staat.de
+snipeit_port: 8051
+snipeit_dir: "/var/www/snipeit"
+
+# in secrets
+snipeit_secret:
+snipeit_mariadb_root:
