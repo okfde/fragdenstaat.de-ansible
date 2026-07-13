@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -ex
+umask 177
+
+PATH=/usr/bin:/bin
+DATE=`date +%F`
+DAYOFMONTH=`date +%d`
+
+cd {{ item.path }}
+docker compose exec {{ item.container_name }} mariadb-dump -u {{ item.db_user }} --password={{ item.db_password }} {{ item.db_name }} | gzip -c > {{ item.path }}/sqlbackup-$DATE.sql.gz
+find {{ item.path }} -maxdepth 1 -name "*.sql.gz" -mtime +7 -delete
