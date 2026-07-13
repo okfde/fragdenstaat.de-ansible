@@ -1,0 +1,7 @@
+---
+
+- name: restart snipeit
+  ansible.builtin.systemd:
+    name: snipeit
+    state: restarted
+    daemon_reload: true
