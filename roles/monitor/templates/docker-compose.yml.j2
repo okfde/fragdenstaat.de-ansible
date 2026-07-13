@@ -131,6 +131,7 @@ services:
     volumes:
       - "{{ monitor_dir }}/graylog/graylog_data:/usr/share/graylog/data/data"
       - "{{ monitor_dir }}/graylog/graylog_journal:/usr/share/graylog/data/journal"
+      - "{{ monitor_dir }}/graylog/graylog_config:/usr/share/graylog/data/config"
     restart: unless-stopped
     network_mode: host
 {% endif %}
