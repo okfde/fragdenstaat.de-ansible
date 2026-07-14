@@ -1,4 +1,11 @@
 services:
+
+x-logging: &default-logging
+  driver: "gelf"
+  options:
+    gelf-address: "udp://192.168.100.5:12201"
+    tag: "monitor"
+
 {% if prometheus is true %}
   prometheus:
     image: prom/prometheus:latest
@@ -10,12 +17,9 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.retention.time=2y'
     restart: unless-stopped
-    network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
+    ports:
+      - "9090:9090"
+    logging: *default-logging
 {% endif %}
 
 {% if grafana is true %}
@@ -29,12 +33,11 @@ services:
       GF_RENDERING_SERVER_URL: http://localhost:8081/render
       GF_RENDERING_CALLBACK_URL: http://localhost:3000/
     restart: unless-stopped
-    network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
+    ports:
+      - "3000:3000"
+    networks:
+      - grafana
+    logging: *default-logging
 
   renderer:
     image: grafana/grafana-image-renderer:latest
@@ -42,12 +45,9 @@ services:
     environment:
       ENABLE_METRICS: "true"
     restart: unless-stopped
-    network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
+    networks:
+      - grafana
+    logging: *default-logging
 {% endif %}
 
 {% if graylog is true %}
@@ -57,13 +57,9 @@ services:
     volumes:
       - "{{ monitor_dir }}/graylog/mongodb_data:/data/db"
     restart: unless-stopped
-    network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
-
+    logging: *default-logging
+    networks:
+      - graylog
   opensearch:
     container_name: graylog_opensearch
     image: "opensearchproject/opensearch:2.15.0"
@@ -85,12 +81,15 @@ services:
     volumes:
       - "{{ monitor_dir }}/graylog/os_data:/usr/share/opensearch/data"
     restart: unless-stopped
-    network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
+    networks:
+      - graylog
+    ports:
+      - "5044:5044/tcp"   # Filebeat
+      - "5140:5140/udp"   # Syslog UDP
+      - "9000:9000/tcp"   # Server<->sidecar API
+      - "12201:12201/tcp" # GELF TCP
+      - "12201:12201/udp" # GELF UDP
+    logging: *default-logging
 
   graylog:
     container_name: graylog
@@ -122,16 +121,24 @@ services:
       GRAYLOG_ROOT_TIMEZONE: "Europe/Berlin"
       GRAYLOG_IS_LEADER: "True"
       TZ: "Europe/Berlin"
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
-
+    logging: *default-logging
     volumes:
       - "{{ monitor_dir }}/graylog/graylog_data:/usr/share/graylog/data/data"
       - "{{ monitor_dir }}/graylog/graylog_journal:/usr/share/graylog/data/journal"
       - "{{ monitor_dir }}/graylog/graylog_config:/usr/share/graylog/data/config"
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - graylog
+
+{% endif %}
+{% if grafana is true or if graylog is true %}
+networks:
+{% if grafana is true %}
+  grafana:
+    driver: bridge
+{% endif %}
+{% if graylog is true %}
+  graylog:
+    driver: bridge
+{% endif %}
 {% endif %}
