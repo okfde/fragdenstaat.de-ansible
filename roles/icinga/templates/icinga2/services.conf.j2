@@ -315,12 +315,12 @@ apply Service "graylog filebeat" {
   assign where host.vars.graylog_filebeat_bind
 }
 
-apply Service "graylog gelf" {
+apply Service "graylog gelf udp" {
   import "generic-service"
 
-  check_command = "tcp"
-  vars.tcp_port = "12201"
-  vars.tcp_address = "$graylog_gelf_bind$"
+  check_command = "udp"
+  vars.udp_port = "12201"
+  vars.udp_address = "$graylog_gelf_bind$"
   vars.notification.pushover = 1
   vars.notification.slack = 0
 
