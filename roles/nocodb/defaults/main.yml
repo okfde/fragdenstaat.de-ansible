@@ -2,6 +2,7 @@ nc_dir: "/var/www/nocodb/"
 nc_data_volume: "/var/www/nocodb/data/db/"
 nc_db_data_volume: "/var/www/nocodb/data/nc/"
 nc_local_port: 8888
+nc_site_url: "https://nocodb.frag-den-staat.de"
 
 # in secrets.yml
 # nc_db_user: "postgres"
