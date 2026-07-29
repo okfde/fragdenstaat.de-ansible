@@ -72,6 +72,19 @@ smtpd_tls_received_header = yes
 smtpd_use_tls=no
 {% endif %}
 
+# smtpd restrictions
+
+smtpd_helo_restrictions =
+    permit_mynetworks,
+    check_helo_access pcre:/etc/postfix/reject_helo,
+    permit
+
+smtpd_sender_restrictions =
+    permit_sasl_authenticated,
+    permit_mynetworks,
+    reject_unknown_sender_domain,
+    check_sender_access pcre:/etc/postfix/reject_domains
+
 smtpd_relay_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
@@ -84,11 +97,6 @@ smtpd_recipient_restrictions =
     permit_sasl_authenticated,
     reject_unauth_destination,
     check_policy_service unix:private/policy-spf
-
-smtpd_helo_restrictions =
-    permit_mynetworks,
-    check_helo_access pcre:/etc/postfix/reject_helo,
-    permit
 
 # mitigation for https://www.postfix.org/smtp-smuggling.html
 smtpd_data_restrictions = reject_unauth_pipelining
@@ -143,12 +151,10 @@ smtpd_sasl_path = private/auth
 
 # receive_override_options=no_address_mappings
 smtpd_sasl_local_domain = $myhostname
-smtpd_sender_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unknown_sender_domain, check_sender_access pcre:/etc/postfix/reject_domains
 # mailbox_command = /usr/lib/dovecot/deliver -c /etc/dovecot/conf.d/01-mail-stack-delivery.conf -m "${EXTENSION}"
 
 smtp_use_tls = yes
 tls_random_source = dev:/dev/urandom
-
 
 # SPF https://help.ubuntu.com/community/Postfix/SPF
 policy-spf_time_limit = 3600s

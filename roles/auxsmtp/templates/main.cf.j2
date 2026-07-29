@@ -71,6 +71,16 @@ smtp_tls_security_level = dane
 smtpd_use_tls=no
 {% endif %}
 
+smtpd_helo_restrictions =
+    permit_mynetworks,
+    check_helo_access pcre:/etc/postfix/reject_helo,
+    permit
+
+smtpd_sender_restrictions =
+    permit_sasl_authenticated,
+    reject_unknown_sender_domain,
+    check_sender_access pcre:/etc/postfix/reject_domains
+
 smtpd_relay_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
@@ -81,11 +91,6 @@ smtpd_recipient_restrictions =
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_unauth_destination,
-
-smtpd_helo_restrictions =
-    permit_mynetworks,
-    check_helo_access pcre:/etc/postfix/reject_helo,
-    permit
 
 mydomain = {{ domain_name }}
 myhostname = {{ postfix_hostname }}
@@ -118,7 +123,6 @@ virtual_mailbox_base = /var/vmail
 
 # receive_override_options=no_address_mappings
 smtpd_sasl_local_domain = $myhostname
-smtpd_sender_restrictions = permit_sasl_authenticated, reject_unknown_sender_domain, check_sender_access pcre:/etc/postfix/reject_domains
 
 smtp_use_tls = yes
 tls_random_source = dev:/dev/urandom
