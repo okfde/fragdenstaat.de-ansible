@@ -80,8 +80,11 @@ smtpd_helo_restrictions =
     permit
 
 smtpd_sender_restrictions =
-    permit_sasl_authenticated,
     permit_mynetworks,
+    # alias for "reject_authenticated_sender_login_mismatch, reject_unauthenticated_sender_login_mismatch"
+    # Check *before* allowing all authenticated mail
+    reject_sender_login_mismatch,
+    permit_sasl_authenticated,
     reject_unknown_sender_domain,
     check_sender_access pcre:/etc/postfix/reject_domains
 
@@ -92,11 +95,12 @@ smtpd_relay_restrictions =
 
 smtpd_recipient_restrictions =
     check_recipient_access pcre:/etc/postfix/blocklisted_recipients,
-    check_recipient_access hash:/etc/postfix/spamfilter_access,
+    # TODO: Some are superflous since we set this in smtpd_relay_restrictions, see https://www.postfix.org/SMTPD_ACCESS_README.html
     permit_mynetworks,
     permit_sasl_authenticated,
     reject_unauth_destination,
     check_policy_service unix:private/policy-spf
+    check_recipient_access hash:/etc/postfix/spamfilter_access,
 
 # mitigation for https://www.postfix.org/smtp-smuggling.html
 smtpd_data_restrictions = reject_unauth_pipelining
