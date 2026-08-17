@@ -51,11 +51,6 @@
 
 - name: Import run_django_tasks.yml
   ansible.builtin.import_tasks: run_django_tasks.yml
-  tags:
-    - deploy
-    - deploy-backend
-    - deploy-web
-    - deploy-frontend
 
 - name: release notifications
   ansible.builtin.import_tasks: release_notification.yml
