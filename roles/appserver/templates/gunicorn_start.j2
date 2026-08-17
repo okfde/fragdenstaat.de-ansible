@@ -39,6 +39,9 @@ exec gunicorn \
     --max-requests-jitter $MAX_REQUESTS_JITTER \
     --timeout {{ gunicorn_timeout_seconds|default(30) }} \
     --graceful-timeout {{ gunicorn_timeout_seconds|default(30) }} \
+    --error-logfile - \
+    --access-logfile - \
+    --capture-output \
     --user $USER --group $GROUP \
     --log-level info \
     --bind unix:$SOCKFILE \
