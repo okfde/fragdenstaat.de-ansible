@@ -1,0 +1,19 @@
+---
+- name: Ensure grub config directory exists
+  ansible.builtin.file:
+    path: /etc/default/grub.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# See https://kernel-internals.org/mm/page-poisoning/
+- name: Enforce memory hygiene
+  ansible.builtin.copy:
+    content: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT page_poison=on slub_debug=FZP"'
+    dest: /etc/default/grub.d/hardening.cfg
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Update grub

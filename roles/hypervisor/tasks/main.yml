@@ -1,0 +1,16 @@
+---
+- name: Import setup_initramfs.yml
+  ansible.builtin.import_tasks: setup_initramfs.yml
+  tags: initramfs
+
+- name: Import setup_hardening.yml
+  ansible.builtin.import_tasks: setup_hardening.yml
+  tags: hardening
+
+- name: Import setup_host.yml
+  ansible.builtin.import_tasks: setup_host.yml
+  tags: virt-host
+
+- name: Import setup_guests.yml
+  ansible.builtin.import_tasks: setup_guests.yml
+  tags: virt-guests

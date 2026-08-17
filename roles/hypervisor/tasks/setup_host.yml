@@ -1,0 +1,49 @@
+---
+- name: Install virtualization host packages
+  ansible.builtin.apt:
+    pkg:
+      - apparmor-utils
+      - brige-utils
+      - guestfs-tools
+      - libvirt0
+      - libvirt-clients
+      - libvirt-daemon
+      - libvirt-daemon-system
+      - python3-libvirt
+      - qemu-kvm
+      - qemu-system
+      - qemu-system-x86
+      - qemu-utils
+      - virtinst
+      - zfsutils-linux
+
+- name: Ensure ZFS kernel module is loaded
+  community.general.modprobe:
+    name: zfs
+    state: present
+    persistent: present
+
+# App armor is enabled per default on Ubuntu.
+# Add task to load apparmor on boot if ever switching to another host OS
+- name: Ensure apparmor is enabled for libvirt
+  notify: Restart libvirtd
+  block:
+    - name: Set apparmor as security driver for libvirt
+      ansible.builtin.lineinfile:
+        path: /etc/libvirt/qemu.conf
+        insertafter: '#security_driver = "selinux"'
+        line: 'security_driver = [ "apparmor" ]'
+    - name: Ensure apparmor is enabled for libvirt part II
+      ansible.builtin.replace:
+        path: /etc/libvirt/qemu.conf
+        regexp: "^#{{ item }}"
+        replace: "{{ item }}"
+      with_items:
+        - "security_default_confined = 1"
+        - "security_require_confined = 1"
+
+# TODO: copy network setup from roles/test/qemu where applicable
+
+# TODO: Add filter rules to prevent IP/Mac/ARP spoofing by VMs
+
+# TODO: copy templating from roles/test/qemu where applicable

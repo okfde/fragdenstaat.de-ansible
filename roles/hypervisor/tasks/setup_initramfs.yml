@@ -1,0 +1,55 @@
+---
+- name: Derive device name for internal network
+  ansible.builtin.set_fact:
+    _network_device_internal: "{{ host_data.interface_name }}.{{ network_vlan.id }}@{{ host_data.interface_name }}"
+
+# TODO: Remove me or hide behind tag once role is finished
+- name: Print device name for internal network
+  ansible.builtin.debug:
+    msg: "{{ _network_device_internal }}"
+
+# TODO: Add gateway IP and netmask
+- name: Configure networking for initramfs
+  ansible.builtin.lineinfile:
+    path: /etc/initramfs-tools/initramfs.conf
+    regexp: '^IP='
+    line: 'IP={{ host_data.site_ipv4 }}::<GATEWAY-IP>:<NETMASK>::{{ ansible_hostname }}:{{ _network_device_internal }}'
+
+- name: Install dropbear-initramfs
+  ansible.builtin.apt:
+    name:
+      - dropbear-initramfs
+      - kbd
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  retries: 3
+  delay: 10
+
+- name: Create dropbear-initramfs config directory
+  ansible.builtin.file:
+    path: /etc/dropbear/initramfs
+    state: directory
+    recurse: true
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Create dropbear-initramfs config
+  ansible.builtin.template:
+    src: dropbear.conf.j2
+    dest: /etc/dropbear/initramfs/dropbear.conf
+    owner: root
+    group: root
+    mode: "0640"
+
+- name: Create dropbear-initramfs authorized_keys file
+  ansible.posix.authorized_key:
+    path: /etc/dropbear/initramfs/authorized_keys
+    user: root
+    state: present
+    key: "{{ item.1 }}"
+  loop: "{{ ssh_users | subelements('ssh_public_keys', 'skip_missing=True') }}"
+  when: not ansible_check_mode
+  notify: Update initramfs
+
+# TODO: Print SSH host key fingerprint
