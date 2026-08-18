@@ -1,0 +1,32 @@
+---
+
+- name: Configure sshd
+  ansible.builtin.lineinfile:
+    path: "/etc/ssh/sshd_config"
+    regex: "^(#)?{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
+    state: present
+  loop:
+    - key: "PasswordAuthentication"
+      value: "no"
+    - key: "Port"
+      value: "{{ ssh_port }}"
+  notify:
+    - restart ssh
+
+- name: Make sure ufw applications config folder is present
+  ansible.builtin.file:
+    path: "/etc/ufw/applications.d"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure ufw opensshd config
+  ansible.builtin.lineinfile:
+    path: "/etc/ufw/applications.d/openssh-server"
+    regex: "^(#)?ports="
+    line: "ports={{ ssh_port }}/tcp"
+    state: present
+  notify:
+    - reload ufw

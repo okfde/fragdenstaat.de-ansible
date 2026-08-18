@@ -1,6 +1,6 @@
 ---
 
-- name: apt
+- name: services
   hosts: all
   become: true
   become_user: root
@@ -8,12 +8,8 @@
     - ../local_vars/local_config.yml
 
   roles:
-    - role: apt
-      tags: apt
-
     - role: dockerupdates
       tags: dockerupdates
-
     - role: nocodb
       tags: nocodb
       when: inventory_hostname in groups["auxiliary"]

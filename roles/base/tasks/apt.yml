@@ -1,0 +1,44 @@
+---
+
+- name: Configure /etc/apt/sources.list
+  ansible.builtin.template:
+    dest: /etc/apt/sources.list
+    src: sources.list.j2
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - sources
+  notify: apt update
+
+- name: Ensure selected packages are latest
+  ansible.builtin.apt:
+    name: "{{ base_packages_latest }}"
+    state: latest
+    install_recommends: false
+  tags: packages
+  retries: 3
+  delay: 10
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ base_packages_install }}"
+    state: latest
+    install_recommends: false
+  tags: packages
+  retries: 3
+  delay: 10
+
+- name: Remove unneeded packages
+  ansible.builtin.apt:
+    name: "{{ base_packages_remove }}"
+    purge: true
+
+- name: Remove useless packages from the cache
+  ansible.builtin.apt:
+    autoclean: true
+
+- name: Remove dependencies that are no longer required
+  ansible.builtin.apt:
+    autoremove: true
+    purge: true

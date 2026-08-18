@@ -1,0 +1,14 @@
+---
+
+- name: Install needrestart
+  ansible.builtin.apt:
+    name: needrestart
+    update_cache: true
+
+- name: Configure needrestart
+  ansible.builtin.copy:
+    src: needrestart.conf
+    dest: /etc/needrestart/conf.d/fds.conf
+    owner: root
+    group: root
+    mode: "0644"

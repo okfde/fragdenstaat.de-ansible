@@ -9,80 +9,21 @@
   when: create_swap_file
   tags: swap
 
-- name: Add apt universe
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
-    update_cache: false
-    mode: "0644"
-  register: universe_installed
-
-- name: Update apt cache
-  ansible.builtin.apt:
-    update_cache: true
-  when: universe_installed is changed
-  changed_when: false
-  tags:
-    - skip_ansible_lint
-  retries: 3
-  delay: 10
-
-- name: Ensure bash, OpenSSL, and libssl are the latest versions
-  ansible.builtin.apt:
-    name:
-      - bash
-      - openssl
-      - libssl-dev
-      - libssl-doc
-    update_cache: "{{ update_apt_cache }}"
-    state: latest
-  tags: packages
-  retries: 3
-  delay: 10
-
-- name: Install base packages
-  ansible.builtin.apt:
-    name:
-      - build-essential
-      - acl
-      - ntp
-      - ntpdate
-      - gpg
-      - gpg-agent
-      - bind9-host
-      - bc
-    update_cache: "{{ update_apt_cache }}"
-    force: true
-    state: present
-  tags: packages
-  retries: 3
-  delay: 10
+- name: Import apt.yml
+  ansible.builtin.import_tasks: apt.yml
+  tags: apt
 
 - name: Import add_users.yml
   ansible.builtin.import_tasks: add_users.yml
   tags: add_users
 
-- name: Configure sshd
-  ansible.builtin.lineinfile:
-    path: "/etc/ssh/sshd_config"
-    regex: "^(#)?{{ item.key }}"
-    line: "{{ item.key }} {{ item.value }}"
-    state: present
-  loop:
-    - key: "PasswordAuthentication"
-      value: "no"
-    - key: "Port"
-      value: "{{ ssh_port }}"
-  notify:
-    - restart ssh
+- name: Import sshd.yml
+  ansible.builtin.import_tasks: sshd.yml
+  tags: sshd
 
-- name: Configure ufw opensshd config
-  ansible.builtin.lineinfile:
-    path: "/etc/ufw/applications.d/openssh-server"
-    regex: "^(#)?ports="
-    line: "ports={{ ssh_port }}/tcp"
-    state: present
-  notify:
-    - reload ufw
+- name: Import setup_needrestart.yml
+  ansible.builtin.import_tasks: setup_needrestart.yml
+  tags: needrestart
 
 - name: Import setup_unattended_upgrades.yml
   ansible.builtin.import_tasks: setup_unattended_upgrades.yml
