@@ -27,6 +27,8 @@
     - role: msmtp
       tags: msmtp
       when: inventory_hostname in groups["msmtp"]
+    - role: hypervisor
+      when: inventory_hostname in groups["hypervisor"]
     - role: fonts
       tags: fonts
     - role: scripts
