@@ -80,7 +80,7 @@ Unattended-Upgrade::Mail "root@fragdenstaat.de";
 //    "always", "only-on-error" or "on-change"
 // If this is not set, then any legacy MailOnlyOnError (boolean) value
 // is used to chose between "only-on-error" and "on-change"
-Unattended-Upgrade::MailReport "always";
+Unattended-Upgrade::MailReport "only-on-error";
 
 // Remove unused automatically installed kernel-related packages
 // (kernel images, kernel headers and kernel version locked tools).
@@ -125,7 +125,7 @@ Unattended-Upgrade::SyslogFacility "daemon";
 // Unattended-Upgrade::Skip-Updates-On-Metered-Connections "true";
 
 // Verbose logging
-Unattended-Upgrade::Verbose "true";
+Unattended-Upgrade::Verbose "false";
 
 // Print debugging information both in unattended-upgrades and
 // in unattended-upgrade-shutdown
