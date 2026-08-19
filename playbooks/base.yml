@@ -10,6 +10,8 @@
   roles:
     - role: base
       tags: base
+    - role: wireguard
+      tags: wireguard
     - role: monitor
       tags: monitor
     - role: backup

@@ -13,6 +13,16 @@
       tags: network
       when: "not 'tst.okfn.de' in inventory_hostname or inventory_hostname == 'fds-tst.okfn.de'"
 
+- name: Setup wireguard
+  hosts: vpn
+  become: true
+  become_user: root
+  vars_files:
+    - ../local_vars/local_config.yml
+  roles:
+    - role: wireguard
+      tags: wireguard
+
 - name: Create db server
   hosts: db
   become: true

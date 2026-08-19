@@ -1,0 +1,61 @@
+---
+
+- name: Deploy docker compose instances
+  hosts: auxiliary
+  become: true
+  become_user: root
+
+  # Skip prerequisite role with for example `--skip-tags docker`
+  pre_tasks:
+    - name: Import docker role
+      tags: docker, always
+      ansible.builtin.import_role:
+        name: docker
+
+    - name: Import nginx role
+      tags: nginx, always
+      ansible.builtin.import_role:
+        name: nginx
+
+    - name: Import certbot role
+      tags: certbot, always
+      ansible.builtin.import_role:
+        name: certbot
+
+  roles:
+    - role: nocodb
+      tags: nocodb
+      when: inventory_hostname in groups["auxiliary"]
+    - role: weblate
+      tags: weblate
+      when: inventory_hostname in groups["auxiliary"]
+    - role: metabase
+      tags: metabase
+      when: inventory_hostname in groups["auxiliary"]
+    - role: ogimage
+      tags: ogimage
+      when: inventory_hostname in groups["auxiliary"]
+    - role: discourse
+      tags: discourse
+      when: inventory_hostname in groups["auxiliary"]
+    - role: zammad
+      tags: zammad
+      when: inventory_hostname in groups["auxiliary"]
+    - role: snipeit
+      tags: snipeit
+      when: inventory_hostname in groups["auxiliary"]
+    - role: sentry
+      tags: sentry
+      when: inventory_hostname in groups["monitor"]
+    - role: monitor
+      tags: monitor
+      when: inventory_hostname in groups["monitor"]
+
+# TODO: Currently only affects monitor setup which sets dockerupdate_compose_lines var
+- name: Update docker compose containers
+  hosts: docker
+  become: true
+  become_user: root
+  roles:
+    - role: dockerupdates
+      tags: dockerupdates

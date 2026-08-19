@@ -85,6 +85,10 @@ schaar.okfn.de
 brooke.okfn.de
 fds-es1.okfn.de
 
+[docker]
+fds-mon.okfn.de
+schaar.okfn.de
+
 [storage]
 schoch.okfn.de
 
