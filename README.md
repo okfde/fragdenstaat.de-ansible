@@ -52,7 +52,7 @@ Make sure vpn server is setup.
 
 Setup VPN server:
 ```
-ansible-playbook -v playbooks/vpnserver.yml
+ansible-playbook playbooks/fragdenstaat.de_full.yml -t wireguard -v
 ```
 
 Store public key in host variables file in `host_vars/` under the key `host_data.wg_publickey`
@@ -71,7 +71,7 @@ You should commit `env_vars/vpnclients.yml`.
 Update the peers on the server:
 
 ```
-ansible-playbook -v playbooks/vpnserver.yml
+ansible-playbook playbooks/fragdenstaat.de_full.yml -t wireguard -v
 ```
 
 ## Geo-blocking
