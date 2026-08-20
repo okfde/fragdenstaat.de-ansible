@@ -10,3 +10,24 @@ enable_fail2ban: true
 
 unattended_calendar: "*-*-* 6:00"
 unattended_delay: "60m"
+
+apt_update_cache: true
+base_packages_latest:
+  - bash
+  - openssl
+  - libssl-dev
+  - libssl-doc
+
+base_packages_install:
+  - acl
+  - bc
+  - bind9-host
+  - build-essential
+  - gpg
+  - gpg-agent
+  - man
+  - ntp
+  - ntpdate
+  - vim
+
+base_packages_remove: []

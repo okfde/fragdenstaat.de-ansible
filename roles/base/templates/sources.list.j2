@@ -1,7 +1,7 @@
-{% if "ubuntu" in host_data %}
+{% if host_data is defined and "ubuntu" in host_data %}
 {% set distname = host_data.ubuntu %}
 {% else %}
-{% set distname = "jammy" %}
+{% set distname = ansible_distribution_release %}
 {% endif %}
 # Base
 deb http://mirror.hetzner.com/ubuntu/packages {{ distname }} main restricted universe multiverse
