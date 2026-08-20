@@ -22,6 +22,10 @@ prometheus_exporter:
 https_domains:
   - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']
 
+# Required for wildcard cert
+certbot_mode: "dns-01"
+certbot_script: "/opt/certbot/bin/certbot"
+
 icinga:
   ip_override: 192.168.100.10
   vars:
