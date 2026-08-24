@@ -6,8 +6,8 @@
     update_cache: true
 
 - name: Configure needrestart
-  ansible.builtin.copy:
-    src: needrestart.conf
+  ansible.builtin.template:
+    src: needrestart.conf.j2
     dest: /etc/needrestart/conf.d/fds.conf
     owner: root
     group: root

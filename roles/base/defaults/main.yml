@@ -31,3 +31,11 @@ base_packages_install:
   - vim
 
 base_packages_remove: []
+
+needrestart:
+  ignorelist:
+    - "postgres.*"
+    - "postfix[.]service"
+    - "libvirtd[.]service"
+    - "docker[.]service"
+    - "containerd[.]service"
