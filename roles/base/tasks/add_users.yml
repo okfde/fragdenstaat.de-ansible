@@ -34,11 +34,8 @@
     user: "{{ item.0.name }}"
     state: present
     key: "{{ item.1 }}"
+    exclusive: true
   loop: "{{ ssh_users | subelements('ssh_public_keys', 'skip_missing=True') }}"
-  ignore_errors: true
-  when: not ansible_check_mode
-  tags:
-    - skip_ansible_lint
 
 - name: Set testsystem indicator in .bashrc
   ansible.builtin.replace:
@@ -69,10 +66,3 @@
     regexp: "PS1='\\${"
     replace: "PS1='LIVESYSTEM: ${"
   when: "not 'tst.okfn.de' in inventory_hostname and not ansible_check_mode"
-
-- name: Remove authorized keys for users
-  ansible.posix.authorized_key:
-    user: "{{ item.0.name }}"
-    state: absent
-    key: "{{ item.1 }}"
-  loop: "{{ ssh_users | subelements('revoked_ssh_public_keys', 'skip_missing=True') }}"
