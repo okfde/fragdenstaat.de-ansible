@@ -31,11 +31,12 @@
 
 - name: Set authorized keys for users
   ansible.posix.authorized_key:
-    user: "{{ item.0.name }}"
+    user: "{{ item.name }}"
     state: present
-    key: "{{ item.1 }}"
+    key: "{{ item.ssh_public_keys | default([]) | join ('\n') }}"
     exclusive: true
-  loop: "{{ ssh_users | subelements('ssh_public_keys', 'skip_missing=True') }}"
+  loop: "{{ ssh_users }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Set testsystem indicator in .bashrc
   ansible.builtin.replace:
