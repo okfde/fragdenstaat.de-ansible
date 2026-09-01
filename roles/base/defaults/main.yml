@@ -1,5 +1,7 @@
 ---
 
+base_timezone: Europe/Berlin
+
 server_user: root
 
 enable_unattended_upgrades: true
