@@ -1,14 +1,8 @@
 ---
 git_repo: https://github.com/okfde/fragdenstaat_de.git
 
-ssh_port: "22"
-## in secrets.yml
-# ssh_users:
-#   - name: <name>
-#     ssh_public_keys:
-#       - ""
-#     revoked_ssh_public_keys:
-#       - ""
+base_ssh_port: "22"
+base_ssh_users: "{{ secret_base_ssh_users }}"
 
 network_vlan:
   id: 4000

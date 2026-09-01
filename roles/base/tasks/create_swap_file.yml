@@ -1,33 +1,35 @@
 - name: Create swap file
   ansible.builtin.command:
     cmd: "dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ swap_file_size_kb }}k"
-    creates: "{{ swap_file_path }}"
+    creates: "{{ base_swap_file_path }}"
   tags: swap.file.create
 
 - name: Change swap file permissions
   ansible.builtin.file:
-    path: "{{ swap_file_path }}"
+    path: "{{ base_swap_file_path }}"
     owner: root
     group: root
     mode: "0600"
+  ignore_errors: "{{ ansible_check_mode }}"
   tags: swap.file.permissions
 
 - name: Check swap file type
   ansible.builtin.command: file {{ swap_file_path }}
-  register: swapfile
+  register: _swapfile
   changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
   tags: swap.file.mkswap
 
 - name: Make swap file
-  ansible.builtin.command: "mkswap {{ swap_file_path }}"
-  when: swapfile.stdout.find('swap file') == -1
+  ansible.builtin.command: "mkswap {{ base_swap_file_path }}"
+  when: _swapfile.stdout.find('swap file') == -1
   tags: swap.file.mkswap
   changed_when: false
 
 - name: Write swap entry in fstab
   ansible.posix.mount:
     name: none
-    src: "{{ swap_file_path }}"
+    src: "{{ base_swap_file_path }}"
     fstype: swap
     opts: sw
     passno: 0
@@ -36,7 +38,7 @@
   tags: swap.fstab
 
 - name: Mount swap
-  ansible.builtin.command: "swapon {{ swap_file_path }}"
+  ansible.builtin.command: "swapon {{ base_swap_file_path }}"
   when: ansible_swaptotal_mb < 1
   tags: swap.file.swapon
   changed_when: false
