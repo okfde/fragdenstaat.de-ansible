@@ -6,7 +6,9 @@
 
 - name: Import create_swap_file.yml
   ansible.builtin.import_tasks: create_swap_file.yml
-  when: create_swap_file
+  when:
+    - base_create_swap_file is defined
+    - base_create_swap_file is truthy
   tags: swap
 
 - name: Import setup_timezone.yml
@@ -31,19 +33,31 @@
 
 - name: Import setup_unattended_upgrades.yml
   ansible.builtin.import_tasks: setup_unattended_upgrades.yml
-  when: enable_unattended_upgrades is defined and enable_unattended_upgrades
+  when:
+    - base_enable_unattended_upgrades is defined
+    - base_enable_unattended_upgrades is truthy
   tags: unattended-upgrades
 
 - name: Import setup_uncomplicated_firewall.yml
   ansible.builtin.import_tasks: setup_uncomplicated_firewall.yml
-  when: enable_ufw is defined and enable_ufw
+  when:
+    - base_enable_ufw is defined
+    - base_enable_ufw is truthy
+  tags:
+    - ufw
 
 - name: Import setup_fail2ban.yml
   ansible.builtin.import_tasks: setup_fail2ban.yml
-  when: enable_fail2ban is defined and enable_fail2ban
+  when:
+    - base_enable_fail2ban is defined
+    - base_enable_fail2ban is truthy
+  tags:
+    - fail2ban
 
 - name: Import sysctl_settings.yml
   ansible.builtin.import_tasks: sysctl_settings.yml
-  when: sysctl_settings is defined
+  when:
+    - base_sysctl_settings is defined
+    - base_sysctl_settings | length > 0
   tags:
     - sysctl

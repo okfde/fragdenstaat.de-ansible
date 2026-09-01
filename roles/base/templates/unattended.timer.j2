@@ -3,8 +3,8 @@ Description=Daily apt upgrade and clean activities
 After=apt-daily.timer
 
 [Timer]
-OnCalendar={{ unattended_calendar }}
-RandomizedDelaySec={{ unattended_delay }}
+OnCalendar={{ base_unattended_calendar }}
+RandomizedDelaySec={{ base_unattended_delay }}
 Persistent=true
 
 [Install]
