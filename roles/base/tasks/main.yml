@@ -9,6 +9,10 @@
   when: create_swap_file
   tags: swap
 
+- name: Import setup_timezone.yml
+  ansible.builtin.import_tasks: setup_timezone.yml
+  tags: timezone
+
 - name: Import apt.yml
   ansible.builtin.import_tasks: apt.yml
   tags: apt
