@@ -1,19 +1,24 @@
 ---
 
+base_ssh_port: 22
+
 base_timezone: Europe/Berlin
 
-server_user: root
+base_enable_unattended_upgrades: true
 
-enable_unattended_upgrades: true
+base_enable_ufw: true
 
-enable_ufw: true
+base_enable_fail2ban: true
 
-enable_fail2ban: true
+base_unattended_calendar: "*-*-* 6:00"
+base_unattended_delay: "60m"
 
-unattended_calendar: "*-*-* 6:00"
-unattended_delay: "60m"
+base_create_swap_file: false
+base_swap_file_path: /swapfile
+base_swap_file_size_kb: 512
 
-apt_update_cache: true
+base_apt_update_cache: "{{ update_apt_cache | default('true') }}"
+
 base_packages_latest:
   - bash
   - openssl
@@ -34,7 +39,7 @@ base_packages_install:
 
 base_packages_remove: []
 
-needrestart:
+base_needrestart:
   ignorelist:
     - "postgres.*"
     - "postfix[.]service"

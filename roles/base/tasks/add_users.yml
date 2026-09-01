@@ -27,15 +27,15 @@
     shell: /bin/bash
     groups: sudo
     append: true
-  with_items: "{{ ssh_users }}"
+  with_items: "{{ base_ssh_users }}"
 
 - name: Set authorized keys for users
   ansible.posix.authorized_key:
     user: "{{ item.name }}"
     state: present
-    key: "{{ item.ssh_public_keys | default([]) | join ('\n') }}"
+    key: "{{ item.public_keys | default([]) | join ('\n') }}"
     exclusive: true
-  loop: "{{ ssh_users }}"
+  loop: "{{ base_ssh_users }}"
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Set testsystem indicator in .bashrc
@@ -44,7 +44,7 @@
     regexp: "PS1='\\${"
     replace: "PS1='TESTSYSTEM: ${"
   when: "'tst.okfn.de' in inventory_hostname"
-  with_items: "{{ ssh_users }}"
+  with_items: "{{ base_ssh_users }}"
 
 - name: Set livesystem indicator in .bashrc
   ansible.builtin.replace:
@@ -52,7 +52,7 @@
     regexp: "PS1='\\${"
     replace: "PS1='LIVESYSTEM: ${"
   when: "not 'tst.okfn.de' in inventory_hostname and not ansible_check_mode"
-  with_items: "{{ ssh_users }}"
+  with_items: "{{ base_ssh_users }}"
 
 - name: Set testsystem indicator in .bashrc (root)
   ansible.builtin.replace:

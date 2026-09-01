@@ -3,7 +3,7 @@
 - name: Install needrestart
   ansible.builtin.apt:
     name: needrestart
-    update_cache: true
+    update_cache: "{{ base_apt_update_cache }}"
 
 - name: Configure needrestart
   ansible.builtin.template:

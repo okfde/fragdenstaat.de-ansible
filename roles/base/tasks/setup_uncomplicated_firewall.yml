@@ -2,7 +2,7 @@
 
 - name: Install Uncomplicated Firewall
   ansible.builtin.apt:
-    update_cache: "{{ update_apt_cache }}"
+    update_cache: "{{ base_apt_update_cache }}"
     pkg: ufw
     state: present
   retries: 3
@@ -11,7 +11,7 @@
 - name: Allow ssh connections
   community.general.ufw:
     rule: allow
-    port: "{{ ssh_port }}"
+    port: "{{ base_ssh_port }}"
     proto: tcp
 
 - name: Enable ufw/firewall

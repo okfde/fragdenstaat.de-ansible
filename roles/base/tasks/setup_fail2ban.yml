@@ -2,7 +2,7 @@
 
 - name: Install fail2ban
   ansible.builtin.apt:
-    update_cache: "{{ update_apt_cache }}"
+    update_cache: "{{ base_apt_update_cache }}"
     state: present
     pkg: fail2ban
   retries: 3

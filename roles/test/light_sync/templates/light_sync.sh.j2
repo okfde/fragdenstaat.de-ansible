@@ -5,7 +5,7 @@ repos=("brooke" "schoch")
 borg_repos=({% for host in ("brooke.okfn.de", "schoch.okfn.de") %}"ssh://{{ light_sync.repo[host].user }}@{{ light_sync.repo[host].host }}:{{ light_sync.repo[host].port }}/{{ light_sync.repo[host].path }}" {% endfor %})
 borg_repokeys=("{{ light_sync.repo["brooke.okfn.de"].pass }}" "{{ light_sync.repo["schoch.okfn.de"].pass }}")
 
-ssh_port="{{ ssh_port }}"
+ssh_port="{{ base_ssh_port }}"
 
 brooke_ip="192.168.122.123"
 schoch_ip="192.168.122.240"
