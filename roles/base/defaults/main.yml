@@ -28,8 +28,8 @@ base_packages_install:
   - gpg
   - gpg-agent
   - man
-  - ntp
-  - ntpdate
+  - ntpsec
+  - ntpsec-ntpdate
   - vim
 
 base_packages_remove: []
