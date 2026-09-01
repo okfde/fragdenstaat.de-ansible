@@ -61,3 +61,10 @@
     - base_sysctl_settings | length > 0
   tags:
     - sysctl
+
+- name: Import setup_dropbear_initramfs.yml
+  ansible.builtin.import_tasks: setup_dropbear_initramfs.yml
+  when: inventory_hostname in groups["hypervisor"]
+  tags:
+    - initramfs
+    - dropbear
