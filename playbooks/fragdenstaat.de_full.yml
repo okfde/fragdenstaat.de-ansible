@@ -4,8 +4,6 @@
   hosts: all
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: base
       tags: base
@@ -17,8 +15,6 @@
   hosts: vpn
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: wireguard
       tags: wireguard
@@ -27,8 +23,6 @@
   hosts: db
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: db
       tags: db
@@ -37,8 +31,6 @@
   hosts: mail
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: certbot
       tags: certbot
@@ -56,8 +48,6 @@
   hosts: search
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - elasticsearch
   tags:
@@ -67,8 +57,6 @@
   hosts: queue
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - rabbitmq
   tags:
@@ -78,8 +66,6 @@
   hosts: broker
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
 
   roles:
     - redis
@@ -90,8 +76,6 @@
   hosts: cache
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - memcached
   tags:
@@ -101,8 +85,6 @@
   hosts: media
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: nginx
       tags: nginx
@@ -114,8 +96,6 @@
   hosts: monitor
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: nginx
       tags: nginx
@@ -128,8 +108,6 @@
   hosts: app
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - app
     - appserver
@@ -141,8 +119,6 @@
   hosts: web
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: nginx
       tags: nginx
@@ -154,8 +130,6 @@
   hosts: app
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
   roles:
     - role: app
       tags: app
