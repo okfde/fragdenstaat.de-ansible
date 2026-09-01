@@ -4,8 +4,6 @@
   hosts: all
   become: true
   become_user: root
-  vars_files:
-    - ../local_vars/local_config.yml
 
   roles:
     - role: fdsbot
