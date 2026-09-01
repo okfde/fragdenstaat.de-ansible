@@ -5,4 +5,4 @@
     sysctl_set: true
     state: present
     reload: true
-  with_dict: "{{ sysctl_settings }}"
+  with_dict: "{{ base_sysctl_settings }}"

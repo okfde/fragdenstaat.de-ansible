@@ -10,7 +10,7 @@
     - key: "PasswordAuthentication"
       value: "no"
     - key: "Port"
-      value: "{{ ssh_port }}"
+      value: "{{ base_ssh_port }}"
   notify:
     - restart ssh
 
@@ -26,7 +26,7 @@
   ansible.builtin.lineinfile:
     path: "/etc/ufw/applications.d/openssh-server"
     regex: "^(#)?ports="
-    line: "ports={{ ssh_port }}/tcp"
+    line: "ports={{ base_ssh_port }}/tcp"
     state: present
   notify:
     - reload ufw
