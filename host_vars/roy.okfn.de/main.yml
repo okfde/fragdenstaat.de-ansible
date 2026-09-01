@@ -1,0 +1,11 @@
+---
+host_data:
+# region:
+  datacenter: fsn1-dc7
+  interface_name: enp6s0
+  mac: 9c:6b:00:1f:ab:7b
+  global_ipv4: 5.9.108.236
+  global_ipv6: 2a01:4f8:162:44c7::2
+# site_ipv4:
+# wg_publickey:
+# vpn_peer_id:
