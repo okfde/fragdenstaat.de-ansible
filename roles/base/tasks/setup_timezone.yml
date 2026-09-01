@@ -1,0 +1,9 @@
+---
+
+- name: Configure system timezone
+  ansible.builtin.copy:
+    content: "{{ base_timezone ~ '\n' }}"
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: "644"
