@@ -1,0 +1,45 @@
+---
+# See https://community.hetzner.com/tutorials/install-encrypted-ubuntu-2004-with-automated-unlock-via-tang-and-clevis/de
+- name: Configure rfc3442 dhcp client for initramfs
+  ansible.builtin.copy:
+    src: initramfs-dhclient-hook.sh
+    dest: /etc/initramfs-tools/hooks/add-rfc3442-dhclient-hook
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Update initramfs
+
+- name: Install dropbear-initramfs
+  ansible.builtin.apt:
+    name:
+      - dropbear-initramfs
+      - kbd
+    update_cache: "{{ update_apt_cache }}"
+    state: present
+  retries: 3
+  delay: 10
+
+- name: Create dropbear-initramfs config directory
+  ansible.builtin.file:
+    path: /etc/dropbear/initramfs
+    state: directory
+    recurse: true
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create dropbear-initramfs config
+  ansible.builtin.replace:
+    path: /etc/dropbear/initramfs/dropbear.conf
+    regexp: "^#?DROPBEAR_OPTIONS.*"
+    replace: "DROPBEAR_OPTIONS=\"-I 300 -j -k -p 2222 -s -c cryptroot-unlock\""
+
+- name: Create dropbear-initramfs authorized_keys file
+  ansible.posix.authorized_key:
+    path: /etc/dropbear/initramfs/authorized_keys
+    user: root
+    state: present
+    exclusive: true
+    # merge all user keys to one file, initramfs is single user
+    key: "{{ ssh_users | map(attribute='ssh_public_keys')| default([]) | flatten | join ('\n')}}"
+  notify: Update initramfs

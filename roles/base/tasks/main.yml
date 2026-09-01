@@ -47,3 +47,10 @@
   when: sysctl_settings is defined
   tags:
     - sysctl
+
+- name: Import setup_dropbear_initramfs.yml
+  ansible.builtin.import_tasks: setup_dropbear_initramfs.yml
+  when: inventory_hostname in groups["hypervisor"]
+  tags:
+    - initramfs
+    - dropbear
