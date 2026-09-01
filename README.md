@@ -15,7 +15,9 @@ pip install -r requirements.txt
 
 ## Configure your SSH user
 
-Copy `local_vars/local_config.yml.example` to `local_vars/local_config.yml` and set your SSH username.
+System users and their respective ssh public keys are declared in `group_vars/all/secrets.yml`.
+
+Make sure to set the corresponding username and ssh key in your ssh config.
 
 ## Deploy FragDenStaat.de
 
