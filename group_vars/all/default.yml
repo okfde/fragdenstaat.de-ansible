@@ -496,7 +496,7 @@ priviliged_media_content_security_policy:
   - "default-src 'self' data: __static__"
   - "script-src 'self' 'unsafe-inline' __static__ https://traffic.okfn.de"
   - "style-src 'self' 'unsafe-inline' __static__"
-  - "img-src 'self' data: blob: __static__ https://traffic.okfn.de *.tile.openstreetmap.org *.global.ssl.fastly.net"
+  - "img-src 'self' data: blob: __static__ https://traffic.okfn.de *.tile.openstreetmap.org *.basemaps.cartocdn.com"
   - "worker-src 'self' blob: __static__"
   - "frame-src 'self' blob: __static__ __web__ https://www.youtube-nocookie.com https://media.ccc.de"
   - "object-src 'self' __web__"
