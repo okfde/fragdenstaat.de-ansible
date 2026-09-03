@@ -1,0 +1,17 @@
+{% set algos =  host_data.ssh_host_keys.dropbear | dict2items(key_name='algo', value_name='pubkey') | map(attribute='algo') | join(',') %}
+Host {{ inventory_hostname }}
+	User root
+	Port 2222
+	HostName {{ host_data.global_ipv4 }}
+	UpdateHostKeys no
+	StrictHostKeyChecking yes
+	HostKeyAlgorithms {{ algos }}
+
+{% if identity_file is defined and identity_file | length > 0 %}
+	IdentitiesOnly yes
+	IdentityFile ~/.ssh/{{ identity_file }}
+{% endif %}
+
+{% if identity_agent is defined and identity_agent | length > 0 %}
+	IdentityAgent {{ identity_agent }}
+{% endif %}
