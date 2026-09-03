@@ -118,6 +118,8 @@ db_reporting_views:
     query: "SELECT id, created, subscribed, unsubscribed, reference, keyword, newsletter_id, unsubscribe_method, unsubscribe_reference FROM public.fds_newsletter_subscriber"
   - name: foirequests
     query: "SELECT id, title, slug, public_body_id, user_id, created_at, resolved_on, due_date, costs, refusal_reason, public, status, visibility, law_id, is_foi, same_as_id, same_as_count, jurisdiction_id, resolution, reference, project_id, closed, campaign_id, language FROM public.foirequest_foirequest"
+  - name: foimessages
+    query: "SELECT id, request_id, sent, is_response, sender_user_id, sender_public_body_id, timestamp, recipient_public_body_id, status, is_escalation, not_publishable, content_hidden, kind, confirmation_sent, is_draft, registered_mail_date FROM public.foirequest_foimessage"
   - name: documents
     query: "SELECT id, title, slug, description, num_pages, language, public, publicbody_id, foirequest_id, file_size, pending, properties, data, content_hash FROM public.document_document"
   - name: articles
