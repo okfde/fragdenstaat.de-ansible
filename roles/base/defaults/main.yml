@@ -1,17 +1,24 @@
 ---
 
-server_user: root
+base_ssh_port: 22
 
-enable_unattended_upgrades: true
+base_timezone: Europe/Berlin
 
-enable_ufw: true
+base_enable_unattended_upgrades: true
 
-enable_fail2ban: true
+base_enable_ufw: true
 
-unattended_calendar: "*-*-* 6:00"
-unattended_delay: "60m"
+base_enable_fail2ban: true
 
-apt_update_cache: true
+base_unattended_calendar: "*-*-* 6:00"
+base_unattended_delay: "60m"
+
+base_create_swap_file: false
+base_swap_file_path: /swapfile
+base_swap_file_size_kb: 512
+
+base_apt_update_cache: "{{ update_apt_cache | default('true') }}"
+
 base_packages_latest:
   - bash
   - openssl
@@ -26,13 +33,13 @@ base_packages_install:
   - gpg
   - gpg-agent
   - man
-  - ntp
-  - ntpdate
+  - ntpsec
+  - ntpsec-ntpdate
   - vim
 
 base_packages_remove: []
 
-needrestart:
+base_needrestart:
   ignorelist:
     - "postgres.*"
     - "postfix[.]service"

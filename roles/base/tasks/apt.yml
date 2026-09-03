@@ -1,15 +1,57 @@
 ---
 
-- name: Configure /etc/apt/sources.list
-  ansible.builtin.template:
-    dest: /etc/apt/sources.list
-    src: sources.list.j2
-    owner: root
-    group: root
-    mode: "0644"
+- name: Configure apt sources
+  notify: apt update
   tags:
     - sources
-  notify: apt update
+  block:
+    # TODO: Replace with install_python_debian paramter once we are on ansible-core 2.20.x
+    # See https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/deb822_repository_module.html#parameter-install_python_debian
+    - name: Make sure that python3-debian module is installed
+      ansible.builtin.apt:
+        name: python3-debian
+        install_recommends: false
+      retries: 3
+      delay: 10
+
+    # Allows to override distribution release version with '-e ansible_distribition_release_override',
+    # should only ever be needed for dist upgrades, which still needs some manual work.
+    # TODO: Add a tagged 'dist-upgrade' task
+    - name: Configure deb822 format sources list
+      ansible.builtin.deb822_repository:
+        name: hetzner-mirror
+        types: deb
+        trusted: true
+        uris: http://mirror.hetzner.com/ubuntu/packages
+        suites:
+          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}"
+          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}-updates"
+          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}-backports"
+          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}-security"
+        components:
+          - main
+          - universe
+          - restricted
+          - multiverse
+        architectures: amd64
+        signed_by: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+    - name: Make sure legacy sources list is empty
+      ansible.builtin.copy:
+        content: "# Sources have moved to /etc/apt/sources.list.d/hetzner-mirror.sources\n"
+        dest: "/etc/apt/sources.list"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Make sure other default sources lists are absent
+      ansible.builtin.file:
+        path: "/etc/apt/sources.list.d/{{ item }}"
+        state: absent
+      with_items:
+        - "archive_ubuntu_com_ubuntu.list"
+        - "de_archive_ubuntu_com_ubuntu.list"
+        - "ubuntu.sources"
 
 - name: Ensure selected packages are latest
   ansible.builtin.apt:

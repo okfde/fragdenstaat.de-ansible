@@ -10,7 +10,6 @@ host_data:
   disk_type: hdd
   # 26 TB available, 60 GB per volume, some wiggle room
   seaweed_max_volumes: 400
-  ubuntu: noble
   vpn_peer_id: 202
   wg_publickey: "JcI3Tr0SFM/bvZ4bPrRjckSeUnCkp8a/PfJ/goUB1jQ="
 
@@ -39,7 +38,7 @@ icinga:
     - disks["disk /home"] = { disk_partitions = "/home" }
     - temp = 0
 
-sysctl_settings:
+base_sysctl_settings:
   dev.raid.speed_limit_max:
     value: 50000
   dev.raid.speed_limit_min:

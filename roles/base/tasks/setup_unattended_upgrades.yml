@@ -2,7 +2,7 @@
 
 - name: Install Unattended Upgrades
   ansible.builtin.apt:
-    update_cache: "{{ update_apt_cache }}"
+    update_cache: "{{ base_apt_update_cache }}"
     state: present
     pkg: unattended-upgrades
   retries: 3
@@ -10,7 +10,7 @@
 
 - name: Install apt-listchanges Upgrades
   ansible.builtin.apt:
-    update_cache: "{{ update_apt_cache }}"
+    update_cache: "{{ base_apt_update_cache }}"
     state: present
     pkg: apt-listchanges
   retries: 3
