@@ -1,0 +1,81 @@
+---
+# Example usage:
+# ansible-playbook playbooks/extra/unlock-hypervisor.yml -l host.example.org"
+- name: "Unlock hypervisor host"
+# Setting 'hosts: localhost' complicates accessing the templated host variables,
+# therefore we pretend to run the playbook on the remote host that we want to unlock,
+# but delegate every task to localhost.
+  hosts: hypervisor
+  strategy: linear
+  become: false
+  gather_facts: false
+  vars_prompt:
+    - name: identity_file
+      prompt: >
+        Enter filename of the private SSH key to use for remote unlock.
+        The file is expected to be available at /home/$USER/.ssh/<filename> and the filename cannot contain unsafe characters '%', '{' or '}'.
+        Will use all available keys if left empty.
+      private: false
+    - name: identity_agent
+      prompt: >
+        IdentityAgent to use for SSH connection.
+        Will use default ssh-agent or none if left empty.
+      private: false
+
+  pre_tasks:
+    - name: "Assert that required host variables are set"
+      ansible.builtin.assert:
+        that:
+          - host_data is defined
+          - host_data.luks_passphrase is defined
+          - host_data.global_ipv4
+          - host_data.ssh_host_keys is defined
+          - host_data.ssh_host_keys.dropbear is defined
+
+  tasks:
+    # TODO: replace this temporary ssh configuration with playbook for permanent config
+    - name: "Create tmpdir on localhost for ssh configuration"
+      ansible.builtin.tempfile:
+        state: directory
+      delegate_to: localhost
+      register: __tmpdir_ssh
+
+    - name: "Create temporary ssh configuration"
+      ansible.builtin.template:
+        src: "./templates/ssh_{{ item }}.j2"
+        dest: "{{ __tmpdir_ssh.path }}/{{ item }}"
+        mode: "0644"
+      with_items:
+        - config
+        - known_hosts
+      delegate_to: localhost
+
+    - name: "Check if remote host is reachable via ssh"
+      ansible.builtin.wait_for:
+        host: "{{ host_data.global_ipv4 }}"
+        port: 2222
+        state: started
+        delay: 0
+        timeout: 3
+      delegate_to: localhost
+      failed_when: false
+
+    - name: "Decrypt remote host" # noqa risky-shell-pipe (printf will not fail)
+      ansible.builtin.shell:
+        cmd: "printf '%s' {{ host_data.luks_passphrase }} | ssh -T -F {{ __tmpdir_ssh.path }}/config {{ inventory_hostname }} -o UserKnownHostsFile={{ __tmpdir_ssh.path }}/known_hosts"
+      delegate_to: localhost
+      delay: 10
+      retries: 15
+      register: __remote_unlock
+      # 'cryptsetup failed' indicates that the password is incorrect -> stop the loop
+      until: __remote_unlock.stderr.find("cryptsetup failed") or __remote_unlock.stderr.find("set up successfully")
+      failed_when:
+        - '"cryptsetup failed" in __remote_unlock.stderr'
+      changed_when:
+        - '"set up successfully" in __remote_unlock.stderr'
+
+    - name: "Remove temporary ssh config"
+      ansible.builtin.file:
+        path: "{{ __tmpdir_ssh.path }}"
+        state: absent
+      delegate_to: localhost

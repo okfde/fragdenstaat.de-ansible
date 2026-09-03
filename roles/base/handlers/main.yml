@@ -23,3 +23,11 @@
     update_cache: true
   retries: 3
   delay: 10
+
+- name: update initramfs
+  ansible.builtin.command: update-initramfs -u
+  changed_when: true
+
+- name: dpkg-reconfigure dropbear-initramfs
+  ansible.builtin.command: dpkg-reconfigure dropbear-initramfs
+  changed_when: true
