@@ -1,0 +1,4 @@
+{% set pairs =  host_data.ssh_host_keys.dropbear | dict2items(key_name='algo', value_name='pubkey') %}
+{% for item in pairs  %}
+[{{ host_data.global_ipv4 }}]:2222 {{ item.algo }} {{ item.pubkey }}
+{% endfor %}
