@@ -6,6 +6,8 @@ host_data:
   mac: 9c:6b:00:1f:ab:7b
   global_ipv4: 5.9.108.236
   global_ipv6: 2a01:4f8:162:44c7::2
+  luks_passphrase: "{{ secret_luks_passphrase }}"
+  ssh_host_keys: "{{ secret_ssh_host_keys }}"
 # site_ipv4:
 # wg_publickey:
 # vpn_peer_id:
