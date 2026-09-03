@@ -212,3 +212,36 @@ db_reporting_views:
         user_id,
         subscriber_id
       FROM fds_mailing_mailingmessage
+
+  - name: lawsuits
+    query: |
+      SELECT
+        id,
+        title,
+        description,
+        last_update,
+        costs,
+        costs_covered,
+        links,
+        plaintiff,
+        active,
+        result,
+        publicbody_id,
+        request_id,
+        cost_detail,
+        reference,
+        plaintiff_user_id,
+        public
+      FROM froide_legalaction_lawsuit
+
+  - name: lawsuit_instances
+    query: |
+      SELECT
+        id,
+        court_type,
+        start_date,
+        end_date,
+        court_id,
+        lawsuit_id,
+        result
+      FROM froide_legalaction_instance
