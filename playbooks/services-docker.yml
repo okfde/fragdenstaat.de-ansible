@@ -1,7 +1,7 @@
 ---
 
 - name: Deploy docker compose instances
-  hosts: auxiliary
+  hosts: docker
   become: true
   become_user: root
 
@@ -23,6 +23,7 @@
         name: certbot
 
   roles:
+    # Auxiliary
     - role: nocodb
       tags: nocodb
       when: inventory_hostname in groups["auxiliary"]
@@ -44,6 +45,7 @@
     - role: snipeit
       tags: snipeit
       when: inventory_hostname in groups["auxiliary"]
+    # Monitor
     - role: sentry
       tags: sentry
       when: inventory_hostname in groups["monitor"]
