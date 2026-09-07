@@ -1,0 +1,13 @@
+---
+
+- name: Icinga
+  hosts: icinga
+  become: true
+  become_user: root
+
+  roles:
+    - role: certbot
+      tags: certbot
+      when: https_domains is defined
+    - role: icinga
+      tags: icinga
