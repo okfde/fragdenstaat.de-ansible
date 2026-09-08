@@ -2,7 +2,7 @@
  * The ApiUser objects are used for authentication against the API.
  */
 object ApiUser "root" {
-  password = "{{ apiuser_password }}"
+  password = "{{ icinga2_apiuser_password }}"
   // client_cn = ""
 
   permissions = [ "*" ]

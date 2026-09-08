@@ -1,0 +1,4 @@
+---
+
+nginx_pixel_domain: "pixel.fragdenstaat.de"
+nginx_pixel_log_file: "{{ application_log_dir }}/pixel.log"

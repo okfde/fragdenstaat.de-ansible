@@ -14,6 +14,7 @@ host_data:
 prometheus_exporter:
   - node_exporter
 
+backup_repo: "{{ secret_backup_repo }}"
 borg:
   locations: /var/www/ /opt/discourse_docker/shared/standalone/backups/default/
   keepdaily: 7

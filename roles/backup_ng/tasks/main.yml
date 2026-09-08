@@ -22,25 +22,25 @@
   ansible.builtin.blockinfile:
     path: /root/.ssh/config
     block: |
-      Host {{ backup_repo[inventory_hostname]['host'] }}
-      HostName {{ backup_repo[inventory_hostname]['host'] }}
-      User {{ backup_repo[inventory_hostname]['user'] }}
+      Host {{ backup_repo['host'] }}
+      HostName {{ backup_repo['host'] }}
+      User {{ backup_repo['user'] }}
       IdentityFile /root/.ssh/id_storagebox
-      Port {{ backup_repo[inventory_hostname]['port'] }}
+      Port {{ backup_repo['port'] }}
     mode: "0640"
     create: true
   become: true
 
 - name: Copy ssh-key
   ansible.builtin.command:
-    cmd: sshpass -p {{ backup_repo[inventory_hostname]['password'] }} ssh-copy-id -o StrictHostKeyChecking=no -p {{ backup_repo[inventory_hostname]['port'] }} -s {{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}
+    cmd: sshpass -p {{ backup_repo['password'] }} ssh-copy-id -o StrictHostKeyChecking=no -p {{ backup_repo['port'] }} -s {{ backup_repo['user'] }}@{{ backup_repo['host'] }}
   changed_when: false
   become: true
   when: ansible_distribution_version >= "22.04"
 
 - name: Initialize borg repo
   ansible.builtin.shell:
-    cmd: "BORG_PASSPHRASE={{ backup_repo[inventory_hostname].repokey }} /usr/bin/borg init ssh://{{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }}:{{ backup_repo[inventory_hostname]['port'] }}/./{{ backup_repo[inventory_hostname]['path'] }}/ -e repokey --make-parent-dirs"
+    cmd: "BORG_PASSPHRASE={{ backup_repo.repokey }} /usr/bin/borg init ssh://{{ backup_repo['user'] }}@{{ backup_repo['host'] }}:{{ backup_repo['port'] }}/./{{ backup_repo['path'] }}/ -e repokey --make-parent-dirs"
     creates: /root/borg.sh
   become: true
   when: "borg is defined"
@@ -111,7 +111,7 @@
 
 - name: Initialize restic repo
   ansible.builtin.command:
-    cmd: "/usr/bin/restic init -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd"
+    cmd: "/usr/bin/restic init -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd"
     creates: /root/restic.sh
   become: true
   when: "restic is defined"

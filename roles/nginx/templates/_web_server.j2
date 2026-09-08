@@ -39,17 +39,17 @@ if ($badagent) {
     return 444;
 }
 
-{% if temp_redirect_paths is defined %}
-    {% for redirect_path in temp_redirect_paths %}
-        location ~* {{ redirect_path.from }}([^\s]*)$ {
+{% if nginx_web_temp_redirect_paths is defined %}
+    {% for temp_redirect_path in nginx_web_temp_redirect_paths %}
+        location ~* {{ temp_redirect_path.from }}([^\s]*)$ {
           {{ add_web_headers() }}
-          return 302 {{ redirect_path.path }}$1$is_args$args;
+          return 302 {{ temp_redirect_path.path }}$1$is_args$args;
         }
     {% endfor %}
 {% endif %}
 
-{% if redirect_paths is defined %}
-    {% for redirect_path in redirect_paths %}
+{% if nginx_web_redirect_paths is defined %}
+    {% for redirect_path in nginx_web_redirect_paths %}
         location ~ {{ redirect_path.from }}([^\s]*)$ {
           {{ add_web_headers() }}
           return 301 {{ redirect_path.path }}$1$is_args$args;
@@ -57,7 +57,7 @@ if ($badagent) {
     {% endfor %}
 {% endif %}
 
-{% for simple_file in simple_files %}
+{% for simple_file in nginx_simple_files %}
     {% if simple_file.path is defined %}
         location = {{ simple_file.path }} {
             {{ add_web_headers() }}
@@ -93,7 +93,7 @@ location /static/ {
     }
 {% endfor %}
 
-{% for item in rate_limited_urls %}
+{% for item in nginx_web_rate_limited_urls %}
     location {{ item.url }} {
         limit_req zone={{ item.zone }} burst=5 nodelay;
         {% if item.auth %}{{ basic_auth(item.auth) }}{% endif %}
@@ -103,7 +103,7 @@ location /static/ {
     }
 {% endfor %}
 
-{% for url_realm in protected_urls %}
+{% for url_realm in nginx_web_protected_urls %}
     location {{ url_realm.url }} {
         {% if url_realm.realm is defined %}
             {{ basic_auth(url_realm.realm) }}
@@ -126,7 +126,7 @@ location /static/ {
     }
 {% endfor %}
 
-{% for url_origins in cors_exceptions %}
+{% for url_origins in nginx_web_cors_exceptions %}
     location {{ url_origins.url }} {
         {% set default_headers = add_web_headers() %}
         {{ default_headers }}

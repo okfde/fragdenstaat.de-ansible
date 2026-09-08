@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export BORG_REPO="ssh://{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:{{ backup_repo[inventory_hostname].port }}/./{{ backup_repo[inventory_hostname].path }}"
-export BORG_PASSPHRASE="{{ backup_repo[inventory_hostname].repokey }}"
+export BORG_REPO="ssh://{{ backup_repo.user }}@{{ backup_repo.host }}:{{ backup_repo.port }}/./{{ backup_repo.path }}"
+export BORG_PASSPHRASE="{{ backup_repo.repokey }}"
 
 mkdir -p /mnt/borg/
 

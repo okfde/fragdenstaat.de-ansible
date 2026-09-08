@@ -45,8 +45,8 @@ location = /error_451.html {
     root {{ nginx_static_html_dir }}/static_html/;
 }
 
-{% if media_legal_paths is defined %}
-    {% for legal_info in media_legal_paths %}
+{% if nginx_media_legal_paths is defined %}
+    {% for legal_info in nginx_media_legal_paths %}
         location ~ {{ legal_info.path }}(.*)$ {
             {{ add_media_headers() }}
             return 451;
@@ -54,8 +54,8 @@ location = /error_451.html {
     {% endfor %}
 {% endif %}
 
-{% if media_redirect_paths is defined %}
-    {% for redirect_path in media_redirect_paths %}
+{% if nginx_media_redirect_paths is defined %}
+    {% for redirect_path in nginx_media_redirect_paths %}
         location ~ {{ redirect_path.from }}([^\s]*)$ {
             {{ add_media_headers() }}
             return 301 {{ redirect_path.path }}$1$is_args$args;
@@ -109,7 +109,7 @@ location = /error_451.html {
         {{ default_headers }}
         {{ cors(static_server_url, repeat_headers=default_headers) }}
         {{ cors(web_server_url, repeat_headers=default_headers) }}
-        {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
+        {% for valid_ref in nginx_valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
 
         alias   {{ nginx_media_dir }}{{ loc.url }};
     }
