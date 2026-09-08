@@ -1,0 +1,63 @@
+---
+
+fds_default_from_email: "FragDenStaat.de <info@fragdenstaat.de>"
+fds_server_email: "info@fragdenstaat.de"
+fds_site_email: "info@fragdenstaat.de"
+
+django_secret_key: "{{ secret_django_secret_key }}"
+django_secret_url_admin: "{{ secret_django_secret_url_admin }}"
+
+django_sentry_dsn: "{{ secret_django_sentry_dsn }}"
+django_sentry_public_dsn: "{{ secret_django_sentry_public_dsn }}"
+sentry_auth_token: "{{ secret_sentry_auth_token }}"
+sentry_url: "{{ secret_sentry_url }}"
+sentry_org: "{{ secret_sentry_org }}"
+sentry_project: "{{ secret_sentry_project }}"
+sentry_webhook_url: "{{ secret_sentry_webhook_url }}" # TODO: dead code?
+
+froide_evidencecollection_nocodb_api_url: "https://nocodb.frag-den-staat.de/api/v2"
+froide_evidencecollection_nocodb_api_token: "{{ secret_froide_evidencecollection_nocodb_api_token }}"
+froide_evidencecollection_nocodb_table_actor: "{{ secret_froide_evidencecollection_nocodb_table_actor }}"
+froide_evidencecollection_nocodb_table_affiliation: "{{ secret_froide_evidencecollection_nocodb_table_affiliation }}"
+froide_evidencecollection_nocodb_table_evidence: "{{ secret_froide_evidencecollection_nocodb_table_evidence }}"
+froide_evidencecollection_nocodb_table_role: "{{ secret_froide_evidencecollection_nocodb_table_role }}"
+froide_evidencecollection_nocodb_view_actor_organization: "{{ secret_froide_evidencecollection_nocodb_view_actor_organization }}"
+froide_evidencecollection_nocodb_view_actor_person: "{{ secret_froide_evidencecollection_nocodb_view_actor_person }}"
+
+froide_pressconference_cvd_credentials: "{{ secret_froide_pressconference_cvd_credentials }}"
+
+stripe_public_key: "{{ secret_stripe_public_key }}"
+stripe_private_key: "{{ secret_stripe_private_key }}"
+stripe_webhook_cc_signing_key: "{{ secret_stripe_webhook_cc_signing_key }}"
+stripe_webhook_sepa_signing_key: "{{ secret_stripe_webhook_sepa_signing_key }}"
+stripe_webhook_sofort_signing_key: "{{ secret_stripe_webhook_sofort_signing_key }}"
+
+paypal_api_url: "https://api.paypal.com"
+paypal_client_id: "{{ secret_paypal_client_id }}"
+paypal_client_secret: "{{ secret_paypal_client_secret }}"
+paypal_webhook_id: "{{ secret_paypal_webhook_id }}"
+
+telnyx_app_id: "{{ secret_telnyx_app_id }}"
+telnyx_api_key: "{{ secret_telnyx_api_key }}"
+telnyx_public_key: "{{ secret_telnyx_public_key }}"
+telnyx_from_number: "{{ secret_telnyx_from_number }}"
+
+paperless_api_url: "https://paperless.okfn.de/api"
+paperless_api_token: "{{ secret_paperless_api_token }}"
+paperless_uploaded_type: "{{ secret_paperless_uploaded_type }}"
+paperless_request_field: "{{ secret_paperless_request_field }}"
+
+donation_backup_url: "{{ secret_donation_backup_url }}"
+donation_backup_credentials: "{{ secret_donation_backup_credentials }}"
+
+fds_legal_backup_credentials: "{{ secret_fds_legal_backup_credentials }}"
+fds_legal_backup_url: "{{ secret_fds_legal_backup_url }}"
+
+yelp_api_key: "{{ secret_yelp_api_key }}"
+foursquare_api_key: "{{ secret_foursquare_api_key }}"
+mapbox_api_key: "{{ secret_mapbox_api_key }}"
+google_places_api_key: "{{ secret_google_places_api_key }}"
+here_geocode_api_key: "{{ secret_here_geocode_api_key }}"
+
+slack_webhook_url: "{{ secret_slack_webhook_url }}"
+matomo_api_url: "{{ secret_matomo_api_url }}"

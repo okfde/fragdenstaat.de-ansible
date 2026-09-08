@@ -186,8 +186,10 @@
     mode: "0550"
     owner: www-data
     group: www-data
-  with_items: "{{ simple_files }}"
-  when: inventory_hostname in groups['web'] and not "nocopy" in item
+  with_items: "{{ nginx_simple_files }}"
+  when:
+    - inventory_hostname in groups['web']
+    - not "nocopy" in item
   tags:
     - nginx
 

@@ -37,7 +37,7 @@ map $http_sec_fetch_dest $contentdisposition {
 
 map $http_referer $bad_referrer {
     default                  0;
-    {% for domain in bad_referrers %}
+    {% for domain in nginx_bad_referrers %}
     "~{{ domain.domain }}"          "https://{{ static_server_name }}/nope?url={{ domain.url|urlencode() }}";
     {% endfor %}
 }

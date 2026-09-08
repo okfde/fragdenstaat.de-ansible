@@ -14,9 +14,9 @@
 
 # icinga2_ticket_salt: salt
 
-# apiuser_password: password
+# icinga2_apiuser_password: password
 
-# icingausers:
+# icinga2_users:
 #   username:
 #     pushover_api_token: apitoken
 #     pushover_user_key: userkey

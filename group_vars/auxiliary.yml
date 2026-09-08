@@ -1,9 +1,0 @@
-https_domains:
-  - ["ogimage.frag-den-staat.de"]
-  - ["weblate.frag-den-staat.de"]
-  - ["metabase.frag-den-staat.de"]
-  - ["forum.okfn.de", "forum.fragdenstaat.de"]
-  - ["nocodb.frag-den-staat.de"]
-  - ["support.frag-den-staat.de"]
-  - ["webmail.frag-den-staat.de"]
-  - ["inventar.frag-den-staat.de"]

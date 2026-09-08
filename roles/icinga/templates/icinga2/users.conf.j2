@@ -4,21 +4,21 @@ object User "icingaadmin" {
   display_name = "Icinga 2 Admin"
   groups = [ "icingaadmins" ]
 
-  email = "{{ icingaadmin_email }}"
+  email = "{{ icinga2_admin_email }}"
 }
 
 object UserGroup "icingaadmins" {
   display_name = "Icinga 2 Admin Group"
 }
 
-{% for user in icingausers %}
+{% for user in icinga2_users %}
 object User "{{ user }}" {
   import "generic-user"
 
   display_name = "{{ user }}"
 
-  email = "{{ icingausers[user].email }}"
-  vars.pushover_user_key = "{{ icingausers[user].pushover_user_key }}"
-  vars.pushover_api_token = "{{ icingausers[user].pushover_api_token }}"
+  email = "{{ icinga2_users[user].email }}"
+  vars.pushover_user_key = "{{ icinga2_users[user].pushover_user_key }}"
+  vars.pushover_api_token = "{{ icinga2_users[user].pushover_api_token }}"
 }
 {% endfor %}

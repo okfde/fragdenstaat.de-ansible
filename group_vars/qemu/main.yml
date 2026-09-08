@@ -1,0 +1,3 @@
+---
+
+qemu_vm_root_password: "{{ secret_qemu_vm_root_password }}"

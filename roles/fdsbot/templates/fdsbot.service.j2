@@ -7,7 +7,7 @@ WorkingDirectory={{ fdsbot_dir }}
 ExecStart=pnpm run start
 Restart=always
 Environment="ALLOWED_USERS={{ fdsbot_slack_users }}"
-Environment="SUPER_USERS={{ fdsbot_super_users }}"
+Environment="SUPER_USERS={{ fdsbot_slack_super_users }}"
 Environment="SLACK_ROOM_PROD={{ fdsbot_slack_room_prod }}"
 Environment="SLACK_ROOM_TEST={{ fdsbot_slack_room_test }}"
 Environment="GITHUB_CHECK_REPOS={{ fdsbot_check_repos }}"

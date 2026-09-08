@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "df" | sftp -q {{ backup_repo[inventory_hostname]['user'] }}@{{ backup_repo[inventory_hostname]['host'] }} | grep -v "Size" | grep -v "sftp" | awk '{print "storagebox_size "$1"\nstoragebox_used "$2"\nstoragebox_avail "$3}' > /var/lib/prometheus/node-exporter/storagebox.prom
+echo "df" | sftp -q {{ backup_repo['user'] }}@{{ backup_repo['host'] }} | grep -v "Size" | grep -v "sftp" | awk '{print "storagebox_size "$1"\nstoragebox_used "$2"\nstoragebox_avail "$3}' > /var/lib/prometheus/node-exporter/storagebox.prom
 
 {% if "borg" in hostvars[inventory_hostname] %}
 echo "storagebox_keepdaily{locations=\"{{ borg.locations }}\"} {{ borg.keepdaily }}" >> /var/lib/prometheus/node-exporter/storagebox.prom

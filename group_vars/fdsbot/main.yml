@@ -1,0 +1,12 @@
+---
+fdsbot_check_repos: "okfde/froide,okfde/fragdenstaat_de,okfde/django-filingcabinet"
+fdsbot_ignore_checks: "Dependabot,update-uv-graph,dump"
+fdsbot_octokit_token: "{{ secret_fdsbot_octokit_token }}"
+fdsbot_sentry_dsn: "{{ secret_fdsbot_sentry_dsn }}"
+fdsbot_slack_app_token: "{{ secret_fdsbot_slack_app_token }}"
+fdsbot_slack_bot_token: "{{ secret_fdsbot_slack_bot_token }}"
+fdsbot_slack_room_prod: "{{ secret_fdsbot_slack_room_prod }}"
+fdsbot_slack_room_test: "{{ secret_fdsbot_slack_room_test }}"
+fdsbot_slack_signing_secret: "{{ secret_fdsbot_slack_signing_secret }}"
+fdsbot_slack_super_users: "{{ secret_fdsbot_slack_super_users }}"
+fdsbot_slack_users: "{{ secret_fdsbot_slack_users }}"
