@@ -8,8 +8,8 @@ SETCOLOR_SUCCESS="echo -en \\033[1;32m"
 SETCOLOR_FAILURE="echo -en \\033[1;31m"
 SETCOLOR_NORMAL="echo -en \\033[0;39m"
 
-export BORG_REPO="ssh://{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:{{ backup_repo[inventory_hostname].port }}/./{{ backup_repo[inventory_hostname].path }}"
-export BORG_PASSPHRASE="{{ backup_repo[inventory_hostname].repokey }}"
+export BORG_REPO="ssh://{{ backup_repo.user }}@{{ backup_repo.host }}:{{ backup_repo.port }}/./{{ backup_repo.path }}"
+export BORG_PASSPHRASE="{{ backup_repo.repokey }}"
 
 TIME_TOTAL=0
 
@@ -295,7 +295,7 @@ else
     echo "" > /var/lib/prometheus/node-exporter/borg.prom
 fi
 
-echo "df" | sftp -q {{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }} | grep -v "Size" | grep -v "sftp" | awk '{print "borg_storagebox_size{hostname=\"'$(hostname)'\"} "$1"\nborg_storagebox_used{hostname=\"'$(hostname)'\"} "$2"\nborg_storagebox_avail{hostname=\"'$(hostname)'\"} "$3}' >> /var/lib/prometheus/node-exporter/borg.prom
+echo "df" | sftp -q {{ backup_repo.user }}@{{ backup_repo.host }} | grep -v "Size" | grep -v "sftp" | awk '{print "borg_storagebox_size{hostname=\"'$(hostname)'\"} "$1"\nborg_storagebox_used{hostname=\"'$(hostname)'\"} "$2"\nborg_storagebox_avail{hostname=\"'$(hostname)'\"} "$3}' >> /var/lib/prometheus/node-exporter/borg.prom
 
 echo "borg_total_chunks{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_chunks}" >> /var/lib/prometheus/node-exporter/borg.prom
 echo "borg_total_csize{hostname=\"${hostname}\",repository_id=${repository_id}} ${total_csize}" >> /var/lib/prometheus/node-exporter/borg.prom

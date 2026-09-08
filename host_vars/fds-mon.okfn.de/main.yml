@@ -26,6 +26,7 @@ https_domains:
 monitor_server_name: "mon.zerschlagdenstaat.de"
 logserver_server_name: "log.zerschlagdenstaat.de"
 
+backup_repo: "{{ secret_backup_repo }}"
 borg:
   snapshots:
     - name: container
@@ -98,7 +99,7 @@ icinga:
     - tor_onion_target["tor - onion_static_server"] = { onion = "static.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad" }
 
     - graylog_api_url = "http://localhost:9010/api/cluster/"
-    - graylog_api_token = "{{ icinga_graylog_api_token }}"
+    - graylog_api_token = "{{ secret_icinga_graylog_api_token }}"
 
 dockerupdate:
   graylog:
