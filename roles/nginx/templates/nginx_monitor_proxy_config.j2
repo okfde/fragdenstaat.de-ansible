@@ -60,7 +60,7 @@ server {
     {% endwith %}
 
     location / {
-        {% for i in logserver_access %}
+        {% for i in nginx_monitor_logserver_access %}
         allow {{ i }};
         {% endfor %}
         deny all;

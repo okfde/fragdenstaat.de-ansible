@@ -17,6 +17,7 @@ prometheus_exporter:
   - postfix_exporter
   - celery_exporter
 
+backup_repo: "{{ secret_backup_repo }}"
 borg:
   locations: /var/vmail/ /var/www/fragdenstaat.de/backup/
   keepdaily: 7

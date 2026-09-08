@@ -26,10 +26,8 @@ discourse:
   plugins:
     - git clone https://github.com/discourse/abbreviation-discourse-plugin.git
 
-# in secrets.yml
-discourse_mail:
-  developer_mail: 'discourse@example.org'
-  smtp_address: smtp.example.org
-  smtp_port: 587
-  smtp_user: noreply@example.org
-  smtp_pass: ""
+discourse_mail_developer_mail: 'discourse@example.org'
+discourse_mail_smtp_address: smtp.example.org
+discourse_mail_smtp_port: 587
+discourse_mail_smtp_user: noreply@example.org
+discourse_mail_smtp_pass: ""

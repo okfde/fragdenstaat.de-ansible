@@ -24,7 +24,7 @@
     owner: www-data
     group: www-data
     mode: "0550"
-  with_items: "{{ htpasswd }}"
+  with_items: "{{ nginx_htpasswd }}"
   notify: reload nginx
   tags:
     - nginx
