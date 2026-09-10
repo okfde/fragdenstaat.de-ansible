@@ -140,7 +140,7 @@ next
 {% endif %}
 
 step "Remove stale locks"
-  try /usr/bin/restic unlock -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+  try /usr/bin/restic unlock -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd
 next
 
 {% if 'prescripts' in restic %}
@@ -152,7 +152,7 @@ next
 {% endif %}
 
 step "Create backup"
-  try /usr/bin/restic backup {{ restic.locations }} --limit-upload 62500 -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd --exclude-file /root/restic.exclude
+  try /usr/bin/restic backup {{ restic.locations }} --limit-upload 62500 -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd --exclude-file /root/restic.exclude
 next
 
 {% if 'snapshots' in restic %}
@@ -175,12 +175,12 @@ next
 {% endif %}
 
 step "Remove old snapshots"
-  try /usr/bin/restic forget --keep-daily {{ restic.keepdaily }} -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+  try /usr/bin/restic forget --keep-daily {{ restic.keepdaily }} -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd
 next
 
 if (( $(date +"%d") == 15)); then
   step "Prune backup generations"
-    try /usr/bin/restic prune -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+    try /usr/bin/restic prune -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd
   next
 fi
 
@@ -188,16 +188,16 @@ if (( $(date +"%d") == 1)); then
   step "Backup Check (verify)"
     export TMPDIR="/var/tmp/restic"
     mkdir -p "/var/tmp/restic"
-    try /usr/bin/restic check --read-data -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+    try /usr/bin/restic check --read-data -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd
   next
 else
   step "Backup Check (quick)"
-    try /usr/bin/restic check -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+    try /usr/bin/restic check -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd
   next
 fi
 
 step "Backup stats"
-  try /usr/bin/restic stats -r sftp:{{ backup_repo[inventory_hostname].user }}@{{ backup_repo[inventory_hostname].host }}:./{{ backup_repo[inventory_hostname].path }}/ --password-file /root/restic.passwd
+  try /usr/bin/restic stats -r sftp:{{ backup_repo.user }}@{{ backup_repo.host }}:./{{ backup_repo.path }}/ --password-file /root/restic.passwd
 next
 
 curl -s -POST http://192.168.100.5:12201/gelf -p0 -d '{"host":"{{ inventory_hostname }}","facility":"restic","message":"Backup end","status":"OK"}'

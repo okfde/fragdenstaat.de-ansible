@@ -25,8 +25,8 @@ upstream {{ application_name }}_asgi_server {
 proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60m;
 
 ### redirect_domains start
-{% if redirect_domains is defined %}
-  {% for redirect_domain in redirect_domains %}
+{% if nginx_web_redirect_domains is defined %}
+  {% for redirect_domain in nginx_web_redirect_domains %}
     server {
         listen 80;
         listen [::]:80;

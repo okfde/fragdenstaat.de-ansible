@@ -1,0 +1,28 @@
+---
+
+sentry_mail_from: "noreply@fragdenstaat.de"
+sentry_mail_host: "mail.fragdenstaat.de"
+sentry_mail_password: "{{ secret_sentry_mail_password }}"
+sentry_mail_port: 587
+sentry_mail_username: "noreply@fragdenstaat.de"
+sentry_github_app_id: "{{ secret_sentry_github_app_id }}"
+sentry_github_app_name: "{{ secret_sentry_github_app_name }}"
+sentry_github_app_webhook_secret: "{{ secret_sentry_github_app_webhook_secret }}"
+sentry_github_app_client_id: "{{ secret_sentry_github_app_client_id }}"
+sentry_github_app_client_secret: "{{ secret_sentry_github_app_client_secret }}"
+sentry_github_app_private_key: "{{ secret_sentry_github_app_private_key }}"
+sentry_slack_client_id: "{{ secret_sentry_slack_client_id }}"
+sentry_slack_client_secret: "{{ secret_sentry_slack_client_secret }}"
+sentry_slack_signing_secret: "{{ secret_sentry_slack_signing_secret }}"
+
+# Graylog
+opensearch_init_password: "{{ secret_opensearch_init_password }}"
+secret_graylog_password_secret: "{{ secret_graylog_password_secret }}"
+secret_graylog_root_password_sha256: "{{ secret_graylog_root_password_sha256 }}"
+secret_graylog_root_password: "{{ secret_graylog_root_password }}"
+
+nginx_monitor_logserver_access: "{{ secret_nginx_monitor_logserver_access }}"
+
+# Grafana
+grafana_admin_password: "{{ secret_grafana_admin_password }}"
+grafana_admin_user: "{{ secret_grafana_admin_user }}"

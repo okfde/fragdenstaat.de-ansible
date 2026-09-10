@@ -1,0 +1,289 @@
+---
+git_repo: https://github.com/okfde/fragdenstaat_de.git
+
+base_ssh_port: "2228"
+base_ssh_users: "{{ secret_base_ssh_users }}"
+
+network_vlan:
+  id: 4000
+
+# Declare the VPN subnet
+vpn_network: "10.9.0."
+vpn_network_subnet: "10.9.0.0/24"
+vpn_networkv6: "fc00::"
+vpn_networkv6_subnet: "fc00::0/120"
+
+maintenance: false
+maintenance_media: false
+maintenance_admin_ip: false
+update_apt_cache: true
+
+hostname: "{{ inventory_hostname }}"
+project_name: fragdenstaat.de
+application_name: fragdenstaat_de
+mail_domain: mail.fragdenstaat.de
+domain_name: fragdenstaat.de
+web_server_name: fragdenstaat.de
+web_server_url: "https://{{ web_server_name }}"
+wsweb_server_url: "wss://{{ web_server_name }}"
+media_server_name: media.frag-den-staat.de
+media_server_url: "https://{{ media_server_name }}"
+static_server_name: static.frag-den-staat.de
+static_server_url: "https://{{ static_server_name }}"
+static_asset_path: "{{ static_server_url }}/static/"
+
+foi_mail_server_host: "mail.fragdenstaat.de"
+foi_mail_domain: '"fragdenstaat.de","echtemail.de"'
+site_url: "https://fragdenstaat.de"
+media_url: "https://media.frag-den-staat.de/files/"
+static_url: "https://static.frag-den-staat.de/static/"
+allowed_hosts: '"fragdenstaat.de","media.frag-den-staat.de","testserver"'
+payment_host: "fragdenstaat.de"
+
+external_media_storage: true
+external_media_storage_src: "/home/storage-box/home"
+external_media_storage_target: "/mnt/schoch"
+external_media_storage_unitname: "mnt-schoch"
+
+letsencrypt_enabled: true
+letsencrypt_registration_email: root@fragdenstaat.de
+letsencrypt_tmp_dir: /opt/letsencrypt/tmp
+letsencrypt_renew_hooks:
+  "mail.fragdenstaat.de": "systemctl reload nginx postfix dovecot"
+
+db_host: "127.0.0.1"
+db_name: "{{ application_name }}"
+db_user: "{{ application_name }}"
+db_password: "{{ secret_db_password }}"
+db_user_readonly: "{{ application_name }}_readonly"
+db_password_readonly: "{{ secret_db_password_readonly }}"
+db_reporting_schema: "reporting"
+db_user_reporting: "fds_report"
+db_password_replication: "{{ secret_db_password_replication }}"
+db_password_reporting: "{{ secret_db_password_reporting }}"
+
+collect_release_info: true
+
+# Gunicorn settings.
+gunicorn_num_workers: 10
+gunicorn_user: "{{ application_name }}"
+gunicorn_user_uid: 1001
+gunicorn_group: webapps
+gunicorn_group_gid: 998
+uvicorn_num_workers: 2
+gunicorn_cmssite_num_workers: 2
+
+onion_service_enabled: true
+gunicorn_onion_num_workers: 2
+uvicorn_onion_num_workers: 1
+onion_web_server: "fdstaat23zv6kdmntgkvdzkr7hipl5oqswwi3xawzkj2w2gwsbxmrwyd.onion"
+onion_web_server_url: "http://{{ onion_web_server }}"
+onion_wsweb_server_url: "ws://{{ onion_web_server }}"
+onion_media_server: "media.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad.onion"
+onion_static_server: "static.fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad.onion"
+onion_media_server_url: "http://{{ onion_media_server }}"
+onion_static_server_url: "http://{{ onion_static_server }}"
+onion_static_url: "http://{{ onion_static_server }}/static/"
+onion_media_url: "http://{{ onion_media_server }}/files/"
+onion_nginx_static_dir: "/var/www/fragdenstaat.de/public/onion/static/"
+onion_services:
+  onion_web:
+    hostname: "fdstaat23zv6kdmntgkvdzkr7hipl5oqswwi3xawzkj2w2gwsbxmrwyd.onion"
+    port: 80
+    internal_port: 8050
+  onion_static_media:
+    hostname: "fdscdncc46svip3qd3vtyrrw7435sdftp4wd3crarr3m6iwenitoryad.onion"
+    port: 80
+    internal_port: 8051
+
+# Temporary here
+virtualenv_path: "/var/www/fragdenstaat.de"
+project_path: "{{ virtualenv_path }}/{{ project_name }}"
+application_log_dir: "/var/www/fragdenstaat.de/logs"
+
+nginx_htpasswd: "{{ secret_nginx_htpasswd }}"
+webmail_htpasswd: "{{ secret_webmail_htpasswd }}"
+
+django_migrations_db_user: "django_migrations"
+django_migrations_db_password: "{{ secret_django_migrations_db_password }}"
+
+django_media_root: "/var/www/fragdenstaat.de/storage/files"
+django_static_root: "/var/www/fragdenstaat.de/public/static"
+
+django_settings_file: "{{ application_name }}.settings.production"
+django_configuration: "FragDenStaat"
+
+django_geoip_path: "/var/www/fragdenstaat.de/data"
+frontex_captcha_model_path: "/var/www/fragdenstaat.de/data/model.pth"
+
+release_repo: okfde/fragdenstaat_de
+
+celery_workers:
+  - name: celery
+    queues: "celery"
+    worker: 3
+  - name: mail
+    queues: "emailfetch,email"
+    worker: 1
+  - name: mailsend
+    queues: "emailsend"
+    worker: 2
+  - name: mailsend_bulk
+    queues: "emailsend_bulk"
+    worker: 6
+  - name: search
+    queues: "searchindex"
+    worker: 4
+  - name: celery_solo_1
+    queues: "redact,ocr"
+    worker: 1
+    type: slow
+  - name: celery_solo_2
+    queues: "redact,ocr,convert,convert_office,document"
+    worker: 1
+    type: slow
+  - name: celery_solo_3
+    queues: "redact,document"
+    worker: 2
+    type: slow
+
+# This needs tessdata/ for tesseract >= 4 starting Ubuntu 18.04
+tesseract_data_path: /usr/share/tesseract-ocr/5/tessdata/
+
+dovecot_passwdfile_scheme: "sha512-crypt"
+
+email_host: "mail.fragdenstaat.de"
+email_host_user: "{{ secret_email_host_user }}"
+email_host_password: "{{ secret_email_host_password }}"
+foi_email_host: "mail.fragdenstaat.de"
+foi_email_host_user: "foimail@fragdenstaat.de"
+foi_email_host_password: "{{ secret_foi_email_host_password }}"
+
+bounce_email_host: "mail.fragdenstaat.de"
+bounce_email_host_user: "{{ secret_bounce_email_host_user }}"
+bounce_email_host_password: "{{ secret_bounce_email_host_password }}"
+unsubscribe_email_host: "mail.fragdenstaat.de"
+unsubscribe_email_host_user: "{{ secret_unsubscribe_email_host_user }}"
+unsubscribe_email_host_password: "{{ secret_unsubscribe_email_host_password }}"
+
+postfix_reject_helo_list: "{{ secret_postfix_reject_helo_list }}"
+
+backup_ftp_url: "{{ secret_backup_ftp_url }}"
+backup_ftp_password: "{{ secret_backup_ftp_password }}"
+backup_gpg_password: "{{ secret_backup_gpg_password }}"
+backup_cron_email: "root@fragdenstaat.de"
+
+nginx_bad_referrers: "{{ secret_nginx_bad_referrers }}"
+
+nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
+nginx_media_dir: "/var/www/fragdenstaat.de/storage"
+nginx_private_media_path: "/var/www/fragdenstaat.de/storage/"
+
+nginx_assets_dir:
+  - url: "/assets/contractor/"
+    dir: "files/contractor/"
+
+nginx_public_media:
+  - url: "/files/legalaction/"
+  - url: "/files/media/"
+  - url: "/files/profile/"
+  - url: "/files/orglogo/"
+  - url: "/files/docs/"
+    force_download: true
+  - url: "/files/datashow/"
+    force_download: true
+  - url: "/files/campaign-logos/"
+  - url: "/files/froide_evidencecollection/"
+
+nginx_public_privileged_media:
+  - "/files/campaign/"
+
+nginx_private_media:
+  - url: "/protected"
+    dir: "files"
+    force_download: true
+  - url: "/private_main"
+    dir: "private/main"
+  - url: "/private_thumbnails"
+    dir: "private/thumbnails"
+  - url: "/filingcabinet-private"
+    dir: "files"
+
+nginx_private_media_prefix:
+  - url: "/files/foi/"
+  - url: "/files/docs-private/"
+  - url: "/files/export/"
+  - url: "/smedia"
+
+certbot_mode: "http-01"
+
+nginx_valid_referrers: "{{ secret_nginx_valid_referrers }}"
+
+nginx_simple_files: "{{ secret_nginx_simple_files }}"
+
+# CSP supports __wsweb__ __web__, __media__ and __static__ variable__s
+content_security_policy:
+  "default-src": "'none'"
+  "script-src": "'self' __static__ https://traffic.okfn.de https://js.stripe.com"
+  "style-src": "'self' 'unsafe-inline' __static__"
+  "img-src": "'self' data: blob: __static__ __media__ https://traffic.okfn.de *.tile.openstreetmap.org *.basemaps.cartocdn.com i.ytimg.com https://cdn.pretix.cloud"
+  "media-src": "__static__ __media__"
+  "worker-src": "'self' blob: __static__"
+  "frame-src": "'self' blob: __static__ __media__ https://www.youtube-nocookie.com https://media.ccc.de https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://datawrapper.dwcdn.net https://okfde.github.io"
+  "object-src": "'self' __media__"
+  "connect-src": "'self' __wsweb__ __static__ __media__ https://sentry.okfn.de https://api.stripe.com https://traffic.okfn.de"
+  "child-src": "'self' blob: __static__"
+  "base-uri": "'none'"
+  "font-src": "data: __static__"
+  "manifest-src": "__static__"
+  "form-action": "'self' __web__ https://forum.okfn.de https://www.paypal.com https://pretix.eu https://hooks.stripe.com https://stripe.com https://r.girogate.de"
+  "report-uri": "https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
+
+content_security_policy_overrides: "{{ secret_content_security_policy_overrides }}"
+
+static_content_security_policy:
+  - "default-src 'self' data: blob: __web__ __media__"
+  - "style-src 'self' data: 'unsafe-inline'"
+  - "connect-src 'self' __wsweb__ __web__ __media__"
+  - "frame-ancestors *"
+  - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
+
+media_content_security_policy:
+  - "default-src 'none'"
+  - "style-src 'unsafe-inline'"
+  - "object-src 'self'"
+  - "img-src 'self'"
+  - "connect-src 'self'"
+  - "media-src 'self'"
+  - "frame-ancestors *"
+  - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
+
+priviliged_media_content_security_policy:
+  - "default-src 'self' data: __static__"
+  - "script-src 'self' 'unsafe-inline' __static__ https://traffic.okfn.de"
+  - "style-src 'self' 'unsafe-inline' __static__"
+  - "img-src 'self' data: blob: __static__ https://traffic.okfn.de *.tile.openstreetmap.org *.basemaps.cartocdn.com"
+  - "worker-src 'self' blob: __static__"
+  - "frame-src 'self' blob: __static__ __web__ https://www.youtube-nocookie.com https://media.ccc.de"
+  - "object-src 'self' __web__"
+  - "connect-src 'self' __web__ __wsweb__"
+  - "child-src blob: __static__"
+  - "frame-ancestors *"
+  - "report-uri https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
+
+nginx_extra_domains:
+  - domain: mta-sts.fragdenstaat.de
+    files:
+      - path: "/.well-known/mta-sts.txt"
+        filename: mta-sts.txt
+
+matomo_site_id: "25"
+
+geoip_account_id: "{{ secret_geoip_account_id }}"
+geoip_license_key: "{{ secret_geoip_license_key }}"
+suspicious_asn_list: "{{ secret_suspicious_asn_list }}"
+
+graylog_server_api_token: "{{ secret_graylog_server_api_token }}"
+
+# Note: Obsolete? Not referenced in repo
+minio_admin_password: "{{ secret_minio_admin_password }}"

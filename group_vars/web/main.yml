@@ -1,0 +1,202 @@
+---
+https_domains:
+  - ["{{ web_server_name }}", "www.{{ web_server_name }}"]
+  - ["{{ static_server_name }}"]
+  - ["{{ mail_domain }}", "{{ domain_name }}"]
+  - ["app.fragdenstaat.de"]
+  - ["shop.fragdenstaat.de"]
+  - ["blog.fragdenstaat.de"]
+  - ["verklagdenstaat.de", "www.verklagdenstaat.de"]
+  - ["zerschlagdenstaat.de", "www.zerschlagdenstaat.de"]
+  - ["mta-sts.fragdenstaat.de"]
+  - ["pixel.fragdenstaat.de"]
+  - ["frag-den-staat.de", "www.frag-den-staat.de"]
+  - ["gegenrechtsschutz.de", "www.gegenrechtsschutz.de"]
+  - ["ueberbrueckungsfonds.de", "www.ueberbrueckungsfonds.de"]
+  - ["xn--ueberbrckungsfonds-s6b.de", "www.xn--ueberbrckungsfonds-s6b.de"]
+  - ["xn--berbrueckungsfonds-l6b.de", "www.xn--berbrueckungsfonds-l6b.de"]
+  - ["xn--berbrckungsfonds-izbf.de", "www.xn--berbrckungsfonds-izbf.de"]
+
+nginx_cache_urls:
+  - path: "/"
+  - path: "/artikel/feed/"
+  - path: "/artikel/exklusiv/2024/10/sachsenwald/"
+  - path: "/artikel/exklusiv/2025/02/beraterberichte/"
+  - path: "/kampagnen/verschlusssache-pruefung/"
+    with_params: true
+  - path: "/dokumente/258046-koalitionsvertrag-cdu-csu-spd-2025-entwurf/"
+  - path: "/artikel/exklusiv/2026/04/der-fall-stephan-maninger/"
+  - path: "/aktionen/afd-datenbank/"
+
+nginx_geo_blocked_countries:
+  - CN
+
+nginx_geo_blocked_asns:
+  - 132203   # Tencent
+
+nginx_web_protected_urls: "{{ secret_nginx_web_protected_urls }}"
+nginx_web_rate_limited_urls: "{{ secret_nginx_web_rate_limited_urls }}"
+
+nginx_web_temp_redirect_paths: "{{ secret_nginx_web_temp_redirect_paths }}"
+
+cms_sites:
+  - key: "grs"
+    name: "Gegenrechtsschutz"
+    domain: "gegenrechtsschutz.de"
+    site_id: 2
+    site_url: "https://gegenrechtsschutz.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+  - key: "ubf"
+    name: "Ubf"
+    domain: "ueberbrueckungsfonds.de"
+    site_id: 3
+    site_url: "https://ueberbrueckungsfonds.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+
+nginx_web_redirect_paths:
+  - from: "^/files/foi/30800/"
+    path: "/media-30800/"
+  - from: "^/de/"
+    path: "/"
+  - from: "^/r/"
+    path: "/a/"
+  - from: "/blog/feed/"
+    path: "/artikel/feed/"
+  - from: "^/des/?$"
+    path: "/dossier/desiderius-erasmus-stiftung/?pk_campaign=zdfmr"
+  - from: "^/polizeiprofessor/?$"
+    path: "/artikel/exklusiv/2026/04/der-fall-stephan-maninger/"
+  - from: "^/afd-datenbank/?"
+    path: "/aktionen/afd-datenbank/"
+
+nginx_web_cors_exceptions:
+  - url: "/api/v1/campaigninformationobject"
+    origins:
+      - "__static__"
+      - "__media__"
+      - "https://okfde.github.io"
+  - url: "/newsletter/update/wahlbrief-bw/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-by/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-be/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-bb/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-hb/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-hh/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-he/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-mv/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-ni/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-nw/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-rp/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-sl/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-sn/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-st/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-sh/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+  - url: "/newsletter/update/wahlbrief-th/subscribe-ajax/"
+    origins:
+      - "https://wahlbrief.de"
+
+nginx_web_redirect_domains:
+  - from: "blog.fragdenstaat.de"
+    domain: "fragdenstaat.de/blog"
+    https: true
+  - from: "shop.fragdenstaat.de"
+    domain: "fragdenstaat.de/shop"
+    https: true
+  - from: "app.fragdenstaat.de"
+    domain: "fragdenstaat.de/app/scanner/deep"
+    https: true
+    simple_files:
+      - path: "/.well-known/apple-app-site-association"
+        filename: apple-app-site-association
+        mimetype: "application/json"
+      - path: "/.well-known/assetlinks.json"
+        filename: assetlinks.json
+        mimetype: "application/json"
+  - from: "mail.fragdenstaat.de"
+    domain: "fragdenstaat.de"
+    https: true
+  - from: "media.frag-den-staat.de"
+    domain: "media.frag-den-staat.de"
+    https: false
+  - from: "static.frag-den-staat.de"
+    domain: "static.frag-den-staat.de"
+    https: false
+  - from: "verklagdenstaat.de"
+    domain: "fragdenstaat.de/klagen"
+    https: true
+  - from: "zerschlagdenstaat.de"
+    domain: "fragdenstaat.de"
+    https: true
+  - from: "frag-den-staat.de"
+    domain: "fragdenstaat.de"
+    https: true
+  - from: "www.frag-den-staat.de"
+    domain: "fragdenstaat.de"
+    https: true
+  - from: "www.gegenrechtsschutz.de"
+    domain: "gegenrechtsschutz.de"
+    https: true
+  - from: "xn--ueberbrckungsfonds-s6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--berbrueckungsfonds-l6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--berbrckungsfonds-izbf.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.xn--ueberbrckungsfonds-s6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.xn--berbrueckungsfonds-l6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.xn--berbrckungsfonds-izbf.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--ueberbrckungsfonds-s6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "xn--berbrueckungsfonds-l6b.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.ueberbrueckungsfonds.de"
+    domain: "ueberbrueckungsfonds.de"
+    https: true

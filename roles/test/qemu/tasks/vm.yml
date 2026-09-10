@@ -36,7 +36,7 @@
     cmd: |
       virt-customize -a "/var/lib/libvirt/images/{{ item.name }}.qcow2" \
         --hostname "{{ item.name }}" \
-        --root-password "password:{{ vm_root_password }}" \
+        --root-password "password:{{ qemu_vm_root_password }}" \
         --selinux-relabel --network \
         --copy-in "/opt/qemu/templates/50-cloud-init.yaml:/etc/netplan/" \
         --ssh-inject root:file:/opt/qemu/templates/id_fds.pub \

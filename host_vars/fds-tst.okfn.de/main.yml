@@ -11,6 +11,8 @@ host_data:
   vpn_peer_id: 210
   wg_publickey: "tMty2vJ+FtEfJ8j9GeeYrEAWCbYhj/R0ay0BtHOyayE="
 
+backup_repo: "{{ secret_backup_repo }}"
+
 monitor_server: fds-tst.okfn.de
 prometheus: false
 grafana: false
@@ -24,6 +26,7 @@ https_domains:
 # Required for wildcard cert
 certbot_mode: "dns-01"
 certbot_script: "/opt/certbot/bin/certbot"
+hetzner_dns_cloud_api_token: "{{ secret_hetzner_dns_cloud_api_token }}"
 
 icinga:
   ip_override: 192.168.100.10

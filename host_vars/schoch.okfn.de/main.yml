@@ -23,6 +23,7 @@ prometheus_exporter:
   - node_exporter
   - nginx_exporter
 
+backup_repo: "{{ secret_backup_repo }}"
 borg:
   locations: /home/storage-box/home
   keepdaily: 7

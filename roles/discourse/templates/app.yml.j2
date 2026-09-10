@@ -27,11 +27,11 @@ env:
 {% endfor %}
 
   DISCOURSE_HOSTNAME: {{ discourse_domain }}
-  DISCOURSE_DEVELOPER_EMAILS: '{{ discourse_mail.developer_mail }}'
-  DISCOURSE_SMTP_ADDRESS: {{ discourse_mail.smtp_address }}
-  DISCOURSE_SMTP_PORT: {{ discourse_mail.smtp_port }}
-  DISCOURSE_SMTP_USER_NAME: {{ discourse_mail.smtp_user }}
-  DISCOURSE_SMTP_PASSWORD: "{{ discourse_mail.smtp_pass }}"
+  DISCOURSE_DEVELOPER_EMAILS: '{{ discourse_mail_developer_mail }}'
+  DISCOURSE_SMTP_ADDRESS: {{ discourse_mail_smtp_address }}
+  DISCOURSE_SMTP_PORT: {{ discourse_mail_smtp_port }}
+  DISCOURSE_SMTP_USER_NAME: {{ discourse_mail_smtp_user }}
+  DISCOURSE_SMTP_PASSWORD: "{{ discourse_mail_smtp_pass }}"
 
 ## The Docker container is stateless; all data is stored in /shared
 volumes:
