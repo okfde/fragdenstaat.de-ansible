@@ -29,9 +29,6 @@ base_packages_install:
   - acl
   - bc
   - bind9-host
-  - build-essential
-  - gpg
-  - gpg-agent
   - man
   - ntpsec
   - ntpsec-ntpdate

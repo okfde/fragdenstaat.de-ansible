@@ -1,7 +1,28 @@
+# TODO: Replace with install_python_debian paramter once we are on ansible-core 2.20.x
+# See https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/deb822_repository_module.html#parameter-install_python_debian
+- name: Make sure that python3-debian module is installed
+  ansible.builtin.apt:
+    name: python3-debian
+    install_recommends: false
+  retries: 3
+  delay: 10
+  register: _python3_debian
+
 - name: Enable deb-src
-  ansible.builtin.apt_repository:
-    repo: "deb-src http://de.archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} main restricted"
-    state: present
+  ansible.builtin.deb822_repository:
+    name: hetzner-mirror-src-only
+    types: deb-src
+    trusted: true
+    uris: http://mirror.hetzner.com/ubuntu/packages
+    suites:
+      - "{{ ansible_distribution_release) }}"
+    components:
+      - main
+      - restricted
+    architectures: amd64
+    signed_by: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+  register: _deb822_repository
+  ignore_errors: "{{ ansible_check_mode and _python3_debian.changed }}"
 
 - name: Install the imagemagick
   ansible.builtin.apt:

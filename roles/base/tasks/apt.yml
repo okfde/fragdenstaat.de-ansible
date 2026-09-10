@@ -13,6 +13,7 @@
         install_recommends: false
       retries: 3
       delay: 10
+      register: _python3_debian
 
     # Allows to override distribution release version with '-e ansible_distribition_release_override',
     # should only ever be needed for dist upgrades, which still needs some manual work.
@@ -35,6 +36,8 @@
           - multiverse
         architectures: amd64
         signed_by: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+      register: _deb822_repository
+      ignore_errors: "{{ ansible_check_mode and _python3_debian.changed }}"
 
     - name: Make sure legacy sources list is empty
       ansible.builtin.copy:
