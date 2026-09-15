@@ -18,7 +18,7 @@
     # Allows to override distribution release version with '-e ansible_distribition_release_override',
     # should only ever be needed for dist upgrades, which still needs some manual work.
     # TODO: Add a tagged 'dist-upgrade' task
-    - name: Configure deb822 format sources list
+    - name: Configure deb822 format sources list # noqa ignore-errors (false positive)
       ansible.builtin.deb822_repository:
         name: hetzner-mirror
         types: deb
