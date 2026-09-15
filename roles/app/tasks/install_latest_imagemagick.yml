@@ -8,7 +8,7 @@
   delay: 10
   register: _python3_debian
 
-- name: Enable deb-src
+- name: Enable deb-src # noqa ignore-errors (false positive)
   ansible.builtin.deb822_repository:
     name: hetzner-mirror-src-only
     types: deb-src
