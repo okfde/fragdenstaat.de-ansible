@@ -27,7 +27,7 @@
     path: /etc/wireguard/wg0.conf
   register: wg0_conf
 
-- name: mkdir -p /etc/wireguard/keys
+- name: Create /etc/wireguard/keys directory
   ansible.builtin.file:
     path: /etc/wireguard/keys
     state: directory
