@@ -5,7 +5,7 @@ collections:
   - community.general
   - community.docker
   - community.mysql
-  - community.postgresql
+  - { name: community.postgresql, version: 4.2.0 }
   - community.rabbitmq
   - community.crypto
   - community.libvirt
