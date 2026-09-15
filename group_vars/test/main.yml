@@ -1,5 +1,9 @@
 maintenance: false
 
+# Monitoring
+monitor_server: fds-tst.okfn.de
+
+# App
 mail_domain: mail.test.zerschlagdenstaat.de
 domain_name: test.zerschlagdenstaat.de
 web_server_name: test.zerschlagdenstaat.de

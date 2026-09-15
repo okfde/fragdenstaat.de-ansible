@@ -15,7 +15,6 @@ https_domains:
   - ["metabase.test.zerschlagdenstaat.de"]
   - ["forum.test.zerschlagdenstaat.de"]
 
-monitor_server: fds-tst.okfn.de
 monitor_prometheus_exporters:
   - node
 
