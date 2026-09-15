@@ -160,7 +160,7 @@
     src: storagebox_exporter.sh.j2
     dest: /root/storagebox_exporter.sh
     mode: "0750"
-  when: "(prometheus_exporter is defined) and ('node_exporter' in prometheus_exporter)"
+  when: "(monitor_prometheus_exporters is defined) and ('node' in monitor_prometheus_exporters)"
 
 - name: Create exporter cronjob
   ansible.builtin.cron:
@@ -172,7 +172,7 @@
     dom: "*"
     month: "*"
     dow: "*"
-  when: "(prometheus_exporter is defined) and ('node_exporter' in prometheus_exporter)"
+  when: "(monitor_prometheus_exporters is defined) and ('node' in monitor_prometheus_exporters)"
 
 - name: Remove borg scripts
   ansible.builtin.file:

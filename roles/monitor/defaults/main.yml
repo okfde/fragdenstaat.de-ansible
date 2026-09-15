@@ -1,7 +1,7 @@
 grafana: false
 prometheus: false
-prometheus_exporter:
-  - node_exporter
+monitor_prometheus_exporters:
+  - node
 prometheus_postgres_datasource: "user=prometheus host=/run/postgresql dbname=postgres"
 graylog: false
 sidecar: true

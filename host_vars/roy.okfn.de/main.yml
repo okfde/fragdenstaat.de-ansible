@@ -11,3 +11,6 @@ host_data:
   site_ipv4: 192.168.100.6
   wg_publickey: "y/HgbusX8W9c2fmLEdxIEOwcIvAY/dTo0IeevZZVTAQ="
   vpn_peer_id: 203
+
+monitor_prometheus_exporters:
+  - node

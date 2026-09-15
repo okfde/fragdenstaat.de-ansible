@@ -19,9 +19,9 @@ nginx_static_html_dir: "/var/www/static"
 
 minio_path: "/home/storage-box/home/s3/"
 
-prometheus_exporter:
-  - node_exporter
-  - nginx_exporter
+monitor_prometheus_exporters:
+  - node
+  - nginx
 
 backup_repo: "{{ secret_backup_repo }}"
 borg:

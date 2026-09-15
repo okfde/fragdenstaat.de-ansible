@@ -13,12 +13,8 @@ host_data:
 
 backup_repo: "{{ secret_backup_repo }}"
 
-monitor_server: fds-tst.okfn.de
-prometheus: false
-grafana: false
-graylog: false
-prometheus_exporter:
-  - node_exporter
+monitor_prometheus_exporters:
+  - node
 
 https_domains:
   - ['test.zerschlagdenstaat.de', '*.test.zerschlagdenstaat.de']

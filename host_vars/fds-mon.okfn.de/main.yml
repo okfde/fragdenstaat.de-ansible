@@ -15,8 +15,8 @@ prometheus: true
 graylog: true
 grafana: true
 
-prometheus_exporter:
-  - node_exporter
+monitor_prometheus_exporters:
+  - node
 
 https_domains:
   - ["mon.zerschlagdenstaat.de"]

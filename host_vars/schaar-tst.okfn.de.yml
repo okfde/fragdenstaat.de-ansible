@@ -16,8 +16,8 @@ https_domains:
   - ["forum.test.zerschlagdenstaat.de"]
 
 monitor_server: fds-tst.okfn.de
-prometheus_exporter:
-  - node_exporter
+monitor_prometheus_exporters:
+  - node
 
 ogimage_domain: ogimage.test.zerschlagdenstaat.de
 discourse_domain: forum.test.zerschlagdenstaat.de

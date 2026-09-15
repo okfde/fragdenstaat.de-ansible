@@ -1,5 +1,7 @@
-- name: Include monitor.yml
-  ansible.builtin.include_tasks: monitor.yml
+---
+
+- name: Include monitor-server.yml
+  ansible.builtin.include_tasks: monitor-server.yml
   when: graylog is true or grafana is true or prometheus is true
   tags:
     - grafana
@@ -17,9 +19,11 @@
   tags: rsyslog
 
 - name: Include prometheus exporter
-  ansible.builtin.include_tasks: "{{ item }}.yml"
-  with_items: "{{ prometheus_exporter }}"
-  when: prometheus_exporter is defined
+  ansible.builtin.include_tasks: "exporters/{{ item }}.yml"
+  with_items: "{{ monitor_prometheus_exporters }}"
+  when:
+    - monitor_prometheus_exporters is defined
+    - monitor_prometheus_exporters | length > 0
   tags: exporter
 
 - name: Include sidecar.yml

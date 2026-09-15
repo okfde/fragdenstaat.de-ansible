@@ -13,8 +13,8 @@ base_create_swap_file: false
 
 elasticsearch_heapsize: 22g
 
-prometheus_exporter:
-  - node_exporter
+monitor_prometheus_exporters:
+  - node
 
 icinga:
   vars:

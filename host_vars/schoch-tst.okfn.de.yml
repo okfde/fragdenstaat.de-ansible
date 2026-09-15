@@ -12,8 +12,8 @@ https_domains:
   - ["media.test.zerschlagdenstaat.de"]
 
 monitor_server: fds-tst.okfn.de
-prometheus_exporter:
-  - node_exporter
+monitor_prometheus_exporters:
+  - node
 
 nfs_allow_from: 192.168.122.123
 

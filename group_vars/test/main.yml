@@ -59,7 +59,6 @@ celery_workers:
     worker: 1
     type: slow
 
-
 certbot_mode: "dns-01"
 certbot_script: /opt/certbot/bin/certbot
 

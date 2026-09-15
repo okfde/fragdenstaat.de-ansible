@@ -9,11 +9,11 @@ host_data:
   site_ipv4: 192.168.122.123
 
 monitor_server: fds-tst.okfn.de
-prometheus_exporter:
-  - node_exporter
-  - nginx_exporter
-  - postgres_exporter
-  - postfix_exporter
+monitor_prometheus_exporters:
+  - node
+  - nginx
+  - postgres
+  - postfix
 
 https_domains:
   - ["test.zerschlagdenstaat.de"]
@@ -48,7 +48,6 @@ cms_sites:
         filename: robots.txt
       - path: "/.well-known/security.txt"
         filename: security.txt
-
 
 fonts:
   - hk_grotesk

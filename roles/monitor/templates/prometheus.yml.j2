@@ -14,24 +14,24 @@ alerting:
 scrape_configs:
   - job_name: "node_exporter"
     static_configs:
-      - targets: [{% for host in groups['all'] %}{% if 'node_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9100"{% endif %}{% if not loop.last %}{% if 'node_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+      - targets: [{% for host in groups['all'] %}{% if 'node' in hostvars[host].monitor_prometheus_exporters %}"{{ hostvars[host].host_data.site_ipv4 }}:9100"{% endif %}{% if not loop.last %}{% if 'node' in hostvars[loop.nextitem].monitor_prometheus_exporters %},{% endif %}{% endif %}{% endfor %}]
 
   - job_name: "postgres_exporter"
     static_configs:
-      - targets: [{% for host in groups['all'] %}{% if 'postgres_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9187"{% endif %}{% if not loop.last %}{% if 'postgres_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+      - targets: [{% for host in groups['all'] %}{% if 'postgres' in hostvars[host].monitor_prometheus_exporters %}"{{ hostvars[host].host_data.site_ipv4 }}:9187"{% endif %}{% if not loop.last %}{% if 'postgres' in hostvars[loop.nextitem].monitor_prometheus_exporters %},{% endif %}{% endif %}{% endfor %}]
 
   - job_name: "postfix_exporter"
     static_configs:
-      - targets: [{% for host in groups['all'] %}{% if 'postfix_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9154"{% endif %}{% if not loop.last %}{% if 'nginx_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+      - targets: [{% for host in groups['all'] %}{% if 'postfix' in hostvars[host].monitor_prometheus_exporters %}"{{ hostvars[host].host_data.site_ipv4 }}:9154"{% endif %}{% if not loop.last %}{% if 'nginx' in hostvars[loop.nextitem].monitor_prometheus_exporters %},{% endif %}{% endif %}{% endfor %}]
 
   - job_name: "nginx_exporter"
     static_configs:
-      - targets: [{% for host in groups['all'] %}{% if 'nginx_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9113"{% endif %}{% if not loop.last %}{% if 'nginx_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+      - targets: [{% for host in groups['all'] %}{% if 'nginx' in hostvars[host].monitor_prometheus_exporters %}"{{ hostvars[host].host_data.site_ipv4 }}:9113"{% endif %}{% if not loop.last %}{% if 'nginx' in hostvars[loop.nextitem].monitor_prometheus_exporters %},{% endif %}{% endif %}{% endfor %}]
 
   - job_name: "statsd_exporter"
     static_configs:
-      - targets: [{% for host in groups['all'] %}{% if 'statsd_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9102"{% endif %}{% if not loop.last %}{% if 'statsd_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+      - targets: [{% for host in groups['all'] %}{% if 'statsd' in hostvars[host].monitor_prometheus_exporters %}"{{ hostvars[host].host_data.site_ipv4 }}:9102"{% endif %}{% if not loop.last %}{% if 'statsd' in hostvars[loop.nextitem].monitor_prometheus_exporters %},{% endif %}{% endif %}{% endfor %}]
 
   - job_name: "celery_exporter"
     static_configs:
-      - targets: [{% for host in groups['all'] %}{% if 'celery_exporter' in hostvars[host].prometheus_exporter %}"{{ hostvars[host].host_data.site_ipv4 }}:9808"{% endif %}{% if not loop.last %}{% if 'celery_exporter' in hostvars[loop.nextitem].prometheus_exporter %},{% endif %}{% endif %}{% endfor %}]
+      - targets: [{% for host in groups['all'] %}{% if 'celery' in hostvars[host].monitor_prometheus_exporters %}"{{ hostvars[host].host_data.site_ipv4 }}:9808"{% endif %}{% if not loop.last %}{% if 'celery' in hostvars[loop.nextitem].monitor_prometheus_exporters %},{% endif %}{% endif %}{% endfor %}]

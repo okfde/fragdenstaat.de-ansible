@@ -10,12 +10,12 @@ host_data:
   wg_publickey: "l3eERIhs8c4yJI54VIrLY8w/BiRFuB4o7HQVGqZMvnY="
   vpn_peer_id: 200
 
-prometheus_exporter:
-  - node_exporter
-  - postgres_exporter
-  - nginx_exporter
-  - postfix_exporter
-  - celery_exporter
+monitor_prometheus_exporters:
+  - node
+  - postgres
+  - nginx
+  - postfix
+  - celery
 
 backup_repo: "{{ secret_backup_repo }}"
 borg:
