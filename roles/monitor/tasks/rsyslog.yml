@@ -5,8 +5,8 @@
   tags: rsyslog
 
 - name: Create graylog config for rsyslog
-  ansible.builtin.template:
-    src: rsyslog.conf.j2
+  ansible.builtin.copy:
+    content: "*.*@{{ hostvars[monitor_server]['host_data']['site_ipv4'] }}:5140;RSYSLOG_SyslogProtocol23Format\n"
     dest: /etc/rsyslog.d/10-graylog.conf
     mode: "0644"
   notify: Restart rsyslog

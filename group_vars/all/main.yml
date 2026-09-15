@@ -293,6 +293,9 @@ geoip_account_id: "{{ secret_geoip_account_id }}"
 geoip_license_key: "{{ secret_geoip_license_key }}"
 suspicious_asn_list: "{{ secret_suspicious_asn_list }}"
 
+# Monitoring
+monitor_server: fds-tst.okfn.de
+monitor_graylog_internal_ip: "{{ hostvars[monitor_server]['host_data']['site_ipv4'] }}"
 graylog_server_api_token: "{{ secret_graylog_server_api_token }}"
 
 # Note: Obsolete? Not referenced in repo
