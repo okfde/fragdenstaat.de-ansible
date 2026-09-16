@@ -63,6 +63,15 @@ db_reporting_views:
         recurrence_streak_start,
         (SELECT id FROM public.fds_newsletter_subscriber WHERE newsletter_id=1 AND subscribed IS NOT NULL AND email = public.fds_donation_donor.email AND email != '' LIMIT 1) AS subscriber_id
       FROM public.fds_donation_donor
+  - name: donortags
+    query: |
+      SELECT
+        public.fds_donation_donor.id AS donor_id,
+        public.fds_donation_donortag.name AS tag,
+        public.fds_donation_donortag.slug AS slug
+      FROM public.fds_donation_donor
+      LEFT JOIN public.fds_donation_taggeddonor ON public.fds_donation_donor.id = public.fds_donation_taggeddonor.content_object_id
+      LEFT JOIN public.fds_donation_donortag ON public.fds_donation_donortag.id = public.fds_donation_taggeddonor.tag_id
   - name: donorevents
     query: "SELECT id, timestamp, kind, reference, context, donor_id FROM public.fds_donation_donorevent"
   - name: donationgiftorders
