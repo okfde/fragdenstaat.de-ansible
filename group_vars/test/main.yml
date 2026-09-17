@@ -1,0 +1,212 @@
+maintenance: false
+
+mail_domain: mail.test.zerschlagdenstaat.de
+domain_name: test.zerschlagdenstaat.de
+web_server_name: test.zerschlagdenstaat.de
+web_server_url: "https://{{ web_server_name }}"
+wsweb_server_url: "wss://{{ web_server_name }}"
+media_server_name: media.test.zerschlagdenstaat.de
+media_server_url: "https://{{ media_server_name }}"
+static_server_name: static.test.zerschlagdenstaat.de
+static_server_url: "https://{{ static_server_name }}"
+static_asset_path: "{{ static_server_url }}/static/"
+
+foi_mail_server_host: "mail.test.zerschlagdenstaat.de"
+foi_mail_domain: "test.zerschlagdenstaat.de"
+site_url: "https://test.zerschlagdenstaat.de"
+media_url: "https://media.test.zerschlagdenstaat.de/files/"
+static_url: "https://static.test.zerschlagdenstaat.de/static/"
+allowed_hosts: '"test.zerschlagdenstaat.de","media.test.zerschlagdenstaat.de"'
+payment_host: "test.zerschlagdenstaat.de"
+
+onion_service_enabled: false
+
+email_host: "127.0.0.1"
+email_host_user: "{{ secret_email_host_user }}"
+email_host_password: "{{ secret_email_host_password }}"
+foi_email_host: "127.0.0.1"
+foi_email_host_user: "mail@fragdenstaat.de"
+foi_email_host_password: "{{ secret_foi_email_host_password }}"
+bounce_email_host: "127.0.0.1"
+bounce_email_host_user: "{{ secret_bounce_email_host_user }}"
+bounce_email_host_password: "{{ secret_bounce_email_host_password }}"
+unsubscribe_email_host: "127.0.0.1"
+unsubscribe_email_host_user: "{{ secret_unsubscribe_email_host_user }}"
+unsubscribe_email_host_password: "{{ secret_unsubscribe_email_host_password }}"
+
+gunicorn_user_uid: "1111"
+gunicorn_num_workers: 1
+uvicorn_num_workers: 1
+gunicorn_cmssite_num_workers: 1
+celery_workers:
+  - name: celery
+    queues: "celery"
+    worker: 1
+  - name: mail
+    queues: "emailfetch,email"
+    worker: 1
+  - name: mailsend
+    queues: "emailsend"
+    worker: 1
+  - name: mailsend_bulk
+    queues: "emailsend_bulk"
+    worker: 1
+  - name: search
+    queues: "searchindex"
+    worker: 1
+  - name: celery_solo_1
+    queues: "redact,ocr,convert,convert_office,document"
+    worker: 1
+    type: slow
+
+
+certbot_mode: "dns-01"
+certbot_script: /opt/certbot/bin/certbot
+
+nginx_web_redirect_domains:
+  - from: "blog.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de/blog"
+    https: true
+  - from: "shop.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de/shop"
+    https: true
+  - from: "app.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de/app"
+    https: true
+  - from: "mail.test.zerschlagdenstaat.de"
+    domain: "test.zerschlagdenstaat.de"
+    https: true
+
+nginx_extra_domains:
+  - domain: mta-sts.test.zerschlagdenstaat.de
+    files:
+      - path: "/.well-known/mta-sts.txt"
+        filename: mta-sts.txt
+
+nginx_set_real_ip_from: "192.168.122.0/24"
+nginx_real_ip_header: "X-Real-IP"
+
+network_vlan:
+  id: 4000
+
+hetzner_dns_api_token: "{{ secret_hetzner_dns_api_token }}"
+hetzner_dns_cloud_api_token: "{{ secret_hetzner_dns_cloud_api_token }}"
+
+slack_token: "{{ secret_slack_token }}"
+slack_channel: "{{ secret_slack_channel }}"
+django_secret_key: "{{ secret_django_secret_key }}"
+fds_default_from_email: "ZerschlagDenStaat.de <info@test.zerschlagdenstaat.de>"
+fds_server_email: "info@test.zerschlagdenstaat.de"
+fds_site_email: "info@test.zerschlagdenstaat.de"
+
+django_migrations_db_user: "{{ secret_django_migrations_db_user }}"
+django_migrations_db_password: "{{ secret_django_migrations_db_password }}"
+db_password: "{{ secret_db_password }}"
+db_password_readonly: "{{ secret_db_password_readonly }}"
+db_password_replication: "{{ secret_db_password_replication }}"
+db_password_reporting: "{{ secret_db_password_reporting }}"
+
+rabbitmq_admin_password: "{{ secret_rabbitmq_admin_password }}"
+rabbitmq_application_password: "{{ secret_rabbitmq_application_password }}"
+rabbitmq_node: "rabbit@brooke-tst"
+
+nginx_web_protected_urls: "{{ secret_nginx_web_protected_urls }}"
+
+nginx_htpasswd: "{{ secret_nginx_htpasswd }}"
+
+email_accounts: "{{ secret_email_accounts }}"
+email_alias: "{{ secret_email_alias }}"
+alias_foi_domains: "{{ secret_alias_foi_domains }}"
+
+django_sentry_dsn: "{{ secret_django_sentry_dsn }}"
+django_sentry_public_dsn: "{{ secret_django_sentry_public_dsn }}"
+sentry_auth_token: "{{ secret_sentry_auth_token }}"
+sentry_domain: "sentry.okfn.de"
+sentry_url: "https://sentry.okfn.de"
+sentry_org: "okfde"
+sentry_project: "fds-test"
+sentry_webhook_url: "{{ secret_sentry_webhook_url }}" # TODO: dead code?
+
+slack_webhook_url: "{{ secret_slack_webhook_url }}"
+matomo_api_url: "{{ secret_matomo_api_url }}"
+
+backup_cron_email: "root@test.zerschlagdenstaat.de"
+
+qemu_vm_root_password: "{{ secret_qemu_vm_root_password }}"
+
+minio_admin_password: "{{ secret_minio_admin_password }}"
+
+light_sync: "{{ secret_light_sync }}"
+
+scripts_config: "{{ secret_scripts_config }}"
+
+nginx_simple_files: "{{ secret_nginx_simple_files }}"
+nginx_valid_referrers: "{{ secret_nginx_valid_referrers }}"
+nginx_web_rate_limited_urls: "{{ secret_nginx_web_rate_limited_urls }}"
+
+sentry_github_app_id: ""
+sentry_github_app_name: ""
+sentry_github_app_webhook_secret: ""
+sentry_github_app_client_id: ""
+sentry_github_app_client_secret: ""
+sentry_github_app_private_key: ""
+
+sentry_slack_client_id: ""
+sentry_slack_client_secret: ""
+sentry_slack_signing_secret: ""
+sentry_mail_from: ""
+sentry_mail_host: ""
+sentry_mail_password: ""
+sentry_mail_port: 587
+sentry_mail_username: ""
+
+fdsbot_slack_users: ""
+fdsbot_octokit_token: ""
+fdsbot_slack_token: ""
+
+farmsubsidy_api_key: ""
+farmsubsidy_basic_auth: ""
+
+weblate_mail_from: ""
+weblate_mail_host: ""
+weblate_mail_password: ""
+weblate_mail_username: ""
+weblate_sentry_dsn: ""
+weblate_github_key: ""
+weblate_github_secret: ""
+weblate_admin_email: ""
+weblate_admin_password: ""
+weblate_github_token: ""
+
+stripe_public_key: "{{ secret_stripe_public_key }}"
+stripe_private_key: "{{ secret_stripe_private_key }}"
+stripe_webhook_cc_signing_key: "{{ secret_stripe_webhook_cc_signing_key }}"
+stripe_webhook_sepa_signing_key: "{{ secret_stripe_webhook_sepa_signing_key }}"
+stripe_webhook_sofort_signing_key: "{{ secret_stripe_webhook_sofort_signing_key }}"
+
+paypal_api_url: "https://api.paypal.com"
+paypal_client_id: "{{ secret_paypal_client_id }}"
+paypal_client_secret: "{{ secret_paypal_client_secret }}"
+paypal_webhook_id: "{{ secret_paypal_webhook_id }}"
+
+paperless_api_url: ""
+paperless_api_token: ""
+paperless_uploaded_type: ""
+paperless_request_field: ""
+
+yelp_api_key: ""
+foursquare_api_key: ""
+mapbox_api_key: ""
+google_places_api_key: ""
+here_geocode_api_key: ""
+
+telnyx_app_id: ""
+telnyx_api_key: ""
+telnyx_public_key: ""
+telnyx_from_number: ""
+
+donation_backup_url: ""
+donation_backup_credentials: ""
+
+fds_legal_backup_credentials: ""
+fds_legal_backup_url: ""

@@ -1,0 +1,7 @@
+---
+
+rabbitmq_application_vhost: fragdenstaat_de
+rabbitmq_application_user: fragdenstaat_de
+rabbitmq_node: "rabbit@brooke"
+rabbitmq_admin_password: "{{ secret_rabbitmq_admin_password }}"
+rabbitmq_application_password: "{{ secret_rabbitmq_application_password }}"

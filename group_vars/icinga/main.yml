@@ -1,0 +1,21 @@
+---
+
+icinga2_admin_email: "root@fragdenstaat.de"
+icinga2_ca_host: 192.168.100.5
+icinga2_delegate_host: fds-mon.okfn.de
+icinga2_role_user: root
+
+icingaweb2_host: cmk.zerschlagdenstaat.de
+icingaweb2_db: icingaweb2
+icingaweb2_db_user: icingaweb2
+icingaweb2_db_pass: "{{ secret_icingaweb2_db_pass }}"
+icingaweb2_php_version: 8.3
+icingaweb2_user: "{{ secret_icingaweb2_user }}"
+icingaweb2_pass: "{{ secret_icingaweb2_pass }}"
+
+icinga2_ticket_salt: "{{ secret_icinga2_ticket_salt }}"
+icinga2_apiuser_password: "{{ secret_icinga2_apiuser_password }}"
+
+icinga2_users: "{{ secret_icinga2_users }}"
+
+icinga_slack_webhook: "{{ secret_icinga_slack_webhook }}"

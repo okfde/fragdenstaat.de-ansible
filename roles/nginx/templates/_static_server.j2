@@ -13,7 +13,7 @@
 
 {% macro static_location() -%}
     referer_hash_bucket_size 128;
-    valid_referers none blocked {{ web_server_name }} {{ media_server_name }} {{ static_server_name }} {% for valid_ref in valid_referrers %}{{ valid_ref }} {% endfor%} localhost;
+    valid_referers none blocked {{ web_server_name }} {{ media_server_name }} {{ static_server_name }} {% for valid_ref in nginx_valid_referrers %}{{ valid_ref }} {% endfor%} localhost;
     if ($invalid_referer) {
         return   403;
     }
@@ -24,7 +24,7 @@
     {{ default_headers }}
     {{ cors(web_server_url, null_fallback=True, repeat_headers=default_headers) }}
     {{ cors("http://localhost", repeat_headers=default_headers) }}
-    {% for valid_ref in valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
+    {% for valid_ref in nginx_valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
 
 {%- endmacro %}
 
@@ -48,7 +48,7 @@ location /static/ {
 
     alias   {{ nginx_static_dir }};
 }
-{% for simple_file in simple_files %}
+{% for simple_file in nginx_simple_files %}
     {% if simple_file.path is defined %}
         location = {{ simple_file.path }} {
             {% if simple_file.mimetype is defined %}

@@ -1,7 +1,7 @@
 ---
 git_repo: https://github.com/okfde/fragdenstaat_de.git
 
-base_ssh_port: "22"
+base_ssh_port: "2228"
 base_ssh_users: "{{ secret_base_ssh_users }}"
 
 network_vlan:
@@ -54,14 +54,13 @@ letsencrypt_renew_hooks:
 db_host: "127.0.0.1"
 db_name: "{{ application_name }}"
 db_user: "{{ application_name }}"
-## in secets.yml
-# db_password:
+db_password: "{{ secret_db_password }}"
 db_user_readonly: "{{ application_name }}_readonly"
-## in secets.yml
-# db_password_readonly:
+db_password_readonly: "{{ secret_db_password_readonly }}"
 db_reporting_schema: "reporting"
 db_user_reporting: "fds_report"
-# db_password_reporting
+db_password_replication: "{{ secret_db_password_replication }}"
+db_password_reporting: "{{ secret_db_password_reporting }}"
 
 collect_release_info: true
 
@@ -102,14 +101,11 @@ virtualenv_path: "/var/www/fragdenstaat.de"
 project_path: "{{ virtualenv_path }}/{{ project_name }}"
 application_log_dir: "/var/www/fragdenstaat.de/logs"
 
-## in secrets.yml
-# htpasswd:
-#   - name: user
-#     password: password
-#     realm: admin
+nginx_htpasswd: "{{ secret_nginx_htpasswd }}"
+webmail_htpasswd: "{{ secret_webmail_htpasswd }}"
 
-## in secrets.yml
-webmail_htpasswd: []
+django_migrations_db_user: "django_migrations"
+django_migrations_db_password: "{{ secret_django_migrations_db_password }}"
 
 django_media_root: "/var/www/fragdenstaat.de/storage/files"
 django_static_root: "/var/www/fragdenstaat.de/public/static"
@@ -119,21 +115,6 @@ django_configuration: "FragDenStaat"
 
 django_geoip_path: "/var/www/fragdenstaat.de/data"
 frontex_captcha_model_path: "/var/www/fragdenstaat.de/data/model.pth"
-
-## in secrets.yml
-# django_secret_url_admin: "admin"
-
-## in secrets.yml
-# protected_urls:
-#   - url: "/admin/"
-#     realm: admin
-#     only_ip: []
-
-## in secrets.yml
-# rate_limited_urls:
-#   - url: /account/login/
-#     zone: login
-#     auth: false
 
 release_repo: okfde/fragdenstaat_de
 
@@ -166,69 +147,33 @@ celery_workers:
     worker: 2
     type: slow
 
-## in secrets.yml
-# rabbitmq_admin_password:
-rabbitmq_application_vhost: "{{ application_name }}"
-rabbitmq_application_user: "{{ application_name }}"
-## in secrets.yml
-# rabbitmq_application_password: from secrets
-rabbitmq_node: "rabbit@localhost"
-
 # This needs tessdata/ for tesseract >= 4 starting Ubuntu 18.04
 tesseract_data_path: /usr/share/tesseract-ocr/5/tessdata/
 
 dovecot_passwdfile_scheme: "sha512-crypt"
 
-## in secrets.yml
-# email_accounts:
-#   - user: mail@fragdenstaat.de
-#     password: "password"
-#   - user: mail@fragdenstaat.de
-#     password: "password"
-
 email_host: "mail.fragdenstaat.de"
-## in secrets.yml
-# email_host_user: "mail@fragdenstaat.de"
-# email_host_password: password
+email_host_user: "{{ secret_email_host_user }}"
+email_host_password: "{{ secret_email_host_password }}"
 foi_email_host: "mail.fragdenstaat.de"
-## in secrets.yml
-# foi_email_host_user: "mail@fragdenstaat.de"
-# foi_email_host_password: password
+foi_email_host_user: "foimail@fragdenstaat.de"
+foi_email_host_password: "{{ secret_foi_email_host_password }}"
+
 bounce_email_host: "mail.fragdenstaat.de"
-## in secrets.yml
-# bounce_email_host_user: "mail@fragdenstaat.de"
-# bounce_email_host_password: password
+bounce_email_host_user: "{{ secret_bounce_email_host_user }}"
+bounce_email_host_password: "{{ secret_bounce_email_host_password }}"
 unsubscribe_email_host: "mail.fragdenstaat.de"
-## in secrets.yml
-# unsubscribe_email_host_user: "mail@fragdenstaat.de"
-# unsubscribe_email_host_password: password
+unsubscribe_email_host_user: "{{ secret_unsubscribe_email_host_user }}"
+unsubscribe_email_host_password: "{{ secret_unsubscribe_email_host_password }}"
 
-## in secret.yml
-# email_alias:
-#   - from: "test@fragdenstaat.de"
-#     to: "root@fragdenstaat.de"
+postfix_reject_helo_list: "{{ secret_postfix_reject_helo_list }}"
 
-## in secret.yml
-smtp_relays: []
-#  - domain: ""
-#    username: ""
-#    password: ""
+backup_ftp_url: "{{ secret_backup_ftp_url }}"
+backup_ftp_password: "{{ secret_backup_ftp_password }}"
+backup_gpg_password: "{{ secret_backup_gpg_password }}"
+backup_cron_email: "root@fragdenstaat.de"
 
-transport_maps: []
-#  - from: """
-#    to: ""
-
-## in secret.yml
-alias_foi_domains: []
-
-## in secret.yml
-bad_referrers: []
-
-## in secret.yml
-# backup_ftp_url: "ftp://user@server"
-# backup_ftp_password: "password"
-# backup_gpg_password: "password"
-# backup_cron_email:
+nginx_bad_referrers: "{{ secret_nginx_bad_referrers }}"
 
 nginx_static_dir: "/var/www/fragdenstaat.de/public/static/"
 nginx_media_dir: "/var/www/fragdenstaat.de/storage"
@@ -270,182 +215,23 @@ nginx_private_media_prefix:
   - url: "/files/export/"
   - url: "/smedia"
 
-redirect_domains:
-  - from: "blog.fragdenstaat.de"
-    domain: "fragdenstaat.de/blog"
-    https: true
-  - from: "shop.fragdenstaat.de"
-    domain: "fragdenstaat.de/shop"
-    https: true
-  - from: "app.fragdenstaat.de"
-    domain: "fragdenstaat.de/app/scanner/deep"
-    https: true
-    simple_files:
-      - path: "/.well-known/apple-app-site-association"
-        filename: apple-app-site-association
-        mimetype: "application/json"
-      - path: "/.well-known/assetlinks.json"
-        filename: assetlinks.json
-        mimetype: "application/json"
-  - from: "mail.fragdenstaat.de"
-    domain: "fragdenstaat.de"
-    https: true
-  - from: "media.frag-den-staat.de"
-    domain: "media.frag-den-staat.de"
-    https: false
-  - from: "static.frag-den-staat.de"
-    domain: "static.frag-den-staat.de"
-    https: false
-  - from: "verklagdenstaat.de"
-    domain: "fragdenstaat.de/klagen"
-    https: true
-  - from: "zerschlagdenstaat.de"
-    domain: "fragdenstaat.de"
-    https: true
-  - from: "frag-den-staat.de"
-    domain: "fragdenstaat.de"
-    https: true
-  - from: "www.frag-den-staat.de"
-    domain: "fragdenstaat.de"
-    https: true
-  - from: "www.gegenrechtsschutz.de"
-    domain: "gegenrechtsschutz.de"
-    https: true
-  - from: "xn--ueberbrckungsfonds-s6b.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "xn--berbrueckungsfonds-l6b.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "xn--berbrckungsfonds-izbf.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "www.xn--ueberbrckungsfonds-s6b.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "www.xn--berbrueckungsfonds-l6b.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "www.xn--berbrckungsfonds-izbf.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "xn--ueberbrckungsfonds-s6b.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "xn--berbrueckungsfonds-l6b.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-  - from: "www.ueberbrueckungsfonds.de"
-    domain: "ueberbrueckungsfonds.de"
-    https: true
-
-certbot_mode: "http-01"
-
-## in secret.yml
-temp_redirect_paths: []
-valid_referrers: []
-
-redirect_paths:
-  - from: "^/files/foi/30800/"
-    path: "/media-30800/"
-  - from: "^/de/"
-    path: "/"
-  - from: "^/r/"
-    path: "/a/"
-  - from: "/blog/feed/"
-    path: "/artikel/feed/"
-  - from: "^/des/?$"
-    path: "/dossier/desiderius-erasmus-stiftung/?pk_campaign=zdfmr"
-  - from: "^/polizeiprofessor/?$"
-    path: "/artikel/exklusiv/2026/04/der-fall-stephan-maninger/"
-  - from: "^/afd-datenbank/?"
-    path: "/aktionen/afd-datenbank/"
-
-media_legal_paths: []
+nginx_media_legal_paths: []
 # - path: "/files/foi/110867/bfr-stellungnahme.pdf"
 #   link: "https://fragdenstaat.de/zensurheberrecht"
 
-media_redirect_paths:
+nginx_media_redirect_paths:
   - from: "/files/media/main/2e/bc/2ebc2ed7-51e4-4717-9fc7-a34225bebc5c/sog-masterplan-csu.pdf"
     path: "https://fragdenstaat.de/dokumente/30-sog-masterplan-csu/"
 # - from: "/files/foi/110867/bfr-stellungnahme.pdf"
 #   path: "https://fragdenstaat.de/dokumente/66/"
 
-## in secret.yml
-simple_files:
-  - path: "/robots.txt"
-    filename: robots.txt
-  - path: "/.well-known/security.txt"
-    filename: security.txt
-  - path: "/.well-known/apple-app-site-association"
-    filename: apple-app-site-association
-    mimetype: "application/json"
-  - path: "/.well-known/apple-developer-merchantid-domain-association"
-    filename: apple-developer-merchantid-domain-association.dms
-  - path: "/.well-known/assetlinks.json"
-    filename: assetlinks.json
-    mimetype: "application/json"
-  - path: "/BingSiteAuth.xml"
-    filename: BingSiteAuth.xml
-  - filename: mta-sts.txt
+certbot_mode: "http-01"
 
-cors_exceptions:
-  - url: "/api/v1/campaigninformationobject"
-    origins:
-      - "__static__"
-      - "__media__"
-      - "https://okfde.github.io"
-  - url: "/newsletter/update/wahlbrief-bw/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-by/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-be/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-bb/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-hb/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-hh/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-he/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-mv/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-ni/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-nw/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-rp/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-sl/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-sn/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-st/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-sh/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
-  - url: "/newsletter/update/wahlbrief-th/subscribe-ajax/"
-    origins:
-      - "https://wahlbrief.de"
+nginx_valid_referrers: "{{ secret_nginx_valid_referrers }}"
+
+nginx_simple_files: "{{ secret_nginx_simple_files }}"
 
 # CSP supports __wsweb__ __web__, __media__ and __static__ variable__s
-
 content_security_policy:
   "default-src": "'none'"
   "script-src": "'self' __static__ https://traffic.okfn.de https://js.stripe.com"
@@ -463,11 +249,7 @@ content_security_policy:
   "form-action": "'self' __web__ https://forum.okfn.de https://www.paypal.com https://pretix.eu https://hooks.stripe.com https://stripe.com https://r.girogate.de"
   "report-uri": "https://sentry.okfn.de/api/3/security/?sentry_key=f00c20a879414df69051163a90597a8c"
 
-## in secret.yml
-content_security_policy_overrides:
-  - url: "~^/account/authorize/"
-    directives:
-      "form-action": "* fragdenstaat:"
+content_security_policy_overrides: "{{ secret_content_security_policy_overrides }}"
 
 static_content_security_policy:
   - "default-src 'self' data: blob: __web__ __media__"
@@ -505,64 +287,13 @@ nginx_extra_domains:
       - path: "/.well-known/mta-sts.txt"
         filename: mta-sts.txt
 
-## in secrets.yml
-django_sentry_dsn: ""
-django_sentry_public_dsn: ""
-sentry_auth_token: ""
-sentry_url: ""
-sentry_org: ""
-sentry_project: ""
-sentry_webhook_url: ""
-
 matomo_site_id: "25"
 
-yelp_api_key: ""
-foursquare_api_key: ""
-mapbox_api_key: ""
-google_places_api_key: ""
-here_geocode_api_key: ""
+geoip_account_id: "{{ secret_geoip_account_id }}"
+geoip_license_key: "{{ secret_geoip_license_key }}"
+suspicious_asn_list: "{{ secret_suspicious_asn_list }}"
 
-telnyx_app_id: ""
-telnyx_api_key: ""
-telnyx_public_key: ""
-telnyx_from_number: ""
+graylog_server_api_token: "{{ secret_graylog_server_api_token }}"
 
-stripe_public_key: ""
-stripe_private_key: ""
-stripe_webhook_cc_signing_key: ""
-stripe_webhook_sepa_signing_key: ""
-stripe_webhook_sofort_signing_key: ""
-
-paypal_client_id: ""
-paypal_client_secret: ""
-paypal_api_url: ""
-paypal_webhook_id: ""
-
-slack_webhook_url: ""
-matomo_api_url: ""
-
-geoip_account_id: 0
-geoip_license_key: ""
-suspicious_asn_list: ""
-
-fds_legal_backup_credentials: ""
-fds_legal_backup_url: ""
-
-donation_backup_url: ""
-donation_backup_credentials: ""
-
-paperless_api_url: ""
-paperless_api_token: ""
-paperless_uploaded_type: ""
-paperless_request_field: ""
-
-froide_evidencecollection_nocodb_api_token: ""
-froide_evidencecollection_nocodb_api_url: ""
-froide_evidencecollection_nocodb_table_actor: ""
-froide_evidencecollection_nocodb_table_affiliation: ""
-froide_evidencecollection_nocodb_table_evidence: ""
-froide_evidencecollection_nocodb_table_role: ""
-froide_evidencecollection_nocodb_view_actor_organization: ""
-froide_evidencecollection_nocodb_view_actor_person: ""
-
-froide_pressconference_cvd_credentials: ""
+# Note: Obsolete? Not referenced in repo
+minio_admin_password: "{{ secret_minio_admin_password }}"
