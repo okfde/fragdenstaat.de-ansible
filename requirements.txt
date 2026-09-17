@@ -10,7 +10,7 @@ ansible-core==2.18.19
     #   ansible
     #   ansible-compat
     #   ansible-lint
-ansible-lint==25.5.0
+ansible-lint==26.8.0
     # via fragdenstaat-de-ansible (pyproject.toml)
 attrs==25.3.0
     # via
