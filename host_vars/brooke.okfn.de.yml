@@ -84,5 +84,5 @@ icinga:
     - onion_web = 1
     - onion_static_media = 1
 
-unattended_calendar: "*-*-* 5:00"
-unattended_delay: "15m"
+base_unattended_calendar: "*-*-* 5:00"
+base_unattended_delay: "15m"
