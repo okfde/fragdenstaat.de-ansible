@@ -4,7 +4,7 @@ ansible==11.6.0
     # via fragdenstaat-de-ansible (pyproject.toml)
 ansible-compat==25.5.0
     # via ansible-lint
-ansible-core==2.18.19
+ansible-core==2.21.4
     # via
     #   fragdenstaat-de-ansible (pyproject.toml)
     #   ansible
@@ -22,21 +22,21 @@ bracex==2.5.post1
     # via wcmatch
 cffi==1.14.2
     # via cryptography
-click==8.2.1
+click==8.5.0
     # via black
-cryptography==50.0.0
+cryptography==50.0.1
     # via ansible-core
-filelock==3.18.0
+filelock==3.32.6
     # via ansible-lint
 importlib-metadata==8.7.0
     # via ansible-lint
 jinja2==3.1.6
     # via ansible-core
-jsonschema==4.23.0
+jsonschema==4.26.0
     # via
     #   ansible-compat
     #   ansible-lint
-jsonschema-specifications==2025.4.1
+jsonschema-specifications==2025.9.1
     # via jsonschema
 markupsafe==2.0.1
     # via jinja2
@@ -53,40 +53,40 @@ pathspec==0.12.1
     #   ansible-lint
     #   black
     #   yamllint
-platformdirs==4.3.8
+platformdirs==4.11.8
     # via black
 pycparser==3.0
     # via cffi
-pyyaml==6.0.2
+pyyaml==6.0.3
     # via
     #   ansible-compat
     #   ansible-core
     #   ansible-lint
     #   yamllint
-referencing==0.36.2
+referencing==0.37.0
     # via
     #   ansible-lint
     #   jsonschema
     #   jsonschema-specifications
-resolvelib==1.0.1
+resolvelib==1.2.1
     # via ansible-core
 rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.11
+ruamel-yaml==0.19.1
     # via ansible-lint
-ruamel-yaml-clib==0.2.12
+ruamel-yaml-clib==0.2.15
     # via ruamel-yaml
 subprocess-tee==0.4.2
     # via
     #   ansible-compat
     #   ansible-lint
-typing-extensions==4.13.2
+typing-extensions==4.16.0
     # via referencing
 wcmatch==10.0
     # via ansible-lint
-yamllint==1.37.1
+yamllint==1.38.0
     # via
     #   fragdenstaat-de-ansible (pyproject.toml)
     #   ansible-lint
