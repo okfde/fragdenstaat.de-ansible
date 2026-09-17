@@ -55,7 +55,7 @@ pathspec==0.12.1
     #   yamllint
 platformdirs==4.3.8
     # via black
-pycparser==2.20
+pycparser==3.0
     # via cffi
 pyyaml==6.0.2
     # via
