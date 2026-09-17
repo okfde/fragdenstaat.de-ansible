@@ -7,10 +7,12 @@ on:
     paths:
       - '**.yml'
       - '**.yaml'
+      - '!**/dependabot.yml'
   pull_request:
     paths:
       - '**.yml'
       - '**.yaml'
+      - '!**/dependabot.yml'
 
 jobs:
   lint:
