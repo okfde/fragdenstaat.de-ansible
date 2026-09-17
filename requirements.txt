@@ -28,7 +28,7 @@ cryptography==50.0.1
     # via ansible-core
 filelock==3.32.6
     # via ansible-lint
-importlib-metadata==8.7.0
+importlib-metadata==9.0.0
     # via ansible-lint
 jinja2==3.1.6
     # via ansible-core
