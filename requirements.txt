@@ -12,7 +12,7 @@ ansible-core==2.21.4
     #   ansible-lint
 ansible-lint==26.8.0
     # via fragdenstaat-de-ansible (pyproject.toml)
-attrs==25.3.0
+attrs==26.1.0
     # via
     #   jsonschema
     #   referencing
