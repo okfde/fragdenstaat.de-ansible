@@ -18,7 +18,7 @@ attrs==25.3.0
     #   referencing
 black==25.1.0
     # via ansible-lint
-bracex==2.5.post1
+bracex==3.0.1
     # via wcmatch
 cffi==1.14.2
     # via cryptography
