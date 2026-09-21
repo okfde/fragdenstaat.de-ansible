@@ -20,7 +20,7 @@ black==26.5.1
     # via ansible-lint
 bracex==2.5.post1
     # via wcmatch
-cffi==1.14.2
+cffi==2.1.1
     # via cryptography
 click==8.5.0
     # via black
