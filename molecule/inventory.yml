@@ -1,0 +1,27 @@
+---
+molecule:
+  children:
+    borgmatic:
+      hosts:
+        server.fragdenstaat.de:
+          ansible_connection: containers.podman.podman
+          pg_db: foo
+          pg_user: bar
+          pg_pass: secret123
+          borgmatic_passphrase: secretpassword
+          borgmatic_repositories:
+            - user: backup
+              host: storagebox.fragdenstaat.de
+              port: 22
+              path: "/srv/backups/server"
+              password: "password"
+          borgmatic_config_databases:
+            postgresql:
+              - name: "{{ pg_db }}"
+                username: "{{ pg_user }}"
+                password: "{{ pg_pass }}"
+
+    storagebox:
+      hosts:
+        storagebox.fragdenstaat.de:
+          ansible_connection: containers.podman.podman

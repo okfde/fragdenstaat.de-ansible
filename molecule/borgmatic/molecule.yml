@@ -1,0 +1,7 @@
+---
+scenario:
+  name: borgmatic
+  test_sequence:
+    - prepare
+    - converge
+    - verify

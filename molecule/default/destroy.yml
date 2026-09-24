@@ -1,0 +1,21 @@
+---
+- name: Destroy container instances
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Remove test containers
+      containers.podman.podman_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ groups['molecule'] }}"
+
+    - name: Remove test container network
+      containers.podman.podman_network:
+        name: molecule-test
+        state: absent
+
+    - name: Stop apt-cacher-ng proxy
+      containers.podman.podman_container:
+        image: "docker.io/sameersbn/apt-cacher-ng:latest"
+        name: apt-cacher-ng
+        state: stopped
