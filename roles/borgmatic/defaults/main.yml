@@ -1,0 +1,43 @@
+---
+borgmatic_packages:
+  - borgbackup
+  - borgmatic
+  - python3-pyfuse3
+
+borgmatic_passphrase: ""
+borgmatic_repositories: []
+# borgmatic_repositories:
+#   - user:
+#     host:
+#     port:
+#     path:
+#     password:
+
+borgmatic_sentry:
+  url:
+  monitor_slug: "borgmatic"
+
+borgmatic_config_source_directories:
+  - "/"
+borgmatic_config_exclude_patterns: []
+borgmatic_config_one_file_system: true
+borgmatic_config_lock_wait_time: 1
+borgmatic_config_upload_rate_limit: 0
+borgmatic_config_retention_policy:
+  keep_daily: 7
+  keep_weekly: 7
+  keep_monthly: 7
+borgmatic_config_databases: [] # See config.yml.j2 for reference
+# borgmatic_config_databases:
+#   postgresql:
+#     - name: foo
+#       label: foo
+#       username: bar
+#       password: password
+borgmatic_config_retries: 3
+borgmatic_config_retry_wait: 10
+borgmatic_config_checks:
+  - name: repository
+    frequency: 1 month
+  - name: archives
+    frequency: 1 month

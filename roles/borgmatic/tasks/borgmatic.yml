@@ -1,0 +1,52 @@
+---
+- name: Ensure borgmatic is installed
+  ansible.builtin.apt:
+    pkg: "{{ borgmatic_packages }}"
+    state: present
+
+- name: Store repository passphrase # noqa risky-shell-pipe (printf will not fail)
+  ansible.builtin.shell:
+    cmd: "printf '%s' {{ borgmatic_passphrase }} | systemd-creds encrypt - /etc/credstore.encrypted/borgmatic.pw"
+  register: _systemd_credential
+  changed_when:
+    - _systemd_credential.rc == 0
+
+- name: Ensure /etc/borgmatic drectory exists
+  ansible.builtin.file:
+    path: /etc/borgmatic
+    state: directory
+    mode: "700"
+    owner: root
+
+- name: Add Borgmatic configuration
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "/etc/borgmatic/config.yaml"
+    owner: root
+    group: root
+    mode: "0600"
+    validate: borgmatic config validate --config %s
+
+- name: Enable borgmatic timer
+  ansible.builtin.systemd:
+    name: borgmatic.timer
+    enabled: true
+    state: started
+
+- name: Create repositories
+  ansible.builtin.command:
+    cmd: borgmatic repo-create --encryption repokey
+  register: _repo_create
+  changed_when:
+    - _repo_create.stderr | regex_search('.*Repository .* does not exist.*', multiline=True)
+    - _repo_create.rc == 0
+
+- name: Export repokey
+  ansible.builtin.command:
+    cmd: "borgmatic key export"
+  changed_when: false
+  register: _key_export
+
+- name: Print repokey
+  ansible.builtin.debug:
+    var: _key_export.stdout
