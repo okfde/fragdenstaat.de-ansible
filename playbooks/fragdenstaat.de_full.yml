@@ -11,6 +11,11 @@
       tags: network
       when: "not 'tst.okfn.de' in inventory_hostname or inventory_hostname == 'fds-tst.okfn.de'"
 
+- name: Import backup playbook
+  ansible.builtin.import_playbook: backup.yml
+  tags:
+    - backup
+
 - name: Setup wireguard
   hosts: vpn
   become: true
