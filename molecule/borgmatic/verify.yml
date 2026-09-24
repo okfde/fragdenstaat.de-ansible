@@ -1,0 +1,15 @@
+---
+- name: Verify
+  hosts: borgmatic
+  gather_facts: false
+  tasks:
+    - name: Run backup
+      ansible.builtin.command:
+        cmd: borgmatic create --stat
+      register: _backup
+      changed_when:
+        - _backup.rc == 0
+
+    - name: Print backup result
+      ansible.builtin.debug:
+        var: _backup.stdout
