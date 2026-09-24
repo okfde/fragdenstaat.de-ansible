@@ -1,0 +1,7 @@
+---
+
+- name: Base
+  hosts: all
+  roles:
+    - role: certbot
+      tags: certbot

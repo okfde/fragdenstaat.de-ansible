@@ -1,0 +1,14 @@
+---
+- name: Backup
+  hosts: backup, backup_ng, borgmatic
+  gather_facts: true
+  roles:
+    - role: backup
+      tags: backup
+      when: inventory_hostname in groups["backup"]
+    - role: backup_ng
+      tags: backup_ng
+      when: inventory_hostname in groups["backup_ng"]
+    - role: borgmatic
+      tags: borgmatic
+      when: inventory_hostname in groups["borgmatic"]
