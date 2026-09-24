@@ -12,15 +12,9 @@
       tags: wireguard
     - role: monitor
       tags: monitor
-    - role: backup
-      tags: backup
-      when: inventory_hostname in groups["backup"]
     - role: storage
       tags: storage
       when: inventory_hostname in groups["media"]
-    - role: backup_ng
-      tags: backup_ng
-      when: inventory_hostname in groups["backup_ng"]
     - role: postfix_light
       tags: mail_light
       when: inventory_hostname in groups["mail_light"]

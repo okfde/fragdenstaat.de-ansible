@@ -1,0 +1,6 @@
+---
+collections:
+  - name: community.postgresql
+    version: ">=5.0.0"
+  - name: containers.podman
+    version: ">=1.20.2"

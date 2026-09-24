@@ -1,0 +1,31 @@
+---
+ansible:
+  cfg:
+    defaults:
+      roles_path: ${MOLECULE_PROJECT_DIRECTORY}/roles
+      host_key_checking: false
+      verbosity: 0
+    ssh_connection:
+      pipelining: true
+  env:
+    ANSIBLE_FORCE_COLOR: "1"
+    ANSIBLE_LOAD_CALLBACK_PLUGINS: "1"
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --force-handlers
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/../inventory.yml
+      ansible_navigator:
+        - --mode stdout
+        - --pull-policy missing
+        - --execution-environment-image ghcr.io/ansible/community-ansible-dev-tools:latest
+
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: false
+    ignore-errors: false
+    requirements-file: ${MOLECULE_PROJECT_DIRECTORY}/requirements.yml
+
+shared_state: true

@@ -1,0 +1,72 @@
+---
+- name: Prepare backup client
+  hosts: borgmatic
+  gather_facts: false
+  tasks:
+    - name: Ensure postgresql is installed
+      ansible.builtin.apt:
+        name:
+          - postgresql
+          - libpq-dev
+          - python3-psycopg2
+        update_cache: true
+
+    - name: Ensure postgresql is running
+      ansible.builtin.service:
+        name: postgresql
+        state: started
+
+    - name: Setup postgres database
+      become: true
+      become_user: postgres
+      block:
+        - name: Create new postgres user
+          community.postgresql.postgresql_user:
+            name: "{{ pg_user }}"
+            password: "{{ pg_pass }}"
+
+        - name: Create a database
+          community.postgresql.postgresql_db:
+            name: "{{ pg_db }}"
+            encoding: "UTF-8"
+            owner: "{{ pg_user }}"
+
+        - name: Create test schemas
+          community.postgresql.postgresql_schema:
+            login_db: "{{ pg_db }}"
+            name: test
+            comment: 'Test schema'
+
+- name: Prepare backup server
+  hosts: storagebox
+  gather_facts: false
+  tasks:
+    - name: Install serverside borgbackup
+      ansible.builtin.apt:
+        name:
+          - ssh
+          - borgbackup
+        state: present
+        update_cache: true
+
+    - name: Ensure that sshd is running
+      ansible.builtin.service:
+        name: sshd
+        state: started
+
+    - name: Create backup user
+      ansible.builtin.user:
+        name: backup
+        group: backup
+        home: "/srv/backups"
+        create_home: true
+        shell: /bin/sh
+        password: "$5$iy7XrHFpBcNwPvBY$FitYFbwS0HX28Ca3CQlyZRmoWNMh4ROAGT5WRKXqcO1" # "password"
+
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: "/srv/backups/.ssh"
+        state: directory
+        owner: backup
+        group: backup
+        mode: "0700"

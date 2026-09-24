@@ -1,0 +1,80 @@
+---
+- name: Create container instances
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create a podman network for apt-cacher-ng
+      containers.podman.podman_network:
+        name: molecule-apt-cacher-ng
+        state: present
+
+    - name: Spin up apt-cacher-ng proxy container
+      containers.podman.podman_container:
+        name: apt-cacher-ng
+        image: "docker.io/sameersbn/apt-cacher-ng:latest"
+        volumes:
+          - "/var/cache/apt-cacher-ng"
+        ports:
+          - "127.0.0.1:3142:3142"
+        network:
+          - molecule-apt-cacher-ng
+        state: started
+
+    - name: Create a podman network for inventory
+      containers.podman.podman_network:
+        name: molecule-test
+        state: present
+        driver: bridge
+
+    - name: Create containers from inventory
+      containers.podman.podman_container:
+        hostname: "{{ item }}"
+        name: "{{ item }}"
+        image: "docker.io/geerlingguy/docker-ubuntu2604-ansible:latest"
+        privileged: true
+        volumes:
+          - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+          - "/var/lib/containerd"
+        cgroupns: host
+        systemd: true
+        network:
+          - molecule-test
+          - molecule-apt-cacher-ng
+        log_driver: json-file
+        state: started
+      register: result
+      loop: "{{ groups['molecule'] }}"
+
+    - name: Verify containers are running
+      ansible.builtin.include_tasks:
+        file: tasks/create-fail.yml
+      when: >
+        item.container.State.ExitCode != 0 or
+        not item.container.State.Running
+      loop: "{{ result.results }}"
+      loop_control:
+        label: "{{ item.container.Name }}"
+
+    - name: Wait for containers to be ready
+      ansible.builtin.wait_for_connection:
+        timeout: 30
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['molecule'] }}"
+
+    - name: Configure apt to use cache proxy
+      ansible.builtin.copy:
+        content: |
+          Acquire::HTTP::Proxy "http://apt-cacher-ng:3142";
+          Acquire::HTTPS::Proxy "false";
+        dest: /etc/apt/apt.conf.d/01proxy
+        owner: root
+        group: root
+        mode: '0644'
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['molecule'] }}"
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['molecule'] }}"

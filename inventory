@@ -63,15 +63,6 @@ schaar.okfn.de
 [monitor]
 fds-mon.okfn.de
 
-[backup]
-brooke.okfn.de
-
-[backup_ng]
-fds-mon.okfn.de
-brooke.okfn.de
-schoch.okfn.de
-schaar.okfn.de
-
 [discourse]
 schaar.okfn.de
 
@@ -97,4 +88,17 @@ schoch.okfn.de
 schoch.okfn.de
 
 [hypervisor]
+roy.okfn.de
+
+# Backups
+[backup]
+brooke.okfn.de
+
+[backup_ng]
+fds-mon.okfn.de
+brooke.okfn.de
+schoch.okfn.de
+schaar.okfn.de
+
+[borgmatic]
 roy.okfn.de
