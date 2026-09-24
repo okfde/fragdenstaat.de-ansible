@@ -91,6 +91,34 @@ nginx_geo_blocked_asns:
 
 Geo-blocking is off when both lists are empty (role default). Either list can enable it. ASN blocking applies to all traffic from that network globally.
 
+## Testing
+
+We use [molecule](https://docs.ansible.com/projects/molecule/) for testing the ansible roles,
+following the [ansible-native configuration](https://docs.ansible.com/projects/molecule/ansible-native/), i.e. ansible is itself used to spin up the testing host inventory via podman.
+
+With `shared_state: true` in `.config/molecule/config.yml` (whose configuration is inherited by any scenario configured in  `molecule/<scenario>/molecule.yml`) the `create` and `destroy` sequences defined for the `default` scenario will be reused by any other scenario for creating and destroying the inventory defined in `molecule/inventory.yml`.
+
+### Running a test scenario
+```
+molecule test -s <scenario>
+```
+For example, to run the `borgmatic` scenario, run, and optionally define a test sequence:
+```
+# This will run the whole scenario
+molecule test -s borgmatic
+
+# This will run up until the `converge` sequence of the borgmatic scenario
+molecule converge -s borgmatic
+```
+
+### Adding tests
+
+Additional scenarios can be defined in `molecule/<scenario>/`. Note that role and collection dependencies need to be added to the `requirements.yml` in the base directory and any that new scenarios should reuse and extend the existing inventory `molecule/inventory.yml` where possible.
+
+### Package caching
+
+The default `create` sequence spins up an [apt-cacher-ng](https://help.ubuntu.com/community/Apt-Cacher%20NG) as a cache proxy. Note that, while the other containers defined in `molecule/inventory.yml` will be removed in the `destroy` sequence, the `apt-cacher-ng` container and its volume persist over time, as deleting them would render the whole purpose of a cache proxy useless.
+
 ## Current FragDenStaat.de architecture
 
 ```mermaid

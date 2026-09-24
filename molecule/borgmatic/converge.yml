@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: borgmatic
+  gather_facts: true
+  become: true
+  become_user: root
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: borgmatic
