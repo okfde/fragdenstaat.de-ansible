@@ -2,9 +2,6 @@
 
 - name: Base
   hosts: all
-  become: true
-  become_user: root
-
   roles:
     - role: base
       tags: base

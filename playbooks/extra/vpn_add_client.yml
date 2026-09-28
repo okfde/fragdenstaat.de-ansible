@@ -1,6 +1,7 @@
 ---
 - name: Add VPN client
   hosts: localhost
+  become: false
   connection: local
   vars_prompt:
     - name: client_name

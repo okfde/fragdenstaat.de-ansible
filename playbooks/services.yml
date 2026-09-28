@@ -2,8 +2,6 @@
 
 - name: services
   hosts: all
-  become: true
-  become_user: root
 
   roles:
     - role: fdsbot
