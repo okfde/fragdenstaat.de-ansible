@@ -6,7 +6,6 @@
 # therefore we pretend to run the playbook on the remote host that we want to unlock,
 # but delegate every task to localhost.
   hosts: hypervisor
-  strategy: linear
   become: false
   gather_facts: false
   vars_prompt:

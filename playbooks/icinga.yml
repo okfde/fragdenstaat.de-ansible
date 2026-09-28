@@ -2,8 +2,6 @@
 
 - name: Icinga
   hosts: icinga
-  become: true
-  become_user: root
 
   roles:
     - role: certbot

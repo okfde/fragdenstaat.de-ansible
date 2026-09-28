@@ -1,7 +1,5 @@
 - name: Update app
   hosts: app
-  become: true
-  become_user: root
 
   pre_tasks:
     - name: Send Slack notification message on start deployment

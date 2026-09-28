@@ -2,8 +2,6 @@
 
 - name: Deploy docker compose instances
   hosts: docker
-  become: true
-  become_user: root
 
   # Skip prerequisite role with for example `--skip-tags docker`
   pre_tasks:
@@ -56,8 +54,6 @@
 # TODO: Currently only affects monitor setup which sets dockerupdate_compose_lines var
 - name: Update docker compose containers
   hosts: docker
-  become: true
-  become_user: root
   roles:
     - role: dockerupdates
       tags: dockerupdates
