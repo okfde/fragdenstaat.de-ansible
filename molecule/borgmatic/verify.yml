@@ -2,6 +2,9 @@
 - name: Verify
   hosts: borgmatic
   gather_facts: false
+  vars:
+    secrets_location: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}/secrets.yml"
+
   tasks:
     - name: Run backup
       ansible.builtin.command:
@@ -13,3 +16,29 @@
     - name: Print backup result
       ansible.builtin.debug:
         var: _backup.stdout
+
+    - name: Fail if secrets file was not created
+      ansible.builtin.stat:
+        path: "{{ secrets_location }}"
+      delegate_to: localhost
+      become: false
+      register: _secrets_file
+      failed_when: _secrets_file.stat.exists is false
+
+    - name: Check if secrets file encrypted
+      ansible.builtin.command:
+        cmd: "head {{ secrets_location }}"
+      register: _head
+      changed_when: false
+      failed_when:
+        - _head.stdout is not search('ANSIBLE_VAULT')
+      delegate_to: localhost
+      become: false
+
+    - name: Check if secrets file contains 'BORG_KEY'
+      ansible.builtin.assert:
+        that:
+          - lookup('ansible.builtin.unvault', secrets_location) is search('BORG_KEY')
+        quiet: true
+      delegate_to: localhost
+      become: false

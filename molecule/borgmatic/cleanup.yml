@@ -1,0 +1,10 @@
+---
+- name: Cleanup
+  hosts: localhost
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Remove host_vars directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../host_vars"
+        state: absent

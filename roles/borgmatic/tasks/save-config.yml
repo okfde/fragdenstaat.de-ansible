@@ -1,0 +1,126 @@
+---
+- name: export repokey
+  ansible.builtin.command:
+    cmd: "borgmatic key export"
+  changed_when: false
+  register: _key_export
+
+- name: Set facts
+  ansible.builtin.set_fact:
+    _repokey: "{{ _key_export.stdout }}"
+    _vault_pass: "{{ playbook_dir }}/../vault.key"
+    _host_vars_dir: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}"
+
+- name: Set more facts
+  ansible.builtin.set_fact:
+    _secrets_path: "{{ _host_vars_dir | ansible.builtin.normpath }}/secrets.yml"
+
+- name: Check if secrets.yml exists for host
+  ansible.builtin.stat:
+    path: "{{ _secrets_path }}"
+  register: _secrets_file_stat
+  delegate_to: localhost
+  become: false
+
+- name: Gather contents of secret.yml
+  ansible.builtin.set_fact:
+    _secrets_content: "{{ lookup('ansible.builtin.unvault', _secrets_path) | string | from_yaml }}"
+  delegate_to: localhost
+  become: false
+  when:
+    - _secrets_file_stat is defined
+    - _secrets_file_stat.stat.exists is truthy
+  failed_when:
+    - _secrets_content == ""
+  changed_when: false
+
+- name: Check if secrets are already defined
+  ansible.builtin.set_fact:
+    _repokey_in_secrets: "{{ _secrets_content.secret_borgmatic_repokey }}"
+  when:
+    - _secrets_file_stat is defined
+    - _secrets_content.secret_borgmatic_repokey is defined
+
+- name: Do nothing if local repo key matches with repokey gathered from host
+  ansible.builtin.debug:
+    msg: |
+      INFO: Repokey for {{ inventory_hostname }} is already present in {{ _secrets_path }}.
+      INFO: Nothing to do.
+  when:
+    - _secrets_file_stat is defined
+    - _secrets_content.secret_borgmatic_repokey is defined
+    - _repokey_in_secrets == _repokey
+
+- name: Warn if local repo key differs from repokey gathered from host
+  ansible.builtin.debug:
+    msg: |
+      WARNING: Repokey stored in local secrets file differs from repokey exported on host.
+      WARNING: Overwriting stored repokey.
+
+      Output of 'borgmatic key export' on {{ inventory_hostname }}:
+      {{ _repokey }}
+
+      Value of 'secret_borgmatic_repokey' in {{ _secrets_path }}:
+      {{ _repokey_in_secrets }}
+  when:
+    - _secrets_file_stat is defined
+    - _secrets_content.secret_borgmatic_repokey is defined
+    - _repokey_in_secrets != _repokey
+
+- name: Write secrets to disk
+  when:
+    - _secrets_content is not defined or _secrets_content.secret_borgmatic_repokey is not defined or _borgmatic_passphrase_generated is defined
+  block:
+    - name: Ensure host_vars directory exists # noqa risky-file-permissions (breaks molecule)
+      ansible.builtin.file:
+        path: "{{ _host_vars_dir | ansible.builtin.normpath }}"
+        state: directory
+      delegate_to: localhost
+      delegate_facts: true
+      become: false
+
+    - name: Create new secrets dict
+      ansible.builtin.set_fact:
+        _secrets_content_new: "{{ _secrets_content | default({}) | ansible.builtin.combine({'secret_borgmatic_repokey': _repokey}) }}"
+
+    - name: Insert generated borgmatic passphrase into secrets
+      ansible.builtin.set_fact:
+        _secrets_content_new: "{{ _secrets_content_new | ansible.builtin.combine({'secret_borgmatic_passphrase': _borgmatic_passphrase_generated}) }}"
+      when: _borgmatic_passphrase_generated is defined
+
+    - name: Ensure borgmatic_passphrase is defined # noqa risky-file-permissions (breaks molecule)
+      ansible.builtin.lineinfile:
+        path: "{{ _host_vars_dir | ansible.builtin.normpath }}/main.yml"
+        regexp: '^borgmatic_passphrase:.*'
+        line: "{% raw %}borgmatic_passphrase: \"{{ secret_borgmatic_passprase }}\"{% endraw %}"
+        create: true
+      when: _borgmatic_passphrase_generated is defined
+      delegate_to: localhost
+      become: false
+      diff: true
+
+    - name: Gather vault pw
+      ansible.builtin.set_fact:
+        _vault_password: "{{ lookup('file', _vault_pass) }}"
+      delegate_to: localhost
+      become: false
+      when:
+        - _vault_password is undefined
+
+    - name: Write new secrets file to disk # noqa risky-file-permissions (breaks molecule)
+      ansible.builtin.copy:
+        content: "{{ _secrets_content_new | ansible.builtin.to_nice_yaml(indent=2, line_break='\"') | ansible.builtin.vault(_vault_password) }}"
+        dest: "{{ _secrets_path }}"
+        decrypt: false # Do not decrypt vault content
+
+      delegate_to: localhost
+      become: false
+      diff: true
+
+    - name: Inform user
+      ansible.builtin.debug:
+        msg: |
+          Saved borgmatic secrets for {{ inventory_hostname }} to disk.
+
+          Please check if the information stored in "{{ _secrets_path }}" is correct.
+          And don't forget to commit your changes.
