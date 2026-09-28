@@ -4,7 +4,7 @@ borgmatic_packages:
   - borgmatic
   - python3-pyfuse3
 
-borgmatic_passphrase: ""
+borgmatic_passphrase:
 borgmatic_repositories: []
 # borgmatic_repositories:
 #   - user:
