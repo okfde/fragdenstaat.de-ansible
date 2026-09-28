@@ -1,4 +1,5 @@
 ---
+
 - name: Prepare backup client
   hosts: borgmatic
   gather_facts: false

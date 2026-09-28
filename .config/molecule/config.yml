@@ -2,6 +2,8 @@
 ansible:
   cfg:
     defaults:
+      vault_password_file: ${MOLECULE_SCENARIO_DIRECTORY}/../molecule-vault
+
       gathering: smart
       callback_result_format: yaml
       roles_path: ${MOLECULE_PROJECT_DIRECTORY}/roles

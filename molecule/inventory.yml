@@ -6,7 +6,6 @@ ubuntu:
         pg_db: foo
         pg_user: bar
         pg_pass: secret123
-        borgmatic_passphrase: secretpassword
         borgmatic_config_databases:
           postgresql:
             - name: "{{ pg_db }}"

@@ -8,6 +8,7 @@
     path: /root/.ssh/id_borgmatic
     comment: "borgmatic@{{ ansible_facts['hostname'] }}"
     type: ed25519
+  no_log: true
 
 - name: Copy ssh-key to remote repositories (Dry run for check mode)
   ansible.builtin.command:
@@ -24,6 +25,7 @@
   become: true
   loop: "{{ borgmatic_repositories }}"
   check_mode: false
+  no_log: true
 
 - name: Create ssh config
   ansible.builtin.blockinfile:
