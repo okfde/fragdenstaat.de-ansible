@@ -3,7 +3,6 @@
 - name: Make sure that python3-debian module is installed
   ansible.builtin.apt:
     name: python3-debian
-    install_recommends: false
   retries: 3
   delay: 10
   register: _python3_debian
