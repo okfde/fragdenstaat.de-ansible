@@ -13,7 +13,9 @@
       - libpoppler-cpp-dev
       - ocrmypdf
       - optipng
+      # OSM data conversion
       - osmctools
+      - osmosis
       - jpegoptim
       - dirmngr
       - git
