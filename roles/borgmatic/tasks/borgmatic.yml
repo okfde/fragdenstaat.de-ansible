@@ -39,9 +39,13 @@
     enabled: true
     state: started
 
+- name: Set repo-create command
+  ansible.builtin.set_fact:
+    repo_create_cmd: "{{ 'repo-create' if ansible_facts['distribution_version'] is version('26.04', '>=') else 'init' }}"
+
 - name: Create repositories
   ansible.builtin.command:
-    cmd: borgmatic repo-create --encryption repokey
+    cmd: "borgmatic {{ repo_create_cmd }} --encryption repokey"
   register: _repo_create
   changed_when:
     - _repo_create.stderr | regex_search('.*Repository .* does not exist.*', multiline=True)

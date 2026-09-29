@@ -54,19 +54,27 @@
         name: sshd
         state: started
 
+    - name: Ensure group of backup user exists
+      ansible.builtin.group:
+        name: "{{ hostvars[item]['container_distro'] }}"
+        state: present
+      loop: "{{ groups['borgmatic'] }}"
+
     - name: Create backup user
       ansible.builtin.user:
-        name: backup
-        group: backup
-        home: "/srv/backups"
+        name: "{{ hostvars[item]['container_distro'] }}"
+        group: "{{ hostvars[item]['container_distro'] }}"
+        home: "/home/{{ hostvars[item]['container_distro'] }}"
         create_home: true
         shell: /bin/sh
         password: "$5$iy7XrHFpBcNwPvBY$FitYFbwS0HX28Ca3CQlyZRmoWNMh4ROAGT5WRKXqcO1" # "password"
+      loop: "{{ groups['borgmatic'] }}"
 
     - name: Create .ssh directory
       ansible.builtin.file:
-        path: "/srv/backups/.ssh"
+        path: "/home/{{ hostvars[item]['container_distro'] }}/.ssh"
         state: directory
-        owner: backup
-        group: backup
+        owner: "{{ hostvars[item]['container_distro'] }}"
+        group: "{{ hostvars[item]['container_distro'] }}"
         mode: "0700"
+      loop: "{{ groups['borgmatic'] }}"
