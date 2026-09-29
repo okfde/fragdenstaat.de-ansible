@@ -7,7 +7,7 @@
       containers.podman.podman_container:
         name: "{{ item }}"
         state: absent
-      loop: "{{ groups['molecule'] }}"
+      loop: "{{ groups['ubuntu'] }}"
 
     - name: Remove test container network
       containers.podman.podman_network:
@@ -16,6 +16,5 @@
 
     - name: Stop apt-cacher-ng proxy
       containers.podman.podman_container:
-        image: "docker.io/sameersbn/apt-cacher-ng:latest"
         name: apt-cacher-ng
         state: stopped

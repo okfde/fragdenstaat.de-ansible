@@ -1,27 +1,41 @@
 ---
-molecule:
+ubuntu:
   children:
     borgmatic:
+      vars:
+        pg_db: foo
+        pg_user: bar
+        pg_pass: secret123
+        borgmatic_passphrase: secretpassword
+        borgmatic_config_databases:
+          postgresql:
+            - name: "{{ pg_db }}"
+              username: "{{ pg_user }}"
+              password: "{{ pg_pass }}"
       hosts:
-        server.fragdenstaat.de:
+        resolute.fds.molecule:
           ansible_connection: containers.podman.podman
-          pg_db: foo
-          pg_user: bar
-          pg_pass: secret123
-          borgmatic_passphrase: secretpassword
+          container_image: docker.io/geerlingguy/docker-ubuntu2604-ansible:latest
+          container_distro: resolute
           borgmatic_repositories:
-            - user: backup
-              host: storagebox.fragdenstaat.de
+            - user: "{{ container_distro }}"
+              host: storagebox.fds.molecule
               port: 22
-              path: "/srv/backups/server"
+              path: "~borgmatic"
               password: "password"
-          borgmatic_config_databases:
-            postgresql:
-              - name: "{{ pg_db }}"
-                username: "{{ pg_user }}"
-                password: "{{ pg_pass }}"
+        noble.fds.molecule:
+          ansible_connection: containers.podman.podman
+          container_image: docker.io/geerlingguy/docker-ubuntu2404-ansible:latest
+          container_distro: noble
+          borgmatic_repositories:
+            - user: "{{ container_distro }}"
+              host: storagebox.fds.molecule
+              port: 22
+              path: "~borgmatic"
+              password: "password"
 
     storagebox:
       hosts:
-        storagebox.fragdenstaat.de:
+        storagebox.fds.molecule:
           ansible_connection: containers.podman.podman
+          container_image: docker.io/geerlingguy/docker-ubuntu2604-ansible:latest
