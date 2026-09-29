@@ -30,7 +30,7 @@
       containers.podman.podman_container:
         hostname: "{{ item }}"
         name: "{{ item }}"
-        image: "docker.io/geerlingguy/docker-ubuntu2604-ansible:latest"
+        image: "{{ hostvars[item]['container_image'] }}"
         privileged: true
         volumes:
           - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
@@ -43,7 +43,7 @@
         log_driver: json-file
         state: started
       register: result
-      loop: "{{ groups['molecule'] }}"
+      loop: "{{ groups['ubuntu'] }}"
 
     - name: Verify containers are running
       ansible.builtin.include_tasks:
@@ -59,7 +59,7 @@
       ansible.builtin.wait_for_connection:
         timeout: 30
       delegate_to: "{{ item }}"
-      loop: "{{ groups['molecule'] }}"
+      loop: "{{ groups['ubuntu'] }}"
 
     - name: Configure apt to use cache proxy
       ansible.builtin.copy:
@@ -71,10 +71,10 @@
         group: root
         mode: '0644'
       delegate_to: "{{ item }}"
-      loop: "{{ groups['molecule'] }}"
+      loop: "{{ groups['ubuntu'] }}"
 
     - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
       delegate_to: "{{ item }}"
-      loop: "{{ groups['molecule'] }}"
+      loop: "{{ groups['ubuntu'] }}"
