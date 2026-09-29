@@ -17,6 +17,8 @@ base_create_swap_file: false
 base_swap_file_path: /swapfile
 base_swap_file_size_kb: 512
 
+base_apt_install_recommends: false
+
 base_apt_update_cache: "{{ update_apt_cache | default('true') }}"
 
 base_packages_latest:

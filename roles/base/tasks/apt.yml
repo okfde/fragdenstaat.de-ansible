@@ -1,16 +1,21 @@
 ---
 
+- name: Configure apt to not install recommends
+  ansible.builtin.copy:
+    dest: "/etc/apt/apt.conf.d/95-no-install-recommends"
+    content: "APT::Install-Recommends \"{{ base_apt_install_recommends }}\";\n"
+    mode: "0644"
+
 - name: Configure apt sources
   notify: apt update
   tags:
     - sources
   block:
-    # TODO: Replace with install_python_debian paramter once we are on ansible-core 2.20.x
+    # TODO: Replace with install_python_debian parameter once we are on ansible-core 2.20.x
     # See https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/deb822_repository_module.html#parameter-install_python_debian
     - name: Make sure that python3-debian module is installed
       ansible.builtin.apt:
         name: python3-debian
-        install_recommends: false
       retries: 3
       delay: 10
       register: _python3_debian
