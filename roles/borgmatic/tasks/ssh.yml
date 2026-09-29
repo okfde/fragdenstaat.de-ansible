@@ -1,0 +1,41 @@
+---
+- name: Install sshpass
+  ansible.builtin.apt:
+    package: sshpass
+
+- name: Generate ssh-key
+  community.crypto.openssh_keypair:
+    path: /root/.ssh/id_borgmatic
+    comment: "borgmatic@{{ ansible_facts['hostname'] }}"
+    type: ed25519
+
+- name: Copy ssh-key to remote repositories (Dry run for check mode)
+  ansible.builtin.command:
+    cmd: >
+      sshpass -p {{ item.password }}
+      ssh-copy-id
+      {% if ansible_check_mode is true %}
+      -n
+      {% endif %}
+      -o StrictHostKeyChecking=accept-new
+      -p {{ item.port | default(22) }}
+      -s {{ item.user }}@{{ item.host }}
+  changed_when: false
+  become: true
+  loop: "{{ borgmatic_repositories }}"
+  check_mode: false
+
+- name: Create ssh config
+  ansible.builtin.blockinfile:
+    path: /root/.ssh/config
+    block: |
+      {% for item in borgmatic_repositories %}
+      Host {{ item.host }}
+        	HostName {{ item.host }}
+        	User {{ item.user }}
+        	Port {{ item.port | default(22) }}
+        	IdentityFile /root/.ssh/id_borgmatic
+        	StrictHostKeyChecking accept-new
+      {% endfor %}
+    mode: "0640"
+    create: true
