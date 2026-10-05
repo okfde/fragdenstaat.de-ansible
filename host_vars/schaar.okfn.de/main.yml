@@ -32,9 +32,9 @@ borg:
       path: "/var/www/nocodb/"
       src: create_postgres_backup_docker.sh
       dest: nocodb_backup.sh
-      db_name: "{{ nc_db_name }}"
-      db_user: "{{ nc_db_user }}"
-      db_password: "{{ nc_db_password }}"
+      db_name: "{{ noco_db_name }}"
+      db_user: "{{ noco_db_user }}"
+      db_password: "{{ noco_db_password }}"
     - name: snipeit
       container_name: db
       path: "/var/www/snipeit/"

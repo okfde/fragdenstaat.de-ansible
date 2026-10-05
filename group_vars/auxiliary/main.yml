@@ -35,9 +35,14 @@ discourse_mail_smtp_port: 587
 discourse_mail_smtp_user: "{{ secret_discourse_mail_smtp_user }}"
 discourse_mail_smtp_pass: "{{ secret_discourse_mail_smtp_pass }}"
 
-nc_db_user: "postgres"
-nc_db_password: "{{ secret_nc_db_password }}"
-nc_db_name: "root_db"
-nc_db_brooke: "{{ secret_nc_db_brooke }}"
+noco_db_user: "postgres"
+noco_db_password: "{{ secret_noco_db_password }}"
+noco_db_name: "root_db"
+noco_db_brooke: "{{ secret_noco_db_brooke }}"
 noco_cookie: "{{ secret_noco_cookie }}"
 noco_location: "{{ secret_noco_location }}"
+noco_mail_from: "noreply@fragdenstaat.de"
+noco_mail_host: "mail.fragdenstaat.de"
+noco_mail_port: 587
+noco_mail_username: "noreply@fragdenstaat.de"
+noco_mail_password: "{{ secret_noco_mail_password }}"

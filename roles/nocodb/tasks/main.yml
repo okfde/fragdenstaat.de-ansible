@@ -65,7 +65,7 @@
   delegate_to: "brooke.okfn.de"
   become: true
   become_user: postgres
-  with_items: "{{ nc_db_brooke }}"
+  with_items: "{{ noco_db_brooke }}"
 
 - name: Create database user
   community.general.postgresql_user:
@@ -76,7 +76,7 @@
   delegate_to: "brooke.okfn.de"
   become: true
   become_user: postgres
-  with_items: "{{ nc_db_brooke }}"
+  with_items: "{{ noco_db_brooke }}"
 
 - name: Ensure user has access to the new database
   community.postgresql.postgresql_privs:
@@ -88,7 +88,7 @@
   delegate_to: "brooke.okfn.de"
   become: true
   become_user: postgres
-  with_items: "{{ nc_db_brooke }}"
+  with_items: "{{ noco_db_brooke }}"
 
 - name: Ensure user does not have unnecessary permissions
   community.general.postgresql_user:
@@ -98,4 +98,4 @@
   delegate_to: "brooke.okfn.de"
   become: true
   become_user: postgres
-  with_items: "{{ nc_db_brooke }}"
+  with_items: "{{ noco_db_brooke }}"

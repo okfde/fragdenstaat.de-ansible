@@ -4,10 +4,17 @@ services:
       root_db:
         condition: service_healthy
     environment:
-      NC_DB: "pg://root_db:5432?u={{ nc_db_user }}&p={{ nc_db_password }}&d={{ nc_db_name }}"
+      NC_DB: "pg://root_db:5432?u={{ noco_db_user }}&p={{ noco_db_password }}&d={{ noco_db_name }}"
       NC_SITE_URL: "{{ nc_site_url }}"
       NC_ATTACHMENT_FIELD_SIZE: 500000000
       NC_REFRESH_TOKEN_EXP_IN_DAYS: 7
+      NC_SMTP_FROM: "{{ noco_mail_from }}"
+      NC_SMTP_HOST: "{{ noco_mail_host }}"
+      NC_SMTP_PORT: "{{ noco_mail_port }}"
+      NC_SMTP_USERNAME: "{{ noco_mail_username }}"
+      NC_SMTP_PASSWORD: "{{ noco_mail_password }}"
+      NC_SMTP_SECURE: "true"
+      NC_SMTP_REJECT_UNAUTHORIZED: "true"
     image: "nocodb/nocodb:latest"
     ports:
       - "{{ nc_local_port }}:8080"
@@ -16,9 +23,9 @@ services:
       - "{{ nc_data_volume }}:/usr/app/data"
   root_db:
     environment:
-      POSTGRES_DB: "{{ nc_db_user }}"
-      POSTGRES_PASSWORD: "{{ nc_db_password }}"
-      POSTGRES_USER: "{{ nc_db_user }}"
+      POSTGRES_DB: "{{ noco_db_user }}"
+      POSTGRES_PASSWORD: "{{ noco_db_password }}"
+      POSTGRES_USER: "{{ noco_db_user }}"
     healthcheck:
       interval: 10s
       retries: 10
