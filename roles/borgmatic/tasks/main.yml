@@ -1,0 +1,19 @@
+---
+- name: Assert that required variables are set
+  ansible.builtin.assert:
+    that:
+      - borgmatic_repositories is defined
+      - borgmatic_repositories | length != 0
+
+- name: Import ssh.yml
+  ansible.builtin.import_tasks: ssh.yml
+  tags: ssh
+
+- name: Import borgmatic.yml
+  ansible.builtin.import_tasks: borgmatic.yml
+  tags: borgmatic
+
+- name: Import save-config.yml
+  ansible.builtin.import_tasks: save-config.yml
+  tags:
+    - borgmatic

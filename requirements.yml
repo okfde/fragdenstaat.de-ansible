@@ -9,3 +9,4 @@ collections:
   - community.rabbitmq
   - community.crypto
   - community.libvirt
+  - { name: containers.podman, version: ">=1.20.2"}
