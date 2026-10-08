@@ -41,7 +41,7 @@ noco_db_name: "root_db"
 noco_db_brooke: "{{ secret_noco_db_brooke }}"
 noco_cookie: "{{ secret_noco_cookie }}"
 noco_location: "{{ secret_noco_location }}"
-noco_mail_from: "noreply@fragdenstaat.de"
+noco_mail_from: "noreply@nocodb.frag-den-staat.de"
 noco_mail_host: "mail.fragdenstaat.de"
 noco_mail_port: 465
 noco_mail_username: "noreply@fragdenstaat.de"
