@@ -43,6 +43,6 @@ noco_cookie: "{{ secret_noco_cookie }}"
 noco_location: "{{ secret_noco_location }}"
 noco_mail_from: "noreply@fragdenstaat.de"
 noco_mail_host: "mail.fragdenstaat.de"
-noco_mail_port: 587
+noco_mail_port: 465
 noco_mail_username: "noreply@fragdenstaat.de"
 noco_mail_password: "{{ secret_noco_mail_password }}"
