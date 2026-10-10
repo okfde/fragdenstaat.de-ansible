@@ -4,13 +4,13 @@ ansible==11.6.0
     # via fragdenstaat-de-ansible (pyproject.toml)
 ansible-compat==25.5.0
     # via ansible-lint
-ansible-core==2.21.4
+ansible-core==2.21.5
     # via
     #   fragdenstaat-de-ansible (pyproject.toml)
     #   ansible
     #   ansible-compat
     #   ansible-lint
-ansible-lint==26.8.0
+ansible-lint==26.9.0
     # via fragdenstaat-de-ansible (pyproject.toml)
 attrs==26.1.0
     # via
@@ -24,7 +24,7 @@ cffi==2.1.1
     # via cryptography
 click==8.5.0
     # via black
-cryptography==50.0.1
+cryptography==50.0.2
     # via ansible-core
 filelock==3.32.7
     # via ansible-lint
@@ -53,7 +53,7 @@ pathspec==0.12.1
     #   ansible-lint
     #   black
     #   yamllint
-platformdirs==4.11.8
+platformdirs==4.12.2
     # via black
 pycparser==3.0
     # via cffi
