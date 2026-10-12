@@ -17,9 +17,9 @@ sentry_slack_signing_secret: "{{ secret_sentry_slack_signing_secret }}"
 
 # Graylog
 opensearch_init_password: "{{ secret_opensearch_init_password }}"
-secret_graylog_password_secret: "{{ secret_graylog_password_secret }}"
-secret_graylog_root_password_sha256: "{{ secret_graylog_root_password_sha256 }}"
-secret_graylog_root_password: "{{ secret_graylog_root_password }}"
+graylog_password_secret: "{{ secret_graylog_password_secret }}"
+graylog_root_password_sha256: "{{ secret_graylog_root_password_sha256 }}"
+graylog_root_password: "{{ secret_graylog_root_password }}"
 
 nginx_monitor_logserver_access: "{{ secret_nginx_monitor_logserver_access }}"
 
