@@ -24,7 +24,6 @@ zammad_url: "support.frag-den-staat.de"
 zammad_db_password: "{{ secret_zammad_db_password }}"
 zammad_elasticsearch_password: "{{ secret_zammad_elasticsearch_password }}"
 zammad_s3_url: "{{ secret_zammad_s3_url }}"
-zammad_token: "{{ secret_zammad_token }}"
 
 snipeit_secret: "{{ secret_snipeit_secret }}"
 snipeit_mariadb_root: "{{ secret_snipeit_mariadb_root }}"
