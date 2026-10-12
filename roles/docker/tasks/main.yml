@@ -18,3 +18,13 @@
       - "containerd.io"
       - "docker-compose-plugin"
       - "apparmor-utils"
+
+- name: Configure docker daemon
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: "0644"
+    owner: root
+    group: root
+    validate: dockerd --validate --config-file %s
+  notify: Restart docker
