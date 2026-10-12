@@ -60,6 +60,7 @@
   tags:
     - django.compilemessages
     - deploy-web
+    - deploy-frontend
     - deploy-backend
   ignore_errors: true
 
