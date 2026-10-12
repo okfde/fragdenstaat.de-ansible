@@ -26,3 +26,7 @@ nginx_monitor_logserver_access: "{{ secret_nginx_monitor_logserver_access }}"
 # Grafana
 grafana_admin_password: "{{ secret_grafana_admin_password }}"
 grafana_admin_user: "{{ secret_grafana_admin_user }}"
+
+# Icinga zammad plugin
+zammad_url: "support.frag-den-staat.de"
+zammad_token: "{{ secret_zammad_token }}"
