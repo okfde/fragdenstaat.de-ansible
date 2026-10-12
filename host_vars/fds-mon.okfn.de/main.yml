@@ -72,6 +72,7 @@ icinga:
     - http_vhosts["api.fragdenstaat.de"] = { http_uri = "https://fragdenstaat.de/api/v1/" }
     - http_vhosts["gegenrechtsschutz.de"] = { http_uri = "https://gegenrechtsschutz.de/" }
     - http_vhosts["ueberbrueckungsfonds.de"] = { http_uri = "https://https://ueberbrueckungsfonds.de/" }
+    - http_vhosts["inventar.frag-den-staat.de"] = { http_uri = "https://inventar.frag-den-staat.de/" }
 
     - disks["disk vg1-monitor"] = { disk_partitions = "/dev/mapper/vg1-monitor" }
     - disks["disk vg1-container"] = { disk_partitions = "/dev/mapper/vg1-container", disk_wfree = "10", disk_cfree = "5" }
