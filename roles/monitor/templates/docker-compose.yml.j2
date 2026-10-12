@@ -11,11 +11,6 @@ services:
       - '--storage.tsdb.retention.time=2y'
     restart: unless-stopped
     network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
 {% endif %}
 
 {% if grafana is true %}
@@ -30,11 +25,6 @@ services:
       GF_RENDERING_CALLBACK_URL: http://localhost:3000/
     restart: unless-stopped
     network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
 
   renderer:
     image: grafana/grafana-image-renderer:latest
@@ -43,11 +33,6 @@ services:
       ENABLE_METRICS: "true"
     restart: unless-stopped
     network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
 {% endif %}
 
 {% if graylog is true %}
@@ -58,11 +43,6 @@ services:
       - "{{ monitor_dir }}/graylog/mongodb_data:/data/db"
     restart: unless-stopped
     network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
 
   opensearch:
     container_name: graylog_opensearch
@@ -86,11 +66,6 @@ services:
       - "{{ monitor_dir }}/graylog/os_data:/usr/share/opensearch/data"
     restart: unless-stopped
     network_mode: host
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
 
   graylog:
     container_name: graylog
@@ -122,11 +97,6 @@ services:
       GRAYLOG_ROOT_TIMEZONE: "Europe/Berlin"
       GRAYLOG_IS_LEADER: "True"
       TZ: "Europe/Berlin"
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://192.168.100.5:12201"
-        tag: "monitor"
 
     volumes:
       - "{{ monitor_dir }}/graylog/graylog_data:/usr/share/graylog/data/data"
