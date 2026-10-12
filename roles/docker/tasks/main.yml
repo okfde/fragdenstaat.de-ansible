@@ -14,18 +14,7 @@
   ansible.builtin.apt:
     pkg:
       - "docker-ce"
-    update_cache: true
-  retries: 3
-  delay: 10
-
-- name: Update apt and install docker-ce-cli
-  ansible.builtin.apt:
-    pkg:
       - "docker-ce-cli"
       - "containerd.io"
       - "docker-compose-plugin"
       - "apparmor-utils"
-    state: latest
-    update_cache: true
-  retries: 3
-  delay: 10
