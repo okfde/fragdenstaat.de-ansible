@@ -110,14 +110,17 @@
   ansible.builtin.cron:
     name: daily auto renew cert
     special_time: daily
-    job: "{{ certbot_script }} renew"
+    job: "{{ certbot_script }} renew --quiet"
     state: present
   when: certbot_auto_renew and (certbot_mode is not defined or certbot_mode == 'http-01')
+  tags:
+    - certbot-cron
 
 - name: Ensure a cron job to auto-renew the cert exists (dns-01)
   ansible.builtin.cron:
     name: daily auto renew cert
     special_time: daily
-    job: "{{ certbot_script }} renew --dns-hetzner-credentials /etc/letsencrypt/hetzner.ini"
+    job: "{{ certbot_script }} renew --dns-hetzner-credentials /etc/letsencrypt/hetzner.ini --quiet"
     state: present
   when: certbot_auto_renew and (certbot_mode is defined and certbot_mode == 'dns-01')
+    - certbot-cron
