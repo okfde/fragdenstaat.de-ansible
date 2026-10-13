@@ -19,10 +19,10 @@
 - name: Include prometheus exporter
   ansible.builtin.include_tasks: "{{ item }}.yml"
   with_items: "{{ prometheus_exporter }}"
-  when: prometheus_exporter is defined
+  when: prometheus_exporter is defined and prometheus_exporter | length > 0
   tags: exporter
 
 - name: Include sidecar.yml
   ansible.builtin.include_tasks: sidecar.yml
-  when: sidecar is defined
+  when: sidecar is true
   tags: sidecar
