@@ -72,9 +72,3 @@
         mode: '0644'
       delegate_to: "{{ item }}"
       loop: "{{ groups['ubuntu'] }}"
-
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: true
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['ubuntu'] }}"
