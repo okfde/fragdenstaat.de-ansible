@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: borgmatic
+  gather_facts: true
+  vars:
+    _vault_password: insecure
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: borgmatic

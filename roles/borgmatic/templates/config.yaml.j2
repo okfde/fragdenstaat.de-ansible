@@ -1,0 +1,256 @@
+---
+source_directories:
+{% for dir in borgmatic_config_source_directories | sort %}
+    - {{ dir }}
+{% endfor %}
+
+repositories:
+{% for repo in borgmatic_repositories %}
+    - path: ssh://{{ repo.user }}@{{ repo.host }}:{{ repo.port | default(22) }}/{{ repo.path | default('~/borgmatic') }}
+{% if repo.label is defined %}
+      label: {{ repo.label }}
+{% endif %}
+{% endfor %}
+
+# Stay in same file system (do not cross mount points).
+one_file_system: {{ borgmatic_config_one_file_system }}
+
+{% if borgmatic_config_exclude_patterns | length > 0 %}
+exclude_patterns:
+{% for dir in borgmatic_config_exclude_patterns | sort %}
+    - {{ dir }}
+{% endfor %}
+{% endif %}
+
+# Exclude directories that contain a CACHEDIR.TAG file. See
+# http://www.brynosaurus.com/cachedir/spec.html for details.
+# Defaults to false.
+exclude_caches: true
+
+# Exclude directories that contain a file with the given filename.
+exclude_if_present:
+    - .nobackup
+
+# Note that the name borgmatic.pw is hardcoded in the systemd service file.
+# See https://torsion.org/borgmatic/reference/configuration/credentials/systemd/
+encryption_passphrase: "{credential systemd borgmatic.pw}"
+
+# Type of compression to use when creating archives. See
+# http://borgbackup.readthedocs.io/en/stable/usage/create.html
+# for details. Defaults to "lz4".
+compression: lz4
+
+# Remote network upload rate limit in kiBytes/second. Defaults to
+# unlimited.
+{% if borgmatic_config_upload_rate_limit %}
+upload_rate_limit: {{ borgmatic_config_upload_rate_limit }}
+{% endif %}
+
+# Command to use instead of "ssh". This can be used to specify ssh
+# options. Defaults to not set.
+{% if borgmatic_config_ssh_command is defined %}
+ssh_command: {{ borgmatic_config_ssh_command }}
+{% endif %}
+
+# Umask to be used for borg create. Defaults to 0077.
+umask: 0077
+
+# Maximum seconds to wait for acquiring a repository/cache lock.
+# Defaults to 1.
+lock_wait: {{ borgmatic_config_lock_wait_time }}
+
+# Name of the archive to create. Borg placeholders can be used. See
+# the output of "borg help placeholders" for details. Defaults to
+# "{hostname}-{now:%Y-%m-%dT%H:%M:%S.%f}" with Borg 1 and
+# "{hostname}" with Borg 2, as Borg 2 does not require unique
+# archive names; identical archive names form a common "series" that
+# can be targeted together. When running actions like repo-list,
+# info, or check, borgmatic automatically tries to match only
+# archives created with this name format.
+archive_name_format: {{ inventory_hostname }}-{now:%Y-%m-%d-%H%M%S}
+
+##########################
+# Start retention policy #
+##########################
+{% if borgmatic_config_retention_policy.keep_secondly is defined %}
+# Number of secondly archives to keep.
+keep_secondly: {{ borgmatic_config_retention_policy.keep_secondly }}
+
+{% endif %}
+{% if borgmatic_config_retention_policy.keep_minutely is defined %}
+# Number of minutely archives to keep.
+keep_minutely: {{ borgmatic_config_retention_policy.keep_minutely }}
+
+{% endif %}
+{% if borgmatic_config_retention_policy.keep_hourly is defined %}
+# Number of hourly archives to keep.
+keep_hourly: {{ borgmatic_config_retention_policy.keep_hourly }}
+
+{% endif %}
+{% if borgmatic_config_retention_policy.keep_daily is defined %}
+# Number of daily archives to keep.
+keep_daily: {{ borgmatic_config_retention_policy.keep_daily }}
+
+{% endif %}
+{% if borgmatic_config_retention_policy.keep_weekly is defined %}
+# Number of weekly archives to keep.
+keep_weekly: {{ borgmatic_config_retention_policy.keep_weekly }}
+
+{% endif %}
+{% if borgmatic_config_retention_policy.keep_monthly is defined %}
+# Number of monthly archives to keep.
+keep_monthly: {{ borgmatic_config_retention_policy.keep_monthly }}
+
+{% endif %}
+{% if borgmatic_config_retention_policy.keep_yearly is defined %}
+# Number of yearly archives to keep.
+keep_yearly: {{ borgmatic_config_retention_policy.keep_yearly }}
+
+{% endif %}
+#########################
+# Stop retention policy #
+#########################
+{% if borgmatic_config_databases | length > 0 %}
+###################
+# START DATABASES #
+###################
+{% if borgmatic_config_databases.postgresql is defined %}
+postgresql_databases:
+{% for item in borgmatic_config_databases.postgresql | sort(attribute='name')  %}
+    - name: {{ item.name }}
+      hostname: {{ item.hostname | default('localhost')}}
+      port: {{ item.port | default(5432) }}
+      ssl_mode: {{ item.ssl_mode | default('disable') }}
+{% if item.username is defined %}
+      username: {{ item.username }}
+{% endif %}
+      {% if item.password is defined %}password: {{ item.password }}
+{% endif %}
+{% if item.label is defined %}
+      label: {{ item.label }}
+{% endif %}
+{% if item.container is defined %}
+      label: {{ item.container }}
+{% endif %}
+{% if item.pg_dump_command is defined %}
+      pg_dump_command: {{ item.pg_dump_command }}
+{% endif %}
+{% if item.pg_restore_command is defined %}
+      pg_restore_command: {{ item.pg_restore_command }}
+{% endif %}
+{% if item.psql_command is defined %}
+      psql_command: {{ item.psql_command }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% if borgmatic_config_databases.mariadb is defined %}
+{% for item in borgmatic_config_databases.mariadb | sort(attribute='name') %}
+    - name: {{ item.name }}
+      hostname: {{ item.hostname | default('localhost')}}
+      port: {{ item.port | default(3306) }}
+      tls: {{ item.tls | default(false) }}
+{% if item.username is defined %}
+      username: {{ item.username }}
+{% endif %}
+{% if item.password is defined %}
+      password: {{ item.password }}
+{% endif %}
+{% if item.label is defined %}
+      label: {{ item.label }}
+{% endif %}
+{% if item.container is defined %}
+      label: {{ item.container }}
+{% endif %}
+{% if item.socket_path is defined %}
+      socket_path: {{ item.socket_path }}
+{% endif %}
+{% if item.mariadb_dump_command is defined %}
+      mariadb_dump_command: {{ item.mariadb_dump_command }}
+{% endif %}
+{% if item.mariadb_command is defined %}
+      mariadb_command: {{ item.mariadb_command }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% if borgmatic_config_databases.mysql is defined %}
+{% for item in borgmatic_config_databases.mysql | sort(attribute='name') %}
+    - name: {{ item.name }}
+      hostname: {{ item.hostname | default('localhost')}}
+      port: {{ item.port | default(3306) }}
+      tls: {{ item.tls | default(false) }}
+{% if item.username is defined %}
+      username: {{ item.username }}
+{% endif %}
+{% if item.password is defined %}
+      password: {{ item.password }}
+{% endif %}
+{% if item.label is defined %}
+      label: {{ item.label }}
+{% endif %}
+{% if item.container is defined %}
+      label: {{ item.container }}
+{% endif %}
+{% if item.socket_path is defined %}
+      socket_path: {{ item.socket_path }}
+{% endif %}
+{% if item.mysql_dump_command is defined %}
+      mysql_dump_command: {{ item.mysql_dump_command }}
+{% endif %}
+{% if item.mysql_command is defined %}
+      mysql_command: {{ item.mysql_command }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% if borgmatic_config_databases.mongodb is defined %}
+{% for item in borgmatic_config_databases.mongodb | sort(attribute='name') %}
+    - name: {{ item.name }}
+      hostname: {{ item.hostname | default('localhost')}}
+      port: {{ item.port | default(27017) }}
+{% if item.username is defined %}
+      username: {{ item.username }}
+{% endif %}
+{% if item.password is defined %}
+      password: {{ item.password }}
+{% endif %}
+{% if item.label is defined %}
+      label: {{ item.label }}
+{% endif %}
+{% if item.container is defined %}
+      label: {{ item.container }}
+{% endif %}
+{% if item.mongodb_command is defined %}
+      mongodb_command: {{ item.mongodb_command }}
+{% endif %}
+{% endfor %}
+{% endif %}
+#################
+# END DATABASES #
+#################
+{% endif %}
+
+{% if borgmatic_config_checks | length > 0 %}
+# List of one or more consistency checks to run on a periodic basis
+# (if "frequency" is set) or every time borgmatic runs checks (if
+# "frequency" is omitted).
+checks:
+{% for check in borgmatic_config_checks | sort(attribute='name') %}
+    - name: {{ check.name }}
+      frequency: {{ check.frequency }}
+{% endfor %}
+{% endif %}
+
+# Number of times to retry a failing backup before giving up.
+retries: {{ borgmatic_config_retries }}
+
+# Wait time between retries (in seconds) to allow transient issues to pass.
+# Increases after each retry by that same wait time as a form of backoff.
+retry_wait: {{ borgmatic_config_retry_wait }}
+
+{% if borgmatic_sentry is defined and borgmatic_sentry.url is defined and borgmatic_sentry.slug is defined %}
+sentry:
+    data_source_name_url: {{ borgmatic_sentry.url }}
+    monitor_slug: {{ borgmatic_sentry.slug }}
+{% endif %}
