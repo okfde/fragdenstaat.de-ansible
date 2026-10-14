@@ -25,3 +25,5 @@ nginx_geo_block_asns_enabled: "{{ nginx_geo_blocked_asns | length > 0 }}"
 nginx_geo_blocking_enabled: "{{ (nginx_geo_blocked_countries | length > 0) or (nginx_geo_blocked_asns | length > 0) }}"
 nginx_geo_blocked_countries: []
 nginx_geo_blocked_asns: []
+
+nginx_config_cmssite: "cmssite"

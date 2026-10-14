@@ -87,23 +87,21 @@
     - deploy-frontend
     - deploy-web
 
-- name: Ensure CMS applications are started
+- name: Ensure CMS application is started
   community.general.supervisorctl:
-    name: "cmssite_gunicorn_{{ item.key }}"
+    name: "cmssite_gunicorn"
     state: started
-  with_items: "{{ cms_sites }}"
   tags:
     - deploy
     - deploy-backend
     - deploy-frontend
     - deploy-web
 
-- name: Reload CMS applications
+- name: Reload CMS application
   community.general.supervisorctl:
-    name: "cmssite_gunicorn_{{ item.key }}"
+    name: "cmssite_gunicorn"
     state: signalled
     signal: HUP
-  with_items: "{{ cms_sites }}"
   notify:
     - restart memcached
   tags:
