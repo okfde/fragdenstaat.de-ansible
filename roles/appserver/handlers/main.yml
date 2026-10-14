@@ -22,9 +22,8 @@
 
 - name: restart CMS app server
   community.general.supervisorctl:
-    name: "cmssite_gunicorn_{{ item.key }}"
+    name: "cmssite_gunicorn"
     state: restarted
-  with_items: "{{ cms_sites }}"
   notify:
     - restart memcached
 

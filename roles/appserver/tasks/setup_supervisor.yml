@@ -35,13 +35,11 @@
 - name: Create the Supervisor config file for CMS sites
   ansible.builtin.template:
     src: "supervisor_app_gunicorn_cmssite.j2"
-    dest: "/etc/supervisor/conf.d/app_gunicorn_{{ item.key }}.conf"
+    dest: "/etc/supervisor/conf.d/app_gunicorn_cmssite.conf"
     backup: true
     mode: "600"
-  with_items: "{{ cms_sites }}"
 
 - name: Re-read the Supervisor config files
   community.general.supervisorctl:
-    name: "cmssite_gunicorn_{{ item.key }}"
+    name: "cmssite_gunicorn"
     state: present
-  with_items: "{{ cms_sites }}"

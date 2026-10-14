@@ -1,15 +1,16 @@
 {% from '_utils.j2' import basic_auth, proxy_wsgi_upstream, hsts_header with context %}
 
-upstream {{ item.key }}_wsgi_server {
+upstream cmssite_wsgi_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
   # to return a good HTTP response (in case the Unicorn master nukes a
   # single worker for timing out).
 
-  server unix:{{ virtualenv_path }}/run/gunicorn_{{ item.key }}.sock fail_timeout=0;
+  server unix:{{ virtualenv_path }}/run/gunicorn_cmssite.sock fail_timeout=0;
 }
 
-proxy_cache_path /var/cache/nginx-cms-{{ item.key }} levels=1:2 keys_zone=cms_{{ item.key }}_cache:50m inactive=300m;
+proxy_cache_path /var/cache/nginx-cmssite levels=1:2 keys_zone=cmssite_cache:50m inactive=300m;
 
+{% for item in cms_sites %}
 server {
     listen      80;
     listen [::]:80;
@@ -46,7 +47,7 @@ server {
 
         location / {
             {% if "-tst" not in inventory_hostname %}
-            proxy_cache cms_{{ item.key }}_cache;
+            proxy_cache cms_cache;
             proxy_cache_key $scheme$proxy_host$uri;
             proxy_cache_valid 10m;
             proxy_cache_use_stale error timeout invalid_header http_500 http_502 http_503 http_504;
@@ -64,7 +65,9 @@ server {
             {% endif %}
 
             {{ hsts_header() }}
-            {{ proxy_wsgi_upstream(item.key) }}
+            {{ proxy_wsgi_upstream("cmssite") }}
         }
     }
 {% endif %}
+
+{% endfor %}
