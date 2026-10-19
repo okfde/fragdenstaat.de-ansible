@@ -123,4 +123,5 @@
     job: "{{ certbot_script }} renew --dns-hetzner-credentials /etc/letsencrypt/hetzner.ini --quiet"
     state: present
   when: certbot_auto_renew and (certbot_mode is defined and certbot_mode == 'dns-01')
+  tags:
     - certbot-cron
