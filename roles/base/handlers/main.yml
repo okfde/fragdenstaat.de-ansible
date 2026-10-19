@@ -31,3 +31,7 @@
 - name: dpkg-reconfigure dropbear-initramfs
   ansible.builtin.command: dpkg-reconfigure dropbear-initramfs
   changed_when: true
+
+- name: Daemon reload
+  ansible.builtin.systemd:
+    daemon_reload: true

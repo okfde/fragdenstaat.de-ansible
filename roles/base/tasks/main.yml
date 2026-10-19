@@ -19,6 +19,12 @@
   ansible.builtin.import_tasks: apt.yml
   tags: apt
 
+- name: Import disable_snap.yml
+  ansible.builtin.import_tasks: disable_snap.yml
+  when:
+    - base_disable_snap is true
+  tags: snap
+
 - name: Import add_users.yml
   ansible.builtin.import_tasks: add_users.yml
   tags: add_users

@@ -38,6 +38,8 @@ base_packages_install:
 
 base_packages_remove: []
 
+base_disable_snap: true
+
 base_needrestart:
   ignorelist:
     - "postgres.*"
