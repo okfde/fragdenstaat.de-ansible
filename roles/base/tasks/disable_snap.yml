@@ -1,0 +1,22 @@
+---
+
+- name: Purge snapd
+  ansible.builtin.apt:
+    name: snapd
+    state: absent
+    purge: true
+  notify: Daemon reload
+
+- name: Prevent installation of snapd
+  ansible.builtin.dpkg_selections:
+    name: snapd
+    selection: hold
+
+- name: Prevent indirect installation of snapd
+  ansible.builtin.copy:
+    content: |
+      Package: snapd
+      Pin: release a=*
+      Pin-Priority: -1
+    dest: /etc/apt/preferences.d/99-no-snap.pref
+    mode: "0644"
