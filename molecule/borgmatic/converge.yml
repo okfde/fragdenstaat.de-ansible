@@ -1,0 +1,29 @@
+---
+- name: Converge
+  hosts: borgmatic
+  gather_facts: true
+  vars:
+    _vault_password: insecure
+    secrets_location: "{{ playbook_dir }}/../host_vars/{{ inventory_hostname }}/secrets.yml"
+
+  pre_tasks:
+    - name: (Idempotence:) Check if converge run created a secrets file
+      ansible.builtin.stat:
+        path: "{{ secrets_location }}"
+      delegate_to: localhost
+      become: false
+      register: _converge_secrets_file
+
+    - name: (Idempotence:) Source secrets file from converge run
+      ansible.builtin.set_fact:
+        _converge_secrets_content: "{{ lookup('ansible.builtin.file', secrets_location ) | from_yaml }}"
+      delegate_to: localhost
+      become: false
+      when: _converge_secrets_file.stat.exists | bool
+
+  tasks:
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: borgmatic
+      vars:
+        borgmatic_passphrase: "{{ _converge_secrets_content.secret_borgmatic_passphrase | default('') }}"

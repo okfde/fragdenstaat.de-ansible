@@ -1,0 +1,9 @@
+---
+scenario:
+  name: borgmatic
+  test_sequence:
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - cleanup
