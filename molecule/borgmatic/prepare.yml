@@ -39,7 +39,7 @@
             comment: 'Test schema'
 
 - name: Prepare backup server
-  hosts: storagebox
+  hosts: borg_server
   gather_facts: false
   tasks:
     - name: Install serverside borgbackup
