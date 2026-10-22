@@ -7,7 +7,7 @@
       containers.podman.podman_container:
         name: "{{ item }}"
         state: absent
-      loop: "{{ groups['ubuntu'] }}"
+      loop: "{{ groups['all'] }}"
 
     - name: Remove test container network
       containers.podman.podman_network:
