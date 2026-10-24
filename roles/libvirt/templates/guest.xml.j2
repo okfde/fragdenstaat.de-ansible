@@ -1,0 +1,38 @@
+<domain type='kvm'>
+  <name>{{ guest.name }}</name>
+  <memory unit='MiB'>{{ guest.memory | default(2048)}}</memory>
+  <vcpu placement='static'>{{ guest.cpus | default(2) }}</vcpu>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <os firmware='efi'>
+    <type>hvm</type>
+  </os>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' discard='unmap'/>
+      <source file='/zfspool/libvirt/{{ guest.name }}-root.raw' />
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <interface type='network'>
+      <mac address='{{ '52:54:00' | community.general.random_mac(seed=guest.name) }}'/>
+      <source network='default' bridge='virbr0'/>
+      <model type='virtio'/>
+      <alias name='net0'/>
+    </interface>
+    <serial type='pty'>
+      <source path='/dev/pts/1'/>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+      <alias name='serial0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/1'>
+      <source path='/dev/pts/1'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+  </devices>
+</domain>

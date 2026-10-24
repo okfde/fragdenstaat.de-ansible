@@ -1,0 +1,46 @@
+---
+
+- name: Check if vm is already defined
+  community.libvirt.virt:
+    command: list_vms
+  register: _all_vms
+
+- name: Ensure ubuntu image exists
+  ansible.builtin.include_tasks: _fetch_image.yml
+  when: not guest.name in _all_vms
+
+- name: Ensure that disks exists
+  ansible.builtin.include_tasks: _create_disk.yml
+  loop: "{{ guest.disks }}"
+  loop_control:
+    loop_var: disk
+
+# TODO: copy cloud init file
+- name: Create vm
+  ansible.builtin.command: >
+    virt-install
+    --name {{ guest.name }}
+    --memory {{ guest.memory }}
+    --vcpus {{ guest.cpus }}
+    --osinfo detect=on,require=off
+    --import
+    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/root
+    {% for disk in guest.disks %}
+    {% if disk.name != 'root' %}
+    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/{{ disk.name }}
+    {% endif %}
+    {% endfor %}
+    --network network=default
+    --graphics none
+    --noautoconsole
+  register: virt_install
+  changed_when: virt_install.stdout != ""
+  when:
+    - _all_vms.list_vms is defined
+    - guest.name not in _all_vms.list_vms
+
+- name: Ensure vm is running
+  community.libvirt.virt:
+    name: "{{ guest.name }}"
+    state: running
+    autostart: true

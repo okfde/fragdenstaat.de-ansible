@@ -1,0 +1,11 @@
+---
+
+# TODO: Define via xml:
+# - create zfs pool on lvm </dev/????>
+# - set compression etc
+# - chown libvirt-qemu:kvm /zfspool/libvirt
+# - virsh pool-define-as zfs-pool dir --target /zfspool/libvirt/
+# - virsh pool-start zfs-pool
+# - virsh pool-autostart zfs-pool
+#
+# See https://libvirt.org/storage.html#zfs-pool

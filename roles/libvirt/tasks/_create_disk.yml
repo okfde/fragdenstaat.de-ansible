@@ -1,0 +1,96 @@
+---
+
+- name: Set facts
+  ansible.builtin.set_fact:
+    _zvol: "{{ libvirt_volumes }}/{{ guest.name }}/{{ disk.name }}"
+    _zvol_path: "{{ libvirt_volumes_mountdir }}/{{ guest.name }}/{{ disk.name }}"
+
+- name: Check if disk exists
+  ansible.builtin.stat:
+    path: "{{ _zvol_path }}"
+  register: _disk
+
+- name: Inform if disk exists
+  ansible.builtin.debug:
+    msg: |
+      Disk at '{{ _zvol_path }}' already exists.
+      Skip disk creation.
+  when: _disk.stat.exists is true
+
+- name: "Create non-root disk"
+  community.general.zfs:
+    name: "{{ _zvol }}"
+    state: present
+    extra_zfs_properties:
+      volsize: "{{ disk.size | ansible.builtin.human_to_bytes(default_unit='G') }}"
+  when:
+    - _disk.stat.exists is false
+    - disk.name != 'root'
+
+- name: "Configure 'root' disk"
+  when:
+    - _disk.stat.exists is false
+    - disk.name == 'root'
+  block:
+    - name: Resize image disk
+      ansible.builtin.command:
+        cmd: "qemu-img resize {{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }} {{ disk.size | ansible.builtin.human_to_bytes(default_unit='G') }}"
+      changed_when: false
+
+    - name: Load nbd kernel module
+      ansible.builtin.command:
+        cmd: modprobe nbd
+        creates: /sys/module/nbd
+
+    - name: Copy image disk from qcow2 to nbd
+      ansible.builtin.command:
+        cmd: "qemu-nbd --connect=/dev/nbd0 {{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}"
+      changed_when: false
+
+    - name: Get image size
+      ansible.builtin.command:
+        cmd: "blockdev --getsize64 /dev/nbd0"
+      when: disk.name == 'root'
+      register: _nbd_disk_size
+      changed_when: false
+      failed_when:
+        - _nbd_disk_size.stdout == ''
+
+    - name: Create zvolume
+      community.general.zfs:
+        name: "{{ _zvol }}"
+        state: present
+        extra_zfs_properties:
+          volsize: "{{ _nbd_disk_size.stdout }}"
+
+    - name: Copy disk to zvolume
+      ansible.builtin.command:
+        cmd: "dd if=/dev/nbd0 of={{ _zvol_path }} bs=4096"
+      changed_when: false
+
+    - name: Customize disk
+      ansible.builtin.command:
+        cmd: >
+          virt-customize
+          -a "{{ _zvol_path }}"
+          --hostname "{{ guest.name }}"
+          --root-password "password:{{ guest.rootpw | default(libvirt_guest_default_password) }}"
+      register: configured
+      changed_when: false
+
+  rescue:
+    - name: If disk customization failed, remove unfinished disk
+      community.general.zfs:
+        name: "{{ _zvol }}"
+        state: absent
+
+  always:
+    - name: Disconnect nbd
+      ansible.builtin.command:
+        cmd: qemu-nbd --disconnect /dev/nbd0
+        removes: /dev/nbd0
+
+    - name: Unload nbd kernel module
+      ansible.builtin.command:
+        cmd: modprobe -r nbd
+        removes: /sys/module/nbd

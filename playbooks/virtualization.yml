@@ -1,0 +1,7 @@
+---
+
+- name: Virtualization
+  hosts: hypervisor
+  roles:
+    - role: libvirt
+      tags: libvirt
