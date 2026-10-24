@@ -1,0 +1,44 @@
+---
+all:
+  hosts:
+    resolute.fds.molecule:
+      ansible_connection: containers.podman.podman
+      container_image: docker.io/geerlingguy/docker-ubuntu2604-ansible:latest
+    noble.fds.molecule:
+      ansible_connection: containers.podman.podman
+      container_image: docker.io/geerlingguy/docker-ubuntu2404-ansible:latest
+    storagebox.fds.molecule:
+      ansible_connection: containers.podman.podman
+      container_image: docker.io/geerlingguy/docker-ubuntu2604-ansible:latest
+
+borgmatic:
+  hosts:
+    resolute.fds.molecule:
+      container_distro: resolute
+      borgmatic_repositories:
+        - user: "{{ container_distro }}"
+          host: storagebox.fds.molecule
+          port: 22
+          path: "~borgmatic"
+          password: "password"
+    noble.fds.molecule:
+      container_distro: noble
+      borgmatic_repositories:
+        - user: "{{ container_distro }}"
+          host: storagebox.fds.molecule
+          port: 22
+          path: "~borgmatic"
+          password: "password"
+  vars:
+    pg_db: foo
+    pg_user: bar
+    pg_pass: secret123
+    borgmatic_config_databases:
+      postgresql:
+        - name: "{{ pg_db }}"
+          username: "{{ pg_user }}"
+          password: "{{ pg_pass }}"
+
+borg_server:
+  hosts:
+    storagebox.fds.molecule:
