@@ -54,6 +54,7 @@
   args:
     chdir: /etc/wireguard/keys
   changed_when: false
+  check_mode: false
 
 - name: cat server.public => var_publickey
   ansible.builtin.command:
@@ -62,6 +63,7 @@
   args:
     chdir: /etc/wireguard/keys
   changed_when: false
+  check_mode: false
 
 - name: Add vars vpn client
   ansible.builtin.include_vars: ../env_vars/vpnclients.yml
@@ -73,10 +75,7 @@
     owner: root
     group: root
     mode: "0600"
-  when:
-    - "'stdout' in var_privatekey"
-    # var_privatekey cannot be properly evaluated in check_mode, still need to check if config does not exist yet:
-    - wg0_conf is not defined or not wg0_conf.stat.exists
+  when: "'stdout' in var_privatekey and var_privatekey.stdout | length > 0"
   notify:
     - restart wireguard
 
