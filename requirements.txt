@@ -90,5 +90,5 @@ yamllint==1.38.0
     # via
     #   fragdenstaat-de-ansible (pyproject.toml)
     #   ansible-lint
-zipp==3.22.0
+zipp==4.1.0
     # via importlib-metadata
