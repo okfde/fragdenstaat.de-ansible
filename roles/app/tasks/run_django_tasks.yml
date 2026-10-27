@@ -62,7 +62,6 @@
     - deploy-web
     - deploy-frontend
     - deploy-backend
-  ignore_errors: true
 
 - name: Set site domain
   community.general.postgresql_query:
