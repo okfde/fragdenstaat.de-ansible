@@ -11,10 +11,10 @@
     {% endif %}
 {%- endmacro %}
 
-{% if maintenance %}
+{% if maintenance is true %}
     set $maintenance on;
 
-    {% if maintenance_admin_ip %}
+    {% if maintenance_admin_ip is defined %}
     if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
         set $maintenance off;
     }
