@@ -1,0 +1,34 @@
+---
+
+libvirt_packages:
+  - bridge-utils
+  - guestfs-tools
+  - libvirt-clients
+  - libvirt-daemon
+  - libvirt-daemon-system
+  - ovmf
+  - python3-libvirt
+  - python3-lxml
+  - qemu-system-x86
+  - qemu-utils
+  - zfsutils-linux
+  - virt-install
+
+libvirt_guests: []
+
+libvirt_users: "{{ base_ssh_users | map(attribute='name') }}"
+
+libvirt_zpool: "pool"
+libvirt_zpool_mountdir: "/srv/zpool"
+
+libvirt_volumes: "{{ libvirt_zpool }}/volumes"
+libvirt_volumes_mountdir: "/dev/zvol/{{ libvirt_zpool }}/volumes"
+
+libvirt_image_dir: "{{ libvirt_zpool_mountdir }}/images"
+libvirt_image_cache: 3m
+
+libvirt_cloudinit_dir: "/opt/cloud-init"
+
+libvirt_ubuntu_image_version: resolute
+libvirt_ubuntu_image: "{{ libvirt_ubuntu_image_version }}-server-cloudimg-amd64.img"
+libvirt_ubuntu_signing_key: D2EB44626FDDC30B513D5BB71A5D6C4C7DB87C81
