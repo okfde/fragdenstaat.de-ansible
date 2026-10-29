@@ -1,4 +1,4 @@
 ---
-pg_version: 14
+pg_version: 18
 db_user_replication: "replication"
 # db_password_replication
