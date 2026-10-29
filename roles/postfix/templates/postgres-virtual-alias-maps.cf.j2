@@ -1,5 +1,5 @@
-user = {{ db_user }}
-password = {{ db_password }}
+user = {{ db_user_readonly }}
+password = {{ db_password_readonly }}
 hosts = 127.0.0.1
 dbname = {{ db_name }}
 query = {% for em in email_alias %}SELECT '{{ em.to }}' AS destination WHERE '{{ em.from }}' = '%s' UNION ALL {% endfor %}
