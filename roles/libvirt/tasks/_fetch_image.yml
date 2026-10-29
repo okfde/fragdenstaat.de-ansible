@@ -1,0 +1,58 @@
+---
+
+- name: Check if ubuntu image is cached
+  ansible.builtin.stat:
+    path: "{{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}"
+  register: iso_image
+
+- name: Determine if should download new ubuntu image
+  ansible.builtin.set_fact:
+    _libvirt_image_download: >
+      (iso_image.stat.exists is false
+      or ((ansible_date_time.epoch | float - iso_image.stat.mtime ) > ( libvirt_image_cache | community.general.to_seconds )))
+      | bool
+
+- name: Download ubuntu image
+  when: _libvirt_image_download is true
+  block:
+
+    - name: Create temporary build directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: "{{ libvirt_ubuntu_image }}"
+      register: tmpdir
+
+    - name: Download checksum file and signature
+      ansible.builtin.get_url:
+        url: "https://cloud-images.ubuntu.com/{{ libvirt_ubuntu_image_version }}/current/{{ item }}"
+        dest: "{{ tmpdir.path }}"
+        mode: "0644"
+      loop:
+        - "SHA256SUMS"
+        - "SHA256SUMS.gpg"
+        - "{{ libvirt_ubuntu_image }}"
+
+    - name: Verify gpg signature # noqa command-instead-of-shell
+      ansible.builtin.shell:
+        cmd: "{{ item }}"
+        chdir: "{{ tmpdir.path }}"
+      loop:
+        - "gpg --homedir . --keyserver hkp://keyserver.ubuntu.com --recv-keys 0x{{ libvirt_ubuntu_signing_key }}"
+        - "gpg --homedir . --verify --batch SHA256SUMS.gpg SHA256SUMS 2>&1 | grep 'Good signature'"
+        - "sha256sum -c SHA256SUMS 2>&1 | grep OK"
+      register: shasum
+      changed_when: false
+
+    - name: Store image
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ tmpdir.path }}/{{ libvirt_ubuntu_image }}"
+        dest: "{{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}"
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Delete tmpdir
+      ansible.builtin.file:
+        path: "{{ tmpdir.path }}"
+        state: absent

@@ -1,0 +1,44 @@
+---
+
+argument_specs:
+  # roles/libvirt/tasks/main.yml entry point
+  main:
+    options:
+      libvirt_guests:
+        type: "list"
+        elements: "dict"
+        required: false
+        default: []
+        description: "A list of guest with ."
+        options:
+          name:
+            type: "str"
+            required: true
+            description: "fqdn of the name as it will be defined in the inventory file"
+
+          cpus:
+            type: "str"
+            required: false
+            default: 2
+            description: "Number of virtual CPUs."
+
+          memory:
+            type: "int"
+            required: false
+            default: 2048
+            description: "Amount of virtual memory"
+
+          disks:
+            type: "list"
+            elements: "dict"
+            required: true
+            description: "List of devices to create as storage."
+            options:
+              name:
+                type: "str"
+                required: true
+                description: "name of the disk"
+              size:
+                type: "int"
+                required: true
+                description: "size of the disk"

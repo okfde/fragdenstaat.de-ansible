@@ -1,0 +1,24 @@
+---
+
+- name: Import installation tasks
+  ansible.builtin.import_tasks: install.yml
+  tags:
+    - libvirt_install
+
+- name: Import hardening tasks
+  ansible.builtin.import_tasks: hardening.yml
+  tags:
+    - libvirt_hardening
+
+- name: Include guest tasks per guest
+  ansible.builtin.include_tasks: _guests.yml
+  loop: "{{ libvirt_guests }}"
+  loop_control:
+    loop_var: guest
+    label: "{{ guest.name }}"
+  tags:
+    - libvirt_guests
+  args:
+    apply:
+      tags:
+        - libvirt_guests
