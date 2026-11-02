@@ -9,6 +9,11 @@
   ansible.builtin.include_tasks: _fetch_image.yml
   when: not guest.name in _all_vms
 
+- name: Ensure that root disk is defined
+  ansible.builtin.fail:
+    msg: "Disk 'root' cannot be undefined for {{ guest.name }}.\nAborting."
+  when: guest.disks | selectattr('name','equalto','root') | list | length == 0
+
 - name: Ensure that disks exists
   ansible.builtin.include_tasks: _create_disk.yml
   loop: "{{ guest.disks }}"
