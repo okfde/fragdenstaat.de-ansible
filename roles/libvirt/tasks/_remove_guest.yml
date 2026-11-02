@@ -1,0 +1,16 @@
+---
+
+- name: Destroy guest
+  community.libvirt.virt:
+    name: "{{ _guest_to_delete }}"
+    command: "{{ item }}"
+  loop:
+    - destroy
+    - undefine
+
+- name: Recursively destroy disks
+  community.general.zfs:
+    name: "{{ libvirt_volumes }}/{{ _guest_to_delete }}"
+    state: absent
+
+# TODO: Reconcile network, monitoring etc. if required

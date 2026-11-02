@@ -1,0 +1,46 @@
+---
+
+- name: Purge undefined guests from hypervisor
+  hosts: hypervisor
+
+  vars_prompt:
+    - name: _guest_to_delete
+      prompt: "Name of the guest vm to delete"
+      private: false
+    - name: _confirmation
+      prompt: "Confirm deletion of guest vm? [yes/no]"
+      default: 'no'
+      private: false
+
+  pre_tasks:
+    - name: Abort if no confirmation was given
+      ansible.builtin.fail:
+        msg: "Aborting."
+      when: not _confirmation | bool
+
+    - name: Check if guest to delete is defined in host_vars
+      ansible.builtin.fail:
+        msg: |
+          Guest '{{ _guest_to_delete }}' is still defined in host_var 'libvirt_guests'
+          Remove '{{ _guest_to_delete }}' from 'libvirt_guests' before attempting to delete the vm.
+      when:
+        - _guest_to_delete is in (libvirt_guests | default([]) | map(attribute='name') | list)
+
+    - name: Gather guests list
+      community.libvirt.virt:
+        command: list_vms
+      register: list_vms
+
+    - name: Check if guest to delete is defined in libvirt
+      ansible.builtin.fail:
+        msg: |
+          Guest '{{ _guest_to_delete }}' is not defined by libvirt.
+          Nothing to do.
+      when:
+        - not list_vms.list_vms is contains( _guest_to_delete )
+
+  tasks:
+    - name: Include remove_guest task from libvirt role
+      ansible.builtin.include_role:
+        name: libvirt
+        tasks_from: _remove_guest.yml
