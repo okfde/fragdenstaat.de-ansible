@@ -25,7 +25,7 @@
   ansible.builtin.command: >
     virt-install
     --name {{ guest.name }}
-    --memory {{ guest.memory | default(2048)}}
+    --memory {{ guest.memory | default(2048) }}
     --vcpus {{ guest.cpus | default(2) }}
     --osinfo detect=on,require=off
     --import
