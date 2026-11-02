@@ -19,13 +19,11 @@ argument_specs:
           cpus:
             type: "str"
             required: false
-            default: 2
             description: "Number of virtual CPUs."
 
           memory:
             type: "int"
             required: false
-            default: 2048
             description: "Amount of virtual memory"
 
           disks:

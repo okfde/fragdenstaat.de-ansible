@@ -20,8 +20,8 @@
   ansible.builtin.command: >
     virt-install
     --name {{ guest.name }}
-    --memory {{ guest.memory }}
-    --vcpus {{ guest.cpus }}
+    --memory {{ guest.memory | default(2048)}}
+    --vcpus {{ guest.cpus | default(2) }}
     --osinfo detect=on,require=off
     --import
     --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/root
