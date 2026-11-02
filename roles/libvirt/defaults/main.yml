@@ -29,6 +29,8 @@ libvirt_image_cache: 3m
 
 libvirt_cloudinit_dir: "/opt/cloud-init"
 
+libvirt_prometheus_exporter_version: "2.6.2"
+
 libvirt_ubuntu_image_version: resolute
 libvirt_ubuntu_image: "{{ libvirt_ubuntu_image_version }}-server-cloudimg-amd64.img"
 libvirt_ubuntu_signing_key: D2EB44626FDDC30B513D5BB71A5D6C4C7DB87C81

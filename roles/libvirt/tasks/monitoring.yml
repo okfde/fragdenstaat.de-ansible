@@ -1,0 +1,40 @@
+---
+
+- name: Install promtheus-libvirt-exporter systemd file
+  ansible.builtin.template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus-libvirt-exporter.service
+    mode: "0644"
+  notify: Reload daemon
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Download prometheus-libvirt-exporter
+  ansible.builtin.get_url:
+    url: "https://github.com/inovex/prometheus-libvirt-exporter/releases/download/v{{ libvirt_prometheus_exporter_version }}/prometheus-libvirt-exporter-{{ libvirt_prometheus_exporter_version }}.linux-amd64.tar.gz"
+    checksum: "sha256:https://github.com/inovex/prometheus-libvirt-exporter/releases/download/v{{ libvirt_prometheus_exporter_version }}/prometheus-libvirt-exporter-{{ libvirt_prometheus_exporter_version }}_checksums.txt"
+    dest: /usr/local/bin/
+    mode: "0755"
+  notify: Restart prometheus-libvirt-exporter
+
+- name: Ensure prometheus-libvirt-exporter is running
+  ansible.builtin.systemd:
+    name: prometheus-libvirt-exporter
+    state: started
+    enabled: true
+
+- name: Configure firewall for prometheus-libvirt-exporter
+  community.general.ufw:
+    port: "9177"
+    proto: tcp
+    from_ip: 192.168.100.5
+    rule: allow
+
+- name: Reconcile prometheus scrape targets
+  ansible.builtin.include_role:
+    name: monitor
+    tasks_from: _rewrite_prom_config.yml
+    apply:
+      delegate_to: fds-mon.okfn.de
+      delegate_facts: true

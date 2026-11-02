@@ -5,6 +5,11 @@
   tags:
     - libvirt_install
 
+- name: Import monitoring tasks
+  ansible.builtin.import_tasks: monitoring.yml
+  tags:
+    - libvirt_monitoring
+
 - name: Import hardening tasks
   ansible.builtin.import_tasks: hardening.yml
   tags:
