@@ -10,13 +10,6 @@
     path: "{{ _zvol_path }}"
   register: _disk
 
-- name: Inform if disk exists
-  ansible.builtin.debug:
-    msg: |
-      Disk at '{{ _zvol_path }}' already exists.
-      Skip disk creation.
-  when: _disk.stat.exists is true
-
 - name: "Create non-root disk"
   community.general.zfs:
     name: "{{ _zvol }}"
