@@ -2,7 +2,7 @@
 
 - name: Install prometheus-libvirt-exporter
   ansible.builtin.apt:
-    name: prometheus-libvirt-exporter
+    deb: "https://github.com/inovex/prometheus-libvirt-exporter/releases/download/v{{ libvirt_prometheus_exporter_version }}/prometheus-libvirt-exporter-{{ libvirt_prometheus_exporter_version }}.amd64.deb"
 
 - name: Configure prometheus-libvirt-exporter
   ansible.builtin.copy:
