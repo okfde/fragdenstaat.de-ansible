@@ -47,6 +47,19 @@
     - deploy-backend
     - deploy-web
 
+# Remove when CMS migration is done
+- name: Drop old CMS gunicorn script files
+  ansible.builtin.file:
+    path: "{{ virtualenv_path }}/bin/gunicorn_{{ item.key }}_start"
+    state: "absent"
+  notify: restart CMS app server
+  with_items: "{{ cms_sites }}"
+  tags:
+    - deploy
+    - deploy-backend
+    - deploy-web
+
+
 - name: Create the CMS gunicorn script file
   ansible.builtin.template:
     src: "gunicorn_cmssite_start.j2"

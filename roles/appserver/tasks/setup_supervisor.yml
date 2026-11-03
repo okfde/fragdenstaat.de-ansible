@@ -43,3 +43,16 @@
   community.general.supervisorctl:
     name: "cmssite_gunicorn"
     state: present
+
+# Remove when CMS migration is done
+- name: Drop the Supervisor config file for domain CMS sites
+  ansible.builtin.file:
+    path: "/etc/supervisor/conf.d/app_gunicorn_{{ item.key }}.conf"
+    state: "absent"
+  with_items: "{{ cms_sites }}"
+
+- name: Re-read the Supervisor config files
+  community.general.supervisorctl:
+    name: "cmssite_gunicorn_{{ item.key }}"
+    state: absent
+  with_items: "{{ cms_sites }}"
