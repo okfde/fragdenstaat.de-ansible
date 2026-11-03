@@ -16,7 +16,7 @@
   when: _libvirt_image_download is true
   block:
 
-    - name: Create temporary build directory
+    - name: Create temporary download directory
       ansible.builtin.tempfile:
         state: directory
         suffix: "{{ libvirt_ubuntu_image }}"
