@@ -58,8 +58,9 @@
 
     - name: Copy disk to zvolume
       ansible.builtin.command:
-        cmd: "dd if=/dev/nbd0 of={{ _zvol_path }} bs=4096"
-      changed_when: false
+        cmd: "sudo virt-resize --expand /dev/sda1 /dev/nbd0 {{ _zvol_path }}"
+      register: _virt_resize
+      changed_when: _virt_resize.rc == 0
 
     - name: Customize disk
       ansible.builtin.command:
