@@ -1,20 +1,15 @@
 ---
 
-- name: Check if vm is already defined
-  community.libvirt.virt:
-    command: list_vms
-  register: _all_vms
-
 - name: Ensure ubuntu image exists
   ansible.builtin.include_tasks: _fetch_image.yml
-  when: not guest.name in _all_vms
+  when: not guest.name in _all_vms.list_vms
 
 - name: Ensure that root disk is defined
   ansible.builtin.fail:
     msg: "Disk 'root' cannot be undefined for {{ guest.name }}.\nAborting."
   when: guest.disks | selectattr('name','equalto','root') | list | length == 0
 
-- name: Ensure that disks exists
+- name: Ensure that disks are configured
   ansible.builtin.include_tasks: _create_disk.yml
   loop: "{{ guest.disks }}"
   loop_control:
@@ -40,9 +35,7 @@
     --noautoconsole
   register: virt_install
   changed_when: virt_install.stdout != ""
-  when:
-    - _all_vms.list_vms is defined
-    - guest.name not in _all_vms.list_vms
+  when: not guest.name in _all_vms.list_vms
 
 - name: Ensure vm is running
   community.libvirt.virt:

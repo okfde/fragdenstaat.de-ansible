@@ -1,0 +1,21 @@
+---
+
+- name: Get list of guests defined on host
+  community.libvirt.virt:
+    command: list_vms
+  register: _all_vms
+
+- name: Provision guests
+  ansible.builtin.include_tasks: _create_guest.yml
+  loop: "{{ libvirt_guests }}"
+  loop_control:
+    loop_var: guest
+    label: "{{ guest.name }}"
+  when: not guest.name in _all_vms.list_vms
+
+- name: Handle guests that are defined on hypervisor but not defined in host_vars
+  ansible.builtin.include_tasks: _remove_guest.yml
+  loop: "{{ _all_vms.list_vms | ansible.builtin.difference(libvirt_guests | map(attribute='name') | list) }}"
+  loop_control:
+    loop_var: guest_name
+    label: "{{ guest_name }}"
