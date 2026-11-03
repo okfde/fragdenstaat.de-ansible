@@ -1,16 +1,31 @@
 ---
 
-- name: Destroy guest
+- name: Warn about configuration drift # noqa ignore-errors
+  ansible.builtin.fail:
+    msg: |
+      WARNING
+
+      Guest '{{ guest_name }}' is configured on host '{{ inventory_hostname }}', but is not configured in host_var `libvirt_guests` for '{{ inventory_hostname }}'.
+      Run `ansible-playbook playbooks/virtualization.yml -e "libvirt_delete_guest='{{ guest_name }}'"` to purge residual guest.
+  ignore_errors: true
+  when:
+    - guest_name != libvirt_delete_guest
+
+- name: Destroy and undefine guest
   community.libvirt.virt:
-    name: "{{ _guest_to_delete }}"
+    name: "{{ guest_name }}"
     command: "{{ item }}"
   loop:
     - destroy
     - undefine
+  when:
+    - guest_name == libvirt_delete_guest
 
 - name: Recursively destroy disks
   community.general.zfs:
-    name: "{{ libvirt_volumes }}/{{ _guest_to_delete }}"
+    name: "{{ libvirt_volumes }}/{{ guest_name }}"
     state: absent
+  when:
+    - guest_name == libvirt_delete_guest
 
 # TODO: Reconcile network, monitoring etc. if required

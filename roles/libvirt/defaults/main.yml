@@ -15,6 +15,7 @@ libvirt_packages:
   - virt-install
 
 libvirt_guests: []
+libvirt_delete_guest: ""
 
 libvirt_users: "{{ base_ssh_users | map(attribute='name') }}"
 
