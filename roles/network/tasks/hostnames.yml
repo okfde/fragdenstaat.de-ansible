@@ -1,0 +1,36 @@
+---
+
+# TODO: Remove this task
+# This tasks uses groups as aliases to host names, and will break once any of these groups includes more than one member.
+- name: Add host name to hosts file
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regex: "\\s+{{ item }}$"
+    line: "{{ hostvars[groups[item][0]].host_data.site_ipv4 }} {{ item }}"
+    state: present
+  loop:
+    - db
+    - mail
+    - queue
+    - search
+    - broker
+    - cache
+    - media
+    - monitor
+
+- name: Add host name to hosts file
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regex: ".*(\ {{ item }})?\ {{ item | split('.') | first }}?$"
+    line: "{{ hostvars[item].host_data.site_ipv4 }} {{ item }} {{ item | split('.') | first }}"
+    state: present
+  when: item != inventory_hostname
+  loop: "{{ groups['all'] }}"
+
+# TODO: Remove this hack
+- name: Fix zammad check
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    line: "127.0.0.1 {{ zammad_url }}"
+    state: present
+  when: inventory_hostname in groups["auxiliary"]
