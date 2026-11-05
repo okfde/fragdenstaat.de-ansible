@@ -1,0 +1,62 @@
+---
+
+- name: Install VM toolchain
+  ansible.builtin.apt:
+    name: "{{ libvirt_packages }}"
+
+- name: Ensure libvirtd is enabled and running
+  ansible.builtin.systemd:
+    name: libvirtd
+    state: started
+    enabled: true
+
+- name: Add users to libvirt group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: libvirt-qemu
+    append: true
+  loop: "{{ libvirt_users }}"
+
+# Assumes logical volume pool in vg0 exists
+- name: Create zpool
+  community.general.zpool:
+    name: "{{ libvirt_zpool }}"
+    filesystem_properties:
+      compression: lz4
+      recordsize: 128k
+    vdevs:
+      - disks:
+          - /dev/mapper/vg0-pool
+
+- name: Create zfs filesystem for image storage
+  community.general.zfs:
+    name: "{{ libvirt_zpool }}/images"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ libvirt_image_dir }}"
+
+- name: Set permissions for image storage
+  ansible.builtin.file:
+    path: "{{ libvirt_image_dir }}"
+    mode: "0755"
+    owner: root
+    group: root
+
+# - name: Create cloudinit dir
+#   ansible.builtin.file:
+#     path: "{{ libvirt_cloudinit_dir }}"
+#     state: directory
+#     mode: "0700"
+#
+# - name: Create cloudinit file
+#   ansible.builtin.copy:
+#     content: |
+#       #cloud-config
+#       TODO
+#     dest: "{{ libvirt_cloudinit_dir }}/user_data"
+#     mode: "0600"
+#   no_log: true
+
+# TODO: Define default network
+# TODO: Define bridge network for vlan
+# TODO: Provision Authorized keys

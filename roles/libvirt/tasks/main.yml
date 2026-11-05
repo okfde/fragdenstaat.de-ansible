@@ -1,0 +1,21 @@
+---
+
+- name: Import installation tasks
+  ansible.builtin.import_tasks: install.yml
+  tags:
+    - libvirt_install
+
+- name: Import monitoring tasks
+  ansible.builtin.import_tasks: monitoring.yml
+  tags:
+    - libvirt_monitoring
+
+- name: Import hardening tasks
+  ansible.builtin.import_tasks: hardening.yml
+  tags:
+    - libvirt_hardening
+
+- name: Import guest tasks
+  ansible.builtin.import_tasks: guests.yml
+  tags:
+    - libvirt_guests

@@ -1,0 +1,23 @@
+---
+
+- name: Ensure apparmor packages are installed
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apparmor
+    - apparmor-utils
+
+- name: Configure security driver and confinement for libvirt
+  ansible.builtin.lineinfile:
+    path: /etc/libvirt/qemu.conf
+    regexp: "^#?{{ item.key }}.*$"
+    line: "{{ item.key }} = {{ item.value }}"
+  loop:
+    - key: "security_default_confined"
+      value: 1
+    - key: "security_require_confined"
+      value: 1
+    - key: "security_driver"
+      value: "[ \"apparmor\" ]"
+  notify: Restart libvirtd

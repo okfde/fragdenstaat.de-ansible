@@ -1,0 +1,39 @@
+---
+
+- name: Install prometheus-libvirt-exporter
+  ansible.builtin.apt:
+    deb: "https://github.com/inovex/prometheus-libvirt-exporter/releases/download/v{{ libvirt_prometheus_exporter_version }}/prometheus-libvirt-exporter-{{ libvirt_prometheus_exporter_version }}.amd64.deb"
+
+- name: Configure prometheus-libvirt-exporter
+  ansible.builtin.copy:
+    content: |
+      # Set the command-line arguments to pass to the server.
+      # Due to shell scaping, to pass backslashes for regexes, you need to double
+      # them (\\d for \d). If running under systemd, you need to double them again
+      # (\\\\d to mean \d), and escape newlines too.
+      ARGS="--web.listen-address={{ host_data.site_ipv4 }}:9177
+    dest: /etc/default/prometheus-libvirt-exporter
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Ensure prometheus-libvirt-exporter is running
+  ansible.builtin.systemd:
+    name: prometheus-libvirt-exporter
+    state: started
+    enabled: true
+
+- name: Configure firewall for prometheus-libvirt-exporter
+  community.general.ufw:
+    port: "9177"
+    proto: tcp
+    from_ip: 192.168.100.5
+    rule: allow
+
+- name: Reconcile prometheus scrape targets
+  ansible.builtin.include_role:
+    name: monitor
+    tasks_from: _rewrite_prom_config.yml
+    apply:
+      delegate_to: fds-mon.okfn.de
+      delegate_facts: true
