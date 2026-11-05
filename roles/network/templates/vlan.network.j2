@@ -4,11 +4,10 @@
 {% else %}
 {% set ipv4 = host_data.site_ipv4 %}
 {% endif %}
-{# default configuration #}
 [Match]
-Name={{ network_physical_interface }}.{{ network_vlan.id }}
+Name={{ network_physical_interface }}.{{ network_vlan_id }}
 [Network]
-Description="VLAN {{ network_vlan.id }}"
+Description="VLAN {{ network_vlan_id }}"
 {# If we configure a bridge for this interface, the IP address is defined in 'vlan_bridge_network.j2' #}
 {% if network_bridge_vlan is defined and network_bridge_vlan | length > 0 %}
 Bridge={{ network_bridge_vlan }}
