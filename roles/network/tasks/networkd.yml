@@ -1,0 +1,37 @@
+---
+
+- name: Ensure systemd-networkd netdev configuration files exist
+  become: true
+  ansible.builtin.template:
+    src: "systemd_netdev.j2"
+    dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.netdev"
+    owner: root
+    group: systemd-network
+    mode: "0640"
+  notify: restart systemd-networkd
+
+- name: Ensure systemd-networkd vlan network configuration files exist
+  become: true
+  ansible.builtin.template:
+    src: "systemd_vlan_network.j2"
+    dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.network"
+    owner: root
+    group: systemd-network
+    mode: "0640"
+  notify: restart systemd-networkd
+
+- name: Ensure systemd-networkd network configuration files exist
+  become: true
+  ansible.builtin.template:
+    src: "systemd_network.j2"
+    dest: "/etc/systemd/network/10-{{ network_physical_interface }}.network"
+    owner: root
+    group: systemd-network
+    mode: "0640"
+  notify: restart systemd-networkd
+
+- name: enable systemd-networkd
+  become: true
+  ansible.builtin.service:
+    name: systemd-networkd
+    enabled: true

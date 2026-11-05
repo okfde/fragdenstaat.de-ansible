@@ -4,7 +4,7 @@
 {% set ipv4 = host_data.site_ipv4 %}
 {% endif %}
 [Match]
-Name={{ host_data.interface_name}}.{{ network_vlan.id }}
+Name={{ network_physical_interface }}.{{ network_vlan.id }}
 [Network]
 Description="VLAN {{ network_vlan.id }}"
 Address={{ ipv4 }}/24
