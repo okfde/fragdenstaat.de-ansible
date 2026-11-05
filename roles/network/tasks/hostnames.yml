@@ -1,0 +1,19 @@
+---
+
+# TODO: Remove this task
+# This tasks uses groups as aliases to host names, and will break once any of these groups includes more than one member.
+- name: Add host name to hosts file
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regex: "\\s+{{ item }}$"
+    line: "{{ hostvars[groups[item][0]].host_data.site_ipv4 }} {{ item }}"
+    state: present
+  loop:
+    - db
+    - mail
+    - queue
+    - search
+    - broker
+    - cache
+    - media
+    - monitor

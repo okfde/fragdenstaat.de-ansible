@@ -4,8 +4,7 @@ git_repo: https://github.com/okfde/fragdenstaat_de.git
 base_ssh_port: "2228"
 base_ssh_users: "{{ secret_base_ssh_users }}"
 
-network_vlan:
-  id: 4000
+network_vlan_id: 4000
 
 # Declare the VPN subnet
 vpn_network: "10.9.0."
