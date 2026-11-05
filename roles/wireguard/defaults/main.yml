@@ -3,5 +3,3 @@
 
 # Declare the VPN server port
 vpn_port: '51820'
-
-network_physical_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
