@@ -1,0 +1,4 @@
+---
+
+network_bridge_vlan: "br1"
+network_bridge_physical: "br2"
