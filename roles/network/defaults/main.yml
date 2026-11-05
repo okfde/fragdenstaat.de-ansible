@@ -1,7 +1,5 @@
 ---
 
-network_physical_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
-
 # Set VLAN ID to configure VLAN for hosts
 # For hosts without physical network device (i.e. guest vms), set value to 0 to disable configuration
 network_vlan_id: 4000

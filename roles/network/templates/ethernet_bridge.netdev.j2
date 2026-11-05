@@ -2,3 +2,5 @@
 Name={{ network_bridge_physical }}
 Description=Bridge for physical interface {{ network_physical_interface }}
 Kind=bridge
+{# MacAddress *must* be inherited from ethernet interface, or Hetzner will block traffic #}
+MACAddress=none
