@@ -1,3 +1,9 @@
 ---
 
 network_physical_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
+
+# For hypervisors, create a bridge network attached to the virtual vlan interface
+# and to the physical interface respectively. Empty if no bridge should be created.
+# Value corresponds to the name of the bridge interface to be created, i.e. "brX"
+network_bridge_vlan: ""
+network_bridge_physical: ""
