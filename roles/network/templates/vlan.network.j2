@@ -1,0 +1,16 @@
+{# handle test environment #}
+{% if 'tst.okfn.de' in inventory_hostname %}
+{% set ipv4 = host_data.vlan_ipv4 %}
+{% else %}
+{% set ipv4 = host_data.site_ipv4 %}
+{% endif %}
+[Match]
+Name={{ network_physical_interface }}.{{ network_vlan_id }}
+[Network]
+Description="VLAN {{ network_vlan_id }}"
+{# If we configure a bridge for this interface, the IP address is defined in 'vlan_bridge_network.j2' #}
+{% if network_bridge_vlan is defined and network_bridge_vlan | length > 0 %}
+Bridge={{ network_bridge_vlan }}
+{% else %}
+Address={{ ipv4 }}/24
+{% endif %}
