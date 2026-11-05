@@ -69,3 +69,12 @@
     - cache
     - media
     - monitor
+
+- name: Add host name to hosts file
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regex: ".*(\ {{ item }})?\ {{ item | split('.') | first }}?$"
+    line: "{{ hostvars[item].host_data.site_ipv4 }} {{ item }} {{ item | split('.') | first }}"
+    state: present
+  when: item != inventory_hostname
+  loop: "{{ groups['all'] }}"
