@@ -1,8 +1,0 @@
-[Match]
-Name={{ network_physical_interface }}
-
-[Network]
-DHCP=ipv4
-VLAN={{ network_physical_interface }}.{{ network_vlan.id }}
-Address={{ host_data.global_ipv6 }}/64
-Gateway=fe80::1

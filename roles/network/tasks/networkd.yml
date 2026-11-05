@@ -1,37 +1,78 @@
 ---
 
-- name: Ensure systemd-networkd netdev configuration files exist
+- name: Ensure network configuration for phyiscal ethernet device exists
   become: true
   ansible.builtin.template:
-    src: "systemd_netdev.j2"
-    dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.netdev"
-    owner: root
-    group: systemd-network
-    mode: "0640"
-  notify: restart systemd-networkd
-
-- name: Ensure systemd-networkd vlan network configuration files exist
-  become: true
-  ansible.builtin.template:
-    src: "systemd_vlan_network.j2"
-    dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.network"
-    owner: root
-    group: systemd-network
-    mode: "0640"
-  notify: restart systemd-networkd
-
-- name: Ensure systemd-networkd network configuration files exist
-  become: true
-  ansible.builtin.template:
-    src: "systemd_network.j2"
+    src: "ethernet.network.j2"
     dest: "/etc/systemd/network/10-{{ network_physical_interface }}.network"
     owner: root
     group: systemd-network
     mode: "0640"
   notify: restart systemd-networkd
 
-- name: enable systemd-networkd
+- name: Ensure netdev configuration for vlan exist
+  notify: restart systemd-networkd
+  block:
+    - name: Ensure netdev configuration for vlan exist
+      ansible.builtin.template:
+        src: "vlan.netdev.j2"
+        dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.netdev"
+        owner: root
+        group: systemd-network
+        mode: "0640"
+
+    - name: Ensure network configuration for vlan exist
+      become: true
+      ansible.builtin.template:
+        src: "vlan.network.j2"
+        dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.network"
+        owner: root
+        group: systemd-network
+        mode: "0640"
+
+- name: Create bridge for phyiscal ethernet device
+  when: network_bridge_physical | length > 0
+  notify: restart systemd-networkd
+  block:
+    - name: Ensure netdev file for bridge to ethernet interface exists
+      ansible.builtin.template:
+        src: "ethernet_bridge.netdev.j2"
+        dest: "/etc/systemd/network/10-{{ network_bridge_physical }}.netdev"
+        owner: root
+        group: systemd-network
+        mode: "0640"
+
+    - name: Ensure network file for bridge to ethernet interface exists
+      ansible.builtin.template:
+        src: "ethernet_bridge.network.j2"
+        dest: "/etc/systemd/network/10-{{ network_bridge_physical }}.network"
+        owner: root
+        group: systemd-network
+        mode: "0640"
+
+- name: Create bridge for virtual vlan device
+  when: network_bridge_vlan | length > 0
+  notify: restart systemd-networkd
+  block:
+    - name: Ensure netdev file for bridge to vlan interface exists
+      ansible.builtin.template:
+        src: "vlan_bridge.netdev.j2"
+        dest: "/etc/systemd/network/10-{{ network_bridge_vlan }}.netdev"
+        owner: root
+        group: systemd-network
+        mode: "0640"
+
+    - name: Ensure network file for bridge to vlan interface exists
+      ansible.builtin.template:
+        src: "vlan_bridge.network.j2"
+        dest: "/etc/systemd/network/10-{{ network_bridge_vlan }}.network"
+        owner: root
+        group: systemd-network
+        mode: "0640"
+
+- name: Ensure systemd-networkd is enabled and started
   become: true
   ansible.builtin.service:
     name: systemd-networkd
     enabled: true
+    state: started
