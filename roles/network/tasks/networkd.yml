@@ -11,12 +11,13 @@
   notify: restart systemd-networkd
 
 - name: Ensure netdev configuration for vlan exist
+  when: network_vlan_id != 0
   notify: restart systemd-networkd
   block:
     - name: Ensure netdev configuration for vlan exist
       ansible.builtin.template:
         src: "vlan.netdev.j2"
-        dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.netdev"
+        dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan_id }}.netdev"
         owner: root
         group: systemd-network
         mode: "0640"
@@ -25,7 +26,7 @@
       become: true
       ansible.builtin.template:
         src: "vlan.network.j2"
-        dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan.id }}.network"
+        dest: "/etc/systemd/network/10-{{ network_physical_interface }}.{{ network_vlan_id }}.network"
         owner: root
         group: systemd-network
         mode: "0640"

@@ -2,6 +2,10 @@
 
 network_physical_interface: "{{ ansible_facts['default_ipv4']['interface'] }}"
 
+# Set VLAN ID to configure VLAN for hosts
+# For hosts without physical network device (i.e. guest vms), set value to 0 to disable configuration
+network_vlan_id: 4000
+
 # For hypervisors, create a bridge network attached to the virtual vlan interface
 # and to the physical interface respectively. Empty if no bridge should be created.
 # Value corresponds to the name of the bridge interface to be created, i.e. "brX"

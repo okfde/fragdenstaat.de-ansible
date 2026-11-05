@@ -2,7 +2,9 @@
 Name={{ network_physical_interface }}
 
 [Network]
-VLAN={{ network_physical_interface }}.{{ network_vlan.id }}
+{% if network_vlan_id != 0 %}
+VLAN={{ network_physical_interface }}.{{ network_vlan_id }}
+{% endif %}
 {# If we configure a bridge for this interface, the IP address and gateway are defined in 'ethernet_bridge_network.j2' #}
 {% if network_bridge_physical is defined and network_bridge_physical | length > 0 %}
 Bridge={{ network_bridge_physical }}
