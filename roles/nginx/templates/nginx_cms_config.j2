@@ -47,7 +47,7 @@ server {
 
         location / {
             {% if "-tst" not in inventory_hostname %}
-            proxy_cache cms_cache;
+            proxy_cache cmssite_cache;
             proxy_cache_key $scheme$proxy_host$uri;
             proxy_cache_valid 10m;
             proxy_cache_use_stale error timeout invalid_header http_500 http_502 http_503 http_504;
