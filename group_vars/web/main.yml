@@ -16,6 +16,7 @@ https_domains:
   - ["xn--ueberbrckungsfonds-s6b.de", "www.xn--ueberbrckungsfonds-s6b.de"]
   - ["xn--berbrueckungsfonds-l6b.de", "www.xn--berbrueckungsfonds-l6b.de"]
   - ["xn--berbrckungsfonds-izbf.de", "www.xn--berbrckungsfonds-izbf.de"]
+  - ["fragdenstaat-spenden.de", "www.fragdenstaat-spenden.de"]
 
 nginx_cache_urls:
   - path: "/"
@@ -55,6 +56,16 @@ cms_sites:
     domain: "ueberbrueckungsfonds.de"
     site_id: 3
     site_url: "https://ueberbrueckungsfonds.de"
+    simple_files:
+      - path: "/robots.txt"
+        filename: robots.txt
+      - path: "/.well-known/security.txt"
+        filename: security.txt
+  - key: "fdsspenden1"
+    name: "FDS-Spenden-1"
+    domain: "fragdenstaat-spenden.de"
+    site_id: 3
+    site_url: "https://fragdenstaat-spenden.de"
     simple_files:
       - path: "/robots.txt"
         filename: robots.txt
@@ -199,4 +210,7 @@ nginx_web_redirect_domains:
     https: true
   - from: "www.ueberbrueckungsfonds.de"
     domain: "ueberbrueckungsfonds.de"
+    https: true
+  - from: "www.fragdenstaat-spenden.de"
+    domain: "fragdenstaat-spenden.de"
     https: true
