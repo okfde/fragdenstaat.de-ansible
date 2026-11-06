@@ -15,7 +15,14 @@ server {
     listen      80;
     listen [::]:80;
     server_name {{ item.domain }};
-    rewrite     ^ https://{{ item.domain }}$request_uri? permanent;
+    {% if active_https_domains[item.domain] is defined %}
+        rewrite     ^ https://{{ item.domain }}$request_uri? permanent;
+    {% else %}
+        location /.well-known/acme-challenge/ {
+            root {{ letsencrypt_tmp_dir }};
+            try_files $uri $uri/ =404;
+        }
+    {% endif %}
 }
 
 {% if active_https_domains[item.domain] is defined %}
