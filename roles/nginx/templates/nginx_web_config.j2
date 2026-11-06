@@ -249,6 +249,11 @@ server {
 
 server {
     listen 80 default_server;
-    server_name _;
+    listen 443 default_server ssl;
+
     return 444;
+
+    ssl_ciphers aNULL;
+    ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
 }
