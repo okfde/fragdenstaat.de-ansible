@@ -7,21 +7,6 @@
   delay: 10
   register: _python3_debian
 
-- name: Enable deb-src # noqa ignore-errors (false positive)
-  ansible.builtin.deb822_repository:
-    name: hetzner-mirror-src-only
-    types: deb-src
-    trusted: true
-    uris: http://mirror.hetzner.com/ubuntu/packages
-    suites:
-      - "{{ ansible_distribution_release }}"
-    components:
-      - main
-      - restricted
-    architectures: amd64
-    signed_by: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-  ignore_errors: "{{ ansible_check_mode and _python3_debian.changed }}"
-
 - name: Install the imagemagick
   ansible.builtin.apt:
     pkg: imagemagick
