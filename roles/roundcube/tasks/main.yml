@@ -44,6 +44,7 @@
     mode: "0550"
   with_items: "{{ webmail_htpasswd }}"
   notify: reload nginx
+  no_log: true
   tags:
     - nginx
 

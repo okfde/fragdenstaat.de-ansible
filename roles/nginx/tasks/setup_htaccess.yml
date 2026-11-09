@@ -26,6 +26,7 @@
     mode: "0550"
   with_items: "{{ nginx_htpasswd }}"
   notify: reload nginx
+  no_log: true
   tags:
     - nginx
 
