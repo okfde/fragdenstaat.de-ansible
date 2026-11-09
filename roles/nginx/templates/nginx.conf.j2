@@ -133,7 +133,14 @@ http {
 
   limit_req_zone $limit_bots zone=bots:10m rate=1r/s;
   limit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;
-	limit_req_status 429;
+  limit_req_status 429;
+
+  geo $remote_addr $traffic_internal {
+    default         0;
+
+    10.0.0.0/8      1;
+    192.168.0.0/16  1;
+  }
 
 	##
 	# Virtual Host Configs
