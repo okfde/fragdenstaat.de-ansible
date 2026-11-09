@@ -172,7 +172,13 @@ nginx_web_redirect_domains:
   - from: "verklagdenstaat.de"
     domain: "fragdenstaat.de/klagen"
     https: true
+  - from: "www.verklagdenstaat.de"
+    domain: "fragdenstaat.de/klagen"
+    https: true
   - from: "zerschlagdenstaat.de"
+    domain: "fragdenstaat.de"
+    https: true
+  - from: "www.zerschlagdenstaat.de"
     domain: "fragdenstaat.de"
     https: true
   - from: "frag-den-staat.de"
