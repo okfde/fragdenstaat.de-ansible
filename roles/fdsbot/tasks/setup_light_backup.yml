@@ -8,6 +8,12 @@
   args:
     creates: "/etc/postgresql/{{ pg_version }}/{{ fdsbot_db_light_clustername }}"
 
+- name: Ensure the PostgreSQL service is running
+  ansible.builtin.service:
+    name: postgresql@{{ pg_version }}-{{ fdsbot_db_light_clustername }}
+    state: started
+    enabled: true
+
 - name: Add fdsbot user to database
   community.postgresql.postgresql_user:
     port: "{{ fdsbot_db_light_port }}"
