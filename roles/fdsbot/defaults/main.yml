@@ -14,4 +14,4 @@ fdsbot_ansible_playbook: "{{ fdsbot_ansible_dir }}/playbooks/fragdenstaat.de.yml
 fdsbot_db_light: fragdenstaat_de_light
 fdsbot_db_light_port: "5433"
 fdsbot_db_light_clustername: dev
-pg_version: "14"
+pg_version: "18"
