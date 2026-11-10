@@ -33,13 +33,13 @@
 
   tasks:
     # TODO: replace this temporary ssh configuration with playbook for permanent config
-    - name: "Create tmpdir on localhost for ssh configuration"
+    - name: Create tmpdir on localhost for ssh configuration
       ansible.builtin.tempfile:
         state: directory
       delegate_to: localhost
       register: __tmpdir_ssh
 
-    - name: "Create temporary ssh configuration"
+    - name: Create temporary ssh configuration
       ansible.builtin.template:
         src: "./templates/ssh_{{ item }}.j2"
         dest: "{{ __tmpdir_ssh.path }}/{{ item }}"
@@ -49,7 +49,7 @@
         - known_hosts
       delegate_to: localhost
 
-    - name: "Check if remote host is reachable via ssh"
+    - name: Check if remote host is reachable via ssh
       ansible.builtin.wait_for:
         host: "{{ host_data.global_ipv4 }}"
         port: 2222
@@ -59,7 +59,7 @@
       delegate_to: localhost
       failed_when: false
 
-    - name: "Decrypt remote host" # noqa risky-shell-pipe (printf will not fail)
+    - name: Decrypt remote host # noqa risky-shell-pipe (printf will not fail)
       ansible.builtin.shell:
         cmd: "printf '%s' {{ host_data.luks_passphrase }} | ssh -T -F {{ __tmpdir_ssh.path }}/config {{ inventory_hostname }} -o UserKnownHostsFile={{ __tmpdir_ssh.path }}/known_hosts"
       delegate_to: localhost
@@ -75,6 +75,11 @@
         - not __remote_unlock.stderr.find("set up successfully")
       changed_when:
         - __remote_unlock.stderr.find("set up successfully")
+
+    - name: Wait for remote host to become reachable
+      ansible.builtin.wait_for_connection:
+        delay: 20
+        timeout: 200
 
     - name: "Remove temporary ssh config"
       ansible.builtin.file:
