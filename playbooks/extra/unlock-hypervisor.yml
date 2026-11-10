@@ -71,9 +71,8 @@
         __remote_unlock.stderr.find("cryptsetup failed") or
         __remote_unlock.stderr.find("Permission denied") or
         __remote_unlock.stderr.find("set up successfully")
-      failed_when: >
-        __remote_unlock.stderr.find("cryptsetup failed") or
-        __remote_unlock.stderr.find("Permission denied")
+      failed_when:
+        - not __remote_unlock.stderr.find("set up successfully")
       changed_when:
         - __remote_unlock.stderr.find("set up successfully")
 
