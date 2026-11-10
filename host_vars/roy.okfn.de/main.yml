@@ -16,3 +16,13 @@ host_data:
 sidecar: false
 prometheus_exporter:
   - node_exporter
+
+libvirt_guests:
+  - name: testvm4.okfn.de
+    cpus: 3
+    memory: 4096
+    disks:
+      - name: root
+        size: 20
+      - name: data
+        size: 40

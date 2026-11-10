@@ -1,0 +1,3 @@
+---
+
+libvirt_guest_default_password: "{{ secret_libvirt_guest_default_password }}"
