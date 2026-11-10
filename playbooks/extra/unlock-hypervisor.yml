@@ -27,7 +27,7 @@
         that:
           - host_data is defined
           - host_data.luks_passphrase is defined
-          - host_data.global_ipv4
+          - host_data.global_ipv4 is defined
           - host_data.ssh_host_keys is defined
           - host_data.ssh_host_keys.dropbear is defined
 
