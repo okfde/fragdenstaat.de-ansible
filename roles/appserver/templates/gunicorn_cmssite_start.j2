@@ -11,7 +11,6 @@ NUM_WORKERS={{ gunicorn_cmssite_num_workers}}
 
 {% block extra_env_vars %}
 export ALLOWED_HOSTS={{ cms_sites | map(attribute='domain') | join(',') }}
-export CSRF_TRUSTED_ORIGINS={{ cms_sites | map(attribute='site_url') | join(',') }}
 # Don't pollute other app cache
 export CACHE_KEY_PREFIX=cmssite
 export CACHE_LOCAL_MEMORY=1
