@@ -24,6 +24,7 @@
   notify: reload nginx
   tags:
     - nginx
+    - nginx-config
 
 - name: Add or modify nofile soft limit for the user
   community.general.pam_limits:
