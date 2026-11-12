@@ -1,0 +1,15 @@
+[Match]
+Name={{ network_physical_interface }}
+
+[Network]
+{% if network_vlan_id != 0 %}
+VLAN={{ network_physical_interface }}.{{ network_vlan_id }}
+{% endif %}
+{# If we configure a bridge for this interface, the IP address and gateway are defined in 'ethernet_bridge_network.j2' #}
+{% if network_bridge_physical is defined and network_bridge_physical | length > 0 %}
+Bridge={{ network_bridge_physical }}
+{% else %}
+DHCP=ipv4
+Address={{ host_data.global_ipv6 }}/64
+Gateway=fe80::1
+{% endif %}
