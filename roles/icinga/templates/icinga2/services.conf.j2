@@ -153,6 +153,7 @@ apply Service for (http_vhost => config in host.vars.http_vhosts) {
   vars.notification.slack = 1
 
   vars += config
+  vars.http_ssl = 1
 }
 
 apply Service for (ssl_cert => config in host.vars.ssl_cert) {
@@ -171,6 +172,7 @@ apply Service for (disk => config in host.vars.disks) {
   check_command = "disk"
   vars.notification.pushover = 1
   vars.notification.slack = 1
+  vars.http_onredirect = "follow"
 
   vars += config
 }
