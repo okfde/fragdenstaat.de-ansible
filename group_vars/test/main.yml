@@ -86,9 +86,6 @@ nginx_extra_domains:
 nginx_set_real_ip_from: "192.168.122.0/24"
 nginx_real_ip_header: "X-Real-IP"
 
-network_vlan:
-  id: 4000
-
 hetzner_dns_api_token: "{{ secret_hetzner_dns_api_token }}"
 hetzner_dns_cloud_api_token: "{{ secret_hetzner_dns_cloud_api_token }}"
 

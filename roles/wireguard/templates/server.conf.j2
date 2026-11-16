@@ -3,8 +3,8 @@ Address = {{ vpn_network }}{{ hostvars[inventory_hostname].host_data.vpn_peer_id
 Address = {{ vpn_networkv6 }}{{ '%0x' % hostvars[inventory_hostname].host_data.vpn_peer_id }}/128
 ListenPort = {{ vpn_port }}
 PrivateKey = {{ var_privatekey.stdout }}
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ hostvars[inventory_hostname].host_data.interface_name }} -j MASQUERADE
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ wireguard_physical_interface }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ wireguard_physical_interface }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ wireguard_physical_interface }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ wireguard_physical_interface }} -j MASQUERADE
 
 {% for clientgroup in vpn_clientgroups %}
 {% if clientgroup.group in group_names %}
