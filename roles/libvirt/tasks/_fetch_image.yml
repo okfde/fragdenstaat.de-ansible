@@ -5,17 +5,10 @@
     path: "{{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}"
   register: iso_image
 
-- name: Determine if should download new ubuntu image
-  ansible.builtin.set_fact:
-    _libvirt_image_download: >
-      (iso_image.stat.exists is false
-      or ((ansible_date_time.epoch | float - iso_image.stat.mtime ) > ( libvirt_image_cache | community.general.to_seconds )))
-      | bool
-
 - name: Download ubuntu image
-  when: _libvirt_image_download is true
+  when:
+    - iso_image.stat.exists is false or libvirt_image_refresh is true
   block:
-
     - name: Create temporary download directory
       ansible.builtin.tempfile:
         state: directory
@@ -40,7 +33,7 @@
         - "gpg --homedir . --keyserver hkp://keyserver.ubuntu.com --recv-keys 0x{{ libvirt_ubuntu_signing_key }}"
         - "gpg --homedir . --verify --batch SHA256SUMS.gpg SHA256SUMS 2>&1 | grep 'Good signature'"
         - "sha256sum -c SHA256SUMS 2>&1 | grep OK"
-      register: shasum
+      register: _shasum
       changed_when: false
 
     - name: Store image

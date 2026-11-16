@@ -1,22 +1,16 @@
 ---
 
-- name: Ensure ubuntu image exists
-  ansible.builtin.include_tasks: _fetch_image.yml
-  when: not guest.name in _all_vms.list_vms
+- name: Customize disk
+  ansible.builtin.command:
+    cmd: >
+      virt-customize
+      -a "{{ libvirt_volumes_mountdir }}/{{ guest.name }}/root"
+      --hostname "{{ guest.name }}"
+      --root-password "password:{{ guest.rootpw | default(libvirt_guest_default_password) }}"
+  register: configured
+  changed_when: false
 
-- name: Ensure that root disk is defined
-  ansible.builtin.fail:
-    msg: "Disk 'root' cannot be undefined for {{ guest.name }}.\nAborting."
-  when: guest.disks | selectattr('name','equalto','root') | list | length == 0
-
-- name: Ensure that disks are configured
-  ansible.builtin.include_tasks: _create_disk.yml
-  loop: "{{ guest.disks }}"
-  loop_control:
-    loop_var: disk
-
-# TODO: copy cloud init file
-- name: Create vm
+- name: Run virt install
   ansible.builtin.command: >
     virt-install
     --name {{ guest.name }}
@@ -24,21 +18,18 @@
     --vcpus {{ guest.cpus | default(2) }}
     --osinfo detect=on,require=off
     --import
-    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/root
-    {% for disk in guest.disks %}
-    {% if disk.name != 'root' %}
-    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/{{ disk.name }}
-    {% endif %}
+    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/root,bus=virtio,discard=unmap,io=native,cache=none
+    {% if guest.additional_disks is defined %}
+    {% for disk in guest.additional_disks %}
+    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/{{ disk.name }},bus=virtio,discard=unmap,io=native,cache=none
     {% endfor %}
+    {% endif %}
     --network network=default
     --graphics none
-    --noautoconsole
+    --console pty,target_type=serial
   register: virt_install
   changed_when: virt_install.stdout != ""
-  when: not guest.name in _all_vms.list_vms
 
-- name: Ensure vm is running
-  community.libvirt.virt:
-    name: "{{ guest.name }}"
-    state: running
-    autostart: true
+- name: Print stderr if previous command failed
+  ansible.builtin.debug:
+    var: virt_install.stderr

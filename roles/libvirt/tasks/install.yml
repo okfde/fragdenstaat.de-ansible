@@ -17,16 +17,16 @@
     append: true
   loop: "{{ libvirt_users }}"
 
-# Assumes logical volume pool in vg0 exists
-- name: Create zpool
-  community.general.zpool:
-    name: "{{ libvirt_zpool }}"
-    filesystem_properties:
-      compression: lz4
-      recordsize: 128k
-    vdevs:
-      - disks:
-          - /dev/mapper/vg0-pool
+# # Assumes logical volume pool in vg0 exists
+# - name: Create zpool
+#   community.general.zpool:
+#     name: "{{ libvirt_zpool }}"
+#     filesystem_properties:
+#       compression: lz4
+#       recordsize: 128k
+#     vdevs:
+#       - disks:
+#           - /dev/mapper/vg0-pool
 
 - name: Create zfs filesystem for image storage
   community.general.zfs:

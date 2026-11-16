@@ -15,7 +15,7 @@ libvirt_packages:
   - virt-install
 
 libvirt_guests: []
-libvirt_delete_guest: ""
+libvirt_guests_delete: []
 
 libvirt_users: "{{ base_ssh_users | map(attribute='name') }}"
 
@@ -26,11 +26,18 @@ libvirt_volumes: "{{ libvirt_zpool }}/volumes"
 libvirt_volumes_mountdir: "/dev/zvol/{{ libvirt_zpool }}/volumes"
 
 libvirt_image_dir: "{{ libvirt_zpool_mountdir }}/images"
-libvirt_image_cache: 3m
+# libvirt_image_cache: 3m
+
+# Force download of current cloud image
+libvirt_image_refresh: false
 
 libvirt_cloudinit_dir: "/opt/cloud-init"
 
 libvirt_prometheus_exporter_version: "2.6.2"
+
+libvirt_bridge_default: "virbr0"
+libvirt_bridge_vlan: "{{ network_bridge_vlan | default('br1') }}"
+libvirt_bridge_physical: "{{ network_bridge_physical | default('br2') }}"
 
 libvirt_ubuntu_image_version: resolute
 libvirt_ubuntu_image: "{{ libvirt_ubuntu_image_version }}-server-cloudimg-amd64.img"

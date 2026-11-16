@@ -18,11 +18,8 @@ prometheus_exporter:
   - node_exporter
 
 libvirt_guests:
-  - name: testvm4.okfn.de
+  - name: testvm11.okfn.de
     cpus: 3
     memory: 4096
-    disks:
-      - name: root
-        size: 20
-      - name: data
-        size: 40
+    disk_size: 22
+    interal_ip_suffix: 234
