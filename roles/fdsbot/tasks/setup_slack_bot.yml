@@ -64,37 +64,6 @@
   become_user: "{{ fdsbot_user }}"
   changed_when: false
 
-# the ansible-core version currently used is unsupported by ansible-galaxy
-# TODO: upgrade ansible-core
-
-# - name: Upgrade ansible galaxy community.general
-#   ansible.builtin.command:
-#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.general"
-#   become_user: "{{ fdsbot_user }}"
-#   become: true
-#   changed_when: false
-
-# - name: Upgrade ansible galaxy community.postgresql
-#   ansible.builtin.command:
-#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.postgresql"
-#   become_user: "{{ fdsbot_user }}"
-#   become: true
-#   changed_when: false
-
-# - name: Upgrade ansible galaxy ansible.posix
-#   ansible.builtin.command:
-#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U ansible.posix"
-#   become_user: "{{ fdsbot_user }}"
-#   become: true
-#   changed_when: false
-
-# - name: Upgrade ansible galaxy community.rabbitmq
-#   ansible.builtin.command:
-#     cmd: "{{ fdsbot_ansible_dir }}/ansible-env/bin/ansible-galaxy collection install -U community.rabbitmq"
-#   become_user: "{{ fdsbot_user }}"
-#   become: true
-#   changed_when: false
-
 - name: Setup fdsbot Git repo
   ansible.builtin.git:
     repo: "{{ fdsbot_git_repo }}"
@@ -105,12 +74,6 @@
   become: true
   notify:
     - restart fdsbot
-
-- name: Setup pnpm
-  ansible.builtin.command: corepack enable pnpm
-  become: true
-  become_user: root
-  changed_when: false
 
 - name: Install fdsbot dependencies
   ansible.builtin.command: pnpm install
@@ -127,10 +90,6 @@
   become_user: "{{ fdsbot_user }}"
   become: true
   changed_when: false
-
-- name: test
-  ansible.builtin.debug:
-    msg: "{{ fdsbot_deployment_highlights }}"
 
 - name: Set fdsbot systemd service
   ansible.builtin.template:
