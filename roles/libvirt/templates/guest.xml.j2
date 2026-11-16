@@ -1,0 +1,84 @@
+<domain type='kvm'>
+  <name>{{ guest.name }}</name>
+  <memory unit='MiB'>{{ guest.memory | default(2048) }}</memory>
+  <vcpu placement='static'>{{ guest.cpus | default(2) }}</vcpu>
+  <resource>
+    <partition>/machine</partition>
+  </resource>
+  <os>
+    <type arch='x86_64'>hvm</type>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+{# Start configure disks #}
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source dev='{{ libvirt_volumes_mountdir }}/{{ guest.name }}/root'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+{% if guest.additional_disks is defined %}
+{% for disk in guest.additional_disks | sort(attribute='target') %}
+    <disk type='block' device='disk'>
+      <source dev='{{ libvirt_volumes_mountdir }}/{{ guest.name }}/{{ disk.name }}'/>
+      <target dev='{{ disk.target }}' bus='virtio'/>
+    </disk>
+{% endfor %}
+{% endif %}
+{# End configure disks #}
+{# Start configure network devices #}
+{% set shortname = guest.name | ansible.builtin.split('.') | first %}
+{# Interface attached to default bridge is named l-<vm-name> (=local) on host, net0 on guest #}
+    <interface type='network'>
+      <source network='default' bridge='virbr0'/>
+{#
+<alias name='net0'/>
+#}
+      <target dev='l-{{ shortname }}'/>
+      <model type='virtio'/>
+      <address type='pci'/>
+    </interface>
+{# Interface attached to br1 will be named v-<vm-name> (=vlan) on host, net1 on guest #}
+{#
+    <interface type='bridge'>
+      <source bridge='br1'/>
+      <alias name='net1'/>
+      <target dev='v-{{ shortname }}'/>
+      <model type='virtio'/>
+      <address type='pci'/>
+    </interface>
+#}
+{# Interface attached to br2 will be named w-<vm-name> (=wan) on host, net2 on guest #}
+{#
+{% if guest.bridge is defined %}
+    <interface type='bridge'>
+      <source bridge='br2'/>
+      <alias name='net2'/>
+      <mac address='{{ guest.bridge.mac }}'/>
+      <model type='virtio'/>
+      <target dev='w-{{ shortname }}'/>
+      <address type='pci'/>
+    </interface>
+{% endif %}
+#}
+{# Start configure network devices #}
+{# Start configure serial console #}
+    <serial type='pty'>
+      <source path='/dev/pts/1'/>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+      <alias name='serial0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/1'>
+      <source path='/dev/pts/1'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+{# End configure serial console #}
+  </devices>
+</domain>

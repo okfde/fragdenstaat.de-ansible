@@ -33,3 +33,14 @@
 - name: Print stderr if previous command failed
   ansible.builtin.debug:
     var: virt_install.stderr
+
+# - name: Create vm from xml
+#   community.libvirt.virt:
+#     command: define
+#     xml: "{{ lookup('template', 'guest.xml.j2') }}"
+#   register: _define_vm
+#
+# - name: Print xml
+#   ansible.builtin.debug:
+#     msg: "{{ lookup('template', 'guest.xml.j2') }}"
+#   when: _define_vm is failed
