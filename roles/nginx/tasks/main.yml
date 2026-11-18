@@ -53,6 +53,7 @@
   when: inventory_hostname in groups['web']
   tags:
     - nginx
+    - nginx-config
     - config_update
 
 # Remove when CMS migration is done
