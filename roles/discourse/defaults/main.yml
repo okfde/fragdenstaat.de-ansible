@@ -23,8 +23,7 @@ discourse:
       guest: /shared
     - host: /opt/discourse_docker/shared/standalone/log/var-log
       guest: /var/log
-  plugins:
-    - git clone https://github.com/discourse/abbreviation-discourse-plugin.git
+  plugins: []
 
 discourse_mail_developer_mail: 'discourse@example.org'
 discourse_mail_smtp_address: smtp.example.org
