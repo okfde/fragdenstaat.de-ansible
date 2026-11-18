@@ -2,3 +2,7 @@
 elasticsearch_version: "8.x"
 elasticsearch_cluster_name: "elasticsearch"
 elasticsearch_heapsize: "2g"
+
+# Mitigation for CVE-2026-114938 (Java4Shell)
+# see roles/elasticsearch/tasks/main.yml
+elasticsearch_disable_base64_intrinsics: true

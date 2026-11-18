@@ -66,6 +66,30 @@
   notify: restart elasticsearch
   when: "elasticsearch_heapsize is defined"
 
+# Mitigation for CVE-2026-114938 (Java4Shell)
+# disables the vulnerable AVX-512 Base64 decoder intrinsic in the JDK bundled with Elasticsearch
+# TODO: remove once the bundled JDK is >= 27.0.1.1
+# -> set elasticsearch_disable_base64_intrinsics to false (defaults/main.yml) and run playbook again
+# -> then remove this block and variable in defaults/main.yml
+- name: Mitigate Java4Shell (CVE-2026-114938) by disabling Base64 intrinsics
+  ansible.builtin.copy:
+    dest: /etc/elasticsearch/jvm.options.d/java4shell.options
+    owner: root
+    group: elasticsearch
+    mode: "0644"
+    content: "-XX:-UseBASE64Intrinsics\n"
+  notify: restart elasticsearch
+  when: elasticsearch_disable_base64_intrinsics | default(false)
+
+- name: Remove Java4Shell mitigation once no longer needed
+  ansible.builtin.file:
+    path: /etc/elasticsearch/jvm.options.d/java4shell.options
+    state: absent
+  notify: restart elasticsearch
+  when: not (elasticsearch_disable_base64_intrinsics | default(false))
+
+# end of Java4Shell mitigation
+
 - name: Set elasticsearch options
   ansible.builtin.lineinfile:
     path: "/etc/elasticsearch/elasticsearch.yml"
