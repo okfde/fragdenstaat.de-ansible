@@ -39,3 +39,4 @@ grafana_datasources:
 # graylog_root_password_sha256: echo -n yourpassword | shasum -a 256
 # graylog_server_api_token: ""
 # grafana_admin_password: ""
+# grafana_renderer_token: ""

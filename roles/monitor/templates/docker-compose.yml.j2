@@ -23,6 +23,7 @@ services:
       GF_SERVER_ROOT_URL: https://{{ monitor_domain }}/
       GF_RENDERING_SERVER_URL: http://localhost:8081/render
       GF_RENDERING_CALLBACK_URL: http://localhost:3000/
+      GF_RENDERING_RENDERER_TOKEN: "{{ grafana_renderer_token }}"
     restart: unless-stopped
     network_mode: host
 
@@ -31,6 +32,7 @@ services:
     container_name: grafana-image-renderer
     environment:
       ENABLE_METRICS: "true"
+      AUTH_TOKEN: "{{ grafana_renderer_token }}"
     restart: unless-stopped
     network_mode: host
 {% endif %}
