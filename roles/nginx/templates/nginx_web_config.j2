@@ -53,8 +53,8 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60
     }
     {% if redirect_domain.https and active_https_domains[redirect_domain.from] is defined %}
         server {
-            listen              443 ssl http2;
-            listen         [::]:443 ssl http2;
+            listen              443 ssl;
+            listen         [::]:443 ssl;
             server_name         {{ redirect_domain.from }};
 
             {% with server_name = redirect_domain.from %}
@@ -93,8 +93,8 @@ server {
 }
 
 server {
-    listen      443 ssl http2;
-    listen [::]:443 ssl http2;
+    listen      443 ssl
+    listen [::]:443 ssl
     server_name         www.{{ web_server_name }};
     {% with server_name = web_server_name %}
         {% include '_ssl.j2' %}
@@ -106,8 +106,8 @@ server {
 
 ### _web_server.j2 start
 server {
-    listen              443 ssl http2;
-    listen         [::]:443 ssl http2;
+    listen              443 ssl
+    listen         [::]:443 ssl
     server_name         {{ web_server_name }};
 
     {% with server_name = web_server_name %}
@@ -124,8 +124,8 @@ server {
 ### _media_server.j2 start
 {% if groups['media'][0] == inventory_hostname %}
     server {
-        listen              443 ssl http2;
-        listen         [::]:443 ssl http2;
+        listen              443 ssl
+        listen         [::]:443 ssl
         server_name         {{ media_server_name }};
 
         {% with server_name = media_server_name %}
@@ -139,8 +139,8 @@ server {
 
 ### _static_server.j2 start
 server {
-    listen              443 ssl http2;
-    listen         [::]:443 ssl http2;
+    listen              443 ssl
+    listen         [::]:443 ssl
     server_name         {{ static_server_name }};
 
     {% with server_name = static_server_name %}
@@ -157,8 +157,8 @@ server {
 ### nginx_extra_domains start
 {% for site in nginx_extra_domains %}
 server {
-    listen              443 ssl http2;
-    listen         [::]:443 ssl http2;
+    listen              443 ssl
+    listen         [::]:443 ssl
     server_name         {{ site.domain }};
 
     {% with server_name = site.domain %}
