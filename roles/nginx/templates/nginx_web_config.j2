@@ -249,7 +249,9 @@ server {
 
 server {
     listen 80 default_server;
+    listen [::]:80 default_server;
     listen 443 default_server ssl;
+    listen [::]:443 default_server ssl;
 
     return 444;
 
