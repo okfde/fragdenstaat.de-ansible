@@ -1,0 +1,95 @@
+---
+# TODO:
+# community.general.zfs will force recreate a volume if its volsize property has changed
+# zvols cannot be live-resized anyways, but this is still dangerous.
+# It's ugly and further complicates the code, but we might want to `stat` the block device path and conditionally run the creation task
+- name: Ensure root disk is created
+  community.general.zfs:
+    name: "{{ libvirt_volumes }}/{{ guest.name }}/root"
+    state: present
+    extra_zfs_properties:
+      volsize: "{{ guest.disk_size }}G"
+  register:
+    _root_disk
+
+- name: Copy qcow image to root disk # noqa no-handler  (does not got well with 'include_tasks')
+  when:
+    - _root_disk.changed is true
+  block:
+    - name: Create copy of image disk
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}"
+        dest: "{{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}-copy"
+        mode: "0644"
+      changed_when: false
+
+# TODO:
+# Figure out if we can skip nbd and just resize directly from cqow2 to block device
+    - name: Resize image disk
+      ansible.builtin.command:
+        cmd: "qemu-img resize {{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}-copy {{ _root_disk.volsize }}"
+      changed_when: false
+
+    - name: Load nbd kernel module
+      ansible.builtin.command:
+        cmd: modprobe nbd
+        creates: /sys/module/nbd
+      changed_when: false
+
+    - name: Copy image disk from qcow2 to nbd
+      ansible.builtin.command:
+        cmd: "qemu-nbd --connect=/dev/nbd0 {{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}-copy"
+      changed_when: false
+
+    - name: Copy disk to zvolume
+      ansible.builtin.command:
+        cmd: "sudo virt-resize --expand /dev/sda1 /dev/nbd0 /dev/zvol/{{ _root_disk.name }}"
+      register: _virt_resize
+      changed_when: false
+
+  rescue:
+    - name: Copy of qcow image failed, remove unfinished zvol
+      community.general.zfs:
+        name: "{{ _root_disk.name }}"
+        state: absent
+      changed_when: false
+
+    - name: Copy of qcow image failed
+      ansible.builtin.fail:
+        msg: Failed to provision root disk.
+
+  always:
+    - name: Delete resized copy
+      ansible.builtin.file:
+        path: "{{ libvirt_image_dir }}/{{ libvirt_ubuntu_image }}-copy"
+        state: absent
+      changed_when: false
+
+    - name: Disconnect nbd
+      ansible.builtin.command:
+        cmd: qemu-nbd --disconnect /dev/nbd0
+        removes: /dev/nbd0
+      changed_when: false
+
+    - name: Unload nbd kernel module
+      ansible.builtin.command:
+        cmd: modprobe -r nbd
+        removes: /sys/module/nbd
+      changed_when: false
+
+
+# TODO:
+# See comment in line 3
+- name: Ensure additional disks are created
+  community.general.zfs:
+    name: "{{ libvirt_volumes }}/{{ guest.name }}/{{ disk.name }}"
+    state: present
+    extra_zfs_properties:
+      volsize: "{{ disk.size }}G"
+  loop: "{{ guest.additional_disks }}"
+  loop_control:
+    loop_var: disk
+    label: "{{ guest.name }}: {{ disk.name }}"
+  when:
+    - guest.additional_disks is defined and guest.additional_disks | length > 0

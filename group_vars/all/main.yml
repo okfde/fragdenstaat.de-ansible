@@ -1,4 +1,7 @@
 ---
+
+ansible_managed: "Ansible managed file, do not edit directly"
+
 git_repo: https://github.com/okfde/fragdenstaat_de.git
 
 base_ssh_port: "2228"

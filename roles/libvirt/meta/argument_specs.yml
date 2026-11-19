@@ -1,0 +1,78 @@
+---
+
+argument_specs:
+  # roles/libvirt/tasks/main.yml entry point
+  main:
+    options:
+      libvirt_guests:
+        type: "list"
+        elements: "dict"
+        required: false
+        default: []
+        description: "A list of guest with ."
+        options:
+          name:
+            type: "str"
+            required: true
+            description: "fqdn of the name as it will be defined in the inventory file"
+
+          cpus:
+            type: "str"
+            required: false
+            description: "Number of virtual CPUs."
+
+          memory:
+            type: "int"
+            required: false
+            description: "Amount of virtual memory"
+
+          disk_size:
+            type: "int"
+            required: true
+            description: "Size of root disk (mounted to /dev/vda inside the guest)"
+
+          interal_ip_suffix:
+            type: "int"
+            required: true
+            description:
+              - "A suffix for a valid vlan IPv4 address to be assigned"
+              - "I.e. 'suffix' becomes '192.168.100.suffix'"
+              - "Obviously 0 < suffix < 255 (and check for collisions)"
+
+          state:
+            type: "str"
+            choices:
+              - "destroyed"
+              - "paused"
+              - "running"
+              - "shutdown"
+            required: false
+
+          autostart:
+            type: bool
+            required: false
+
+          bridge:
+            type: "str"
+            required: false
+            description:
+              - "TODO"
+
+          additional_disks:
+            type: "list"
+            elements: "dict"
+            required: false
+            description: "List of additional devices to create."
+            options:
+              name:
+                type: "str"
+                required: true
+                description: "Name of the disk on the host (for example, 'data')"
+              size:
+                type: "int"
+                required: true
+                description: "size of the disk"
+              target:
+                type: "str"
+                required: true
+                description: "device target on the guest (for example, 'vdb' -> '/dev/vdb')"

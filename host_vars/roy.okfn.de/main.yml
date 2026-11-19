@@ -16,3 +16,10 @@ host_data:
 sidecar: false
 prometheus_exporter:
   - node_exporter
+
+libvirt_guests:
+  - name: testvm11.okfn.de
+    cpus: 3
+    memory: 4096
+    disk_size: 22
+    interal_ip_suffix: 234

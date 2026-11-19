@@ -1,0 +1,46 @@
+---
+
+- name: Customize disk
+  ansible.builtin.command:
+    cmd: >
+      virt-customize
+      -a "{{ libvirt_volumes_mountdir }}/{{ guest.name }}/root"
+      --hostname "{{ guest.name }}"
+      --root-password "password:{{ guest.rootpw | default(libvirt_guest_default_password) }}"
+  register: configured
+  changed_when: false
+
+- name: Run virt install
+  ansible.builtin.command: >
+    virt-install
+    --name {{ guest.name }}
+    --memory {{ guest.memory | default(2048) }}
+    --vcpus {{ guest.cpus | default(2) }}
+    --osinfo detect=on,require=off
+    --import
+    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/root,bus=virtio,discard=unmap,io=native,cache=none
+    {% if guest.additional_disks is defined %}
+    {% for disk in guest.additional_disks %}
+    --disk path={{ libvirt_volumes_mountdir }}/{{ guest.name }}/{{ disk.name }},bus=virtio,discard=unmap,io=native,cache=none
+    {% endfor %}
+    {% endif %}
+    --network network=default
+    --graphics none
+    --console pty,target_type=serial
+  register: virt_install
+  changed_when: virt_install.stdout != ""
+
+- name: Print stderr if previous command failed
+  ansible.builtin.debug:
+    var: virt_install.stderr
+
+# - name: Create vm from xml
+#   community.libvirt.virt:
+#     command: define
+#     xml: "{{ lookup('template', 'guest.xml.j2') }}"
+#   register: _define_vm
+#
+# - name: Print xml
+#   ansible.builtin.debug:
+#     msg: "{{ lookup('template', 'guest.xml.j2') }}"
+#   when: _define_vm is failed
