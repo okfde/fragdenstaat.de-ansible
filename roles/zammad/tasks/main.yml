@@ -36,12 +36,3 @@
   community.docker.docker_compose_v2_pull:
     project_src: "{{ zammad_dir }}"
   notify: docker compose restart zammad
-
-- name: Create nginx config
-  ansible.builtin.template:
-    src: nginx.conf.j2
-    dest: "/etc/nginx/sites-enabled/zammad.conf"
-    mode: "0640"
-    owner: "root"
-    group: "root"
-  notify: restart nginx zammad
