@@ -7,6 +7,8 @@ base_ssh_users: "{{ secret_base_ssh_users }}"
 network_vlan:
   id: 4000
 
+network_vlan_subnet: "192.168.100.0/24"
+
 # Declare the VPN subnet
 vpn_network: "10.9.0."
 vpn_network_subnet: "10.9.0.0/24"
