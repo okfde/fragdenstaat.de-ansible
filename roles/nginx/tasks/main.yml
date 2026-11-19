@@ -21,7 +21,9 @@
   ansible.builtin.set_fact:
     active_https_domain_list: "{{ active_https_domain_list | default([]) + (item.item | default([])) }}"
   when: item.stat.exists
-  with_items: "{{ https_cert_check.results }}"
+  loop: "{{ https_cert_check.results }}"
+  loop_control:
+    label: "{{ item.item }}"
   tags:
     - nginx
     - config_update
