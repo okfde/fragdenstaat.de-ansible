@@ -78,3 +78,11 @@
     state: present
   when: item != inventory_hostname
   loop: "{{ groups['all'] }}"
+
+# TODO: Remove this hack
+- name: Fix zammad check
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    line: "127.0.0.1 {{ zammad_url }}"
+    state: present
+  when: inventory_hostname in groups["auxiliary"]

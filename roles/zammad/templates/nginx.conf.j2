@@ -13,6 +13,8 @@ server {
         allow {{ vpn_network_subnet }};
         allow {{ vpn_networkv6_subnet }};
 
+        allow 127.0.0.1/32;
+
         deny all;
 
         proxy_set_header X-Forwarded-Proto https;
