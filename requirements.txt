@@ -4,13 +4,13 @@ ansible==11.6.0
     # via fragdenstaat-de-ansible (pyproject.toml)
 ansible-compat==25.5.0
     # via ansible-lint
-ansible-core==2.21.5
+ansible-core==2.21.6
     # via
     #   fragdenstaat-de-ansible (pyproject.toml)
     #   ansible
     #   ansible-compat
     #   ansible-lint
-ansible-lint==26.10.1
+ansible-lint==26.11.0
     # via fragdenstaat-de-ansible (pyproject.toml)
 attrs==26.1.0
     # via
@@ -22,13 +22,13 @@ bracex==2.5.post1
     # via wcmatch
 cffi==2.1.1
     # via cryptography
-click==8.5.0
+click==8.5.1
     # via black
 cryptography==50.0.2
     # via ansible-core
 filelock==3.32.7
     # via ansible-lint
-importlib-metadata==9.0.1
+importlib-metadata==9.1.0
     # via ansible-lint
 jinja2==3.1.6
     # via ansible-core
@@ -40,7 +40,7 @@ jsonschema-specifications==2025.9.1
     # via jsonschema
 markupsafe==2.0.1
     # via jinja2
-mypy-extensions==1.1.0
+mypy-extensions==1.2.0
     # via black
 packaging==25.0
     # via
@@ -53,9 +53,9 @@ pathspec==0.12.1
     #   ansible-lint
     #   black
     #   yamllint
-platformdirs==4.13.3
+platformdirs==4.14.5
     # via black
-pycparser==3.11
+pycparser==3.12
     # via cffi
 pyyaml==6.0.3
     # via
