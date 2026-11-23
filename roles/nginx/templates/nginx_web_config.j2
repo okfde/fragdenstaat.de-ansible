@@ -3,30 +3,30 @@
 {% include '_preamble.j2' %}
 
 upstream {{ application_name }}_wsgi_server {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
+    # fail_timeout=0 means we always retry an upstream even if it failed
+    # to return a good HTTP response (in case the Unicorn master nukes a
+    # single worker for timing out).
 
-  {% if app_bind_localhost_port is defined %}
-  server 127.0.0.1:{{ app_bind_localhost_port }};
-  {% else %}
-  server unix:{{ virtualenv_path }}/run/gunicorn.sock fail_timeout=0;
-  {% endif %}
+{% if app_bind_localhost_port is defined %}
+    server 127.0.0.1:{{ app_bind_localhost_port }};
+{% else %}
+    server unix:{{ virtualenv_path }}/run/gunicorn.sock fail_timeout=0;
+{% endif %}
 }
 
 upstream {{ application_name }}_asgi_server {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
+    # fail_timeout=0 means we always retry an upstream even if it failed
+    # to return a good HTTP response (in case the Unicorn master nukes a
+    # single worker for timing out).
 
-  server unix:{{ virtualenv_path }}/run/uvicorn.sock fail_timeout=0;
+    server unix:{{ virtualenv_path }}/run/uvicorn.sock fail_timeout=0;
 }
 
 proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60m;
 
 ### redirect_domains start
 {% if nginx_web_redirect_domains is defined %}
-  {% for redirect_domain in nginx_web_redirect_domains %}
+{% for redirect_domain in nginx_web_redirect_domains %}
     server {
         listen 80;
         listen [::]:80;
@@ -37,50 +37,50 @@ proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=fds_cache:50m inactive=60
            root {{ letsencrypt_tmp_dir }};
         }
 
-        {% if redirect_domain.simple_files is defined %}
-            {% for simple_file in redirect_domain.simple_files %}
-                {% if simple_file.path is defined %}
-                    location = {{ simple_file.path }} {
-                        return 301 https://{{ redirect_domain.from }}{{ simple_file.path }};
-                    }
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+{% if redirect_domain.simple_files is defined %}
+{% for simple_file in redirect_domain.simple_files %}
+{% if simple_file.path is defined %}
+	location = {{ simple_file.path }} {
+            return 301 https://{{ redirect_domain.from }}{{ simple_file.path }};
+        }
+{% endif %}
+{% endfor %}
+{% endif %}
 
         location / {
             return 301 https://{{ redirect_domain.domain }}$request_uri;
         }
     }
-    {% if redirect_domain.https and active_https_domains[redirect_domain.from] is defined %}
-        server {
-            listen              443 ssl http2;
-            listen         [::]:443 ssl http2;
-            server_name         {{ redirect_domain.from }};
+{% if redirect_domain.https and active_https_domains[redirect_domain.from] is defined %}
+    server {
+        listen              443 ssl http2;
+        listen         [::]:443 ssl http2;
+        server_name         {{ redirect_domain.from }};
 
-            {% with server_name = redirect_domain.from %}
-                {% include '_ssl.j2' %}
-            {% endwith %}
+{% with server_name = redirect_domain.from %}
+{% include '_ssl.j2' %}
+{% endwith %}
 
-            {% if redirect_domain.simple_files is defined %}
-                {% for simple_file in redirect_domain.simple_files %}
-                    {% if simple_file.path is defined %}
-                        location = {{ simple_file.path }} {
-                            {% if simple_file.mimetype is defined %}
-                                add_header Content-Type "{{ simple_file.mimetype }}";
-                                default_type {{ simple_file.mimetype }};
-                            {% endif %}
-                            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
-                        }
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-
-            location / {
-                return 301 https://{{ redirect_domain.domain }}$request_uri;
-            }
+{% if redirect_domain.simple_files is defined %}
+{% for simple_file in redirect_domain.simple_files %}
+{% if simple_file.path is defined %}
+        location = {{ simple_file.path }} {
+{% if simple_file.mimetype is defined %}
+            add_header Content-Type "{{ simple_file.mimetype }}";
+            default_type {{ simple_file.mimetype }};
+{% endif %}
+            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
         }
-    {% endif %}
-  {% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+        location / {
+            return 301 https://{{ redirect_domain.domain }}$request_uri;
+        }
+    }
+{% endif %}
+{% endfor %}
 {% endif %}
 ### redirect_domains end
 
@@ -97,9 +97,9 @@ server {
     listen [::]:443 ssl http2;
 
     server_name         www.{{ web_server_name }};
-    {% with server_name = web_server_name %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
+{% with server_name = web_server_name %}
+    {% include '_ssl.j2' %}
+{% endwith %}
 
     rewrite     ^ https://{{ web_server_name }}$request_uri? permanent;
 }
@@ -111,13 +111,13 @@ server {
     listen         [::]:443 ssl http2;
     server_name         {{ web_server_name }};
 
-    {% with server_name = web_server_name %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
+{% with server_name = web_server_name %}
+    {% include '_ssl.j2' %}
+{% endwith %}
 
-    {% with geo_block_server_name = web_server_name %}
+{% with geo_block_server_name = web_server_name %}
     {% include '_geoblock_server.j2' %}
-    {% endwith %}
+{% endwith %}
     {% include '_web_server.j2' %}
 }
 ### _web_server.j2 end
@@ -129,11 +129,11 @@ server {
         listen         [::]:443 ssl http2;
         server_name         {{ media_server_name }};
 
-        {% with server_name = media_server_name %}
-            {% include '_ssl.j2' %}
-        {% endwith %}
+{% with server_name = media_server_name %}
+{% include '_ssl.j2' %}
+{% endwith %}
 
-        {% include '_media_server.j2' %}
+{% include '_media_server.j2' %}
     }
 {% endif %}
 ### _media_server.j2 end
@@ -144,14 +144,14 @@ server {
     listen         [::]:443 ssl http2;
     server_name         {{ static_server_name }};
 
-    {% with server_name = static_server_name %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
+{% with server_name = static_server_name %}
+{% include '_ssl.j2' %}
+{% endwith %}
 
-    {% with geo_block_server_name = static_server_name %}
-    {% include '_geoblock_server.j2' %}
-    {% endwith %}
-    {% include '_static_server.j2' %}
+{% with geo_block_server_name = static_server_name %}
+{% include '_geoblock_server.j2' %}
+{% endwith %}
+{% include '_static_server.j2' %}
 }
 ### _static_server.j2 end
 
@@ -162,19 +162,19 @@ server {
     listen         [::]:443 ssl http2;
     server_name         {{ site.domain }};
 
-    {% with server_name = site.domain %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
+{% with server_name = site.domain %}
+{% include '_ssl.j2' %}
+{% endwith %}
 
-    {% with geo_block_server_name = site.domain %}
-    {% include '_geoblock_server.j2' %}
-    {% endwith %}
+{% with geo_block_server_name = site.domain %}
+{% include '_geoblock_server.j2' %}
+{% endwith %}
 
-    {% for file in site.files %}
-    location = {{ file.path }} {
-        alias {{ virtualenv_path }}/simple_files/{{ file.filename }};
-    }
-    {% endfor %}
+{% for file in site.files %}
+location = {{ file.path }} {
+    alias {{ virtualenv_path }}/simple_files/{{ file.filename }};
+}
+{% endfor %}
 
 }
 {% endfor %}
@@ -188,28 +188,28 @@ server {
 {{ csp_header_map(header_var=csp_header_var, web=onion_web_server_url, media=onion_media_server_url, static=onion_static_server_url, wsweb=onion_wsweb_server_url) }}
 
 upstream {{ application_name }}_onion_wsgi_server {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
+    # fail_timeout=0 means we always retry an upstream even if it failed
+    # to return a good HTTP response (in case the Unicorn master nukes a
+    # single worker for timing out).
 
-  server unix:{{ virtualenv_path }}/run/gunicorn_onion.sock fail_timeout=0;
+    server unix:{{ virtualenv_path }}/run/gunicorn_onion.sock fail_timeout=0;
 }
 
 upstream {{ application_name }}_onion_asgi_server {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
+    # fail_timeout=0 means we always retry an upstream even if it failed
+    # to return a good HTTP response (in case the Unicorn master nukes a
+    # single worker for timing out).
 
-  server unix:{{ virtualenv_path }}/run/uvicorn_onion.sock fail_timeout=0;
+    server unix:{{ virtualenv_path }}/run/uvicorn_onion.sock fail_timeout=0;
 }
 
 server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         {{ onion_service.hostname }};
 
-    {% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", asgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url %}
-        {% include '_web_server.j2' %}
-    {% endwith %}
+{% with web_server_name = onion_service.hostname, media_server_name=onion_media_server, static_server_name=onion_static_server, wsgi_app_name=application_name + "_onion", asgi_app_name=application_name + "_onion", web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url %}
+    {% include '_web_server.j2' %}
+{% endwith %}
 }
 
 server {
@@ -224,18 +224,18 @@ server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         media.{{ onion_service.hostname }};
 
-    {% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsgi_app_name=application_name + "_onion", wsweb_server_url=onion_wsweb_server_url %}
-        {% include '_media_server.j2' %}
-    {% endwith %}
+{% with media_server_name = "media." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsgi_app_name=application_name + "_onion", wsweb_server_url=onion_wsweb_server_url %}
+    {% include '_media_server.j2' %}
+{% endwith %}
 }
 
 server {
     listen 127.0.0.1:{{ onion_service.internal_port }};
     server_name         static.{{ onion_service.hostname }};
 
-    {% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url, nginx_static_dir=onion_nginx_static_dir %}
-        {% include '_static_server.j2' %}
-    {% endwith %}
+{% with static_server_name = "static." + onion_service.hostname, web_server_url=onion_web_server_url, media_server_url=onion_media_server_url, static_server_url=onion_static_server_url, wsweb_server_url=onion_wsweb_server_url, nginx_static_dir=onion_nginx_static_dir %}
+    {% include '_static_server.j2' %}
+{% endwith %}
 }
 
 server {

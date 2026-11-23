@@ -2,23 +2,23 @@
 
 {# add_headers need to be set on location #}
 {% macro add_media_headers() -%}
-    {% if onion_service_enabled and not ".onion" in media_server_name %}
-        add_header alt-svc 'h2="{{ onion_media_server }}:443"; ma=86400; persist=1';
-        add_header Onion-Location 'http://{{ onion_media_server }}$request_uri';
-    {% endif %}
-    {% if not ".onion" in media_server_name %}
-        {{ hsts_header() }}
-    {% endif %}
+{% if onion_service_enabled and not ".onion" in media_server_name %}
+    add_header alt-svc 'h2="{{ onion_media_server }}:443"; ma=86400; persist=1';
+    add_header Onion-Location 'http://{{ onion_media_server }}$request_uri';
+{% endif %}
+{% if not ".onion" in media_server_name %}
+    {{ hsts_header() }}
+{% endif %}
 {%- endmacro %}
 
 {% if maintenance is true %}
     set $maintenance on;
 
-    {% if maintenance_admin_ip is defined %}
+{% if maintenance_admin_ip is defined %}
     if ($remote_addr ~ ({{ maintenance_admin_ip }})) {
         set $maintenance off;
     }
-    {% endif %}
+{% endif %}
     if ($maintenance = on) {
         return 503;
     }
@@ -46,21 +46,21 @@ location = /error_451.html {
 }
 
 {% if nginx_media_legal_paths is defined %}
-    {% for legal_info in nginx_media_legal_paths %}
-        location ~ {{ legal_info.path }}(.*)$ {
-            {{ add_media_headers() }}
-            return 451;
-        }
-    {% endfor %}
+{% for legal_info in nginx_media_legal_paths %}
+    location ~ {{ legal_info.path }}(.*)$ {
+        {{ add_media_headers() }}
+        return 451;
+    }
+{% endfor %}
 {% endif %}
 
 {% if nginx_media_redirect_paths is defined %}
-    {% for redirect_path in nginx_media_redirect_paths %}
-        location ~ {{ redirect_path.from }}([^\s]*)$ {
-            {{ add_media_headers() }}
-            return 301 {{ redirect_path.path }}$1$is_args$args;
-        }
-    {% endfor %}
+{% for redirect_path in nginx_media_redirect_paths %}
+    location ~ {{ redirect_path.from }}([^\s]*)$ {
+        {{ add_media_headers() }}
+        return 301 {{ redirect_path.path }}$1$is_args$args;
+    }
+{% endfor %}
 {% endif %}
 
 {% for prefix in nginx_private_media_prefix %}
@@ -79,15 +79,15 @@ location = /error_451.html {
     location {{ url_dir.url }} {
         internal;
 
-        {% set extra_headers %}
-            set $link "$upstream_http_link";
-            add_header Link $link;
+{% set extra_headers %}
+        set $link "$upstream_http_link";
+        add_header Link $link;
 
-            {% if url_dir.force_download is defined and url_dir.force_download %}
-                add_header Content-disposition $contentdisposition;
-            {% endif %}
-        {% endset %}
-        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) ~ "\n" ~ extra_headers %}
+{% if url_dir.force_download is defined and url_dir.force_download %}
+        add_header Content-disposition $contentdisposition;
+{% endif %}
+{% endset %}
+{% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) ~ "\n" ~ extra_headers %}
         {{ default_headers }}
         {{ cors(static_server_url, repeat_headers=default_headers) }}
         {{ cors(web_server_url, repeat_headers=default_headers) }}
@@ -100,17 +100,16 @@ location = /error_451.html {
 {% for loc in nginx_public_media %}
     location {{ loc.url }} {
 
-        {% set extra_headers %}
-            {% if loc.force_download is defined and loc.force_download %}
-                add_header Content-disposition $contentdisposition;
-            {% endif %}
-        {% endset %}
-        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) ~ "\n" ~ extra_headers %}
-        {{ default_headers }}
-        {{ cors(static_server_url, repeat_headers=default_headers) }}
-        {{ cors(web_server_url, repeat_headers=default_headers) }}
-        {% for valid_ref in nginx_valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
-
+{% set extra_headers %}
+{% if loc.force_download is defined and loc.force_download %}
+	add_header Content-disposition $contentdisposition;
+{% endif %}
+{% endset %}
+{% set default_headers = add_media_headers() ~ "\n" ~ csp_block(media_content_security_policy) ~ "\n" ~ extra_headers %}
+	{{ default_headers }}
+	{{ cors(static_server_url, repeat_headers=default_headers) }}
+	{{ cors(web_server_url, repeat_headers=default_headers) }}
+{% for valid_ref in nginx_valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
         alias   {{ nginx_media_dir }}{{ loc.url }};
     }
 {% endfor %}
@@ -118,7 +117,7 @@ location = /error_451.html {
 {# privileged media has a CSP like web server #}
 {% for dir in nginx_public_privileged_media %}
     location {{ dir }} {
-        {% set default_headers = add_media_headers() ~ "\n" ~ csp_block(priviliged_media_content_security_policy) %}
+{% set default_headers = add_media_headers() ~ "\n" ~ csp_block(priviliged_media_content_security_policy) %}
         {{ default_headers }}
         {{ cors(static_server_url, repeat_headers=default_headers) }}
         {{ cors(web_server_url, repeat_headers=default_headers) }}

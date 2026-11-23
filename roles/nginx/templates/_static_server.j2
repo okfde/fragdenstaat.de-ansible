@@ -2,13 +2,13 @@
 
 {# add_headers need to be set on location #}
 {% macro add_static_headers() -%}
-    {% if onion_service_enabled and not ".onion" in static_server_name %}
-        add_header alt-svc 'h2="{{ onion_static_server }}:443"; ma=86400; persist=1';
-        add_header Onion-Location 'http://{{ onion_static_server }}$request_uri';
-    {% endif %}
-    {% if not ".onion" in static_server_name %}
-        {{ hsts_header() }}
-    {% endif %}
+{% if onion_service_enabled and not ".onion" in static_server_name %}
+    add_header alt-svc 'h2="{{ onion_static_server }}:443"; ma=86400; persist=1';
+    add_header Onion-Location 'http://{{ onion_static_server }}$request_uri';
+{% endif %}
+{% if not ".onion" in static_server_name %}
+    {{ hsts_header() }}
+{% endif %}
 {%- endmacro %}
 
 {% macro static_location() -%}
@@ -17,14 +17,16 @@
     if ($invalid_referer) {
         return   403;
     }
-    {% set default_headers %}
-        {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
-        {{ add_static_headers() }}
-    {% endset %}
+{% set default_headers %}
+    {{ csp_block(static_content_security_policy, web=web_server_url, media=media_server_url, static=static_server_url) }}
+    {{ add_static_headers() }}
+{% endset %}
     {{ default_headers }}
     {{ cors(web_server_url, null_fallback=True, repeat_headers=default_headers) }}
     {{ cors("http://localhost", repeat_headers=default_headers) }}
-    {% for valid_ref in nginx_valid_referrers %}{{ cors("https://" + valid_ref, repeat_headers=default_headers) }}{% endfor %}
+{% for valid_ref in nginx_valid_referrers %}
+    {{ cors("https://" + valid_ref, repeat_headers=default_headers) }}
+{% endfor %}
 
 {%- endmacro %}
 
@@ -49,15 +51,14 @@ location /static/ {
     alias   {{ nginx_static_dir }};
 }
 {% for simple_file in nginx_simple_files %}
-    {% if simple_file.path is defined %}
-        location = {{ simple_file.path }} {
-            {% if simple_file.mimetype is defined %}
-                add_header Content-Type "{{ simple_file.mimetype }}";
-                default_type {{ simple_file.mimetype }};
-            {% endif %}
-            {{ add_static_headers() }}
-
-            alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
-        }
-    {% endif %}
+{% if simple_file.path is defined %}
+location = {{ simple_file.path }} {
+{% if simple_file.mimetype is defined %}
+    add_header Content-Type "{{ simple_file.mimetype }}";
+    default_type {{ simple_file.mimetype }};
+{% endif %}
+{{ add_static_headers() }}
+    alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
+}
+{% endif %}
 {% endfor %}

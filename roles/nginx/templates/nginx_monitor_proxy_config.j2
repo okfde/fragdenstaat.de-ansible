@@ -15,9 +15,9 @@ server {
     listen         [::]:443 ssl http2;
     server_name         {{ monitor_server_name }};
 
-    {% with server_name = monitor_server_name %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
+{% with server_name = monitor_server_name %}
+    {% include '_ssl.j2' %}
+{% endwith %}
 
     location /status.html {
         root /var/www/html/;
@@ -31,7 +31,7 @@ server {
         proxy_set_header Host $host;
     }
 
-	location /api/live/ {
+    location /api/live/ {
         allow 10.9.0.0/25;
         allow fc00::1/121;
         deny all;
@@ -55,14 +55,14 @@ server {
     listen         [::]:443 ssl http2;
     server_name         {{ logserver_server_name }};
 
-    {% with server_name = logserver_server_name %}
-        {% include '_ssl.j2' %}
-    {% endwith %}
+{% with server_name = logserver_server_name %}
+{% include '_ssl.j2' %}
+{% endwith %}
 
     location / {
-        {% for i in nginx_monitor_logserver_access %}
+{% for i in nginx_monitor_logserver_access %}
         allow {{ i }};
-        {% endfor %}
+{% endfor %}
         deny all;
         proxy_pass http://127.0.0.1:9010;
     }
