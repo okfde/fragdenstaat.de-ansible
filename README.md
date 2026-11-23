@@ -163,7 +163,6 @@ flowchart TB
     subgraph schaar
         schaarnginx[nginx frontend server]
         subgraph docker
-            schaarnginx-->weblate
             schaarnginx-->fds-forum
             schaarnginx-->fds-ogimage
             schaarnginx-->metabase

@@ -25,9 +25,6 @@
     - role: nocodb
       tags: nocodb
       when: inventory_hostname in groups["auxiliary"]
-    - role: weblate
-      tags: weblate
-      when: inventory_hostname in groups["auxiliary"]
     - role: metabase
       tags: metabase
       when: inventory_hostname in groups["auxiliary"]
