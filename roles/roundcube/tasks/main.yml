@@ -1,64 +1,31 @@
 ---
-- name: Setup directory
-  ansible.builtin.file:
-    path: "{{ roundcube_dir }}"
-    state: directory
-    mode: "0755"
 
-- name: Add docker compose config
-  ansible.builtin.template:
-    src: docker-compose.yml.j2
-    dest: "{{ roundcube_dir }}/docker-compose.yml"
-    mode: "0644"
-
-- name: Set roundcube systemd service
-  ansible.builtin.template:
-    src: roundcube.service.j2
-    dest: /etc/systemd/system/roundcube.service
-    mode: "0444"
-
-- name: Start roundcube service
-  ansible.builtin.systemd:
+- name: Stop service
+  ansible.builtin.systemd_service:
     name: roundcube
-    state: restarted
+    state: stopped
+    enabled: false
+
+- name: Delete roundcube systemd service
+  ansible.builtin.file:
+    path: /etc/systemd/system/roundcube.service
+    state: absent
+
+- name: Reload daemon
+  ansible.builtin.systemd_service:
     daemon_reload: true
 
-- name: Check if HTTPS certificates exist
-  ansible.builtin.stat:
-    path: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
-  register: https_cert_check
-  with_items: "{{ https_domains }}"
-
-- name: Set HTTPS certificate facts
-  ansible.builtin.set_fact:
-    active_https_domains: "{{ active_https_domains | default({}) | combine({item.item: item.stat.exists}) }}"
-  with_items: "{{ https_cert_check.results }}"
-
-- name: Create htpassword files for webmail
-  community.general.htpasswd:
-    path: "{{ roundcube_dir }}/htpasswd"
-    name: "{{ item.name }}"
-    password: "{{ item.password }}"
-    owner: www-data
-    group: www-data
-    mode: "0550"
-  with_items: "{{ webmail_htpasswd }}"
-  notify: reload nginx
-  no_log: true
-  tags:
-    - nginx
-
-- name: Create the Nginx site configuration
-  ansible.builtin.template:
-    src: nginx-site.j2
-    dest: "/etc/nginx/sites-available/roundcube"
-    mode: "0600"
-    backup: true
-  notify: reload nginx
-
-- name: Ensure that the application site is enabled
+- name: Delete the Nginx site configuration
   ansible.builtin.file:
-    src: "/etc/nginx/sites-available/roundcube"
-    dest: "/etc/nginx/sites-enabled/roundcube"
-    state: link
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/nginx/sites-available/roundcube"
+    - "/etc/nginx/sites-enabled/roundcube"
   notify: reload nginx
+
+
+- name: Delete roundcube instance
+  ansible.builtin.file:
+    path: "{{ roundcube_dir }}"
+    state: absent
