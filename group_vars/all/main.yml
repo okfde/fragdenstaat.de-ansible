@@ -299,3 +299,6 @@ graylog_server_api_token: "{{ secret_graylog_server_api_token }}"
 
 # Note: Obsolete? Not referenced in repo
 minio_admin_password: "{{ secret_minio_admin_password }}"
+
+slack_token: "{{ secret_slack_token }}"
+slack_channel: "{{ secret_slack_channel }}"
