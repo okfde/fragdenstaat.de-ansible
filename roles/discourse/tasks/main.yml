@@ -12,6 +12,7 @@
   ansible.builtin.git:
     repo: https://github.com/discourse/discourse_docker.git
     dest: "{{ discourse.path }}/{{ discourse_domain }}"
+  diff: false
   notify:
     - Rebuild discourse
 
