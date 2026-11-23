@@ -53,7 +53,6 @@ icinga:
     - docker = 1
     - ogimage_port = 3000
     - metabase_port = 8042
-    - weblate_port = 8020
     - discourse_port = 8035
     - smartmon = "sd"
     - zammad = 1

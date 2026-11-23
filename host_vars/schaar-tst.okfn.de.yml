@@ -10,7 +10,6 @@ host_data:
 https_domains:
   - ["sentry.test.zerschlagdenstaat.de"]
   - ["ogimage.test.zerschlagdenstaat.de"]
-  - ["weblate.test.zerschlagdenstaat.de"]
   - ["metabase.test.zerschlagdenstaat.de"]
   - ["forum.test.zerschlagdenstaat.de"]
 
@@ -20,4 +19,3 @@ prometheus_exporter:
 
 ogimage_domain: ogimage.test.zerschlagdenstaat.de
 discourse_domain: forum.test.zerschlagdenstaat.de
-weblate_domain: weblate.test.zerschlagdenstaat.de
