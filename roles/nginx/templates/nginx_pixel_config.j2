@@ -23,8 +23,8 @@ map $request_uri $pixelloggable {
 
 {% if active_https_domains[nginx_pixel_domain] %}
     server {
-        listen              443 ssl;
-        listen         [::]:443 ssl;
+        listen              443 ssl http2;
+        listen         [::]:443 ssl http2;
         server_name         {{ nginx_pixel_domain }};
 
         {% with server_name = nginx_pixel_domain %}
