@@ -96,6 +96,7 @@
     executable: /bin/bash
   register: icinga2_ido_db_pass
   changed_when: false
+  no_log: true
 
 - name: Configure resources
   ansible.builtin.template:
@@ -105,6 +106,7 @@
     owner: www-data
     group: icingaweb2
   when: "'stdout' in icinga2_ido_db_pass"
+  no_log: true
 
 - name: Configure roles
   ansible.builtin.template:
