@@ -1,0 +1,33 @@
+---
+
+argument_specs:
+  main:
+    options:
+      network_host_type:
+        type: "str"
+        required: true
+        choices:
+          - "physical"
+          - "guest"
+        description: "Wether host is a physical machine with phyiscal interfaces or a virtualized guest"
+
+      network_vlan_id:
+        type: "int"
+        required: true
+        description: "VLAN identifier, only applicable for physical hosts."
+
+      network_bridge_vlan:
+        type: "str"
+        required: true
+        description:
+          - "Name of the bridge interface to attach to virtual vlan interface, i.e. 'brX'."
+          - "Leave empty to skip bridge creation"
+          - "Only applicable to physical hosts"
+
+      network_bridge_physical:
+        type: "str"
+        required: true
+        description:
+          - "Name of the bridge interface to attach to virtual phyiscal interface, i.e. 'brX'."
+          - "Leave empty to skip bridge creation"
+          - "Only applicable to physical hosts"

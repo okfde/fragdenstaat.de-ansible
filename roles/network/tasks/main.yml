@@ -4,6 +4,7 @@
   ansible.builtin.import_tasks: networkd.yml
   tags:
     - network_networkd
+  when: network_host_type == 'physical'
 
 - name: Import resolved tasks
   ansible.builtin.import_tasks: resolved.yml

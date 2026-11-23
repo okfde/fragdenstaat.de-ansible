@@ -1,5 +1,8 @@
 ---
 
+# Type of host. 'guest' will skip configuration of physical interface and vlan
+network_host_type: physical
+
 # Set VLAN ID to configure VLAN for hosts
 # For hosts without physical network device (i.e. guest vms), set value to 0 to disable configuration
 network_vlan_id: 4000
