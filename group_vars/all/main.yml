@@ -104,7 +104,6 @@ project_path: "{{ virtualenv_path }}/{{ project_name }}"
 application_log_dir: "/var/www/fragdenstaat.de/logs"
 
 nginx_htpasswd: "{{ secret_nginx_htpasswd }}"
-webmail_htpasswd: "{{ secret_webmail_htpasswd }}"
 
 django_migrations_db_user: "django_migrations"
 django_migrations_db_password: "{{ secret_django_migrations_db_password }}"

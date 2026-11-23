@@ -43,6 +43,9 @@
     - role: snipeit
       tags: snipeit
       when: inventory_hostname in groups["auxiliary"]
+    - role: roundcube
+      tags: roundcube
+      when: inventory_hostname in groups["auxiliary"]
     # Monitor
     - role: sentry
       tags: sentry
