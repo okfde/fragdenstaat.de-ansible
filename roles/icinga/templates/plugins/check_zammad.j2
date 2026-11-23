@@ -6,8 +6,8 @@ token="{{ zammad_token }}"
 result=$(curl --fail -s "https://${domain}/api/v1/monitoring/health_check?token=${token}")
 ret=$?
 if [[ ${ret} -ne 0 ]]; then
-	echo "UNKNOWN: curl exited with exit code ${ret}"
-        exit 3
+  echo "UNKNOWN: curl exited with exit code ${ret}"
+  exit 3
 fi
 
 healthy=$(echo ${result} | jq .healthy)
