@@ -1,6 +1,6 @@
 services:
   app:
-    image: snipe/snipe-it:v8.6.3
+    image: snipe/snipe-it:{{ snipeit_version }}
     restart: unless-stopped
     volumes:
       - ./snipeit-data:/var/lib/snipeit
