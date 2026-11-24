@@ -20,7 +20,7 @@
       delay: 10
       register: _python3_debian
 
-    # Allows to override distribution release version with '-e ansible_distribition_release_override',
+    # Allows to override distribution release version with '-e ansible_distribution_release_override',
     # should only ever be needed for dist upgrades, which still needs some manual work.
     # TODO: Add a tagged 'dist-upgrade' task
     - name: Configure deb822 format sources list # noqa ignore-errors (false positive)
@@ -30,10 +30,10 @@
         trusted: true
         uris: http://mirror.hetzner.com/ubuntu/packages
         suites:
-          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}"
-          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}-updates"
-          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}-backports"
-          - "{{ ansible_distribition_release_override | default(ansible_distribution_release) }}-security"
+          - "{{ ansible_distribution_release_override | default(ansible_facts['distribution_release']) }}"
+          - "{{ ansible_distribution_release_override | default(ansible_facts['distribution_release']) }}-updates"
+          - "{{ ansible_distribution_release_override | default(ansible_facts['distribution_release']) }}-backports"
+          - "{{ ansible_distribution_release_override | default(ansible_facts['distribution_release']) }}-security"
         components:
           - main
           - universe
