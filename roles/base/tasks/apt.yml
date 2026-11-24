@@ -60,6 +60,9 @@
         - "de_archive_ubuntu_com_ubuntu.list"
         - "ubuntu.sources"
 
+- name: flush handlers (update apt cache)
+  ansible.builtin.meta: flush_handlers
+
 - name: Ensure selected packages are latest
   ansible.builtin.apt:
     name: "{{ base_packages_latest }}"
