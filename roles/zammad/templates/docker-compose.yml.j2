@@ -56,6 +56,9 @@ services:
   zammad-nginx:
     <<: *zammad-service
     command: ["zammad-nginx"]
+    environment:
+      <<: *zammad-environment
+      NGINX_SERVER_SCHEME: https
     expose:
       - "8080"
     ports:
