@@ -1,0 +1,9 @@
+---
+
+argument_specs:
+  main:
+    options:
+      prometheus_libvirt_exporter_version:
+        type: "str"
+        required: true
+        description: "Version of prometheus-libvirt-exporter."

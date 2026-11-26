@@ -1,0 +1,107 @@
+---
+
+- name: Create cloud-init tmpdir
+  ansible.builtin.tempfile:
+    state: directory
+  register: _tmpdir
+
+- name: Fix ownership
+  ansible.builtin.file:
+    path: "{{ _tmpdir.path }}"
+    owner: libvirt-qemu
+    group: libvirt-qemu
+
+- name: Cloud-init - Write user-data
+  ansible.builtin.template:
+    src: user-data.yml.j2
+    dest: "{{ _tmpdir.path }}/user-data"
+    mode: "0600"
+    validate: cloud-init schema --config-file=%s --annotate
+  no_log: true
+
+- name: Cloud-init - Write network-config
+  ansible.builtin.template:
+    src: network-config.yml.j2
+    dest: "{{ _tmpdir.path }}/network-config"
+    mode: "0600"
+    validate: cloud-init schema --config-file=%s --schema-type network-config --annotate
+
+- name: Create meta-data file
+  ansible.builtin.copy:
+    content: |
+      local-hostname: {{ guest.name }}
+    dest: "{{ _tmpdir.path }}/meta-data"
+    mode: "0600"
+
+- name: Create seed iso with cloud init user-data
+  ansible.builtin.command:
+    cmd: cloud-localds -N network-config seed.iso user-data meta-data
+    chdir: "{{ _tmpdir.path }}"
+    creates: "{{ _tmpdir.path }}/seed.iso"
+
+- name: Define guest from xml
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'guest.xml.j2') }}"
+
+- name: Start guest
+  community.libvirt.virt:
+    name: "{{ guest.name }}"
+    state: running
+
+- name: Add host name to hosts file
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regex: ".*(\ {{ guest.name }})?\ {{ guest.name | split('.') | first }}?$"
+    line: "{{ hostvars[guest.name].host_data.site_ipv4 }} {{ guest.name }} {{ guest.name | split('.') | first }}"
+    state: present
+
+# For some reason, cloud init is able to reconfigure sshd to use `base_ssh_port` but cannot
+# restart sshd. Therefore: Wait for guest to be online on default port 🤷‍♀️
+- name: Wait for guest to come online
+  ansible.builtin.wait_for:
+    port: 22
+    host: "{{ guest.name }}"
+    search_regex: OpenSSH
+    delay: 10
+    timeout: 300
+  register: _guest_online
+
+- name: Detach cloud init disk
+  ansible.builtin.command:
+    cmd: virsh change-media {{ guest.name }} hda --eject --config --live
+  when: _guest_online is not failed
+  changed_when: false
+
+- name: Remove cloud-init tmpdir
+  ansible.builtin.file:
+    path: "{{ _tmpdir.path }}"
+    state: absent
+
+- name: Reboot guest
+  ansible.builtin.command:
+    cmd: "virsh reboot {{ guest.name }}"
+  changed_when: false
+
+- name: Wait for guest to come online <again>
+  ansible.builtin.wait_for:
+    port: "{{ hostvars[guest.name].base_ssh_port }}"
+    host: "{{ guest.name }}"
+    search_regex: OpenSSH
+    delay: 10
+    timeout: 300
+  register: _guest_online_again
+
+- name: Success
+  ansible.builtin.debug:
+    msg: |
+      `{{ guest.name }} was successfully provisioned on `{{ inventory_hostname }}`.
+
+      You might need to update your ssh config in order to connect to it:
+      Host {{ guest.name }}
+              Hostname {{ guest.name }}
+              User <username>
+              Port 2228
+              ProxyJump {{ inventory_hostname }}
+  when: _guest_online_again is success
+  changed_when: true

@@ -23,7 +23,6 @@
   notify: restart systemd-networkd
 
 - name: Ensure netdev configuration for vlan exist
-  when: network_vlan_id != 0
   notify: restart systemd-networkd
   block:
     - name: Ensure netdev configuration for vlan exist

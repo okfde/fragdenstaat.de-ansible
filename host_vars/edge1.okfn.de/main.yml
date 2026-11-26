@@ -1,0 +1,15 @@
+---
+
+# Keep host_data.site_ipv4 for compatibility
+host_data:
+  site_ipv4: "{{ network_networks.private.address4 }}"
+
+network_networks:
+  private:
+    address4: 192.168.100.103
+  public:
+    mac: 00:50:56:00:FD:9C
+    address4: 5.9.108.212/27
+    gateway4: 5.9.108.193
+    address6: "2a01:4f8:162:44c7::3/64"
+    gateway6: 'fe80::1'

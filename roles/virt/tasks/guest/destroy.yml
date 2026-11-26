@@ -1,0 +1,34 @@
+---
+
+- name: Destroy guest # noqa ignore-errors - will fail if is not present
+  community.libvirt.virt:
+    name: "{{ guest_name }}"
+    state: "destroyed"
+  ignore_errors: true
+
+- name: Undefine guest # noqa ignore-errors - will fail if is not present
+  community.libvirt.virt:
+    name: "{{ guest_name }}"
+    command: "undefine"
+  ignore_errors: true
+
+- name: Recursively destroy disks
+  community.general.zfs:
+    name: "{{ virt_volumes_dataset }}/{{ guest_name }}"
+    state: absent
+
+- name: Remove host name from /etc/hosts
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regex: ".*(\ {{ guest_name }})?\ {{ guest_name | split('.') | first }}?$"
+    state: absent
+  delegate_to: "{{ host }}"
+  loop: "{{ groups['all'] }}"
+  loop_control:
+    loop_var: host
+  when:
+    - host != guest_name
+    - >
+      hostvars[guest_name] is undefined or
+      hostvars[guest_name]['host_data'] is undefined or
+      hostvars[guest_name]['host_data']['site_ipv4'] is undefined

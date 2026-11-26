@@ -15,3 +15,9 @@ host_data:
 sidecar: false
 prometheus_exporter:
   - node_exporter
+
+virt_guests:
+  - name: edge1.okfn.de
+    cpus: 2
+    memory: 4096
+    disk_size: 15

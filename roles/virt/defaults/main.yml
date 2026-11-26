@@ -1,0 +1,34 @@
+---
+
+virt_packages:
+  - bridge-utils
+  - guestfs-tools
+  - libvirt-clients
+  - libvirt-daemon
+  - libvirt-daemon-system
+  - ovmf
+  - python3-libvirt
+  - python3-lxml
+  - qemu-system-x86
+  - qemu-utils
+  - zfsutils-linux
+  - virt-install
+
+virt_guests: []
+virt_guests_delete: []
+
+virt_guests_default_memory: 2046
+virt_guests_default_cpus: 2
+
+virt_zpool: "pool"
+virt_zpool_mount: "/srv/zpool"
+
+virt_zpool_vdev: "/dev/mapper/vg0-pool"
+
+virt_bridge_default: "virbr0"
+virt_bridge_vlan: "{{ network_bridge_vlan | default('br1') }}"
+virt_bridge_physical: "{{ network_bridge_physical | default('br2') }}"
+
+# Force download of current cloud image
+virt_image_refresh: false
+virt_ubuntu_image_version: resolute

@@ -1,0 +1,52 @@
+---
+
+- name: Install VM toolchain
+  ansible.builtin.apt:
+    name: "{{ virt_packages }}"
+
+- name: Ensure libvirtd is enabled and running
+  ansible.builtin.systemd:
+    name: libvirtd
+    state: started
+    enabled: true
+
+- name: Add users to libvirt group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: libvirt-qemu
+    append: true
+  loop: "{{ virt_users }}"
+
+- name: Configure zpool
+  community.general.zpool:
+    name: "{{ virt_zpool }}"
+    mountpoint: "{{ virt_zpool_mount }}"
+    force: false
+    filesystem_properties:
+      compression: lz4
+      recordsize: 64K
+    vdevs:
+      - disks: "{{ virt_zpool_vdev }}"
+
+# TODO: Add `create_only_mismatch: fail` when community.general >= 14.0.0
+- name: Create zfs dataset for volume storage
+  community.general.zfs:
+    name: "{{ virt_volumes_dataset }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: none
+
+# TODO: Add `create_only_mismatch: fail` when community.general >= 14.0.0
+- name: Create zfs dataset for image storage
+  community.general.zfs:
+    name: "{{ virt_images_dataset }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ virt_images_dir }}"
+
+- name: Set permissions for image storage
+  ansible.builtin.file:
+    path: "{{ virt_images_dir }}"
+    mode: "0755"
+    owner: root
+    group: root

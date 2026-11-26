@@ -1,0 +1,63 @@
+---
+
+# community.general.zfs prior to 14.0.0 will force recreate a volume if its volsize property has changed, instead of throwing an error.
+# It's ugly and further complicates the code, but we `stat` the block device path and conditionally run the creation task
+# TODO: Replace stat check with `create_only_mismatch: fail` when community.general >= 14.0.0
+- name: Check if root disk exists
+  ansible.builtin.stat:
+    path: "{{ virt_volumes_mapper }}/{{ guest.name }}/root"
+  register: _root_stat
+
+- name: Ensure root disk is created
+  community.general.zfs:
+    name: "{{ virt_volumes_dataset }}/{{ guest.name }}/root"
+    state: present
+    extra_zfs_properties:
+      volsize: "{{ guest.disk_size }}G"
+  register: _root_disk
+  when: _root_stat.stat.exists is false
+
+- name: Copy qcow image to root disk # noqa no-handler  (does not got well with 'include_tasks')
+  ansible.builtin.command:
+    cmd: "qemu-img convert {{ virt_images_dir }}/{{ virt_ubuntu_image }} /dev/zvol/{{ virt_volumes_dataset }}/{{ guest.name }}/root"
+  when: _root_disk is defined and _root_disk is changed
+  changed_when: true
+
+# TODO: Replace stat check with `create_only_mismatch: fail` when community.general >= 14.0.0
+- name: Check for each additional disk if exists
+  ansible.builtin.stat:
+    path: "{{ virt_volumes_mapper }}/{{ guest.name }}/{{ disk.name }}"
+  loop: "{{ guest.additional_disks }}"
+  loop_control:
+    loop_var: disk
+    label: "{{ guest.name }}/{{ disk.name }}"
+  register: _additional_disks_stat
+  when:
+    - guest.additional_disks is defined and guest.additional_disks | length > 0
+
+- name: Note existing disks
+  ansible.builtin.debug:
+    msg: "zvol already exists. Nothing to do."
+  loop: "{{ guest.additional_disks }}"
+  loop_control:
+    loop_var: disk
+    label: "{{ guest.name }}/{{ disk.name }}"
+  when:
+    - guest.additional_disks is defined and guest.additional_disks | length > 0
+    - _additional_disks_stat is defined
+    - _additional_disks_stat.results | selectattr('disk.name','equalto',disk.name) | map(attribute='stat.exists') | default({}) | list | first is true
+
+- name: Ensure additional disks are created
+  community.general.zfs:
+    name: "{{ virt_volumes_dataset }}/{{ guest.name }}/{{ disk.name }}"
+    state: present
+    extra_zfs_properties:
+      volsize: "{{ disk.size }}G"
+  loop: "{{ guest.additional_disks }}"
+  loop_control:
+    loop_var: disk
+    label: "{{ guest.name }}/{{ disk.name }}"
+  when:
+    - guest.additional_disks is defined and guest.additional_disks | length > 0
+    - _additional_disks_stat is defined
+    - _additional_disks_stat.results | selectattr('disk.name','equalto',disk.name) | map(attribute='stat.exists') | default({}) | list | first is false
