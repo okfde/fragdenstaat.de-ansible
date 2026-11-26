@@ -1,0 +1,93 @@
+---
+
+- name: Install prometheus-libvirt-exporter systemd file
+  ansible.builtin.template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus-libvirt-exporter.service
+    mode: "0644"
+  notify: Reload daemon
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+# TODO: Extract logic into generic role for verifying, fetching and extracting raw binaries from upstream repositories
+- name: Check if prometheus-libvirt-exporter is installed
+  ansible.builtin.stat:
+    path: "/usr/local/bin/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}-linux-amd64"
+  register: _exporter_installed
+
+- name: Install prometheus-libvirt-exporter
+  when: >
+    _exporter_installed.stat.exists is false
+  notify: Restart prometheus-libvirt-exporter
+  block:
+    - name: Create tmpdir
+      ansible.builtin.tempfile:
+        state: directory
+      check_mode: false
+      register: _download_exporter
+
+    - name: Download prometheus-libvirt-exporter
+      ansible.builtin.get_url:
+        url: "https://github.com/inovex/prometheus-libvirt-exporter/releases/download/v{{ prometheus_libvirt_exporter_version }}/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}.linux-amd64.tar.gz"
+        checksum: "sha256:https://github.com/inovex/prometheus-libvirt-exporter/releases/download/v{{ prometheus_libvirt_exporter_version }}/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}_checksums.txt"
+        dest: "{{ _download_exporter.path }}"
+        mode: "0644"
+      check_mode: false
+
+    - name: Unarchive prometheus-libvirt-exporter
+      ansible.builtin.unarchive:
+        remote_src: true
+        src: "{{ _download_exporter.path }}/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}.linux-amd64.tar.gz"
+        dest: "{{ _download_exporter.path }}"
+      check_mode: false
+
+    - name: Install prometheus-libvirt-exporter binary
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ _download_exporter.path }}/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}.linux-amd64/prometheus-libvirt-exporter"
+        dest: "/usr/local/bin/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}-linux-amd64"
+        mode: "0755"
+
+  always:
+    - name: Remove tmpdir
+      ansible.builtin.file:
+        path: "{{ _download_exporter }}"
+        state: absent
+
+- name: Find outdated versions of prometheus-libvirt-exporter
+  ansible.builtin.find:
+    paths: "/usr/local/bin"
+    file_type: file
+    excludes:
+      - "prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}"
+    patterns: "prometheus-libvirt-exporter.*"
+    use_regex: true
+  register: _prometheus_outdated
+
+- name: Remove outdated binaries
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ _prometheus_outdated.files | default([]) | map(attribute='path') | sort }}"
+
+- name: Ensure prometheus-libvirt-exporter is running
+  ansible.builtin.systemd:
+    name: prometheus-libvirt-exporter
+    state: started
+    enabled: true
+
+- name: Configure firewall for prometheus-libvirt-exporter
+  community.general.ufw:
+    port: "9177"
+    proto: tcp
+    from_ip: 192.168.100.5
+    rule: allow
+
+- name: Reconcile prometheus scrape targets
+  ansible.builtin.include_role:
+    name: monitor
+    tasks_from: _rewrite_prom_config.yml
+    apply:
+      delegate_to: fds-mon.okfn.de
+      delegate_facts: true

@@ -98,3 +98,8 @@ schoch.okfn.de
 
 [hypervisor]
 roy.okfn.de
+
+[roy]
+
+[guest:children]
+roy

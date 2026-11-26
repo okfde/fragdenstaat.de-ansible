@@ -1,0 +1,29 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=Prometheus-libvirt-exporter service (host and vm metrics exposed for prometheus, written in Go with pluggable metric collectors)
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/prometheus-libvirt-exporter-{{ prometheus_libvirt_exporter_version }}-linux-amd64 --web.listen-address ":9177"
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+KillSignal=SIGINT
+
+# Security
+PrivateTmp=yes
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,57 @@
+---
+
+- name: Assert that guest is configured in inventory
+  ansible.builtin.assert:
+    quiet: true
+    that:
+      - guest.name in groups[inventory_hostname | split('.') | first]
+    fail_msg: |
+      New guest `{{ guest.name }}` shall be provisioned but `{{ guest.name }}` does not seem to exist in inventory.
+      Please add `{{ guest.name }}` to inventory file and make sure its in the group `{{ inventory_hostname | split('.') | first }}`
+
+- name: Assert that at least internal network is defined in hostvars and contains valid entry
+  ansible.builtin.assert:
+    quiet: true
+    that:
+      - hostvars[guest.name]['network_networks'] is defined
+      - hostvars[guest.name]['network_networks']['private'] is defined
+      - hostvars[guest.name]['network_networks']['private']['address4'] is defined
+
+- name: Ensure that site_ipv4 is unique
+  block:
+    - name: Collect all site_ipv4 values
+      ansible.builtin.set_fact:
+        concat_internal_ipv4: "{{ concat_internal_ipv4 | default([]) + [hostvars[_host]['host_data']['site_ipv4']] | default([]) }}"
+      loop: "{{ groups['all'] }}"
+      loop_control:
+        loop_var: _host
+        label: "{{ hostvars[_host]['host_data']['site_ipv4'] | default('none') }} for {{ _host }}"
+      when: _host != guest.name
+
+    - name: Assert we have a valid and unique internal ipv4
+      ansible.builtin.assert:
+        quiet: true
+        that:
+          - hostvars[guest.name]['network_networks']['private']['address4'] is ansible.utils.ipv4_address
+          - hostvars[guest.name]['network_networks']['private']['address4'] not in concat_internal_ipv4
+        msg: |
+          Internal vlan IP address for `{{ guest.name }}` is already taken.
+
+- name: Assert that variables for required for public ipv4 and ipv6 only defined alltogether or not at all
+  ansible.builtin.assert:
+    quiet: true
+    that:
+      - hostvars[guest.name]['network_networks']['public']['mac'] is defined
+      - hostvars[guest.name]['network_networks']['public']['address4'] is defined
+      - hostvars[guest.name]['network_networks']['public']['gateway4'] is defined
+      - hostvars[guest.name]['network_networks']['public']['address6'] is defined
+      - hostvars[guest.name]['network_networks']['public']['gateway6'] is defined
+    fail_msg: |
+      New guest `{{ guest.name }}` shall be provisioned with public network interface, but required variables are incomplete.
+  when:
+    - hostvars[guest.name]['network_networks']['public'] is defined
+
+- name: Generate mac addresses for internal networks
+  ansible.builtin.set_fact:
+    guest_mac_lan: "{{ '00' | community.general.random_mac(seed=guest.name) }}"
+    guest_mac_vlan: "{{ '02' | community.general.random_mac(seed=guest.name) }}"

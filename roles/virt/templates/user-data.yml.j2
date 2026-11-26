@@ -1,0 +1,45 @@
+#cloud-config
+password: {{ virt_guest_default_password }}
+chpasswd:
+  expire: False
+
+growpart:
+  mode: auto
+  devices: [\"/\"]
+  ignore_growroot_disabled: false
+
+users:
+  - default
+{% for user in hostvars[guest.name]['base_ssh_users'] %}
+  - name: {{ user.name }}
+    groups: sudo
+    lock_passwd: true
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+{% if user.public_keys is defined and user.public_keys | length > 0 %}
+    ssh_authorized_keys:
+{% for pubkey in user.public_keys %}
+      - {{ pubkey }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+{# configure sshd #}
+runcmd:
+  - [ sed, -i, 's/^[#]*Port.*$/Port {{ hostvars[guest.name]['base_ssh_port'] }}/g', /etc/ssh/sshd_config ]
+
+{% if guest.additional_disks is defined and guest.additional_disks | length > 0 %}
+device_aliases:
+{% for disk in guest.additional_disks %}
+  {{ disk.name }}: /dev/{{ disk.target }}
+{% endfor %}
+fs_setup:
+{% for disk in guest.additional_disks %}
+  - label: {{ disk.name }}
+    filesystem: 'ext4'
+    device: /dev/{{ disk.target }}]
+{% endfor %}
+mounts:
+{% for disk in guest.additional_disks %}
+  - [{{ disk.name }}, /mnt/{{ disk.name }}]
+{% endfor %}
+{% endif %}

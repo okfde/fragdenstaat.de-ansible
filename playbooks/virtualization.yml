@@ -1,0 +1,9 @@
+---
+
+- name: Virtualization
+  hosts: hypervisor
+  roles:
+    - role: virt
+      tags: virt
+    - role: prometheus_libvirt_exporter
+      tags: prometheus_libvirt_exporter

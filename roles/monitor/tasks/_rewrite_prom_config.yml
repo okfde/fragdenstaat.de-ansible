@@ -1,0 +1,17 @@
+---
+
+# Task is split out of ./monitor.yml to allow for easier reconciliation of scrape targets when adding or removing exporters.
+# Include in other roles like this:
+# ```
+# - name: Reconcile prometheus scrape targets
+#   ansible.builtin.include_role:
+#     name: monitor
+#     tasks_from: _rewrite_prom_config
+#   delegate_to: fds-mon.okfn.de
+# ```
+- name: Rewrite prometheus.yml
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: "{{ monitor_dir }}/prometheus/etc/prometheus.yml"
+    mode: "0644"
+  notify: Restart prometheus

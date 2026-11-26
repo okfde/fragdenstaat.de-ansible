@@ -1,0 +1,12 @@
+---
+
+virt_users: "{{ base_ssh_users | map(attribute='name') }}"
+
+virt_images_dataset: "{{ virt_zpool }}/images"
+virt_images_dir: "{{ virt_zpool_mount }}/images"
+
+virt_volumes_dataset: "{{ virt_zpool }}/volumes"
+virt_volumes_mapper: "/dev/zvol/{{ virt_volumes_dataset }}"
+
+virt_ubuntu_image: "{{ virt_ubuntu_image_version }}-server-cloudimg-amd64.img"
+virt_ubuntu_signing_key: D2EB44626FDDC30B513D5BB71A5D6C4C7DB87C81

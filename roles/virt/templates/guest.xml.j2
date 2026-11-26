@@ -1,0 +1,85 @@
+<domain type='kvm'>
+  <name>{{ guest.name }}</name>
+  <memory unit='MiB'>{{ guest.memory | default(virt_guests_default_memory) }}</memory>
+  <vcpu placement='static'>{{ guest.cpus | default(virt_guests_default_cpus) }}</vcpu>
+  <resource>
+    <partition>/machine</partition>
+  </resource>
+  <os>
+    <type arch='x86_64'>hvm</type>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+{# Start configure disks #}
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source dev='{{ virt_volumes_mapper }}/{{ guest.name }}/root'/>
+      <alias name='virtio-root'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='{{ _tmpdir.path }}/seed.iso' />
+      <target dev='hda' bus='ide'/>
+      <readonly/>
+    </disk>
+{% if guest.additional_disks is defined %}
+{% for disk in guest.additional_disks | sort(attribute='target') %}
+    <disk type='block' device='disk'>
+      <source dev='{{ virt_volumes_mapper }}/{{ guest.name }}/{{ disk.name }}'/>
+      <target dev='{{ disk.target }}' bus='virtio'/>
+    </disk>
+{% endfor %}
+{% endif %}
+{# End configure disks #}
+{# Start configure network devices #}
+{% set shortname = guest.name | ansible.builtin.split('.') | first %}
+{# Interface attached to default bridge is named l-<vm-name> (=local) on host #}
+    <interface type='network'>
+      <source network='default' bridge='virbr0'/>
+      <target dev='l-{{ shortname }}'/>
+      <mac address='{{ guest_mac_lan }}'/>
+      <model type='virtio'/>
+      <address type='pci'/>
+    </interface>
+{# Interface attached to br1 will be named v-<vm-name> (=vlan) on host #}
+    <interface type='bridge'>
+      <source bridge='br1'/>
+      <mac address='{{ guest_mac_vlan }}'/>
+      <target dev='v-{{ shortname }}'/>
+      <model type='virtio'/>
+      <address type='pci'/>
+    </interface>
+{% set _configure_wan = hostvars[guest.name]['network_networks']['public'] is defined | bool %}
+{% if _configure_wan is true %}
+{# Interface attached to br2 will be named w-<vm-name> (=wan) on host #}
+    <interface type='bridge'>
+      <source bridge='br2'/>
+      <mac address='{{ hostvars[guest.name]['network_networks']['public']['mac'] }}'/>
+      <model type='virtio'/>
+      <target dev='w-{{ shortname }}'/>
+      <address type='pci'/>
+    </interface>
+{% endif %}
+{# Stop configure network devices #}
+{# Start configure serial console #}
+    <serial type='pty'>
+      <source path='/dev/pts/2'/>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+      <alias name='serial0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/2'>
+      <source path='/dev/pts/2'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+{# End configure serial console #}
+  </devices>
+</domain>

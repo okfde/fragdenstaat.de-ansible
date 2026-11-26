@@ -1,0 +1,29 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    net0:
+      match:
+        macaddress: '{{ guest_mac_lan }}'
+      dhcp4: true
+      dhcp6: false
+    net1:
+      match:
+        macaddress: '{{ guest_mac_vlan }}'
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - {{ hostvars[guest.name]['network_networks']['private']['address4'] }}/24
+{% set _configure_net2 = hostvars[guest.name]['network_networks']['public'] is defined | bool %}
+{% if _configure_net2 is true %}
+    net2:
+      match:
+        macaddress: '{{ hostvars[guest.name]['network_networks']['public']['mac'] }}'
+      dhcp4: false
+      dhcp6: false
+      addresses:
+        - {{ hostvars[guest.name]['network_networks']['public']['address4'] }}
+        - {{ hostvars[guest.name]['network_networks']['public']['address6'] }}
+      gateway4: {{ hostvars[guest.name]['network_networks']['public']['gateway4'] }}
+      gateway6: {{ hostvars[guest.name]['network_networks']['public']['gateway6'] }}
+{% endif %}

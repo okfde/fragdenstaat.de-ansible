@@ -1,0 +1,90 @@
+---
+
+- name: Ensure ubuntu image exists
+  ansible.builtin.import_tasks: guest/fetch_image.yml
+
+- name: Destroy guest and disks
+  ansible.builtin.include_tasks: guest/destroy.yml
+  loop: "{{ virt_guests_delete }}"
+  loop_control:
+    loop_var: guest_name
+    label: "{{ guest_name }}"
+
+- name: Get list of existing guest on remote host
+  community.libvirt.virt:
+    command: list_vms
+  register: _all_vms
+
+- name: Assert that host variables are set for new guests
+  ansible.builtin.include_tasks: guest/preflight.yml
+  loop: "{{ virt_guests }}"
+  loop_control:
+    loop_var: guest
+    label: "{{ guest.name }}"
+
+- name: Provision disks
+  ansible.builtin.include_tasks: guest/create_disks.yml
+  loop: "{{ virt_guests }}"
+  loop_control:
+    loop_var: guest
+    label: "{{ guest.name }}"
+
+- name: Provision guests
+  ansible.builtin.include_tasks: guest/create_guest.yml
+  loop: "{{ virt_guests }}"
+  loop_control:
+    loop_var: guest
+    label: "{{ guest.name }}"
+  when: not guest.name in _all_vms.list_vms
+
+- name: Ensure guests are running and autostarted
+  community.libvirt.virt:
+    name: "{{ guest.name }}"
+    state: "{{ guest.state | default('running') }}"
+    autostart: "{{ guest.autostart | default(true) }}"
+  loop: "{{ virt_guests }}"
+  loop_control:
+    loop_var: guest
+    label: "{{ guest.name }}"
+
+- name: Get list of zvolumes
+  ansible.builtin.command:
+    cmd: "ls {{ virt_volumes_mapper }}"
+  register: _all_volumes
+  changed_when: false
+
+- name: Get list of residual guests and volumes
+  ansible.builtin.set_fact:
+    _virt_residual_vms: >
+      {{ _all_vms.list_vms
+      | ansible.builtin.difference(virt_guests | map(attribute='name') | list)
+      | ansible.builtin.difference(virt_guests_delete) }}
+    _virt_residual_volumes: >
+      {{ _all_volumes.stdout | default('') | split
+      | ansible.builtin.difference(virt_guests | map(attribute='name') | list) }}
+
+- name: Assert there are no residual guests # noqa ignore-errors (just throw a warning, don't error)
+  ansible.builtin.assert:
+    that: _virt_residual_vms | length == 0
+    quiet: true
+    fail_msg: |
+      Guests present on remote host but not defined in host_vars:
+      {% for guest in _virt_residual_vms %}
+        - {{ guest }}
+      {% endfor %}
+
+      Re-run playbook with `-e virt_guests_delete=['<guest-do-delete>']` to purge residual guests.
+  ignore_errors: true
+
+- name: Assert there are no residual volumes # noqa ignore-errors (just throw a warning, don't error)
+  ansible.builtin.assert:
+    that: _virt_residual_volumes | length == 0
+    quiet: true
+    fail_msg: |
+      Datasets for guest volumes present on remote host but not defined in host_vars:
+      {% for guest in _virt_residual_volumes %}
+        - {{ guest }}
+      {% endfor %}
+
+      Re-run playbook with `-e virt_guests_delete=['<guest-do-delete>']` to purge residual disks.
+  ignore_errors: true

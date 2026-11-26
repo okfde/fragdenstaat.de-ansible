@@ -2,3 +2,5 @@
 
 network_bridge_vlan: "br1"
 network_bridge_physical: "br2"
+
+virt_guest_default_password: "{{ secret_virt_guest_default_password }}"
