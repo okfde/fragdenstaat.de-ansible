@@ -15,67 +15,67 @@ server {
     listen      80;
     listen [::]:80;
     server_name {{ item.domain }};
-    {% if active_https_domains[item.domain] is defined %}
-        rewrite     ^ https://{{ item.domain }}$request_uri? permanent;
-    {% else %}
-        location /.well-known/acme-challenge/ {
-            root {{ letsencrypt_tmp_dir }};
-            try_files $uri $uri/ =404;
-        }
+{% if active_https_domains[item.domain] is defined %}
+    rewrite     ^ https://{{ item.domain }}$request_uri? permanent;
+{% else %}
+    location /.well-known/acme-challenge/ {
+        root {{ letsencrypt_tmp_dir }};
+        try_files $uri $uri/ =404;
+    }
     {% endif %}
 }
 
 {% if active_https_domains[item.domain] is defined %}
-    server {
-        listen              443 ssl http2;
-        listen         [::]:443 ssl http2;
-        server_name         {{ item.domain }};
+server {
+    listen              443 ssl http2;
+    listen         [::]:443 ssl http2;
+    server_name         {{ item.domain }};
 
-        {% with server_name = item.domain %}
-            {% include '_ssl.j2' %}
-        {% endwith %}
+{% with server_name = item.domain %}
+    {% include '_ssl.j2' %}
+{% endwith %}
 
-        {% with geo_block_server_name = item.domain %}
-        {% include '_geoblock_server.j2' %}
-        {% endwith %}
+{% with geo_block_server_name = item.domain %}
+    {% include '_geoblock_server.j2' %}
+{% endwith %}
 
-        {% for simple_file in item.simple_files %}
-            {% if simple_file.path is defined %}
-                location = {{ simple_file.path }} {
-                    {{ hsts_header() }}
-                    {% if simple_file.mimetype is defined %}
-                        add_header Content-Type "{{ simple_file.mimetype }}";
-                        default_type {{ simple_file.mimetype }};
-                    {% endif %}
-                    alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
-                }
-            {% endif %}
-        {% endfor %}
-
-        location / {
-            {% if "-tst" not in inventory_hostname %}
-            proxy_cache cmssite_cache;
-            proxy_cache_key $scheme$host$uri;
-            proxy_cache_valid 10m;
-            proxy_cache_use_stale error timeout invalid_header http_500 http_502 http_503 http_504;
-            proxy_ignore_headers Expires;
-            proxy_ignore_headers "Cache-Control";
-            proxy_ignore_headers "Set-Cookie";
-            proxy_cache_bypass $traffic_internal;
-            proxy_cache_use_stale updating;
-            proxy_cache_lock on;
-
-            add_header X-Proxy-Cache $upstream_cache_status;
-            {% endif %}
-
-            {% if item.basic_auth_realm is defined %}
-                {{ basic_auth(item.basic_auth_realm) }}
-            {% endif %}
-
-            {{ hsts_header() }}
-            {{ proxy_wsgi_upstream("cmssite") }}
-        }
+{% for simple_file in item.simple_files %}
+{% if simple_file.path is defined %}
+    location = {{ simple_file.path }} {
+        {{ hsts_header() }}
+{% if simple_file.mimetype is defined %}
+            add_header Content-Type "{{ simple_file.mimetype }}";
+            default_type {{ simple_file.mimetype }};
+{% endif %}
+        alias {{ virtualenv_path }}/simple_files/{{ simple_file.filename }};
     }
+{% endif %}
+{% endfor %}
+
+    location / {
+{% if "-tst" not in inventory_hostname %}
+        proxy_cache cmssite_cache;
+        proxy_cache_key $scheme$host$uri;
+        proxy_cache_valid 10m;
+        proxy_cache_use_stale error timeout invalid_header http_500 http_502 http_503 http_504;
+        proxy_ignore_headers Expires;
+        proxy_ignore_headers "Cache-Control";
+        proxy_ignore_headers "Set-Cookie";
+        proxy_cache_bypass $traffic_internal;
+        proxy_cache_use_stale updating;
+        proxy_cache_lock on;
+
+        add_header X-Proxy-Cache $upstream_cache_status;
+{% endif %}
+
+{% if item.basic_auth_realm is defined %}
+    {{ basic_auth(item.basic_auth_realm) }}
+{% endif %}
+
+        {{ hsts_header() }}
+        {{ proxy_wsgi_upstream("cmssite") }}
+    }
+}
 {% endif %}
 
 {% endfor %}
