@@ -84,7 +84,7 @@ subprocess-tee==0.4.2
     #   ansible-lint
 typing-extensions==4.16.0
     # via referencing
-wcmatch==10.0
+wcmatch==11.0.1
     # via ansible-lint
 yamllint==1.38.0
     # via
